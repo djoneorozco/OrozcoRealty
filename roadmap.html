@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OrozcoRealty LLC | Roadmap & To-Do</title>
+  <title>OrozcoRealty Roadmap | Veteran-Owned Investment Strategy</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,7 +13,7 @@
       color: #333;
     }
     header {
-      background: #1e1e1e;
+      background: #111;
       color: white;
       padding: 2.5rem 1rem;
       text-align: center;
@@ -22,7 +22,7 @@
       font-size: 2.5rem;
     }
     nav {
-      background: #111;
+      background: #222;
       padding: 1rem;
       text-align: center;
     }
@@ -44,82 +44,61 @@
       margin-bottom: 2.5rem;
     }
     h2 {
-      font-size: 1.8rem;
-      color: #222;
+      font-size: 2rem;
       margin-bottom: 0.75rem;
     }
     ul {
-      list-style: none;
-      padding: 0;
+      list-style-type: none;
+      padding-left: 0;
     }
     li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
     }
     input[type="checkbox"] {
       transform: scale(1.2);
-      margin-right: 0.75rem;
+      margin-right: 0.5rem;
     }
     progress {
       width: 100%;
       height: 20px;
       margin-top: 1rem;
     }
-    .calendar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-    }
     .event {
       background: white;
       padding: 1rem;
       border-left: 4px solid #2e86de;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      border-radius: 4px;
-      flex: 1 1 45%;
-    }
-    .event h4 {
-      margin: 0;
-      font-size: 1.1rem;
-      color: #2e2e2e;
-    }
-    .event span {
-      display: block;
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 0.25rem;
-    }
-    .analysis {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
     iframe {
       width: 100%;
       height: 350px;
       border: none;
-      margin-top: 1rem;
+    }
+    .analysis {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
     footer {
-      background: #222;
+      background: #111;
       color: white;
       text-align: center;
       padding: 1rem;
-      margin-top: 2rem;
     }
   </style>
   <script>
     function updateProgress() {
       const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      const checked = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
-      const progress = document.getElementById('progress');
-      progress.value = (checked / checkboxes.length) * 100;
+      const checked = Array.from(checkboxes).filter(c => c.checked).length;
+      document.getElementById('progress').value = (checked / checkboxes.length) * 100;
     }
   </script>
 </head>
 <body>
   <header>
-    <h1>OrozcoRealty LLC | Roadmap</h1>
+    <h1>Strategic Roadmap | OrozcoRealty LLC</h1>
   </header>
   <nav>
     <a href="index.html">Home</a>
@@ -131,61 +110,54 @@
   </nav>
   <main>
     <section>
-      <h2>🧾 Interactive To-Do Checklist</h2>
+      <h2>🧭 Strategic Milestones</h2>
       <ul>
-        <li><input type="checkbox" checked disabled> Form LLC with Veteran Verification</li>
-        <li><input type="checkbox" checked disabled> Elect S-Corp and get EIN</li>
-        <li><input type="checkbox" checked disabled> Open business bank account</li>
-        <li><input type="checkbox" checked disabled> Transfer 3506 Lara & 525 Cadena</li>
-        <li><input type="checkbox" onchange="updateProgress()"> Renovate both homes to code (~$25K)</li>
-        <li><input type="checkbox" onchange="updateProgress()"> Apply for post-renovation appraisal</li>
-        <li><input type="checkbox" onchange="updateProgress()"> Request 80% LTV refinance</li>
+        <li><input type="checkbox" checked disabled> Register OrozcoRealty LLC and submit VVL</li>
+        <li><input type="checkbox" checked disabled> Elect S-Corp and receive EIN</li>
+        <li><input type="checkbox" checked disabled> Open business bank account and credit tools</li>
+        <li><input type="checkbox" checked disabled> Transfer Lara & Cadena homes to LLC</li>
+        <li><input type="checkbox" onchange="updateProgress()"> Complete $25K renovation phase</li>
+        <li><input type="checkbox" onchange="updateProgress()"> Apply for appraisal and SBA 7(a)</li>
         <li><input type="checkbox" onchange="updateProgress()"> Submit Section 8 landlord application</li>
-        <li><input type="checkbox" onchange="updateProgress()"> List homes: rent-to-own / Section 8</li>
-        <li><input type="checkbox" onchange="updateProgress()"> Scout San Antonio property (~$100K)</li>
-        <li><input type="checkbox" onchange="updateProgress()"> Apply for SBA Express or 7(a) loan</li>
+        <li><input type="checkbox" onchange="updateProgress()"> Launch listings & rent-to-own program</li>
+        <li><input type="checkbox" onchange="updateProgress()"> Begin San Antonio expansion (target $100K homes)</li>
       </ul>
-      <progress id="progress" value="4" max="11"></progress>
+      <progress id="progress" value="4" max="9"></progress>
     </section>
 
     <section>
-      <h2>📅 Key Milestones</h2>
-      <div class="calendar">
-        <div class="event">
-          <h4>Finalize Renovation Bids</h4>
-          <span>Target: June 20, 2025</span>
-        </div>
-        <div class="event">
-          <h4>Apply for Appraisal</h4>
-          <span>Target: July 15, 2025</span>
-        </div>
-        <div class="event">
-          <h4>Submit 80% LTV Refinance</h4>
-          <span>Target: July 30, 2025</span>
-        </div>
-        <div class="event">
-          <h4>Begin Section 8 Application Process</h4>
-          <span>Target: August 5, 2025</span>
-        </div>
+      <h2>📅 Timeline</h2>
+      <div class="event">
+        <strong>June 2025</strong>: Renovation of Lara & Cadena begins
+      </div>
+      <div class="event">
+        <strong>July 2025</strong>: Appraisals submitted; SBA loan processing begins
+      </div>
+      <div class="event">
+        <strong>August 2025</strong>: Section 8 applications filed; tenant screening opens
+      </div>
+      <div class="event">
+        <strong>Q4 2025</strong>: First full tenant occupancy & cash flow cycle
       </div>
     </section>
 
     <section class="analysis">
-      <h2>📊 Market & Business Analysis</h2>
-      <p><strong>Rental Income Potential:</strong> Each El Cenizo property may rent for $850–$1,000/month. Annual total: ~$22,000.</p>
-      <p><strong>Renovation ROI:</strong> $25K investment expected to raise values to $75K–$90K per unit.</p>
-      <p><strong>Funding Strategy:</strong> 80% LTV = up to $70K liquidity. SBA Express or 7(a) loans could fund additional projects.</p>
+      <h2>📊 Market & Financial Highlights</h2>
+      <p><strong>Target Rents:</strong> $2,000–$2,400 per home based on Section 8 & JBSA demand</p>
+      <p><strong>Projected Equity:</strong> $320K portfolio value by Year 1 with $90K owner equity</p>
+      <p><strong>Loan Strategy:</strong> $500K SBA 7(a) – 25 yrs at 9.25%, using homes as collateral</p>
+      <p><strong>5-Year Goal:</strong> 10 income-generating units and a $1.5M portfolio</p>
     </section>
 
     <section>
-      <h2>📍 Section 8 Eligibility & Location</h2>
-      <p>To participate in the Housing Choice Voucher Program (Section 8), OrozcoRealty will apply through the local Public Housing Authority in Webb County, TX.</p>
-      <p><a href="https://www.hud.gov/program_offices/public_indian_housing/pha/contacts/tx" target="_blank">Click here to find your local PHA in Texas</a></p>
+      <h2>📍 El Cenizo Region & Section 8</h2>
+      <p>These homes are being evaluated for the Housing Choice Voucher Program (Section 8). This includes coordination with the Public Housing Authority in Webb County.</p>
+      <p><a href="https://www.hud.gov/program_offices/public_indian_housing/pha/contacts/tx" target="_blank">Find Your PHA Here</a></p>
       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d17464.38757884268!2d-99.49892034999998!3d27.3344664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8660e689ed1738a5%3A0xb98ae94be1f5c118!2sEl%20Cenizo%2C%20TX%2078046!5e0!3m2!1sen!2sus!4v1689791012345!5m2!1sen!2sus" allowfullscreen></iframe>
     </section>
   </main>
   <footer>
-    &copy; 2025 OrozcoRealty LLC | Strategic Planning & Veteran Investment Focus
+    &copy; 2025 OrozcoRealty LLC | Powered by Strategy, Built by Veterans
   </footer>
 </body>
 </html>
