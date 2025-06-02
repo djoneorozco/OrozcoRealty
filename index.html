@@ -2,52 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OrozcoRealty LLC</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background: #f7f7f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
       color: #333;
     }
     header {
-      background: #2e2e2e;
+      background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1950&q=80') no-repeat center center/cover;
       color: white;
-      padding: 2rem 1rem;
+      padding: 4rem 1rem;
       text-align: center;
     }
     header h1 {
+      font-size: 3rem;
       margin: 0;
-      font-size: 2rem;
     }
-    header p {
-      font-size: 1.1rem;
-      margin-top: 0.5rem;
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #222;
+      padding: 0.5rem;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1.5rem;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
     }
     main {
-      padding: 2rem 1rem;
-      max-width: 800px;
+      padding: 2rem;
+      max-width: 1200px;
       margin: auto;
     }
     section {
       margin-bottom: 2rem;
     }
-    .section-title {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #111;
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .card {
+      flex: 1 1 calc(33% - 1.5rem);
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 1rem;
+    }
+    .card-body h3 {
+      margin-top: 0;
     }
     footer {
-      background: #2e2e2e;
+      background: #222;
       color: white;
       text-align: center;
       padding: 1rem;
-      font-size: 0.9rem;
     }
-    a {
-      color: #0077cc;
+    @media (max-width: 768px) {
+      .card {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
@@ -55,31 +84,65 @@
 
   <header>
     <h1>OrozcoRealty LLC</h1>
-    <p>Veteran-owned real estate company serving El Cenizo & San Antonio, TX</p>
+    <p>Building Veteran-Strong Communities in South Texas</p>
   </header>
 
+  <nav>
+    <a href="#about">About</a>
+    <a href="#listings">Listings</a>
+    <a href="#rehab">Rehab Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
   <main>
-    <section>
-      <h2 class="section-title">Coming Soon</h2>
-      <p>Listings of available properties, Section 8-ready rentals, and rehab updates will be available here. We focus on affordable housing, rent-to-own opportunities, and property investment through veteran and community-focused strategies.</p>
+    <section id="about">
+      <h2>About Us</h2>
+      <p>OrozcoRealty LLC is a veteran-owned real estate company focused on acquiring, rehabbing, and renting affordable homes in El Cenizo and the San Antonio area. We specialize in rent-to-own and Section 8 housing, empowering working families and fellow veterans with stability and opportunity.</p>
     </section>
 
-    <section>
-      <h2 class="section-title">Our Mission</h2>
-      <p>To create quality, affordable homes for underserved communities in South Texas, while empowering veterans and families through property ownership and sustainable housing options.</p>
+    <section id="listings">
+      <h2>Featured Listings</h2>
+      <div class="cards">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1560185127-6a9f6d47e27d?auto=format&fit=crop&w=900&q=60" alt="House 1" />
+          <div class="card-body">
+            <h3>525 Cadena St</h3>
+            <p>El Cenizo, TX - 3 Bed / 1 Bath - $850/month (Rent-to-Own)</p>
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1600585153406-ecb6ee060cb3?auto=format&fit=crop&w=900&q=60" alt="House 2" />
+          <div class="card-body">
+            <h3>3506 Lara St</h3>
+            <p>El Cenizo, TX - 2 Bed / 1 Bath - Section 8 Accepted</p>
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=900&q=60" alt="Coming Soon" />
+          <div class="card-body">
+            <h3>San Antonio Rehab Project</h3>
+            <p>Coming Soon - 3 Bed / 2 Bath - $1,050/month</p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section>
-      <h2 class="section-title">Contact</h2>
+    <section id="rehab">
+      <h2>Rehab & Revitalize</h2>
+      <p>We purchase foreclosed and unfinished properties, restoring them into safe and modern homes. Our projects not only boost neighborhood value but also help us provide affordable housing for families and veterans across South Texas.</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact Us</h2>
       <p>Email: <a href="mailto:info@orozcorealty.org">info@orozcorealty.org</a><br>
-         Location: El Cenizo, TX 78046<br>
-         Coming soon: Contact form and phone number
+         Based in El Cenizo, TX 78046<br>
+         More contact options coming soon.
       </p>
     </section>
   </main>
 
   <footer>
-    &copy; 2025 OrozcoRealty LLC — Veteran-Owned & Operated in Texas
+    &copy; 2025 OrozcoRealty LLC. Veteran-Owned. Built for Texas.
   </footer>
 
 </body>
