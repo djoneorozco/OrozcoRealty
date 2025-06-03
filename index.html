@@ -1,105 +1,140 @@
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OrozcoRealty LLC | Veteran-Owned Real Estate in Texas</title>
+  <title>OrozcoRealty LLC | Veteran Real Estate Solutions</title>
   <style>
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f9f9f9;
-      color: #222;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background: url('https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+      color: white;
+      text-align: center;
+      padding: 6rem 2rem 3rem;
+      position: relative;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    header h1, header p, .logo-container {
+      position: relative;
+      z-index: 1;
+    }
+    header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: auto;
+    }
+    .logo-container {
+      margin-top: 2rem;
+    }
+    .logo-container img {
+      max-width: 220px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
     nav {
-      background: #101010;
-      color: white;
-      padding: 1.25rem;
+      background: #111;
+      padding: 1rem;
       display: flex;
       justify-content: center;
       gap: 2rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     nav a {
       color: white;
       text-decoration: none;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      transition: color 0.3s;
+      font-weight: bold;
+      text-transform: uppercase;
     }
     nav a:hover {
       color: #ffd700;
     }
-    .logo-container {
-      text-align: center;
-      margin: 2rem 0;
-    }
-    .logo-container img {
-      max-width: 280px;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    }
     main {
-      max-width: 960px;
+      max-width: 1200px;
       margin: auto;
-      padding: 2.5rem;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-    }
-    main h2 {
-      text-align: center;
-      color: #333;
-    }
-    main p {
-      line-height: 1.6;
-      margin-top: 1rem;
-    }
-    footer {
-      background: #101010;
-      color: white;
-      text-align: center;
-      padding: 1.25rem;
-      margin-top: 4rem;
-      font-size: 0.95rem;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Navigation -->
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="roadmap.html">Roadmap</a>
-    <a href="listings.html">Listings</a>
-    <a href="projects.html">Projects</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-
-  <!-- Crest Logo -->
-  <div class="logo-container">
-    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
-  </div>
-
-  <!-- Main Content -->
-  <main>
-    <h2>Welcome to OrozcoRealty</h2>
-    <p>
-      We are a veteran-owned real estate company focused on reviving South Texas neighborhoods through strategic investments,
-      modern renovations, and veteran-first housing programs. Our mission includes delivering rental, rent-to-own, and Section 8 housing 
-      with integrity, transparency, and long-term community benefit.
-    </p>
-    <p>
-      Explore our listings, track our renovation progress, and learn about our SBA-supported business growth plan in El Cenizo and San Antonio.
-    </p>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    &copy; 2025 OrozcoRealty LLC | Built by Veterans. Backed by Purpose.
-  </footer>
-
-</body>
+      padding: 2rem;
 </html>
