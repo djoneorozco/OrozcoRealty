@@ -9,8 +9,9 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f4f4;
+      background: linear-gradient(to bottom right, #f0f0f0, #e4e4e4);
       color: #333;
+      overflow-x: hidden;
     }
     nav {
       background: #111;
@@ -18,12 +19,17 @@
       display: flex;
       justify-content: center;
       gap: 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     nav a {
       color: white;
       text-decoration: none;
       font-weight: bold;
       text-transform: uppercase;
+      transition: color 0.3s ease;
     }
     nav a:hover {
       color: #ffd700;
@@ -31,33 +37,62 @@
     header {
       background: #fff;
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 3rem 1rem;
+      animation: fadeIn 1.5s ease;
     }
     header img {
       max-width: 320px;
       height: auto;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+      transition: transform 0.4s ease;
+    }
+    header img:hover {
+      transform: scale(1.05);
     }
     main {
       max-width: 1000px;
-      margin: auto;
+      margin: 3rem auto;
       padding: 2rem;
       background: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+      animation: slideUp 1.2s ease;
     }
     h1, h2 {
       color: #222;
+      text-align: center;
     }
     section {
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      animation: fadeInUp 1s ease both;
+    }
+    section:nth-of-type(2) {
+      animation-delay: 0.3s;
+    }
+    section:nth-of-type(3) {
+      animation-delay: 0.6s;
     }
     footer {
       background: #222;
       color: white;
       text-align: center;
-      padding: 1rem;
-      margin-top: 3rem;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+      animation: fadeIn 2s ease;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
