@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OrozcoRealty LLC</title>
+  <title>About | OrozcoRealty LLC</title>
   <style>
     body {
       margin: 0;
@@ -11,43 +11,17 @@
       background-color: #000;
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    header img {
-      width: 300px;
-      max-width: 90%;
-      animation: pulseLogo 3s infinite ease-in-out;
-      transition: transform 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes pulseLogo {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.85; }
     }
 
     nav {
-      position: absolute;
-      top: 20px;
+      background: #111;
+      padding: 1rem;
       display: flex;
+      justify-content: center;
       gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     nav a {
@@ -55,19 +29,71 @@
       text-decoration: none;
       font-weight: bold;
       text-transform: uppercase;
-      transition: color 0.3s;
+      transition: color 0.3s ease;
     }
 
     nav a:hover {
       color: #ffd700;
     }
 
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    header img {
+      max-width: 320px;
+      width: 80%;
+      animation: pulseLogo 3s infinite ease-in-out;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .history-img {
+      display: block;
+      margin: 1.5rem auto;
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    }
+
     footer {
-      position: absolute;
-      bottom: 20px;
-      font-size: 0.9rem;
+      background: #111;
       color: #aaa;
       text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -86,8 +112,28 @@
     <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
   </header>
 
+  <main>
+    <h1>About OrozcoRealty LLC</h1>
+
+    <section>
+      <h2>Our Mission</h2>
+      <p>OrozcoRealty LLC is a veteran-owned real estate investment firm based in San Antonio, Texas, focused on the revitalization of underserved communities through strategic property acquisition, renovation, and tenant-first leasing models. We aim to provide affordable, safe, and modern housing options for families and veterans across South Texas.</p>
+    </section>
+
+    <section>
+      <h2>Our History</h2>
+      <p>Founded by a retired USAF project analyst and led on-site by a master construction foreman with over 30 years of experience, our company merges military precision with tradesman quality. With deep ties to El Cenizo and San Antonio, we are proud to continue a family legacy of housing access and economic empowerment.</p>
+      <img src="old.jpg" alt="Historical family photo or property" class="history-img">
+    </section>
+
+    <section>
+      <h2>Our Approach</h2>
+      <p>We combine data analytics with boots-on-the-ground construction management to identify undervalued assets and bring them to full market potential. Our properties support rent-to-own paths, Section 8 eligibility, and long-term housing stability for working-class families.</p>
+    </section>
+  </main>
+
   <footer>
-    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | San Antonio & El Cenizo, TX
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
 
 </body>
