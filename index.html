@@ -1,179 +1,209 @@
-<style>
-  :root {
-    --primary: #2A1F1C;        /* Cocoa-Black */
-    --secondary: #3B2F2A;      /* Charcoal-Brown */
-    --tertiary: #4B3621;       /* Black-Walnut */
-    --accent: #FFD700;         /* Gold */
-    --text-light: #f9f6f3;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OrozcoRealty LLC | Veteran Real Estate Solutions</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #f0f0f0, #e4e4e4);
+      color: #333;
+      overflow-x: hidden;
+    }
+    nav {
+      background: #1B1814;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #ffd700;
+    }
+    header {
+      background: url('backdrop.jpg') center/cover no-repeat;
+      color: white;
+      text-align: center;
+      padding: 6rem 2rem 3rem;
+      position: relative;
+      animation: fadeIn 1.5s ease;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 0;
+    }
+    header h1, header p, .logo-container {
+      position: relative;
+      z-index: 1;
+    }
+    header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+    header p {
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: auto;
+    }
+    .logo-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 2;
+    }
+    .logo-container img {
+      max-width: 264px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.4s ease;
+    }
+   .logo-container img:hover {
+  transform: scale(1.25) rotate(-2deg);
+  filter: brightness(1.1);
+    }
+    main {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+      animation: slideUp 1.2s ease;
+    }
+    section {
+      margin-bottom: 3rem;
+      animation: fadeInUp 1s ease both;
+    }
+    section:nth-of-type(2) {
+      animation-delay: 0.3s;
+    }
+    section:nth-of-type(3) {
+      animation-delay: 0.6s;
+    }
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #222;
+      text-align: center;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 1rem;
+    }
+    .card-body h3 {
+      margin: 0 0 0.5rem;
+    }
+    footer {
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+      animation: fadeIn 2s ease;
+    }
 
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(to bottom right, var(--primary), var(--secondary));
-    color: var(--text-light);
-    overflow-x: hidden;
-  }
-
-  nav {
-    background: var(--tertiary);
-    padding: 1rem;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  }
-
-  nav a {
-    color: var(--text-light);
-    text-decoration: none;
-    font-weight: bold;
-    text-transform: uppercase;
-    transition: color 0.3s ease;
-  }
-
-  nav a:hover {
-    color: var(--accent);
-  }
-
-  header {
-    background: url('backdrop.jpg') center/cover no-repeat;
-    color: white;
-    text-align: center;
-    padding: 6rem 2rem 3rem;
-    position: relative;
-    animation: fadeIn 1.5s ease;
-  }
-
-  header::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(42, 31, 28, 0.7); /* Cocoa overlay */
-    z-index: 0;
-  }
-
-  header h1, header p, .logo-container {
-    position: relative;
-    z-index: 1;
-  }
-
-  header h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-  }
-
-  header p {
-    font-size: 1.25rem;
-    max-width: 700px;
-    margin: auto;
-  }
-
-  .logo-container {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 2;
-  }
-
-  .logo-container img {
-    max-width: 264px;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.4s ease;
-  }
-
-  .logo-container img:hover {
-    transform: scale(1.25) rotate(-2deg);
-    filter: brightness(1.1);
-  }
-
-  main {
-    max-width: 1200px;
-    margin: 3rem auto;
-    padding: 2rem;
-    background: var(--tertiary);
-    border-radius: 12px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-    animation: slideUp 1.2s ease;
-    color: var(--text-light);
-  }
-
-  section {
-    margin-bottom: 3rem;
-    animation: fadeInUp 1s ease both;
-  }
-
-  section:nth-of-type(2) { animation-delay: 0.3s; }
-  section:nth-of-type(3) { animation-delay: 0.6s; }
-
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: var(--accent);
-    text-align: center;
-  }
-
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .card {
-    background: var(--secondary);
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    overflow: hidden;
-    transition: transform 0.2s ease;
-    color: var(--text-light);
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-  }
-
-  .card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  .card-body {
-    padding: 1rem;
-  }
-
-  .card-body h3 {
-    margin: 0 0 0.5rem;
-    color: var(--accent);
-  }
-
-  footer {
-    background: var(--primary);
-    color: var(--text-light);
-    text-align: center;
-    padding: 1.5rem;
-    font-size: 0.95rem;
-    animation: fadeIn 2s ease;
-  }
-
-  @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-
-  @keyframes slideUp {
-    0% { opacity: 0; transform: translateY(40px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-</style>
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
+    </div>
+    <h1>Serving our Community</h1>
+    <p>OrozcoRealty is a Real Estate Firm Revitalizing South Texas Communities with Strategic Acquisitions, Affordable Housing & Impactful Growth</p>
+  </header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="listings.html">Listings</a>
+    <a href="rehab.html">Projects</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <main>
+    <section>
+      <h2>Welcome to OrozcoRealty</h2>
+      <p>We are a veteran-founded investment company operating in San Antonio and Laredo, Texas. Our mission is to identify undervalued residential properties, renovate them to code, and offer housing solutions to working families and veterans through rentals and rent-to-own programs. With expert construction oversight and a data-driven investment model, we deliver sustainable returns while transforming communities.</p>
+    </section>
+    <section class="card-grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80" alt="Cadena Home">
+        <div class="card-body">
+          <h3>525 Cadena St</h3>
+          <p>3BR / 1BA – Rent-to-Own | El Cenizo</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Lara Home">
+        <div class="card-body">
+          <h3>3506 Lara St</h3>
+          <p>2BR / 1BA – Section 8 Ready</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="sa.jpg" alt="Future San Antonio Rehab">
+        <div class="card-body">
+          <h3>Next Acquisition</h3>
+          <p>Targeting $100K Investment – San Antonio Expansion</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h2>Strategic Growth</h2>
+      <p>Our five-year roadmap includes acquiring 10+ units, launching a property management arm, and expanding to Texas military housing markets through scalable veteran-led operations. Backed by SBA 7(a) financing and grounded in operational excellence, we’re building a real estate model that serves both capital and community.</p>
+    </section>
+  </main>
+  <footer>
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo
+  </footer>
+</body>
+</html>
