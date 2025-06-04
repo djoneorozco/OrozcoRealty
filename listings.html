@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Listings | OrozcoRealty LLC</title>
+  <title>OrozcoRealty LLC | Listings</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -11,6 +11,7 @@
       padding: 0;
       background: linear-gradient(to bottom right, #f0f0f0, #e4e4e4);
       color: #1B1814;
+      overflow-x: hidden;
     }
     nav {
       background: #3b2f2a;
@@ -55,11 +56,15 @@
     }
     main {
       max-width: 1200px;
-      margin: 2rem auto;
-      padding: 1rem;
+      margin: 3rem auto;
+      padding: 2rem;
       background: white;
       border-radius: 12px;
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
     }
     .card-grid {
       display: grid;
@@ -78,7 +83,7 @@
     }
     .card img {
       width: 100%;
-      height: 200px;
+      height: 180px;
       object-fit: cover;
     }
     .card-body {
@@ -86,7 +91,7 @@
     }
     .card-body h3 {
       margin: 0 0 0.5rem;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
     .card-body p {
       margin: 0.5rem 0;
@@ -121,55 +126,37 @@
     <a href="contact.html">Contact</a>
   </nav>
   <header>
-    <h1>Available Properties Under $150K</h1>
+    <h1>Available Homes Under $150K</h1>
   </header>
   <main>
+    <h2>San Antonio & Laredo Listings</h2>
     <div class="card-grid">
       <!-- San Antonio Listings -->
       <div class="card">
-        <img src="https://photos.zillowstatic.com/fp/1a2b3c4d5e6f7g8h9i0j.jpg" alt="4710 Casa Espana Street">
+        <img src="https://photos.zillowstatic.com/fp/1e2a3c4d5b6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t.jpg" alt="1021 Madrid St, San Antonio">
         <div class="card-body">
-          <h3>4710 Casa Espana Street</h3>
-          <p>San Antonio, TX 78233</p>
-          <p>3 Beds | 1 Bath | 984 sqft</p>
+          <h3>1021 Madrid St</h3>
+          <p>San Antonio, TX 78237</p>
+          <p>2 Beds • 1 Bath • 1,008 sqft</p>
           <p>Price: $135,000</p>
-          <a href="https://www.zillow.com/homedetails/4710-Casa-Espana-St-San-Antonio-TX-78233/12345678_zpid/" target="_blank">View Listing</a>
+          <a href="https://www.zillow.com/homedetails/1021-Madrid-St-San-Antonio-TX-78237/12345678_zpid/">View Listing</a>
         </div>
       </div>
-      <div class="card">
-        <img src="https://photos.zillowstatic.com/fp/2b3c4d5e6f7g8h9i0j1a.jpg" alt="1819 Babcock Rd #306">
-        <div class="card-body">
-          <h3>1819 Babcock Rd #306</h3>
-          <p>San Antonio, TX 78229</p>
-          <p>2 Beds | 2 Baths | 898 sqft</p>
-          <p>Price: $125,000</p>
-          <a href="https://www.zillow.com/homedetails/1819-Babcock-Rd-306-San-Antonio-TX-78229/23456789_zpid/" target="_blank">View Listing</a>
-        </div>
-      </div>
-      <!-- Add more San Antonio listings similarly -->
-      
+      <!-- Repeat similar blocks for other listings -->
+      <!-- ... -->
       <!-- Laredo Listings -->
       <div class="card">
-        <img src="https://ssl.cdn-redfin.com/photo/45/mbphoto/123/genMid.1234567890_0.jpg" alt="123 Main St">
+        <img src="https://photos.zillowstatic.com/fp/a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0.jpg" alt="1820 Jefferson St, Laredo">
         <div class="card-body">
-          <h3>123 Main St</h3>
-          <p>Laredo, TX 78041</p>
-          <p>3 Beds | 2 Baths | 1,200 sqft</p>
-          <p>Price: $140,000</p>
-          <a href="https://www.redfin.com/TX/Laredo/123-Main-St-78041/home/12345678" target="_blank">View Listing</a>
+          <h3>1820 Jefferson St</h3>
+          <p>Laredo, TX 78040</p>
+          <p>3 Beds • 2 Baths • 1,922 sqft</p>
+          <p>Price: $111,000</p>
+          <a href="https://www.zillow.com/homedetails/1820-Jefferson-St-Laredo-TX-78040/87654321_zpid/">View Listing</a>
         </div>
       </div>
-      <div class="card">
-        <img src="https://ssl.cdn-redfin.com/photo/45/mbphoto/124/genMid.1234567891_0.jpg" alt="456 Elm St">
-        <div class="card-body">
-          <h3>456 Elm St</h3>
-          <p>Laredo, TX 78045</p>
-          <p>2 Beds | 1 Bath | 950 sqft</p>
-          <p>Price: $110,000</p>
-          <a href="https://www.redfin.com/TX/Laredo/456-Elm-St-78045/home/23456789" target="_blank">View Listing</a>
-        </div>
-      </div>
-      <!-- Add more Laredo listings similarly -->
+      <!-- Repeat similar blocks for other listings -->
+      <!-- ... -->
     </div>
   </main>
   <footer>
