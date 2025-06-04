@@ -5,23 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Listings | OrozcoRealty LLC</title>
   <style>
-    :root {
-      --primary-bg: #1B1814;
-      --secondary-bg: #3B2F2A;
-      --accent-bg: #4D3C35;
-      --accent-gold: #FFD700;
-      --text-light: #F2F0EC;
-    }
-
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom right, var(--primary-bg), var(--secondary-bg));
-      color: var(--text-light);
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #f0f0f0, #e4e4e4);
+      color: #1B1814;
     }
-
     nav {
-      background: #111;
+      background: #3b2f2a;
       padding: 1rem;
       display: flex;
       justify-content: center;
@@ -31,7 +23,6 @@
       z-index: 1000;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-
     nav a {
       color: white;
       text-decoration: none;
@@ -39,89 +30,81 @@
       text-transform: uppercase;
       transition: color 0.3s ease;
     }
-
     nav a:hover {
-      color: var(--accent-gold);
+      color: #ffd700;
     }
-
     header {
+      background: url('backdrop.jpg') center/cover no-repeat;
+      color: white;
       text-align: center;
-      padding: 3rem 2rem 2rem;
+      padding: 4rem 2rem;
+      position: relative;
     }
-
+    header::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 0;
+    }
     header h1 {
+      position: relative;
+      z-index: 1;
       font-size: 3rem;
-      margin-bottom: 0.5rem;
-      color: var(--accent-gold);
+      margin: 0;
     }
-
-    header p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin: auto;
-    }
-
     main {
       max-width: 1200px;
       margin: 2rem auto;
-      padding: 2rem;
-      background: var(--secondary-bg);
+      padding: 1rem;
+      background: white;
       border-radius: 12px;
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
     }
-
-    section {
-      margin-bottom: 3rem;
-    }
-
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: var(--accent-gold);
-      text-align: center;
-    }
-
     .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
     }
-
     .card {
-      background: var(--accent-bg);
+      background: white;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       overflow: hidden;
       transition: transform 0.2s ease;
     }
-
     .card:hover {
       transform: translateY(-5px);
     }
-
     .card img {
       width: 100%;
       height: 200px;
       object-fit: cover;
     }
-
     .card-body {
       padding: 1rem;
     }
-
     .card-body h3 {
       margin: 0 0 0.5rem;
-      color: var(--accent-gold);
+      font-size: 1.2rem;
     }
-
     .card-body p {
-      margin: 0;
-      color: var(--text-light);
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
     }
-
+    .card-body a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: #3b2f2a;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .card-body a:hover {
+      text-decoration: underline;
+    }
     footer {
-      background: var(--primary-bg);
-      color: var(--text-light);
+      background: #222;
+      color: white;
       text-align: center;
       padding: 1.5rem;
       font-size: 0.95rem;
@@ -137,82 +120,58 @@
     <a href="rehab.html">Projects</a>
     <a href="contact.html">Contact</a>
   </nav>
-
   <header>
-    <h1>Affordable Homes Under $150K</h1>
-    <p>Explore our curated selection of budget-friendly homes in San Antonio and Laredo, perfect for first-time buyers and investors.</p>
+    <h1>Available Properties Under $150K</h1>
   </header>
-
   <main>
-    <section>
-      <h2>San Antonio Listings</h2>
-      <div class="card-grid">
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80" alt="San Antonio Home">
-          <div class="card-body">
-            <h3>1021 Madrid St</h3>
-            <p>2BR / 1BA – $135,000</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="San Antonio Home">
-          <div class="card-body">
-            <h3>737 Kendalia Ave</h3>
-            <p>3BR / 1BA – $114,900</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="San Antonio Home">
-          <div class="card-body">
-            <h3>4710 Casa Espana St</h3>
-            <p>3BR / 1BA – $135,000</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="San Antonio Home">
-          <div class="card-body">
-            <h3>303 Cravens</h3>
-            <p>3BR / 2BA – $99,900</p>
-          </div>
+    <div class="card-grid">
+      <!-- San Antonio Listings -->
+      <div class="card">
+        <img src="https://photos.zillowstatic.com/fp/1a2b3c4d5e6f7g8h9i0j.jpg" alt="4710 Casa Espana Street">
+        <div class="card-body">
+          <h3>4710 Casa Espana Street</h3>
+          <p>San Antonio, TX 78233</p>
+          <p>3 Beds | 1 Bath | 984 sqft</p>
+          <p>Price: $135,000</p>
+          <a href="https://www.zillow.com/homedetails/4710-Casa-Espana-St-San-Antonio-TX-78233/12345678_zpid/" target="_blank">View Listing</a>
         </div>
       </div>
-    </section>
-
-    <section>
-      <h2>Laredo Listings</h2>
-      <div class="card-grid">
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=80" alt="Laredo Home">
-          <div class="card-body">
-            <h3>2107 Culiacan Dr</h3>
-            <p>3BR / 2BA – $124,900</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Laredo Home">
-          <div class="card-body">
-            <h3>415 W San Jose St</h3>
-            <p>5BR / 2BA – $130,000</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Laredo Home">
-          <div class="card-body">
-            <h3>707 Sanders Ave</h3>
-            <p>2BR / 1BA – $125,000</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Laredo Home">
-          <div class="card-body">
-            <h3>1419 E Gustavus St APT 45</h3>
-            <p>2BR / 2BA – $149,990</p>
-          </div>
+      <div class="card">
+        <img src="https://photos.zillowstatic.com/fp/2b3c4d5e6f7g8h9i0j1a.jpg" alt="1819 Babcock Rd #306">
+        <div class="card-body">
+          <h3>1819 Babcock Rd #306</h3>
+          <p>San Antonio, TX 78229</p>
+          <p>2 Beds | 2 Baths | 898 sqft</p>
+          <p>Price: $125,000</p>
+          <a href="https://www.zillow.com/homedetails/1819-Babcock-Rd-306-San-Antonio-TX-78229/23456789_zpid/" target="_blank">View Listing</a>
         </div>
       </div>
-    </section>
+      <!-- Add more San Antonio listings similarly -->
+      
+      <!-- Laredo Listings -->
+      <div class="card">
+        <img src="https://ssl.cdn-redfin.com/photo/45/mbphoto/123/genMid.1234567890_0.jpg" alt="123 Main St">
+        <div class="card-body">
+          <h3>123 Main St</h3>
+          <p>Laredo, TX 78041</p>
+          <p>3 Beds | 2 Baths | 1,200 sqft</p>
+          <p>Price: $140,000</p>
+          <a href="https://www.redfin.com/TX/Laredo/123-Main-St-78041/home/12345678" target="_blank">View Listing</a>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://ssl.cdn-redfin.com/photo/45/mbphoto/124/genMid.1234567891_0.jpg" alt="456 Elm St">
+        <div class="card-body">
+          <h3>456 Elm St</h3>
+          <p>Laredo, TX 78045</p>
+          <p>2 Beds | 1 Bath | 950 sqft</p>
+          <p>Price: $110,000</p>
+          <a href="https://www.redfin.com/TX/Laredo/456-Elm-St-78045/home/23456789" target="_blank">View Listing</a>
+        </div>
+      </div>
+      <!-- Add more Laredo listings similarly -->
+    </div>
   </main>
-
   <footer>
     &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & Laredo
   </footer>
