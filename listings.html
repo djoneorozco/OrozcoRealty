@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orozco Logo Showcase</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1C1B17;
+      color: #f0e8d9;
+    }
 
+    h1 {
+      text-align: center;
+      color: #FFD700;
+      margin: 2rem 0 1rem;
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      width: 200px;
+      height: auto;
+      animation-duration: 4s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+
+    /* 7 Different Animations */
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fadeInUp { animation-name: fadeInUp; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .pulse { animation-name: pulse; }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .rotate { animation-name: rotate; animation-duration: 10s; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .bounce { animation-name: bounce; }
+
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 4px #FFD700); }
+      50% { filter: drop-shadow(0 0 12px #FFD700); }
+    }
+    .glow { animation-name: glow; }
+
+    @keyframes flip {
+      0% { transform: rotateY(0); }
+      50% { transform: rotateY(180deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    .flip { animation-name: flip; animation-duration: 8s; }
+
+    @keyframes riseFade {
+      0% { opacity: 0; transform: translateY(20px); }
+      50% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    .riseFade { animation-name: riseFade; }
+
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .swatch {
+      padding: 1.5rem;
+      border-radius: 8px;
+      color: #f3e9d2;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.1);
+      font-size: 0.95rem;
+    }
+
+    .swatch span {
+      display: block;
+      font-weight: bold;
+      margin-top: 1rem;
+      color: #FFD700;
+    }
+  </style>
+</head>
+<body>
+  <h1>Orozco Realty Logo Showcase</h1>
+  <div class="logo-container">
+    <img src="orozco-logo.png" class="logo glow" alt="Orozco Realty Logo" />
+    <!-- Try other classes here: fadeInUp, pulse, rotate, bounce, glow, flip, riseFade -->
+  </div>
+
+  <div class="swatch-grid">
+    <!-- Include all the same swatches from earlier -->
+    <div class="swatch" style="background-color: #1C1B17;"><span>#1C1B17</span>charcoal-brown</div>
+    <div class="swatch" style="background-color: #1B1814;"><span>#1B1814</span>cocoa-black</div>
+    <div class="swatch" style="background-color: #2C241B;"><span>#2C241B</span>deep-bronze</div>
+    <div class="swatch" style="background-color: #221B15;"><span>#221B15</span>black-walnut</div>
+    <div class="swatch" style="background-color: #1E1A16;"><span>#1E1A16</span>iron-coffee</div>
+    <div class="swatch" style="background-color: #201F17;"><span>#201F17</span>midnight-gold</div>
+    <div class="swatch" style="background-color: #211C17;"><span>#211C17</span>molasses</div>
+    <div class="swatch" style="background-color: #1F1B14;"><span>#1F1B14</span>obsidian-bronze</div>
+    <div class="swatch" style="background-color: #2B211C;"><span>#2B211C</span>smoky-chestnut</div>
+    <div class="swatch" style="background-color: #2E221A;"><span>#2E221A</span>burnt-umber-black</div>
+    <div class="swatch" style="background-color: #31261E;"><span>#31261E</span>dark-sepia</div>
+    <div class="swatch" style="background-color: #231A15;"><span>#231A15</span>bitter-chocolate</div>
+    <div class="swatch" style="background-color: #251E17;"><span>#251E17</span>ebony-bronze</div>
+    <div class="swatch" style="background-color: #1E1814;"><span>#1E1814</span>black-rum</div>
+    <div class="swatch" style="background-color: #2A211A;"><span>#2A211A</span>aged-bourbon</div>
+    <div class="swatch" style="background-color: #2F271F;"><span>#2F271F</span>vintage-leather</div>
+    <div class="swatch" style="background-color: #2B1F18;"><span>#2B1F18</span>rich-mahogany</div>
+    <div class="swatch" style="background-color: #291D16;"><span>#291D16</span>bronzed-espresso</div>
+    <div class="swatch" style="background-color: #2E281F;"><span>#2E281F</span>shadow-gold</div>
+    <div class="swatch" style="background-color: #231C17;"><span>#231C17</span>coal-caramel</div>
+  </div>
+</body>
+</html>
