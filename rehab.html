@@ -3,87 +3,147 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OrozcoRealty Projects</title>
+  <title>Projects | OrozcoRealty LLC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
   <style>
     body {
-      background-color: #0a0a0a;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1B1814;
+      color: #fff;
     }
-
     header {
       background: #111;
-      padding: 1.5rem;
+      padding: 1rem;
       text-align: center;
-      border-bottom: 2px solid #5c4421;
+      font-size: 1.5rem;
+      color: #ffd700;
     }
-
-    header h1 {
-      color: #c9a14a;
-      margin: 0;
-    }
-
-    .kanban-board {
+    .board {
       display: flex;
       justify-content: space-around;
-      gap: 1rem;
-      padding: 2rem;
+      margin: 2rem;
     }
-
     .column {
-      background: #1a1a1a;
-      border: 1px solid #3e2f1e;
+      background: #222;
       border-radius: 8px;
       width: 30%;
       padding: 1rem;
+      min-height: 300px;
     }
-
     .column h2 {
-      color: #b48c36;
+      text-align: center;
+      color: #ffd700;
+    }
+    .task {
+      background: #333;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      cursor: move;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    .task:hover {
+      background: #444;
+    }
+    #addTaskForm {
+      margin: 1rem;
       text-align: center;
     }
-
-    .task {
-      background: #2a2a2a;
-      border-left: 4px solid #c99f4a;
-      margin: 1rem 0;
-      padding: 0.75rem;
-      border-radius: 6px;
+    input, button {
+      padding: 0.5rem;
+      margin: 0.2rem;
+      border: none;
+      border-radius: 5px;
     }
-
-    .task p {
-      margin: 0;
+    button {
+      background-color: #ffd700;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #loginModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #loginModal input {
+      margin: 1rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Project Dashboard</h1>
-  </header>
-  <main class="kanban-board">
-    <div class="column">
+
+  <div id="loginModal">
+    <div>
+      <h2 style="text-align:center; color:#ffd700">Admin Access</h2>
+      <input type="password" id="adminPass" placeholder="Enter password" />
+      <button onclick="checkPassword()">Login</button>
+    </div>
+  </div>
+
+  <header>OrozcoRealty LLC - Project Kanban Board</header>
+
+  <div id="addTaskForm" style="display:none;">
+    <input type="text" id="taskText" placeholder="New Task" />
+    <select id="columnSelect">
+      <option value="todo">To Do</option>
+      <option value="inprogress">In Progress</option>
+      <option value="done">Done</option>
+    </select>
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <div class="board">
+    <div class="column" id="todo">
       <h2>To Do</h2>
-      <div class="task">
-        <p>Set up GitHub Issues for Phase 1</p>
-      </div>
-      <div class="task">
-        <p>Connect Roadmap to GitHub Milestones</p>
-      </div>
     </div>
-    <div class="column">
+    <div class="column" id="inprogress">
       <h2>In Progress</h2>
-      <div class="task">
-        <p>Implement API integration</p>
-      </div>
     </div>
-    <div class="column">
+    <div class="column" id="done">
       <h2>Done</h2>
-      <div class="task">
-        <p>Create Projects.html UI</p>
-      </div>
     </div>
-  </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
+  <script>
+    const adminPassword = "orozcoprojects2025";
+
+    function checkPassword() {
+      const input = document.getElementById("adminPass").value;
+      if (input === adminPassword) {
+        document.getElementById("loginModal").style.display = "none";
+        document.getElementById("addTaskForm").style.display = "block";
+      } else {
+        alert("Incorrect password.");
+      }
+    }
+
+    function addTask() {
+      const taskText = document.getElementById("taskText").value;
+      const column = document.getElementById("columnSelect").value;
+      if (taskText.trim() === '') return;
+      const task = document.createElement('div');
+      task.className = 'task';
+      task.textContent = taskText;
+      document.getElementById(column).appendChild(task);
+      document.getElementById("taskText").value = '';
+    }
+
+    dragula([
+      document.getElementById("todo"),
+      document.getElementById("inprogress"),
+      document.getElementById("done")
+    ]);
+  </script>
+
 </body>
 </html>
