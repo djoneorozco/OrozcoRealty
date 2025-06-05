@@ -1,76 +1,141 @@
-<!-- Insert this just before </main> -->
-<section>
-  <h2>Our Projects</h2>
-  <div style="display: flex; flex-direction: column; gap: 2rem;">
-    
-    <!-- Laredo Table -->
-    <table style="width: 100%; background-color: #000; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);">
-      <thead style="background-color: #222;">
-        <tr>
-          <th colspan="2" style="color: #ffd700; padding: 1rem; text-align: left; font-size: 1.25rem;">Laredo Projects</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Location</td>
-          <td style="padding: 1rem;">El Cenizo, TX</td>
-        </tr>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Focus</td>
-          <td style="padding: 1rem;">Section 8 / Veteran Rentals</td>
-        </tr>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Status</td>
-          <td style="padding: 1rem;">Under Renovation (Summer 2025)</td>
-        </tr>
-      </tbody>
-    </table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | OrozcoRealty LLC</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1B1814;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    <!-- San Antonio Table -->
-    <table style="width: 100%; background-color: #000; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);">
-      <thead style="background-color: #222;">
-        <tr>
-          <th colspan="2" style="color: #ffd700; padding: 1rem; text-align: left; font-size: 1.25rem;">San Antonio Projects</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Neighborhood</td>
-          <td style="padding: 1rem;">Southside & West End</td>
-        </tr>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Focus</td>
-          <td style="padding: 1rem;">Buy & Hold / Rent-to-Own</td>
-        </tr>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Next Acquisition</td>
-          <td style="padding: 1rem;">Q3 2025</td>
-        </tr>
-      </tbody>
-    </table>
+    nav {
+      background: #111;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-    <!-- Future Projects Table -->
-    <table style="width: 100%; background-color: #000; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);">
-      <thead style="background-color: #222;">
-        <tr>
-          <th colspan="2" style="color: #ffd700; padding: 1rem; text-align: left; font-size: 1.25rem;">Future Projects</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Target Locations</td>
-          <td style="padding: 1rem;">Eagle Pass, Corpus Christi</td>
-        </tr>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Strategy</td>
-          <td style="padding: 1rem;">Land Acquisition & Modular Housing</td>
-        </tr>
-        <tr style="border-top: 1px solid #333;">
-          <td style="padding: 1rem;">Expected Launch</td>
-          <td style="padding: 1rem;">2026</td>
-        </tr>
-      </tbody>
-    </table>
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
 
-  </div>
-</section>
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    header {
+      position: relative;
+      height: 300px;
+      background-image: url('banner.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 2rem;
+    }
+
+    header img {
+      max-width: 200px;
+      height: auto;
+      animation: pulseLogo 3s infinite ease-in-out;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .history-img {
+      display: block;
+      margin: 1.5rem auto;
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+    }
+
+    footer {
+      background: #111;
+      color: #aaa;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="listings.html">Listings</a>
+    <a href="rehab.html">Projects</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <header>
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
+  </header>
+
+  <main>
+    <h1>About OrozcoRealty LLC</h1>
+
+    <section>
+      <h2>Our Mission</h2>
+      <p>OrozcoRealty LLC is a veteran-owned real estate investment firm based in San Antonio, Texas, focused on the revitalization of underserved communities through strategic property acquisition, renovation, and tenant-first leasing models. We aim to provide affordable, safe, and modern housing options for families and veterans across South Texas.</p>
+    </section>
+
+    <section>
+      <h2>Our History</h2>
+      <p>Founded by a retired USAF project analyst and led on-site by a master construction foreman with over 30 years of experience, our company merges military precision with tradesman quality. With deep ties to El Cenizo and San Antonio, we are proud to continue a family legacy of housing access and economic empowerment.</p>
+      <img src="old.jpg" alt="Historical family photo or property" class="history-img">
+    </section>
+
+    <section>
+      <h2>Our Approach</h2>
+      <p>We combine data analytics with boots-on-the-ground construction management to identify undervalued assets and bring them to full market potential. Our properties support rent-to-own paths, Section 8 eligibility, and long-term housing stability for working-class families.</p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
+  </footer>
+
+</body>
+</html>
