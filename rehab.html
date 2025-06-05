@@ -1,273 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>OrozcoRealty Projects</title>
-  <style>
-    body {
-      background-color: #1e1e1e;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 2rem;
-    }
-    h1, h2 {
-      text-align: center;
-      color: #ffd700;
-    }
-    nav {
-      background-color: #111;
-      padding: 1rem;
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      border-bottom: 2px solid #333;
-    }
-    nav button {
-      background: #ffd700;
-      color: #111;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .project-container {
-      margin: 2rem auto;
-      padding: 1rem;
-      background: #2b2b2b;
-      border-radius: 10px;
-      max-width: 1100px;
-    }
-    .kanban-board {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .kanban-column {
-      background: #444;
-      flex: 1;
-      padding: 1rem;
-      border-radius: 10px;
-      min-height: 200px;
-    }
-    .kanban-column h3 {
-      text-align: center;
-      color: #ffd700;
-    }
-    .task {
-      background: #666;
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      border-radius: 6px;
-      cursor: grab;
-    }
-    .add-task-form {
-      margin-top: 1rem;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-    }
-    .add-task-form input, .add-task-form button {
-      padding: 0.5rem;
-      border-radius: 6px;
-    }
-    .add-task-form button {
-      background: #ffd700;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .budget-tool input, .budget-tool button {
-      padding: 0.4rem;
-      margin: 0.3rem 0.2rem;
-      border-radius: 6px;
-    }
-    .budget-tool button {
-      background: #ffd700;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #passwordModal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    #passwordModal input {
-      padding: 1rem;
-      font-size: 1.2rem;
-    }
-  </style>
-</head>
-<body>
-  <div id="passwordModal">
-    <div>
-      <h2>Enter Password</h2>
-      <input type="password" id="passwordInput" placeholder="Access Code">
-      <button onclick="checkPassword()">Enter</button>
-    </div>
-  </div>
-
-  <h1>🛠️ OrozcoRealty Project Kanban</h1>
-  <div style="text-align:center; margin-bottom:1rem;">
-    <input type="text" id="project-name" placeholder="Enter Project Name">
-    <button onclick="createProject()">Create Project</button>
-  </div>
-
-  <nav id="project-nav"></nav>
-
-  <div id="projects-wrapper"></div>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projects Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script>
-    const PASSWORD = "letmein"; // Change this to your own password
-
-    function checkPassword() {
-      const input = document.getElementById('passwordInput').value;
-      if (input === PASSWORD) {
-        document.getElementById('passwordModal').style.display = 'none';
-      } else {
-        alert('Wrong password');
-      }
+    function toggleDetails(id) {
+      const details = document.getElementById(`details-${id}`);
+      details.classList.toggle('hidden');
     }
 
-    function allowDrop(ev) {
-      ev.preventDefault();
-    }
+    function addTimelineItem(projectId) {
+      const list = document.getElementById(`timeline-${projectId}`);
+      const newItem = document.createElement('li');
+      const task = prompt("Enter task or milestone:");
+      const date = prompt("Enter date (e.g., June 15, 2025):");
 
-    function drag(ev) {
-      ev.dataTransfer.setData("text", ev.target.id);
-    }
-
-    function drop(ev) {
-      ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
-      ev.target.appendChild(document.getElementById(data));
-    }
-
-    function createProject() {
-      const name = document.getElementById('project-name').value.trim();
-      if (!name) return;
-
-      // Nav Button
-      const nav = document.getElementById('project-nav');
-      const navBtn = document.createElement('button');
-      navBtn.textContent = name;
-      navBtn.onclick = () => {
-        document.getElementById(`project-${name}`).scrollIntoView({ behavior: 'smooth' });
-      };
-      nav.appendChild(navBtn);
-
-      // Project Container
-      const container = document.createElement('div');
-      container.className = 'project-container';
-      container.id = `project-${name}`;
-
-      container.innerHTML = `
-        <h2>${name}</h2>
-
-        <!-- 💰 Budget Tracker -->
-        <div class="budget-tool" style="background:#2c2c2c; border-radius:10px; padding:1rem; margin-bottom:1rem;">
-          <h3 style="color:#ffd700;">💰 Budget Tracker</h3>
-          <label>Total Budget: $</label>
-          <input type="number" id="budget-${name}" placeholder="e.g. 5000" oninput="updateBudget('${name}')"><br/><br/>
-          <div>
-            <input type="text" id="expense-name-${name}" placeholder="Expense name">
-            <input type="number" id="expense-amount-${name}" placeholder="Amount">
-            <button onclick="addExpense('${name}')">Add Expense</button>
-          </div>
-          <div id="expenses-${name}" style="margin-top:1rem;"></div>
-          <p><strong>Total Spent:</strong> $<span id="spent-${name}">0</span></p>
-          <p><strong>Remaining:</strong> $<span id="remaining-${name}" style="color:#0f0;">0</span></p>
-        </div>
-
-        <!-- 🗂️ Kanban Board -->
-        <div class="kanban-board" id="board-${name}">
-          ${['To Do', 'In Progress', 'Done'].map(status => `
-            <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-              <h3>${status}</h3>
-            </div>
-          `).join('')}
-        </div>
-
-        <!-- ➕ Task Form -->
-        <div class="add-task-form">
-          <input type="text" placeholder="New task" id="task-${name}">
-          <button onclick="addTask('${name}')">Add Task</button>
-        </div>
-      `;
-
-      document.getElementById('projects-wrapper').appendChild(container);
-      document.getElementById('project-name').value = '';
-    }
-
-    function addTask(projectName) {
-      const taskInput = document.getElementById(`task-${projectName}`);
-      const taskText = taskInput.value.trim();
-      if (!taskText) return;
-
-      const todoColumn = document.querySelector(`#board-${projectName} .kanban-column`);
-      const task = document.createElement('div');
-      task.className = 'task';
-      task.draggable = true;
-      task.ondragstart = drag;
-      task.id = `task-${projectName}-${Date.now()}`;
-      task.textContent = taskText;
-      todoColumn.appendChild(task);
-
-      taskInput.value = '';
-    }
-
-    function addExpense(projectName) {
-      const nameInput = document.getElementById(`expense-name-${projectName}`);
-      const amountInput = document.getElementById(`expense-amount-${projectName}`);
-
-      const name = nameInput.value.trim();
-      const amount = parseFloat(amountInput.value);
-
-      if (!name || isNaN(amount) || amount <= 0) return;
-
-      const list = document.getElementById(`expenses-${projectName}`);
-      const item = document.createElement('p');
-      item.textContent = `${name}: $${amount.toFixed(2)}`;
-      list.appendChild(item);
-
-      if (!list.dataset.total) list.dataset.total = '0';
-      list.dataset.total = (parseFloat(list.dataset.total) + amount).toString();
-
-      nameInput.value = '';
-      amountInput.value = '';
-
-      updateBudget(projectName);
-    }
-
-    function updateBudget(projectName) {
-      const budgetInput = document.getElementById(`budget-${projectName}`);
-      const expensesDiv = document.getElementById(`expenses-${projectName}`);
-
-      const budget = parseFloat(budgetInput.value) || 0;
-      const spent = parseFloat(expensesDiv.dataset.total) || 0;
-      const remaining = budget - spent;
-
-      document.getElementById(`spent-${projectName}`).textContent = spent.toFixed(2);
-      const remainingSpan = document.getElementById(`remaining-${projectName}`);
-      remainingSpan.textContent = remaining.toFixed(2);
-
-      if (remaining < 0) {
-        remainingSpan.style.color = 'red';
-      } else if (remaining < budget * 0.3) {
-        remainingSpan.style.color = 'orange';
-      } else {
-        remainingSpan.style.color = 'lightgreen';
+      if (task && date) {
+        newItem.textContent = `${date} – ${task}`;
+        newItem.className = 'mb-2 text-sm text-gray-700';
+        list.appendChild(newItem);
       }
     }
   </script>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center">📊 Project Tracker</h1>
+
+    <!-- Project Card Template -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- Example Project -->
+      <div class="bg-white rounded-2xl shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-2">🏠 OrozcoRealty LLC Setup</h2>
+        <p class="text-gray-600 mb-4">Forming Texas veteran-owned LLC, funding renovation projects, and launching Section 8 rentals.</p>
+        <button onclick="toggleDetails('orozco')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">View Timeline</button>
+
+        <div id="details-orozco" class="mt-4 hidden">
+          <ul id="timeline-orozco" class="list-disc list-inside mb-4">
+            <li class="text-sm text-gray-700">May 21 – Submitted VVL application with DD214</li>
+            <li class="text-sm text-gray-700">May 22 – Started LLC formation with waiver</li>
+          </ul>
+          <button onclick="addTimelineItem('orozco')" class="text-sm text-blue-600 hover:underline">+ Add Milestone</button>
+        </div>
+      </div>
+
+      <!-- Add more projects below using the same structure -->
+      
+      <!-- Example: Duke MSQM -->
+      <div class="bg-white rounded-2xl shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-2">📘 Duke MSQM Program</h2>
+        <p class="text-gray-600 mb-4">Master of Science in Quantitative Management. Focused on business analytics and leadership.</p>
+        <button onclick="toggleDetails('duke')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">View Timeline</button>
+
+        <div id="details-duke" class="mt-4 hidden">
+          <ul id="timeline-duke" class="list-disc list-inside mb-4">
+            <li class="text-sm text-gray-700">May 21 – Accepted into Duke MSQM</li>
+            <li class="text-sm text-gray-700">June – Attend orientation sessions</li>
+          </ul>
+          <button onclick="addTimelineItem('duke')" class="text-sm text-blue-600 hover:underline">+ Add Milestone</button>
+        </div>
+      </div>
+
+      <!-- Example: CST Certification -->
+      <div class="bg-white rounded-2xl shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-2">🧠 Certified Scrum Trainer Path</h2>
+        <p class="text-gray-600 mb-4">Goal: Become a CST through Scrum Alliance. Teaching Agile practices to professionals.</p>
+        <button onclick="toggleDetails('cst')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">View Timeline</button>
+
+        <div id="details-cst" class="mt-4 hidden">
+          <ul id="timeline-cst" class="list-disc list-inside mb-4">
+            <li class="text-sm text-gray-700">May – Begin CST mentorship search</li>
+          </ul>
+          <button onclick="addTimelineItem('cst')" class="text-sm text-blue-600 hover:underline">+ Add Milestone</button>
+        </div>
+      </div>
+
+      <!-- Add more project cards as needed -->
+
+    </div>
+  </div>
 </body>
 </html>
