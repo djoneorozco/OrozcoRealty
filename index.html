@@ -1,176 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Orozco Realty LLC</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #000;
-      color: #fff;
-    }
-
-    header {
-      position: relative;
-      background-image: url('banner.jpg');
-      background-size: cover;
-      background-position: center;
-      height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-    }
-
-    header h1 {
-      color: white;
-      font-size: 2.5rem;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-    }
-
-    .logo {
-      width: 100px;
-      animation: float 4s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    main {
-      padding: 2rem;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    h2 {
-      color: #ffd700;
-      border-bottom: 2px solid #ffd700;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    table {
-      width: 100%;
-      background-color: #000;
-      border-collapse: collapse;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
-      margin-bottom: 2rem;
-    }
-
-    thead {
-      background-color: #222;
-    }
-
-    th, td {
-      padding: 1rem;
-      text-align: left;
-      border-top: 1px solid #333;
-    }
-
-    th {
-      color: #ffd700;
-      font-size: 1.25rem;
-    }
-
-    td {
-      color: #fff;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background-color: #111;
-      color: #aaa;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Orozco Realty LLC</h1>
-    <img src="logo.png" alt="Logo" class="logo" />
-  </header>
-
-  <main>
-    <h2>Our Projects</h2>
-
+<!-- Insert this just before </main> -->
+<section>
+  <h2>Our Projects</h2>
+  <div style="display: flex; flex-direction: column; gap: 2rem;">
+    
     <!-- Laredo Table -->
-    <table>
-      <thead>
+    <table style="width: 100%; background-color: #000; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);">
+      <thead style="background-color: #222;">
         <tr>
-          <th colspan="2">Laredo Projects</th>
+          <th colspan="2" style="color: #ffd700; padding: 1rem; text-align: left; font-size: 1.25rem;">Laredo Projects</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Location</td>
-          <td>El Cenizo, TX</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Location</td>
+          <td style="padding: 1rem;">El Cenizo, TX</td>
         </tr>
-        <tr>
-          <td>Focus</td>
-          <td>Section 8 / Veteran Rentals</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Focus</td>
+          <td style="padding: 1rem;">Section 8 / Veteran Rentals</td>
         </tr>
-        <tr>
-          <td>Status</td>
-          <td>Under Renovation (Summer 2025)</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Status</td>
+          <td style="padding: 1rem;">Under Renovation (Summer 2025)</td>
         </tr>
       </tbody>
     </table>
 
     <!-- San Antonio Table -->
-    <table>
-      <thead>
+    <table style="width: 100%; background-color: #000; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);">
+      <thead style="background-color: #222;">
         <tr>
-          <th colspan="2">San Antonio Projects</th>
+          <th colspan="2" style="color: #ffd700; padding: 1rem; text-align: left; font-size: 1.25rem;">San Antonio Projects</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Neighborhood</td>
-          <td>Southside & West End</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Neighborhood</td>
+          <td style="padding: 1rem;">Southside & West End</td>
         </tr>
-        <tr>
-          <td>Focus</td>
-          <td>Buy & Hold / Rent-to-Own</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Focus</td>
+          <td style="padding: 1rem;">Buy & Hold / Rent-to-Own</td>
         </tr>
-        <tr>
-          <td>Next Acquisition</td>
-          <td>Q3 2025</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Next Acquisition</td>
+          <td style="padding: 1rem;">Q3 2025</td>
         </tr>
       </tbody>
     </table>
 
     <!-- Future Projects Table -->
-    <table>
-      <thead>
+    <table style="width: 100%; background-color: #000; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);">
+      <thead style="background-color: #222;">
         <tr>
-          <th colspan="2">Future Projects</th>
+          <th colspan="2" style="color: #ffd700; padding: 1rem; text-align: left; font-size: 1.25rem;">Future Projects</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Target Locations</td>
-          <td>Eagle Pass, Corpus Christi</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Target Locations</td>
+          <td style="padding: 1rem;">Eagle Pass, Corpus Christi</td>
         </tr>
-        <tr>
-          <td>Strategy</td>
-          <td>Land Acquisition & Modular Housing</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Strategy</td>
+          <td style="padding: 1rem;">Land Acquisition & Modular Housing</td>
         </tr>
-        <tr>
-          <td>Expected Launch</td>
-          <td>2026</td>
+        <tr style="border-top: 1px solid #333;">
+          <td style="padding: 1rem;">Expected Launch</td>
+          <td style="padding: 1rem;">2026</td>
         </tr>
       </tbody>
     </table>
-  </main>
 
-  <footer>
-    &copy; 2025 Orozco Realty LLC · Veteran Owned
-  </footer>
-</body>
-</html>
+  </div>
+</section>
