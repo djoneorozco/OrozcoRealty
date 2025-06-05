@@ -1,114 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>OrozcoRealty LLC</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | OrozcoRealty LLC</title>
   <style>
     body {
-      background-color: #1B1814;
-      font-family: Arial, sans-serif;
-      color: white;
       margin: 0;
       padding: 0;
-    }
-
-    header {
       background-color: #1B1814;
-      padding: 20px;
-      text-align: center;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     nav {
-      background-color: #2E2B26;
-      padding: 10px;
-      text-align: center;
+      background: #111;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     nav a {
-      color: white;
+      color: #fff;
       text-decoration: none;
-      margin: 0 15px;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    header {
+      position: relative;
+      height: 300px;
+      background-image: url('banner.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 2rem;
+    }
+
+    header img {
+      max-width: 200px;
+      height: auto;
+      animation: pulseLogo 3s infinite ease-in-out;
     }
 
     main {
-      background-color: #2B2622;
-      max-width: 800px;
-      margin: 30px auto;
-      padding: 40px;
-      border-radius: 10px;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+    }
+
+    section {
+      margin-bottom: 2rem;
     }
 
     h1, h2 {
-      color: white;
+      text-align: center;
+      color: #ffd700;
     }
 
-    .property-card {
-      background-color: #1F1C19;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      padding: 20px;
+    p {
+      line-height: 1.6;
     }
 
-    .property-card img {
+    .history-img {
+      display: block;
+      margin: 1.5rem auto;
       max-width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
     }
 
     footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #1B1814;
+      background: #111;
       color: #aaa;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Serving our Community</h1>
-    <p>
-      OrozcoRealty is a Real Estate Firm revitalizing South Texas Communities
-      with Strategic Acquisitions, Affordable Housing & Impactful Growth
-    </p>
-  </header>
 
   <nav>
-    <a href="#">HOME</a>
-    <a href="#">ABOUT</a>
-    <a href="#">ROADMAP</a>
-    <a href="#">LISTINGS</a>
-    <a href="#">PROJECTS</a>
-    <a href="#">CONTACT</a>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="listings.html">Listings</a>
+    <a href="rehab.html">Projects</a>
+    <a href="contact.html">Contact</a>
   </nav>
 
+  <header>
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
+  </header>
+
   <main>
-    <h2>Welcome to OrozcoRealty</h2>
-    <p>
-      We are a veteran-founded investment company operating in San Antonio and
-      Laredo, Texas. Our mission is to identify undervalued residential
-      properties, renovate them to code, and offer housing solutions to working
-      families and veterans through rentals and rent-to-own programs.
-    </p>
+    <h1>About OrozcoRealty LLC</h1>
 
-    <div class="property-card">
-      <img src="house1.jpg" alt="525 Cadena St">
-      <h3>525 Cadena St</h3>
-      <p>3BR / 1BA – Rent-to-Own | El Cenizo</p>
-    </div>
+    <section>
+      <h2>Our Mission</h2>
+      <p>OrozcoRealty LLC is a veteran-owned real estate investment firm based in San Antonio, Texas, focused on the revitalization of underserved communities through strategic property acquisition, renovation, and tenant-first leasing models. We aim to provide affordable, safe, and modern housing options for families and veterans across South Texas.</p>
+    </section>
 
-    <div class="property-card">
-      <img src="house2.jpg" alt="3506 Lara St">
-      <h3>3506 Lara St</h3>
-      <p>2BR / 1BA – Section 8 Ready</p>
-    </div>
+    <section>
+      <h2>Our History</h2>
+      <p>Founded by a retired USAF project analyst and led on-site by a master construction foreman with over 30 years of experience, our company merges military precision with tradesman quality. With deep ties to El Cenizo and San Antonio, we are proud to continue a family legacy of housing access and economic empowerment.</p>
+      <img src="old.jpg" alt="Historical family photo or property" class="history-img">
+    </section>
 
-    <div class="property-card">
-      <img src="house3.jpg" alt="Next Acquisition">
-      <h3>Next Acquisition</h3>
-      <p>Targeting $100K Investment – San Antonio</p>
-    </div>
+    <section>
+      <h2>Our Approach</h2>
+      <p>We combine data analytics with boots-on-the-ground construction management to identify undervalued assets and bring them to full market potential. Our properties support rent-to-own paths, Section 8 eligibility, and long-term housing stability for working-class families.</p>
+    </section>
   </main>
 
   <footer>
-    © 2025 OrozcoRealty LLC. Veteran-Owned. All rights reserved.
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
+
 </body>
 </html>
