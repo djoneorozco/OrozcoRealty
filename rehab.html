@@ -2,86 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Projects Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects | OrozcoRealty LLC</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .kanban-col {
+      min-height: 200px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <!-- Navigation -->
+  <nav class="bg-gray-800 text-white p-4 flex justify-center space-x-6">
+    <a href="index.html" class="hover:text-yellow-400">Home</a>
+    <a href="about.html" class="hover:text-yellow-400">About</a>
+    <a href="roadmap.html" class="hover:text-yellow-400">Roadmap</a>
+    <a href="listings.html" class="hover:text-yellow-400">Listings</a>
+    <a href="projects.html" class="hover:text-yellow-400 font-bold">Projects</a>
+    <a href="contact.html" class="hover:text-yellow-400">Contact</a>
+  </nav>
+
+  <main class="max-w-7xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center">Project Management</h1>
+
+    <!-- New Project Form -->
+    <div class="bg-white shadow p-4 rounded mb-6">
+      <label class="block font-semibold">New Project Name:</label>
+      <input id="newProjectName" class="w-full border mt-2 p-2 rounded" placeholder="e.g., El Cenizo Rehab"/>
+      <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-700 text-white mt-4 px-4 py-2 rounded">Add Project</button>
+    </div>
+
+    <!-- Project Container -->
+    <div id="projectsContainer" class="space-y-10"></div>
+  </main>
+
   <script>
-    function toggleDetails(id) {
-      const details = document.getElementById(`details-${id}`);
-      details.classList.toggle('hidden');
+    function addProject() {
+      const name = document.getElementById('newProjectName').value.trim();
+      if (!name) return alert('Please enter a project name.');
+      const id = name.replace(/\s+/g, '-').toLowerCase();
+
+      const template = `
+        <div class="bg-white shadow p-4 rounded">
+          <h2 class="text-xl font-bold mb-2">${name}</h2>
+
+          <!-- Budget -->
+          <div class="mb-4">
+            <label class="block font-semibold">Budget (USD):</label>
+            <input type="number" placeholder="Enter budget" class="w-full border mt-1 p-2 rounded"/>
+          </div>
+
+          <!-- Timeline -->
+          <div class="mb-4">
+            <label class="block font-semibold">Project Timeline</label>
+            <ul id="timeline-${id}" class="list-disc pl-6 mb-2"></ul>
+            <button onclick="addTimelineItem('${id}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Add Timeline Item</button>
+          </div>
+
+          <!-- Kanban -->
+          <div class="grid grid-cols-3 gap-4">
+            ${['To Do', 'In Progress', 'Done'].map(status => `
+              <div class="kanban-col bg-gray-100 p-2 rounded" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <h3 class="text-center font-semibold">${status}</h3>
+                <div id="${status.toLowerCase().replace(/\s/g, '')}-${id}" class="min-h-[150px] p-2 space-y-2"></div>
+                <input type="text" id="task-${status}-${id}" class="w-full mt-2 p-1 border rounded" placeholder="New Task">
+                <button onclick="addTask('${status}', '${id}')" class="mt-1 w-full bg-blue-500 text-white rounded py-1">Add Task</button>
+              </div>`).join('')}
+          </div>
+        </div>`;
+
+      document.getElementById('projectsContainer').insertAdjacentHTML('beforeend', template);
+      document.getElementById('newProjectName').value = '';
     }
 
-    function addTimelineItem(projectId) {
-      const list = document.getElementById(`timeline-${projectId}`);
-      const newItem = document.createElement('li');
-      const task = prompt("Enter task or milestone:");
-      const date = prompt("Enter date (e.g., June 15, 2025):");
+    function addTimelineItem(id) {
+      const task = prompt("Enter timeline item:");
+      if (!task) return;
+      const date = prompt("Enter target date (e.g., July 1, 2025):");
+      const timeline = document.getElementById(`timeline-${id}`);
+      const li = document.createElement('li');
+      li.textContent = `${task} – ${date}`;
+      timeline.appendChild(li);
+    }
 
-      if (task && date) {
-        newItem.textContent = `${date} – ${task}`;
-        newItem.className = 'mb-2 text-sm text-gray-700';
-        list.appendChild(newItem);
-      }
+    function addTask(status, id) {
+      const inputId = `task-${status}-${id}`;
+      const input = document.getElementById(inputId);
+      const value = input.value.trim();
+      if (!value) return;
+
+      const card = document.createElement('div');
+      card.className = "bg-white border p-2 rounded shadow cursor-move";
+      card.draggable = true;
+      card.ondragstart = drag;
+      card.textContent = value;
+
+      document.getElementById(`${status.toLowerCase().replace(/\s/g, '')}-${id}`).appendChild(card);
+      input.value = '';
+    }
+
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.outerHTML);
+      ev.target.remove();
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      ev.target.insertAdjacentHTML("beforeend", data);
+      const newCard = ev.target.lastElementChild;
+      newCard.ondragstart = drag;
     }
   </script>
-</head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
-
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-8 text-center">📊 Project Tracker</h1>
-
-    <!-- Project Card Template -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-      <!-- Example Project -->
-      <div class="bg-white rounded-2xl shadow-md p-6">
-        <h2 class="text-xl font-semibold mb-2">🏠 OrozcoRealty LLC Setup</h2>
-        <p class="text-gray-600 mb-4">Forming Texas veteran-owned LLC, funding renovation projects, and launching Section 8 rentals.</p>
-        <button onclick="toggleDetails('orozco')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">View Timeline</button>
-
-        <div id="details-orozco" class="mt-4 hidden">
-          <ul id="timeline-orozco" class="list-disc list-inside mb-4">
-            <li class="text-sm text-gray-700">May 21 – Submitted VVL application with DD214</li>
-            <li class="text-sm text-gray-700">May 22 – Started LLC formation with waiver</li>
-          </ul>
-          <button onclick="addTimelineItem('orozco')" class="text-sm text-blue-600 hover:underline">+ Add Milestone</button>
-        </div>
-      </div>
-
-      <!-- Add more projects below using the same structure -->
-      
-      <!-- Example: Duke MSQM -->
-      <div class="bg-white rounded-2xl shadow-md p-6">
-        <h2 class="text-xl font-semibold mb-2">📘 Duke MSQM Program</h2>
-        <p class="text-gray-600 mb-4">Master of Science in Quantitative Management. Focused on business analytics and leadership.</p>
-        <button onclick="toggleDetails('duke')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">View Timeline</button>
-
-        <div id="details-duke" class="mt-4 hidden">
-          <ul id="timeline-duke" class="list-disc list-inside mb-4">
-            <li class="text-sm text-gray-700">May 21 – Accepted into Duke MSQM</li>
-            <li class="text-sm text-gray-700">June – Attend orientation sessions</li>
-          </ul>
-          <button onclick="addTimelineItem('duke')" class="text-sm text-blue-600 hover:underline">+ Add Milestone</button>
-        </div>
-      </div>
-
-      <!-- Example: CST Certification -->
-      <div class="bg-white rounded-2xl shadow-md p-6">
-        <h2 class="text-xl font-semibold mb-2">🧠 Certified Scrum Trainer Path</h2>
-        <p class="text-gray-600 mb-4">Goal: Become a CST through Scrum Alliance. Teaching Agile practices to professionals.</p>
-        <button onclick="toggleDetails('cst')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">View Timeline</button>
-
-        <div id="details-cst" class="mt-4 hidden">
-          <ul id="timeline-cst" class="list-disc list-inside mb-4">
-            <li class="text-sm text-gray-700">May – Begin CST mentorship search</li>
-          </ul>
-          <button onclick="addTimelineItem('cst')" class="text-sm text-blue-600 hover:underline">+ Add Milestone</button>
-        </div>
-      </div>
-
-      <!-- Add more project cards as needed -->
-
-    </div>
-  </div>
 </body>
 </html>
