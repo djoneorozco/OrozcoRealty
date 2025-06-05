@@ -2,148 +2,251 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Projects | OrozcoRealty LLC</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
   <style>
     body {
       margin: 0;
+      padding: 0;
+      background-color: #1B1814;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #1B1814;
       color: #fff;
     }
-    header {
-      background: #111;
-      padding: 1rem;
+
+    header, footer {
       text-align: center;
+      padding: 1rem;
+      background-color: #111;
+    }
+
+    nav {
+      background-color: #111;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav .logo {
       font-size: 1.5rem;
       color: #ffd700;
+      font-weight: bold;
     }
-    .board {
+
+    nav .menu {
       display: flex;
-      justify-content: space-around;
+      gap: 1rem;
+    }
+
+    nav .menu a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    nav .menu a:hover {
+      color: #ffd700;
+    }
+
+    #password-section {
+      text-align: center;
       margin: 2rem;
     }
-    .column {
-      background: #222;
-      border-radius: 8px;
-      width: 30%;
-      padding: 1rem;
-      min-height: 300px;
+
+    #board-section {
+      display: none;
+      padding: 2rem;
     }
-    .column h2 {
+
+    #new-project-form {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .kanban-board {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 2rem;
+      background: #222;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .kanban-column {
+      width: 30%;
+      background: #333;
+      border-radius: 8px;
+      padding: 1rem;
+      min-height: 200px;
+    }
+
+    .kanban-column h3 {
       text-align: center;
       color: #ffd700;
     }
+
     .task {
-      background: #333;
-      border-radius: 6px;
-      padding: 1rem;
+      background-color: #444;
+      padding: 0.75rem;
       margin: 0.5rem 0;
-      cursor: move;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      border-radius: 5px;
+      cursor: grab;
     }
-    .task:hover {
-      background: #444;
-    }
-    #addTaskForm {
-      margin: 1rem;
-      text-align: center;
-    }
+
     input, button {
       padding: 0.5rem;
-      margin: 0.2rem;
+      font-size: 1rem;
+      border-radius: 6px;
       border: none;
-      border-radius: 5px;
+      margin: 0.25rem;
     }
+
     button {
       background-color: #ffd700;
       color: #111;
       font-weight: bold;
       cursor: pointer;
     }
-    #loginModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
+
+    button:hover {
+      background-color: #ffcc00;
     }
-    #loginModal input {
-      margin: 1rem;
+
+    .project-container {
+      margin-bottom: 3rem;
+    }
+
+    .add-task-form {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    footer {
+      background: #111;
+      padding: 1rem;
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
 
-  <div id="loginModal">
-    <div>
-      <h2 style="text-align:center; color:#ffd700">Admin Access</h2>
-      <input type="password" id="adminPass" placeholder="Enter password" />
-      <button onclick="checkPassword()">Login</button>
-    </div>
+<!-- 🔗 NAVIGATION -->
+<nav>
+  <div class="logo">OrozcoRealty</div>
+  <div class="menu">
+    <a href="index.html">Home</a>
+    <a href="projects.html">Projects</a>
+    <a href="#">Logout</a>
+  </div>
+</nav>
+
+<header>
+  <h1>Project Manager Dashboard</h1>
+</header>
+
+<!-- 🔐 PASSWORD GATE -->
+<section id="password-section">
+  <p>Enter password to access the board:</p>
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="checkPassword()">Enter</button>
+</section>
+
+<!-- ✅ PROJECTS + KANBAN -->
+<section id="board-section">
+  <div id="new-project-form">
+    <input type="text" id="project-name" placeholder="New Project Name">
+    <button onclick="createProject()">Add Project</button>
   </div>
 
-  <header>OrozcoRealty LLC - Project Kanban Board</header>
+  <div id="projects-wrapper"></div>
+</section>
 
-  <div id="addTaskForm" style="display:none;">
-    <input type="text" id="taskText" placeholder="New Task" />
-    <select id="columnSelect">
-      <option value="todo">To Do</option>
-      <option value="inprogress">In Progress</option>
-      <option value="done">Done</option>
-    </select>
-    <button onclick="addTask()">Add Task</button>
-  </div>
+<!-- 👣 FOOTER -->
+<footer>
+  &copy; 2025 OrozcoRealty LLC | Secure Project Tracker
+</footer>
 
-  <div class="board">
-    <div class="column" id="todo">
-      <h2>To Do</h2>
-    </div>
-    <div class="column" id="inprogress">
-      <h2>In Progress</h2>
-    </div>
-    <div class="column" id="done">
-      <h2>Done</h2>
-    </div>
-  </div>
+<!-- 🧠 LOGIC -->
+<script>
+  const correctPassword = 'orozcoprojects2025';
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
-  <script>
-    const adminPassword = "orozcoprojects2025";
-
-    function checkPassword() {
-      const input = document.getElementById("adminPass").value;
-      if (input === adminPassword) {
-        document.getElementById("loginModal").style.display = "none";
-        document.getElementById("addTaskForm").style.display = "block";
-      } else {
-        alert("Incorrect password.");
-      }
+  function checkPassword() {
+    const entered = document.getElementById('password').value;
+    if (entered === correctPassword) {
+      document.getElementById('password-section').style.display = 'none';
+      document.getElementById('board-section').style.display = 'block';
+    } else {
+      alert('Incorrect password.');
     }
+  }
 
-    function addTask() {
-      const taskText = document.getElementById("taskText").value;
-      const column = document.getElementById("columnSelect").value;
-      if (taskText.trim() === '') return;
-      const task = document.createElement('div');
-      task.className = 'task';
-      task.textContent = taskText;
-      document.getElementById(column).appendChild(task);
-      document.getElementById("taskText").value = '';
-    }
+  function createProject() {
+    const name = document.getElementById('project-name').value.trim();
+    if (!name) return;
 
-    dragula([
-      document.getElementById("todo"),
-      document.getElementById("inprogress"),
-      document.getElementById("done")
-    ]);
-  </script>
+    const container = document.createElement('div');
+    container.className = 'project-container';
+
+    container.innerHTML = `
+      <h2 style="text-align:center; color: #ffd700;">${name}</h2>
+      <div class="kanban-board" id="board-${name}">
+        ${['To Do', 'In Progress', 'Done'].map(status => `
+          <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h3>${status}</h3>
+          </div>
+        `).join('')}
+      </div>
+      <div class="add-task-form">
+        <input type="text" placeholder="New task" id="task-${name}">
+        <button onclick="addTask('${name}')">Add Task</button>
+      </div>
+    `;
+
+    document.getElementById('projects-wrapper').appendChild(container);
+    document.getElementById('project-name').value = '';
+  }
+
+  function addTask(projectName) {
+    const input = document.getElementById(`task-${projectName}`);
+    const taskText = input.value.trim();
+    if (!taskText) return;
+
+    const task = document.createElement('div');
+    task.className = 'task';
+    task.draggable = true;
+    task.textContent = taskText;
+    task.ondragstart = drag;
+
+    const board = document.querySelector(`#board-${projectName} .kanban-column`);
+    board.appendChild(task);
+    input.value = '';
+  }
+
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.outerHTML);
+    ev.dataTransfer.dropEffect = "move";
+    ev.target.remove();
+  }
+
+  function drop(ev) {
+    ev.preventDefault();
+    const data = ev.dataTransfer.getData("text");
+    ev.target.closest(".kanban-column").insertAdjacentHTML('beforeend', data);
+    const dropped = ev.target.closest(".kanban-column").lastElementChild;
+    dropped.ondragstart = drag;
+  }
+</script>
 
 </body>
 </html>
