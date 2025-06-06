@@ -2,26 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Listings | OrozcoRealty LLC</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       background-color: #1B1814;
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     nav {
-      background: #111;
-      padding: 1rem;
+      background-color: #000;
       display: flex;
       justify-content: center;
       gap: 2rem;
+      padding: 1rem;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 1000;
     }
 
     nav a {
@@ -29,7 +28,7 @@
       text-decoration: none;
       font-weight: bold;
       text-transform: uppercase;
-      transition: color 0.3s ease;
+      transition: color 0.3s;
     }
 
     nav a:hover {
@@ -37,29 +36,27 @@
     }
 
     header {
+      background-color: #111;
       text-align: center;
       padding: 2rem 1rem;
-      animation: fadeIn 2s ease-in-out;
     }
 
     header img {
-      max-width: 320px;
+      max-width: 350px;
       width: 80%;
-      animation: pulseLogo 3s infinite ease-in-out;
+      height: auto;
     }
 
     main {
-      max-width: 1100px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background-color: #111;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 2rem;
     }
 
     h1 {
       text-align: center;
       color: #ffd700;
+      font-size: 2.5rem;
       margin-bottom: 2rem;
     }
 
@@ -70,16 +67,15 @@
     }
 
     .card {
-      background: #222;
-      border-radius: 12px;
+      background-color: #222;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: slideUp 1.5s ease both;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .card:hover {
-      transform: translateY(-6px);
+      transform: translateY(-5px);
       box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
     }
 
@@ -90,46 +86,26 @@
     }
 
     .card-content {
-      padding: 1.2rem;
+      padding: 1rem;
     }
 
     .card-content h3 {
       color: #ffd700;
-      margin: 0 0 0.5rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
     }
 
     .card-content p {
-      line-height: 1.4;
       font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     footer {
-      background: #111;
+      background-color: #000;
       color: #aaa;
       text-align: center;
       padding: 1.5rem;
-      font-size: 0.95rem;
-    }
-
-    @keyframes pulseLogo {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.9; }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideUp {
-      0% {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      margin-top: 3rem;
     }
   </style>
 </head>
@@ -153,26 +129,26 @@
     <div class="listing-grid">
 
       <div class="card">
-        <img src="listing1.jpg" alt="Property 1">
+        <img src="listing1.jpg" alt="Listing 1">
         <div class="card-content">
           <h3>3BR / 2BA in El Cenizo</h3>
-          <p>Fully renovated home near schools and parks. Section 8 eligible, perfect for families seeking long-term housing.</p>
+          <p>Fully renovated single-family home near schools. Section 8 eligible and ready for move-in.</p>
         </div>
       </div>
 
       <div class="card">
-        <img src="listing2.jpg" alt="Property 2">
+        <img src="listing2.jpg" alt="Listing 2">
         <div class="card-content">
-          <h3>Duplex in South San Antonio</h3>
-          <p>Income-generating duplex in a growing neighborhood. Ideal for investors or multigenerational living.</p>
+          <h3>Modern Duplex in South SA</h3>
+          <p>Investor special! Updated units, separate utilities, and steady cash flow potential.</p>
         </div>
       </div>
 
       <div class="card">
-        <img src="listing3.jpg" alt="Property 3">
+        <img src="listing3.jpg" alt="Listing 3">
         <div class="card-content">
-          <h3>Starter Home with Yard</h3>
-          <p>2BR home with large fenced yard and recent upgrades. Great opportunity for VA buyers with 0% down options.</p>
+          <h3>Starter Home with Backyard</h3>
+          <p>Charming 2BR/1BA home with fenced yard and VA financing options. Perfect for new buyers!</p>
         </div>
       </div>
 
@@ -180,7 +156,7 @@
   </main>
 
   <footer>
-    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving El Cenizo & San Antonio, Texas
   </footer>
 
 </body>
