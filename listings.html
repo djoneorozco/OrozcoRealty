@@ -2,121 +2,139 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OrozcoRealty LLC | Listings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listings | OrozcoRealty LLC</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom right, #f0f0f0, #e4e4e4);
-      color: #1B1814;
-      overflow-x: hidden;
+      background-color: #1B1814;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
     nav {
-      background: #3b2f2a;
+      background: #111;
       padding: 1rem;
       display: flex;
       justify-content: center;
       gap: 2rem;
       position: sticky;
       top: 0;
-      z-index: 1000;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 10;
     }
+
     nav a {
-      color: white;
+      color: #fff;
       text-decoration: none;
       font-weight: bold;
       text-transform: uppercase;
       transition: color 0.3s ease;
     }
+
     nav a:hover {
       color: #ffd700;
     }
+
     header {
-      background: url('backdrop.jpg') center/cover no-repeat;
-      color: white;
       text-align: center;
-      padding: 4rem 2rem;
-      position: relative;
+      padding: 2rem 1rem;
+      animation: fadeIn 2s ease-in-out;
     }
-    header::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 0;
+
+    header img {
+      max-width: 320px;
+      width: 80%;
+      animation: pulseLogo 3s infinite ease-in-out;
     }
-    header h1 {
-      position: relative;
-      z-index: 1;
-      font-size: 3rem;
-      margin: 0;
-    }
+
     main {
-      max-width: 1200px;
-      margin: 3rem auto;
+      max-width: 1100px;
+      margin: 2rem auto;
       padding: 2rem;
-      background: white;
+      background-color: #111;
       border-radius: 12px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
-    h2 {
+
+    h1 {
       text-align: center;
+      color: #ffd700;
       margin-bottom: 2rem;
     }
-    .card-grid {
+
+    .listing-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      gap: 2rem;
     }
+
     .card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: #222;
+      border-radius: 12px;
       overflow: hidden;
-      transition: transform 0.2s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: slideUp 1.5s ease both;
     }
+
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
     }
+
     .card img {
       width: 100%;
-      height: 180px;
+      height: 200px;
       object-fit: cover;
     }
-    .card-body {
-      padding: 1rem;
+
+    .card-content {
+      padding: 1.2rem;
     }
-    .card-body h3 {
+
+    .card-content h3 {
+      color: #ffd700;
       margin: 0 0 0.5rem;
-      font-size: 1.1rem;
     }
-    .card-body p {
-      margin: 0.5rem 0;
+
+    .card-content p {
+      line-height: 1.4;
       font-size: 0.95rem;
     }
-    .card-body a {
-      display: inline-block;
-      margin-top: 0.5rem;
-      color: #3b2f2a;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .card-body a:hover {
-      text-decoration: underline;
-    }
+
     footer {
-      background: #222;
-      color: white;
+      background: #111;
+      color: #aaa;
       text-align: center;
       padding: 1.5rem;
       font-size: 0.95rem;
     }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
+
   <nav>
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
@@ -125,42 +143,45 @@
     <a href="rehab.html">Projects</a>
     <a href="contact.html">Contact</a>
   </nav>
+
   <header>
-    <h1>Available Homes Under $150K</h1>
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
   </header>
+
   <main>
-    <h2>San Antonio & Laredo Listings</h2>
-    <div class="card-grid">
-      <!-- San Antonio Listings -->
+    <h1>Available Listings</h1>
+    <div class="listing-grid">
+
       <div class="card">
-        <img src="https://photos.zillowstatic.com/fp/1e2a3c4d5b6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t.jpg" alt="1021 Madrid St, San Antonio">
-        <div class="card-body">
-          <h3>1021 Madrid St</h3>
-          <p>San Antonio, TX 78237</p>
-          <p>2 Beds • 1 Bath • 1,008 sqft</p>
-          <p>Price: $135,000</p>
-          <a href="https://www.zillow.com/homedetails/1021-Madrid-St-San-Antonio-TX-78237/12345678_zpid/">View Listing</a>
+        <img src="listing1.jpg" alt="Property 1">
+        <div class="card-content">
+          <h3>3BR / 2BA in El Cenizo</h3>
+          <p>Fully renovated home near schools and parks. Section 8 eligible, perfect for families seeking long-term housing.</p>
         </div>
       </div>
-      <!-- Repeat similar blocks for other listings -->
-      <!-- ... -->
-      <!-- Laredo Listings -->
+
       <div class="card">
-        <img src="https://photos.zillowstatic.com/fp/a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0.jpg" alt="1820 Jefferson St, Laredo">
-        <div class="card-body">
-          <h3>1820 Jefferson St</h3>
-          <p>Laredo, TX 78040</p>
-          <p>3 Beds • 2 Baths • 1,922 sqft</p>
-          <p>Price: $111,000</p>
-          <a href="https://www.zillow.com/homedetails/1820-Jefferson-St-Laredo-TX-78040/87654321_zpid/">View Listing</a>
+        <img src="listing2.jpg" alt="Property 2">
+        <div class="card-content">
+          <h3>Duplex in South San Antonio</h3>
+          <p>Income-generating duplex in a growing neighborhood. Ideal for investors or multigenerational living.</p>
         </div>
       </div>
-      <!-- Repeat similar blocks for other listings -->
-      <!-- ... -->
+
+      <div class="card">
+        <img src="listing3.jpg" alt="Property 3">
+        <div class="card-content">
+          <h3>Starter Home with Yard</h3>
+          <p>2BR home with large fenced yard and recent upgrades. Great opportunity for VA buyers with 0% down options.</p>
+        </div>
+      </div>
+
     </div>
   </main>
+
   <footer>
-    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & Laredo
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
+
 </body>
 </html>
