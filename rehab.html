@@ -3,188 +3,224 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Project Board | OrozcoRealty LLC</title>
+  <title>Projects | OrozcoRealty LLC</title>
   <style>
     body {
-      background-color: #1B1814;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #1B1814;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     header {
-      background-color: #111;
+      position: relative;
+      height: 300px;
+      background-image: url('banner.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
       padding: 2rem;
-      text-align: center;
-      border-bottom: 3px solid #ffd700;
     }
 
-    header h1 {
+    header img {
+      max-width: 300px;
+      height: auto;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    nav {
+      background: #111;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
       color: #ffd700;
-      margin: 0;
     }
 
     main {
       max-width: 1200px;
       margin: 2rem auto;
-      padding: 1rem;
+      padding: 2rem;
+      background-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
 
-    .board {
-      display: flex;
-      gap: 1rem;
-      justify-content: space-between;
-    }
-
-    .column {
-      background-color: #222;
-      border-radius: 10px;
-      padding: 1rem;
-      width: 32%;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
-    }
-
-    .column h2 {
+    h1, h2 {
       text-align: center;
       color: #ffd700;
     }
 
-    .task {
-      background-color: #333;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border-radius: 6px;
-      cursor: grab;
-      user-select: none;
-    }
-
-    .task.dragging {
-      opacity: 0.5;
-    }
-
-    .task-list {
-      min-height: 200px;
-      border: 2px dashed #444;
-      border-radius: 6px;
-      padding: 0.5rem;
-    }
-
-    form {
+    .kanban-board {
       display: flex;
-      justify-content: center;
-      margin: 2rem 0;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 2rem;
     }
 
-    input[type="text"] {
-      width: 300px;
+    .kanban-column {
+      flex: 1;
+      background: #222;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .kanban-column h3 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .task {
+      background: #333;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      cursor: grab;
+    }
+
+    .add-task {
+      display: flex;
+      margin-top: 1rem;
+      gap: 0.5rem;
+    }
+
+    .add-task input {
+      flex: 1;
       padding: 0.5rem;
       border-radius: 4px;
       border: none;
-      margin-right: 0.5rem;
     }
 
-    button {
+    .add-task button {
       padding: 0.5rem 1rem;
       background-color: #ffd700;
       border: none;
-      border-radius: 4px;
+      color: #111;
       font-weight: bold;
+      border-radius: 4px;
       cursor: pointer;
     }
 
+    .add-task button:hover {
+      background-color: #e5c100;
+    }
+
     footer {
-      background-color: #111;
-      text-align: center;
+      background: #111;
       color: #aaa;
-      padding: 1rem;
-      margin-top: 2rem;
-      font-size: 0.9rem;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.3); }
     }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <header>
-    <h1>OrozcoRealty LLC Project Board</h1>
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
   </header>
 
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="listings.html">Listings</a>
+    <a href="rehab.html">Projects</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
   <main>
+    <h1>Project Dashboard</h1>
+    <p style="text-align: center;">Track your renovation and real estate projects in real-time. Add tasks below and drag them between stages.</p>
 
-    <form id="task-form">
-      <input type="text" id="task-input" placeholder="New Task..." required />
-      <button type="submit">Add Task</button>
-    </form>
-
-    <div class="board">
-      <div class="column" id="todo">
-        <h2>To Do</h2>
-        <div class="task-list" id="todo-list"></div>
+    <div class="kanban-board">
+      <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>To Do</h3>
+        <div id="todo" class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div class="add-task">
+          <input type="text" id="new-task-input" placeholder="New task..." />
+          <button onclick="addTask()">Add</button>
+        </div>
       </div>
 
-      <div class="column" id="in-progress">
-        <h2>In Progress</h2>
-        <div class="task-list" id="in-progress-list"></div>
+      <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>In Progress</h3>
+        <div id="in-progress" class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
       </div>
 
-      <div class="column" id="completed">
-        <h2>Completed</h2>
-        <div class="task-list" id="completed-list"></div>
+      <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h3>Completed</h3>
+        <div id="completed" class="task-list" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
       </div>
     </div>
-
   </main>
 
+  <!-- FOOTER -->
   <footer>
-    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Built with Pride in San Antonio, TX
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
 
+  <!-- SCRIPT -->
   <script>
-    const form = document.getElementById('task-form');
-    const input = document.getElementById('task-input');
-    const todoList = document.getElementById('todo-list');
-    const inProgressList = document.getElementById('in-progress-list');
-    const completedList = document.getElementById('completed-list');
+    let taskId = 0;
 
-    // Handle task submission
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const taskText = input.value.trim();
-      if (taskText !== "") {
-        const task = createTaskElement(taskText);
-        todoList.appendChild(task);
-        input.value = '';
-      }
-    });
-
-    // Create draggable task
-    function createTaskElement(text) {
-      const div = document.createElement('div');
-      div.className = 'task';
-      div.draggable = true;
-      div.textContent = text;
-
-      div.addEventListener('dragstart', () => {
-        div.classList.add('dragging');
-      });
-
-      div.addEventListener('dragend', () => {
-        div.classList.remove('dragging');
-      });
-
-      return div;
+    function allowDrop(ev) {
+      ev.preventDefault();
     }
 
-    // Enable drag/drop for all columns
-    const taskLists = document.querySelectorAll('.task-list');
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+    }
 
-    taskLists.forEach(list => {
-      list.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const dragging = document.querySelector('.dragging');
-        list.appendChild(dragging);
-      });
-    });
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      const task = document.getElementById(data);
+      if (task) {
+        ev.target.closest('.task-list').appendChild(task);
+      }
+    }
+
+    function addTask() {
+      const input = document.getElementById('new-task-input');
+      const taskText = input.value.trim();
+      if (taskText === "") return;
+
+      const task = document.createElement("div");
+      task.className = "task";
+      task.draggable = true;
+      task.id = "task-" + taskId++;
+      task.innerText = taskText;
+      task.ondragstart = drag;
+
+      document.getElementById("todo").appendChild(task);
+      input.value = "";
+    }
   </script>
 
 </body>
