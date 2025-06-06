@@ -2,107 +2,148 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project Management | OrozcoRealty LLC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projects | OrozcoRealty LLC</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
       margin: 0;
       padding: 0;
-      color: #333;
-    }
-    header, footer {
-      background-color: #001A57;
+      background-color: #1B1814;
       color: #fff;
-      text-align: center;
-      padding: 1rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
+    header {
+      height: 300px;
+      background-image: url('banner.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 2rem;
+    }
+
+    header img {
+      max-width: 300px;
+      height: auto;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
     nav {
-      background: #012169;
+      background: #111;
       padding: 1rem;
       display: flex;
       justify-content: center;
       gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
+
     nav a {
-      color: white;
+      color: #fff;
       text-decoration: none;
       font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
     }
+
     nav a:hover {
-      text-decoration: underline;
+      color: #ffd700;
     }
+
     main {
       max-width: 1200px;
-      margin: auto;
+      margin: 2rem auto;
       padding: 2rem;
+      background-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
+
     .project {
-      background: #fff;
+      background-color: #222;
+      border-radius: 10px;
+      padding: 1rem;
       margin-bottom: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      padding: 1rem;
     }
-    .kanban {
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-    }
-    .column {
-      flex: 1;
-      background: #f0f0f0;
-      padding: 1rem;
-      border-radius: 6px;
-      min-width: 250px;
-    }
-    .column h3 {
+
+    h1, h2 {
       text-align: center;
+      color: #ffd700;
     }
-    .task {
-      background: white;
-      margin-bottom: 0.5rem;
-      padding: 0.5rem;
-      border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      cursor: grab;
+
+    label, input, button {
+      font-size: 1rem;
     }
-    .budget, .roadmap {
+
+    .budget, .roadmap, .kanban {
+      margin-top: 1.5rem;
+    }
+
+    .expense-list, .timeline-events {
       margin-top: 1rem;
     }
-    .roadmap ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    .roadmap li {
-      margin: 0.5rem 0;
+
+    .expense-item, .timeline-item {
       padding: 0.5rem;
-      background: #e6f0ff;
-      border-left: 4px solid #0044cc;
+      background: #333;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
     }
-    .btn {
-      padding: 0.5rem 1rem;
-      background: #001A57;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+
+    .kanban-board {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
     }
-    .btn:hover {
-      background: #003399;
+
+    .kanban-column {
+      flex: 1;
+      background-color: #333;
+      border-radius: 10px;
+      padding: 0.5rem;
+      min-height: 200px;
     }
-    input, textarea {
-      width: 100%;
+
+    .kanban-column h4 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    .task {
+      background-color: #555;
+      padding: 0.5rem;
+      margin: 0.5rem;
+      border-radius: 6px;
+      cursor: grab;
+    }
+
+    .form-inline {
+      display: flex;
+      gap: 0.5rem;
       margin-top: 0.5rem;
-      padding: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    footer {
+      background: #111;
+      color: #aaa;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.3); }
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h1>OrozcoRealty LLC | Project Dashboard</h1>
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
   </header>
 
   <nav>
@@ -110,95 +151,150 @@
     <a href="about.html">About</a>
     <a href="roadmap.html">Roadmap</a>
     <a href="listings.html">Listings</a>
-    <a href="projects.html">Projects</a>
+    <a href="rehab.html">Projects</a>
     <a href="contact.html">Contact</a>
   </nav>
 
   <main>
-    <h2>Add New Project</h2>
-    <input type="text" id="projectTitle" placeholder="Project Title" />
-    <button class="btn" onclick="addProject()">Add Project</button>
+    <h1>Project Management Dashboard</h1>
 
-    <div id="projectContainer"></div>
+    <div class="form-inline">
+      <input id="projectName" placeholder="Enter New Project Name" />
+      <button onclick="addProject()">Add Project</button>
+    </div>
+
+    <div id="projectsContainer"></div>
   </main>
 
   <footer>
-    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Built for Transparency & Excellence
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
 
   <script>
-    function allowDrop(ev) {
-      ev.preventDefault();
-    }
-    function drag(ev) {
-      ev.dataTransfer.setData("text", ev.target.id);
-    }
-    function drop(ev, target) {
-      ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
-      const task = document.getElementById(data);
-      target.appendChild(task);
-    }
-
     let projectCount = 0;
-    let taskCount = 0;
 
     function addProject() {
-      const title = document.getElementById("projectTitle").value;
-      if (!title) return;
+      const name = document.getElementById("projectName").value.trim();
+      if (!name) return;
 
-      const id = `project-${++projectCount}`;
-      const projectDiv = document.createElement("div");
-      projectDiv.className = "project";
-      projectDiv.innerHTML = `
-        <h2>${title}</h2>
+      const id = `project${projectCount++}`;
+      const container = document.createElement("div");
+      container.className = "project";
+      container.innerHTML = `
+        <h2>${name}</h2>
 
         <div class="budget">
           <h3>Budget Analysis</h3>
-          <p>Projected Budget: $<input type='number' placeholder='Enter total budget'></p>
-          <p>Expenditures: $<input type='number' placeholder='Enter total spent'></p>
+          <div class="form-inline">
+            <input type="number" id="${id}-totalBudget" placeholder="Total Budget" />
+            <input type="text" id="${id}-expenseDesc" placeholder="Expense Description" />
+            <input type="number" id="${id}-expenseAmount" placeholder="Amount" />
+            <button onclick="addExpense('${id}')">Add Expense</button>
+          </div>
+          <p id="${id}-budgetStatus">Total Budget: $0 | Spent: $0</p>
+          <div id="${id}-expenses" class="expense-list"></div>
         </div>
 
         <div class="roadmap">
           <h3>Product Roadmap</h3>
-          <ul>
-            <li><input type='text' placeholder='Phase 1 description' /></li>
-            <li><input type='text' placeholder='Phase 2 description' /></li>
-            <li><input type='text' placeholder='Phase 3 description' /></li>
-          </ul>
+          <div class="form-inline">
+            <input type="text" id="${id}-milestone" placeholder="Milestone" />
+            <input type="date" id="${id}-milestoneDate" />
+            <button onclick="addMilestone('${id}')">Add Milestone</button>
+          </div>
+          <div id="${id}-timeline" class="timeline-events"></div>
         </div>
 
         <div class="kanban">
-          <div class="column" ondrop="drop(event, this)" ondragover="allowDrop(event)">
-            <h3>To Do</h3>
-            <div id="todo-${id}"></div>
-            <input type="text" id="taskInput-${id}" placeholder="New Task" />
-            <button class="btn" onclick="addTask('${id}')">Add Task</button>
+          <h3>Kanban Board</h3>
+          <div class="form-inline">
+            <input type="text" id="${id}-taskInput" placeholder="New Task" />
+            <button onclick="addTask('${id}')">Add Task</button>
           </div>
-          <div class="column" ondrop="drop(event, this)" ondragover="allowDrop(event)">
-            <h3>In Progress</h3>
-          </div>
-          <div class="column" ondrop="drop(event, this)" ondragover="allowDrop(event)">
-            <h3>Done</h3>
+          <div class="kanban-board">
+            <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <h4>To Do</h4>
+              <div id="${id}-todo"></div>
+            </div>
+            <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <h4>In Progress</h4>
+              <div id="${id}-progress"></div>
+            </div>
+            <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+              <h4>Done</h4>
+              <div id="${id}-done"></div>
+            </div>
           </div>
         </div>
       `;
-      document.getElementById("projectContainer").appendChild(projectDiv);
-      document.getElementById("projectTitle").value = "";
+
+      document.getElementById("projectsContainer").appendChild(container);
+      document.getElementById("projectName").value = "";
     }
 
-    function addTask(projectId) {
-      const input = document.getElementById(`taskInput-${projectId}`);
-      const taskText = input.value;
+    function addExpense(id) {
+      const desc = document.getElementById(`${id}-expenseDesc`).value;
+      const amt = parseFloat(document.getElementById(`${id}-expenseAmount`).value);
+      const totalEl = document.getElementById(`${id}-totalBudget`);
+      const budget = parseFloat(totalEl.value) || 0;
+
+      if (!desc || isNaN(amt)) return;
+
+      const list = document.getElementById(`${id}-expenses`);
+      const item = document.createElement("div");
+      item.className = "expense-item";
+      item.innerText = `${desc}: $${amt.toFixed(2)}`;
+      list.appendChild(item);
+
+      const spent = Array.from(list.children).reduce((acc, el) => {
+        const val = parseFloat(el.innerText.split("$")[1]);
+        return acc + (isNaN(val) ? 0 : val);
+      }, 0);
+
+      document.getElementById(`${id}-budgetStatus`).innerText = `Total Budget: $${budget.toFixed(2)} | Spent: $${spent.toFixed(2)}`;
+      document.getElementById(`${id}-expenseDesc`).value = "";
+      document.getElementById(`${id}-expenseAmount`).value = "";
+    }
+
+    function addMilestone(id) {
+      const task = document.getElementById(`${id}-milestone`).value;
+      const date = document.getElementById(`${id}-milestoneDate`).value;
+      if (!task || !date) return;
+
+      const item = document.createElement("div");
+      item.className = "timeline-item";
+      item.innerText = `${task} — ${new Date(date).toLocaleDateString()}`;
+      document.getElementById(`${id}-timeline`).appendChild(item);
+      document.getElementById(`${id}-milestone`).value = "";
+      document.getElementById(`${id}-milestoneDate`).value = "";
+    }
+
+    function addTask(id) {
+      const taskText = document.getElementById(`${id}-taskInput`).value.trim();
       if (!taskText) return;
+
       const task = document.createElement("div");
       task.className = "task";
       task.draggable = true;
-      task.id = `task-${++taskCount}`;
       task.ondragstart = drag;
-      task.innerText = taskText;
-      document.getElementById(`todo-${projectId}`).appendChild(task);
-      input.value = "";
+      task.textContent = taskText;
+      document.getElementById(`${id}-todo`).appendChild(task);
+      document.getElementById(`${id}-taskInput`).value = "";
+    }
+
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.outerHTML);
+      ev.target.remove();
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      ev.target.closest(".kanban-column").querySelector("div").insertAdjacentHTML("beforeend", data);
     }
   </script>
 </body>
