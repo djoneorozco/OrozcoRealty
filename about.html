@@ -1,4 +1,4 @@
-<!DOCTYPE html>More actions
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -36,16 +36,16 @@
       color: #ffd700;
     }
 
-    header {
+    .logo-container {
       text-align: center;
-      padding: 2rem 1rem;
-      animation: fadeIn 2s ease-in-out;
+      padding: 2rem 1rem 1rem;
+      animation: slideFade 2s ease-in-out;
     }
 
-    header img {
-      max-width: 320px;
+    .logo-container img {
+      max-width: 300px;
       width: 80%;
-      animation: pulseLogo 3s infinite ease-in-out;
+      animation: floatPulse 6s ease-in-out infinite;
     }
 
     main {
@@ -55,7 +55,6 @@
       background-color: #111;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-      box-shadow: 0 12 28px rgba(255, 255, 255, 0.1);
     }
 
     section {
@@ -87,14 +86,24 @@
       font-size: 0.95rem;
     }
 
-    @keyframes pulseLogo {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.9; }
+    @keyframes floatPulse {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+      }
+      50% {
+        transform: translateY(-10px) scale(1.03);
+      }
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideFade {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
@@ -109,9 +118,9 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-  <header>
+  <div class="logo-container">
     <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
-  </header>
+  </div>
 
   <main>
     <h1>About OrozcoRealty LLC</h1>
