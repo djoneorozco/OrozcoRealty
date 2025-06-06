@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About | OrozcoRealty LLC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home | OrozcoRealty LLC</title>
   <style>
     body {
       margin: 0;
@@ -63,33 +63,39 @@
       box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
 
-    section {
-      margin-bottom: 2rem;
-    }
-
     h1, h2 {
       text-align: center;
       color: #ffd700;
     }
 
-    .card-body {
+    .main-sections {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .image-section {
+      flex: 1;
+      background: #222;
       padding: 1rem;
-    }
-
-    .card-body h3 {
-      margin: 0 0 0.5rem;
-    }
-
-    p {
-      line-height: 1.6;
-    }
-
-    .history-img {
-      display: block;
-      margin: 1.5rem auto;
-      max-width: 100%;
       border-radius: 10px;
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+      text-align: center;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+    }
+
+    .image-section img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .image-section h3 {
+      color: #ffd700;
+      margin-top: 0.5rem;
     }
 
     footer {
@@ -108,12 +114,12 @@
 </head>
 <body>
 
-  <!-- HEADER with banner and animated logo -->
+  <!-- HEADER with banner and logo -->
   <header>
-    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo" />
   </header>
 
-  <!-- NAVIGATION BELOW HEADER -->
+  <!-- NAVIGATION -->
   <nav>
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
@@ -123,46 +129,29 @@
     <a href="contact.html">Contact</a>
   </nav>
 
+  <!-- MAIN SECTION -->
   <main>
-    <h1>About OrozcoRealty LLC</h1>
+    <h1>Welcome to OrozcoRealty LLC</h1>
 
-    <section>
-      <h2>Our Mission</h2>
-      <p>OrozcoRealty LLC is a veteran-owned real estate investment firm based in San Antonio, Texas, focused on the revitalization of underserved communities through strategic property acquisition, renovation, and tenant-first leasing models. We aim to provide affordable, safe, and modern housing options for families and veterans across South Texas.</p>
-    </section>
+    <div class="main-sections">
+      <section class="image-section">
+        <img src="listing1.jpg" alt="Listing" />
+        <h3>Available Listings</h3>
+      </section>
 
-    <section>
-      <h2>Our History</h2>
-      <p>Founded by a retired USAF project analyst and led on-site by a master construction foreman with over 30 years of experience, our company merges military precision with tradesman quality. With deep ties to El Cenizo and San Antonio, we are proud to continue a family legacy of housing access and economic empowerment.</p>
-      <img src="old.jpg" alt="Historical family photo or property" class="history-img">
-    </section>
+      <section class="image-section">
+        <img src="rehab.jpg" alt="Rehab Project" />
+        <h3>Current Rehabs</h3>
+      </section>
 
-    <section>
-      <h2>Our Approach</h2>
-      <p>We combine data analytics with boots-on-the-ground construction management to identify undervalued assets and bring them to full market potential. Our properties support rent-to-own paths, Section 8 eligibility, and long-term housing stability for working-class families.</p>
-    </section>
-
-    <!-- ✅ NEW CARD SECTION START -->
-    <div class="card" style="background-color: #222; border-radius: 10px; margin-top: 2rem; box-shadow: 0 0 16px rgba(255,255,255,0.1);">
-      <div class="card-body">
-        <h3>Community Impact</h3>
-        <p>We actively collaborate with local nonprofits to ensure our housing initiatives align with the real needs of the communities we serve. From school donations to veteran outreach, we reinvest in people, not just properties.</p>
-      </div>
-
-      <div class="card-body">
-        <h3>Veteran Commitment</h3>
-        <p>As a veteran-owned business, we prioritize hiring veterans and offering housing to those who’ve served. It’s not just a mission; it’s personal. Our VA-loan-friendly projects and military-first policy set us apart.</p>
-      </div>
-
-      <div class="card-body">
-        <h3>Innovation in Rehab</h3>
-        <p>We use smart budgeting tools, drone mapping, and schedule-based dashboards to ensure every project meets modern expectations for both quality and transparency—appealing to investors and banks alike.</p>
-      </div>
+      <section class="image-section">
+        <img src="veteran-support.jpg" alt="Veteran Support" />
+        <h3>Veteran Resources</h3>
+      </section>
     </div>
-    <!-- ✅ NEW CARD SECTION END -->
-
   </main>
 
+  <!-- FOOTER -->
   <footer>
     &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
