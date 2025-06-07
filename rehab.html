@@ -6,133 +6,127 @@
   <title>Projects | OrozcoRealty LLC</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* [Keep all existing styles unchanged — trimmed for brevity] */
-    body { margin: 0; padding: 0; background-color: #1B1814; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    header { height: 300px; background-image: url('banner.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: flex-end; padding: 2rem; }
-    header img { max-width: 300px; height: auto; animation: pulseGlow 3s ease-in-out infinite; }
-    nav { background: #111; padding: 1rem; display: flex; justify-content: center; gap: 2rem; position: sticky; top: 0; z-index: 10; }
-    nav a { color: #fff; text-decoration: none; font-weight: bold; text-transform: uppercase; transition: color 0.3s ease; }
-    nav a:hover { color: #ffd700; }
-    main { max-width: 1200px; margin: 2rem auto; padding: 2rem; background-color: #111; border-radius: 12px; box-shadow: 0 0 24px rgba(255, 255, 255, 0.15); }
-    .project { background-color: #222; border-radius: 10px; padding: 1rem; margin-bottom: 2rem; }
-    h1, h2 { text-align: center; color: #ffd700; }
-    .form-inline { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-    input, button { padding: 0.5rem; border-radius: 6px; border: none; }
-    button { background-color: #ffd700; color: #111; cursor: pointer; }
-    .budget-chart { max-width: 300px; margin: 0 auto; }
-    .kanban-board { display: flex; gap: 1rem; margin-top: 1rem; }
-    .kanban-column { flex: 1; background-color: #333; border-radius: 10px; padding: 0.5rem; min-height: 200px; }
-    .task { background-color: #555; padding: 0.5rem; margin: 0.5rem; border-radius: 6px; cursor: grab; }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1B1814;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    header, nav, footer { background: #111; color: #fff; padding: 1rem; text-align: center; }
+    nav a { color: #ffd700; margin: 0 1rem; text-decoration: none; }
+    main { max-width: 1200px; margin: auto; padding: 1rem; background: #111; border-radius: 10px; }
+    .section { margin-bottom: 2rem; }
+    input, button, textarea { margin: 0.3rem; padding: 0.5rem; border-radius: 5px; }
+    .kanban-board { display: flex; gap: 1rem; }
+    .kanban-column { flex: 1; background: #333; padding: 1rem; border-radius: 10px; }
+    .task { background: #555; padding: 0.5rem; margin: 0.3rem 0; border-radius: 5px; cursor: move; }
+    canvas { background: #222; border-radius: 10px; padding: 1rem; }
   </style>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo" />
+    <h1>Projects Dashboard</h1>
   </header>
-
   <nav>
-    <a href="#">Dashboard</a>
-    <a href="#">Projects</a>
-    <a href="#">Team</a>
-    <a href="#">Reports</a>
+    <a href="#">Home</a>
+    <a href="#projects">Projects</a>
+    <a href="#budget">Budget</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#kanban">Kanban</a>
   </nav>
-
   <main>
-    <h1>Project Manager</h1>
-
-    <!-- Add Project Section -->
-    <section class="project">
-      <h2>Add New Project</h2>
-      <div class="form-inline">
-        <input type="text" id="projectName" placeholder="Enter New Project Name" />
-        <button onclick="saveProject()">Save</button>
-      </div>
-      <ul id="projectList"></ul>
+    <section class="section" id="projects">
+      <h2>Create Project</h2>
+      <input id="projectName" placeholder="Project Name" />
+      <input id="projectBudget" type="number" placeholder="Total Budget" />
+      <textarea id="projectExpenses" placeholder="Comma-separated Expenses (e.g. 100,200,300)"></textarea>
+      <button onclick="saveProject()">Save Project</button>
     </section>
 
-    <!-- Budget Pie Chart Section -->
-    <section class="project budget">
-      <h2>Budget Remaining</h2>
-      <canvas id="budgetChart" class="budget-chart"></canvas>
+    <section class="section" id="budget">
+      <h2>Budget Overview</h2>
+      <canvas id="budgetChart" width="400" height="200"></canvas>
     </section>
 
-    <!-- Dynamic Roadmap Section -->
-    <section class="project roadmap">
-      <h2>Product Roadmap</h2>
-      <div class="form-inline">
-        <input type="text" id="taskInput" placeholder="Add Task" />
-        <button onclick="addTask()">+ Add Task</button>
-      </div>
+    <section class="section" id="roadmap">
+      <h2>Project Roadmap</h2>
+      <input id="deliverable" placeholder="Deliverable" />
+      <input id="dueDate" type="date" />
+      <button onclick="addTimelineItem()">Add to Roadmap</button>
+      <ul id="timeline"></ul>
+    </section>
+
+    <section class="section" id="kanban">
+      <h2>Kanban Board</h2>
       <div class="kanban-board">
-        <div class="kanban-column" id="todo"><h4>To Do</h4></div>
-        <div class="kanban-column" id="inprogress"><h4>In Progress</h4></div>
-        <div class="kanban-column" id="done"><h4>Done</h4></div>
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h3>To Do</h3>
+          <div class="task" draggable="true" ondragstart="drag(event)">Task 1</div>
+        </div>
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h3>In Progress</h3>
+        </div>
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h3>Done</h3>
+        </div>
       </div>
     </section>
   </main>
-
   <footer>
-    &copy; 2025 OrozcoRealty LLC — All rights reserved.
+    <p>OrozcoRealty LLC © 2025</p>
   </footer>
 
   <script>
-    // Save Project Functionality
     function saveProject() {
-      const input = document.getElementById('projectName');
-      if (input.value.trim()) {
-        const li = document.createElement('li');
-        li.textContent = input.value;
-        document.getElementById('projectList').appendChild(li);
-        input.value = '';
-      }
-    }
+      const name = document.getElementById('projectName').value;
+      const budget = parseFloat(document.getElementById('projectBudget').value);
+      const expenses = document.getElementById('projectExpenses').value
+        .split(',')
+        .map(Number)
+        .filter(n => !isNaN(n));
 
-    // Budget Chart Initialization
-    const ctx = document.getElementById('budgetChart');
-    new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Spent', 'Remaining'],
-        datasets: [{
-          data: [3000, 7000], // Example data
-          backgroundColor: ['#ff6347', '#32cd32'],
-        }]
-      },
-      options: {
-        plugins: {
-          legend: { position: 'bottom', labels: { color: '#fff' } }
+      const totalExpenses = expenses.reduce((acc, val) => acc + val, 0);
+      const remaining = budget - totalExpenses;
+
+      const ctx = document.getElementById('budgetChart').getContext('2d');
+      if (window.budgetPie) window.budgetPie.destroy();
+      window.budgetPie = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Expenses', 'Remaining'],
+          datasets: [{
+            data: [totalExpenses, remaining],
+            backgroundColor: ['#ff6666', '#66ff66']
+          }]
         }
-      }
-    });
+      });
+    }
 
-    // Add Task to Kanban
-    function addTask() {
-      const input = document.getElementById('taskInput');
-      if (input.value.trim()) {
-        const div = document.createElement('div');
-        div.className = 'task';
-        div.textContent = input.value;
-        div.draggable = true;
-        div.ondragstart = (e) => {
-          e.dataTransfer.setData('text/plain', e.target.id);
-          e.dataTransfer.setData('task-html', e.target.outerHTML);
-          e.target.remove();
-        };
-        div.id = 'task-' + Date.now();
-        document.getElementById('todo').appendChild(div);
-        input.value = '';
+    function addTimelineItem() {
+      const deliverable = document.getElementById('deliverable').value;
+      const dueDate = document.getElementById('dueDate').value;
+      if (deliverable && dueDate) {
+        const item = document.createElement('li');
+        item.textContent = `${deliverable} - Due: ${dueDate}`;
+        document.getElementById('timeline').appendChild(item);
       }
     }
 
-    // Drag and Drop for Kanban
-    document.querySelectorAll('.kanban-column').forEach(col => {
-      col.ondragover = (e) => e.preventDefault();
-      col.ondrop = (e) => {
-        e.preventDefault();
-        const html = e.dataTransfer.getData('task-html');
-        col.insertAdjacentHTML('beforeend', html);
-      };
-    });
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.outerHTML);
+      ev.target.remove();
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      const data = ev.dataTransfer.getData("text");
+      ev.target.closest('.kanban-column').insertAdjacentHTML('beforeend', data);
+    }
   </script>
 </body>
 </html>
