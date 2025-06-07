@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | OrozcoRealty LLC</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/frappe-gantt"></script>
   <style>
     body {
       margin: 0;
@@ -64,57 +63,56 @@
       box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
 
-    .project-icons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    .project-icon {
-      background-color: #333;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
     h1, h2 {
       text-align: center;
       color: #ffd700;
     }
 
-    .form-inline, .expense-form, .deliverable-form {
+    .form-inline, .budget-form, .expense-form {
       display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
       flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
     }
 
-    .expense-area {
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
+    input, button {
+      font-size: 1rem;
+      padding: 0.5rem;
     }
 
-    .expenses, .chart-container {
-      flex: 1;
+    .project {
+      background-color: #222;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .expense-list, .timeline-events, .kanban-board {
+      margin-top: 1rem;
+    }
+
+    .expense-item, .timeline-item {
+      background: #333;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
     }
 
     .chart-container {
-      max-width: 300px;
+      width: 250px;
+      margin-left: auto;
     }
 
     .kanban-board {
       display: flex;
       gap: 1rem;
-      margin-top: 2rem;
     }
 
     .kanban-column {
       flex: 1;
       background-color: #333;
+      padding: 0.5rem;
       border-radius: 10px;
-      padding: 1rem;
       min-height: 200px;
     }
 
@@ -126,12 +124,22 @@
     .task {
       background-color: #555;
       padding: 0.5rem;
+      margin: 0.5rem;
       border-radius: 6px;
-      margin-bottom: 0.5rem;
+      cursor: grab;
     }
 
-    #gantt {
-      margin-top: 2rem;
+    .saved-projects {
+      margin-bottom: 1rem;
+    }
+
+    .saved-projects span {
+      background-color: #444;
+      border-radius: 4px;
+      padding: 0.3rem 0.5rem;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
     }
 
     footer {
@@ -139,6 +147,12 @@
       color: #aaa;
       text-align: center;
       padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.3); }
     }
   </style>
 </head>
@@ -157,54 +171,55 @@
   </nav>
 
   <main>
-    <div class="project-icons" id="projectIcons"></div>
-
+    <div class="saved-projects" id="savedProjects"></div>
     <h1>Project Management Dashboard</h1>
 
     <div class="form-inline">
       <input id="projectName" placeholder="Enter Project Name" />
-      <input id="totalBudget" placeholder="Enter Total Budget ($)" type="number" />
+      <input id="projectBudget" type="number" placeholder="Total Budget ($)" />
       <button onclick="saveProject()">Save Project</button>
-    </div>
-
-    <div class="form-inline">
       <button onclick="editProject()">Edit Project</button>
     </div>
 
-    <h2>Expenses</h2>
-    <div class="expense-area">
-      <div class="expenses">
-        <div class="expense-form">
-          <input id="expenseName" placeholder="Expense Name" />
-          <input id="expenseAmount" placeholder="Amount" type="number" />
-          <button onclick="addExpense()">Add Expense</button>
+    <div class="project">
+      <h2 id="currentProject">Current Project: None</h2>
+
+      <div class="budget-form">
+        <input id="expenseName" placeholder="Expense Name" />
+        <input id="expenseAmount" type="number" placeholder="Amount ($)" />
+        <button onclick="addExpense()">Add Expense</button>
+      </div>
+
+      <div style="display: flex; gap: 2rem;">
+        <div>
+          <h3>Expenses</h3>
+          <div class="expense-list" id="expenseList"></div>
+          <p><strong>Total Expenses:</strong> $<span id="totalExpenses">0</span></p>
+          <p><strong>Remaining Budget:</strong> $<span id="remainingBudget">0</span></p>
         </div>
-        <div id="expenseList"></div>
+        <div class="chart-container">
+          <canvas id="budgetChart"></canvas>
+        </div>
       </div>
-      <div class="chart-container">
-        <canvas id="budgetChart" width="250" height="250"></canvas>
-      </div>
-    </div>
 
-    <h2>Project Timeline</h2>
-    <div class="deliverable-form">
-      <input id="deliverableName" placeholder="Deliverable Name" />
-      <input id="startDate" type="date" />
-      <input id="endDate" type="date" />
-      <button onclick="addDeliverable()">Add Deliverable</button>
-    </div>
-    <div id="gantt"></div>
+      <h3>Project Timeline</h3>
+      <div class="form-inline">
+        <input id="deliverable" placeholder="Deliverable" />
+        <input id="dueDate" type="date" />
+        <button onclick="addTimelineEvent()">Add to Timeline</button>
+      </div>
+      <div class="timeline-events" id="timeline"></div>
 
-    <h2>Kanban Board</h2>
-    <div class="kanban-board">
-      <div class="kanban-column" id="todo">
-        <h4>To Do</h4>
-      </div>
-      <div class="kanban-column" id="inProgress">
-        <h4>In Progress</h4>
-      </div>
-      <div class="kanban-column" id="done">
-        <h4>Done</h4>
+      <div class="kanban-board">
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h4>To Do</h4>
+        </div>
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h4>In Progress</h4>
+        </div>
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h4>Done</h4>
+        </div>
       </div>
     </div>
   </main>
@@ -215,97 +230,133 @@
 
   <script>
     let currentProject = {};
-    let deliverables = [];
+    const savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
 
-    function saveProject() {
-      const name = document.getElementById('projectName').value;
-      const budget = parseFloat(document.getElementById('totalBudget').value);
-      currentProject = { name, budget, expenses: [] };
-
-      const icon = document.createElement('div');
-      icon.className = 'project-icon';
-      icon.innerText = name;
-      icon.onclick = () => loadProject(currentProject);
-      document.getElementById('projectIcons').appendChild(icon);
-
-      updateChart();
+    function updateProjectDisplay() {
+      document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
+      renderExpenses();
+      renderChart();
     }
 
-    function loadProject(project) {
-      currentProject = project;
-      document.getElementById('projectName').value = project.name;
-      document.getElementById('totalBudget').value = project.budget;
-      document.getElementById('expenseList').innerHTML = '';
-      project.expenses.forEach(e => addExpenseToDOM(e.name, e.amount));
-      updateChart();
+    function saveProject() {
+      currentProject.name = document.getElementById("projectName").value;
+      currentProject.budget = parseFloat(document.getElementById("projectBudget").value);
+      currentProject.expenses = currentProject.expenses || [];
+      currentProject.timeline = currentProject.timeline || [];
+      savedProjects.push(currentProject);
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
+      renderSavedProjects();
+      updateProjectDisplay();
     }
 
     function editProject() {
-      currentProject.name = document.getElementById('projectName').value;
-      currentProject.budget = parseFloat(document.getElementById('totalBudget').value);
-      updateChart();
+      const name = prompt("Enter new project name:", currentProject.name);
+      const budget = prompt("Enter new total budget:", currentProject.budget);
+      if (name) currentProject.name = name;
+      if (budget) currentProject.budget = parseFloat(budget);
+      updateProjectDisplay();
+      renderChart();
+    }
+
+    function renderSavedProjects() {
+      const container = document.getElementById("savedProjects");
+      container.innerHTML = "";
+      savedProjects.forEach((p, i) => {
+        const icon = document.createElement("span");
+        icon.textContent = p.name;
+        icon.onclick = () => {
+          currentProject = p;
+          updateProjectDisplay();
+        };
+        container.appendChild(icon);
+      });
     }
 
     function addExpense() {
-      const name = document.getElementById('expenseName').value;
-      const amount = parseFloat(document.getElementById('expenseAmount').value);
+      const name = document.getElementById("expenseName").value;
+      const amount = parseFloat(document.getElementById("expenseAmount").value);
       if (!name || isNaN(amount)) return;
       currentProject.expenses.push({ name, amount });
-      addExpenseToDOM(name, amount);
-      updateChart();
+      renderExpenses();
+      renderChart();
     }
 
-    function addExpenseToDOM(name, amount) {
-      const div = document.createElement('div');
-      div.className = 'expense-item';
-      div.innerText = `${name}: $${amount}`;
-      document.getElementById('expenseList').appendChild(div);
+    function renderExpenses() {
+      const list = document.getElementById("expenseList");
+      list.innerHTML = "";
+      let total = 0;
+      currentProject.expenses.forEach(exp => {
+        total += exp.amount;
+        const item = document.createElement("div");
+        item.className = "expense-item";
+        item.textContent = `${exp.name}: $${exp.amount.toFixed(2)}`;
+        list.appendChild(item);
+      });
+      document.getElementById("totalExpenses").innerText = total.toFixed(2);
+      document.getElementById("remainingBudget").innerText = (currentProject.budget - total).toFixed(2);
     }
 
-    function updateChart() {
-      const total = currentProject.budget || 0;
-      const spent = currentProject.expenses.reduce((sum, e) => sum + e.amount, 0);
-      const remaining = total - spent;
-      if (window.budgetChart) window.budgetChart.destroy();
-      const ctx = document.getElementById('budgetChart').getContext('2d');
-      window.budgetChart = new Chart(ctx, {
-        type: 'doughnut',
+    function renderChart() {
+      const ctx = document.getElementById("budgetChart").getContext("2d");
+      const totalExpenses = currentProject.expenses.reduce((sum, e) => sum + e.amount, 0);
+      const remaining = currentProject.budget - totalExpenses;
+      if (window.budgetPieChart) window.budgetPieChart.destroy();
+      window.budgetPieChart = new Chart(ctx, {
+        type: "doughnut",
         data: {
-          labels: ['Spent', 'Remaining'],
+          labels: ["Expenses", "Remaining"],
           datasets: [{
-            label: 'Budget Breakdown',
-            data: [spent, remaining],
-            backgroundColor: ['#ff4d4d', '#4dff88'],
+            data: [totalExpenses, remaining],
+            backgroundColor: ["#ff4d4d", "#28a745"],
             borderWidth: 0
           }]
         },
         options: {
-          plugins: { legend: { labels: { color: 'white' } } }
+          plugins: {
+            legend: { labels: { color: "#fff" } }
+          },
+          cutout: "50%"
         }
       });
     }
 
-    function addDeliverable() {
-      const name = document.getElementById('deliverableName').value;
-      const start = document.getElementById('startDate').value;
-      const end = document.getElementById('endDate').value;
-      const id = `task-${deliverables.length + 1}`;
-      deliverables.push({ id, name, start, end, progress: 0 });
-      renderGantt();
-      addTaskToKanban(name);
+    function addTimelineEvent() {
+      const text = document.getElementById("deliverable").value;
+      const date = document.getElementById("dueDate").value;
+      if (!text || !date) return;
+      currentProject.timeline.push({ text, date });
+      renderTimeline();
     }
 
-    function renderGantt() {
-      document.getElementById('gantt').innerHTML = '';
-      new Gantt("#gantt", deliverables, { view_mode: 'Week' });
+    function renderTimeline() {
+      const container = document.getElementById("timeline");
+      container.innerHTML = "";
+      currentProject.timeline.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "timeline-item";
+        div.textContent = `${item.date}: ${item.text}`;
+        container.appendChild(div);
+
+        const task = document.createElement("div");
+        task.className = "task";
+        task.draggable = true;
+        task.ondragstart = e => e.dataTransfer.setData("text", e.target.outerHTML);
+        task.innerText = item.text;
+        document.querySelector(".kanban-column").appendChild(task);
+      });
     }
 
-    function addTaskToKanban(taskName) {
-      const task = document.createElement('div');
-      task.className = 'task';
-      task.innerText = taskName;
-      document.getElementById('todo').appendChild(task);
+    function allowDrop(e) {
+      e.preventDefault();
     }
+
+    function drop(e) {
+      e.preventDefault();
+      const data = e.dataTransfer.getData("text");
+      e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
+    }
+
+    renderSavedProjects();
   </script>
 </body>
 </html>
