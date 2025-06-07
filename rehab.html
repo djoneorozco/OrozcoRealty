@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | OrozcoRealty LLC</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -63,34 +63,45 @@
       box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
 
+    .project, .roadmap {
+      background-color: #222;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    label, input, button, select {
+      font-size: 1rem;
+    }
+
     .form-inline {
       display: flex;
       gap: 0.5rem;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
       flex-wrap: wrap;
     }
 
-    .project-section {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+    .chart-container {
+      width: 250px;
+      height: 250px;
+      margin-left: auto;
     }
 
-    .project-details, .budget-visual {
-      flex: 1;
-      min-width: 300px;
-      margin-right: 1rem;
-    }
-
-    canvas {
-      max-width: 250px;
-      max-height: 250px;
-      background: #fff;
-      border-radius: 8px;
-    }
-
-    .project-saver {
+    .timeline {
       margin-top: 1rem;
+      border-left: 2px solid #ffd700;
+      padding-left: 1rem;
+    }
+
+    .timeline-entry {
+      margin: 0.5rem 0;
+      padding-left: 0.5rem;
+      border-left: 3px solid #333;
     }
 
     footer {
@@ -124,118 +135,144 @@
   <main>
     <h1>Project Management Dashboard</h1>
 
-    <div class="project-section">
-      <div class="project-details">
-        <h2>Create Project</h2>
+    <div class="project">
+      <h2>New Project</h2>
+      <div class="form-inline">
         <input id="projectName" placeholder="Project Name" />
-        <input id="projectBudget" placeholder="Total Budget ($)" type="number" />
+        <input id="budgetAmount" type="number" placeholder="Total Budget ($)" />
         <button onclick="saveProject()">Save Project</button>
-        <div class="project-saver">
-          <label>Saved Projects:</label>
-          <select id="savedProjects" onchange="loadProject()"></select>
-        </div>
-
-        <h3>Add Expense</h3>
-        <div class="form-inline">
-          <input id="expenseName" placeholder="Expense Name" />
-          <input id="expenseAmount" placeholder="Amount ($)" type="number" />
-          <button onclick="addExpense()">Add Expense</button>
-        </div>
-        <ul id="expenseList"></ul>
+        <select id="projectSelect" onchange="loadProject()">
+          <option>Select Saved Project</option>
+        </select>
       </div>
-
-      <div class="budget-visual">
-        <h2>Budget Pie Chart</h2>
+      <div class="form-inline">
+        <input id="expenseName" placeholder="Expense Name" />
+        <input id="expenseAmount" type="number" placeholder="Amount ($)" />
+        <button onclick="addExpense()">Add Expense</button>
+      </div>
+      <ul id="expenseList"></ul>
+      <div class="chart-container">
         <canvas id="budgetChart"></canvas>
       </div>
+    </div>
+
+    <div class="roadmap">
+      <h2>Project Roadmap</h2>
+      <div class="form-inline">
+        <input id="deliverable" placeholder="Deliverable" />
+        <input id="dueDate" type="date" />
+        <button onclick="addTimelineItem()">Add to Timeline</button>
+      </div>
+      <div class="timeline" id="timelineList"></div>
     </div>
   </main>
 
   <footer>
-    &copy; 2025 OrozcoRealty LLC | All rights reserved
+    &copy; 2025 OrozcoRealty LLC. All rights reserved.
   </footer>
 
   <script>
-    let currentProject = {
-      name: '',
-      budget: 0,
-      expenses: []
-    };
+    let currentProject = {};
 
     function saveProject() {
       const name = document.getElementById('projectName').value;
-      const budget = parseFloat(document.getElementById('projectBudget').value);
-      if (!name || isNaN(budget)) return alert('Please enter a valid project name and budget.');
-      currentProject.name = name;
-      currentProject.budget = budget;
+      const budget = parseFloat(document.getElementById('budgetAmount').value);
+      if (!name || isNaN(budget)) return alert('Project name and budget required.');
+      currentProject = { name, budget, expenses: [], timeline: [] };
       localStorage.setItem(name, JSON.stringify(currentProject));
       updateProjectList();
-      updateChart();
-    }
-
-    function loadProject() {
-      const name = document.getElementById('savedProjects').value;
-      const data = localStorage.getItem(name);
-      if (data) {
-        currentProject = JSON.parse(data);
-        document.getElementById('projectName').value = currentProject.name;
-        document.getElementById('projectBudget').value = currentProject.budget;
-        renderExpenses();
-        updateChart();
-      }
     }
 
     function updateProjectList() {
-      const select = document.getElementById('savedProjects');
-      select.innerHTML = '';
+      const select = document.getElementById('projectSelect');
+      select.innerHTML = '<option>Select Saved Project</option>';
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        const opt = document.createElement('option');
-        opt.value = key;
-        opt.textContent = key;
-        select.appendChild(opt);
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key;
+        select.appendChild(option);
+      }
+    }
+
+    function loadProject() {
+      const key = document.getElementById('projectSelect').value;
+      if (!key) return;
+      const data = localStorage.getItem(key);
+      if (data) {
+        currentProject = JSON.parse(data);
+        document.getElementById('projectName').value = currentProject.name;
+        document.getElementById('budgetAmount').value = currentProject.budget;
+        updateExpenses();
+        updateChart();
+        updateTimeline();
       }
     }
 
     function addExpense() {
       const name = document.getElementById('expenseName').value;
       const amount = parseFloat(document.getElementById('expenseAmount').value);
-      if (!name || isNaN(amount)) return alert('Enter valid expense and amount.');
+      if (!name || isNaN(amount)) return alert('Enter valid expense.');
       currentProject.expenses.push({ name, amount });
-      localStorage.setItem(currentProject.name, JSON.stringify(currentProject));
-      renderExpenses();
+      saveProject();
+      updateExpenses();
       updateChart();
     }
 
-    function renderExpenses() {
+    function updateExpenses() {
       const list = document.getElementById('expenseList');
       list.innerHTML = '';
-      currentProject.expenses.forEach(exp => {
+      currentProject.expenses.forEach(e => {
         const li = document.createElement('li');
-        li.textContent = `${exp.name}: $${exp.amount.toFixed(2)}`;
+        li.textContent = `${e.name}: $${e.amount.toFixed(2)}`;
         list.appendChild(li);
       });
     }
 
     function updateChart() {
+      const total = currentProject.budget || 0;
       const spent = currentProject.expenses.reduce((sum, e) => sum + e.amount, 0);
-      const remaining = Math.max(currentProject.budget - spent, 0);
-      if (window.budgetPie) window.budgetPie.destroy();
+      const remaining = total - spent;
       const ctx = document.getElementById('budgetChart').getContext('2d');
-      window.budgetPie = new Chart(ctx, {
-        type: 'pie',
+      if (window.budgetChart) window.budgetChart.destroy();
+      window.budgetChart = new Chart(ctx, {
+        type: 'doughnut',
         data: {
           labels: ['Spent', 'Remaining'],
           datasets: [{
             data: [spent, remaining],
-            backgroundColor: ['#ff4d4d', '#4dff88']
+            backgroundColor: ['#ff6347', '#32cd32'],
+            borderColor: 'transparent',
           }]
         },
         options: {
-          responsive: true,
-          plugins: { legend: { labels: { color: 'black' } } }
+          plugins: {
+            legend: { labels: { color: '#fff' } }
+          }
         }
       });
+    }
+
+    function addTimelineItem() {
+      const task = document.getElementById('deliverable').value;
+      const date = document.getElementById('dueDate').value;
+      if (!task || !date) return alert('Enter both deliverable and date.');
+      currentProject.timeline.push({ task, date });
+      saveProject();
+      updateTimeline();
+    }
+
+    function updateTimeline() {
+      const container = document.getElementById('timelineList');
+      container.innerHTML = '';
+      currentProject.timeline
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'timeline-entry';
+          div.innerHTML = `<strong>${item.date}</strong>: ${item.task}`;
+          container.appendChild(div);
+        });
     }
 
     updateProjectList();
