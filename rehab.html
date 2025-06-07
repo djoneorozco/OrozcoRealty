@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Projects | OrozcoRealty LLC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -13,7 +15,6 @@
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     header {
       height: 300px;
       background-image: url('banner.jpg');
@@ -24,13 +25,11 @@
       justify-content: flex-end;
       padding: 2rem;
     }
-
     header img {
       max-width: 300px;
       height: auto;
       animation: pulseGlow 3s ease-in-out infinite;
     }
-
     nav {
       background: #111;
       padding: 1rem;
@@ -41,7 +40,6 @@
       top: 0;
       z-index: 10;
     }
-
     nav a {
       color: #fff;
       text-decoration: none;
@@ -49,11 +47,9 @@
       text-transform: uppercase;
       transition: color 0.3s ease;
     }
-
     nav a:hover {
       color: #ffd700;
     }
-
     main {
       max-width: 1200px;
       margin: 2rem auto;
@@ -62,209 +58,219 @@
       border-radius: 12px;
       box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
-
-    .form-inline {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    .project-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+    .project {
+      background-color: #222;
+      border-radius: 10px;
+      padding: 1rem;
       margin-bottom: 2rem;
     }
-
+    h1, h2 {
+      text-align: center;
+      color: #ffd700;
+    }
+    label, input, button {
+      font-size: 1rem;
+    }
+    .form-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
     .chart-container {
       width: 250px;
       height: 250px;
       margin-left: auto;
     }
-
-    .project, .roadmap, .kanban {
-      background: #222;
+    .roadmap {
+      margin-top: 2rem;
+    }
+    .gantt-target {
+      background-color: #fff;
+      border-radius: 8px;
       padding: 1rem;
-      border-radius: 10px;
-      margin-bottom: 2rem;
     }
-
-    h1, h2 {
-      text-align: center;
-      color: #ffd700;
-    }
-
-    label, input, button, textarea {
-      font-size: 1rem;
-      border-radius: 5px;
-      padding: 0.5rem;
-    }
-
-    button {
-      background-color: #ffd700;
-      border: none;
-      cursor: pointer;
-      color: #111;
-    }
-
-    button:hover {
-      background-color: #e6c200;
-    }
-
-    .expense-item, .timeline-item {
-      background: #333;
-      padding: 0.5rem;
+    .expense-item {
       margin: 0.5rem 0;
-      border-radius: 6px;
     }
-
-    .timeline {
-      border-left: 2px solid #ffd700;
-      padding-left: 1rem;
-      margin-top: 1rem;
+    .btn {
+      padding: 0.5rem 1rem;
+      background-color: #ffd700;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
-
-    footer {
-      background: #111;
-      color: #aaa;
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 0.95rem;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.05); filter: brightness(1.3); }
+    .btn:hover {
+      background-color: #e6c200;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
+    <img src="logo.png" alt="Logo" />
   </header>
-
   <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="roadmap.html">Roadmap</a>
-    <a href="listings.html">Listings</a>
-    <a href="rehab.html">Projects</a>
-    <a href="contact.html">Contact</a>
+    <a href="#">Dashboard</a>
+    <a href="#">Projects</a>
+    <a href="#">Saved</a>
   </nav>
-
   <main>
-    <h1>Project Management Dashboard</h1>
+    <h1>Project Management</h1>
 
-    <section class="project-controls">
-      <div class="form-inline">
-        <input id="projectName" placeholder="Project Name" />
-        <button onclick="saveProject()">Save Project</button>
-        <button onclick="loadProjects()">Load Projects</button>
-      </div>
+    <div class="form-inline">
+      <input type="text" id="projectName" placeholder="Project Name">
+      <input type="number" id="totalBudget" placeholder="Total Budget">
+      <button class="btn" onclick="saveProject()">Save Project</button>
+      <button class="btn" onclick="editProject()">Edit Project</button>
+      <select id="projectSelector" onchange="loadProject()">
+        <option value="">-- Select Project --</option>
+      </select>
+    </div>
 
-      <div class="form-inline">
-        <input type="number" id="totalBudget" placeholder="Total Budget ($)" />
-        <input type="text" id="expenseName" placeholder="Expense Name" />
-        <input type="number" id="expenseAmount" placeholder="Amount" />
-        <button onclick="addExpense()">Add Expense</button>
-      </div>
+    <div class="form-inline">
+      <input type="text" id="expenseName" placeholder="Expense Name">
+      <input type="number" id="expenseAmount" placeholder="Amount">
+      <button class="btn" onclick="addExpense()">Add Expense</button>
+    </div>
 
-      <div class="chart-container">
-        <canvas id="budgetChart"></canvas>
-      </div>
-    </section>
+    <div id="expenses"></div>
+    <h3 id="remainingBudget">Remaining Budget: $0</h3>
+    <div class="chart-container">
+      <canvas id="budgetChart"></canvas>
+    </div>
 
-    <section class="roadmap">
+    <div class="roadmap">
       <h2>Project Roadmap</h2>
       <div class="form-inline">
-        <input type="text" id="deliverable" placeholder="Deliverable Name" />
-        <input type="date" id="dueDate" />
-        <button onclick="addToRoadmap()">Add Deliverable</button>
+        <input type="text" id="taskName" placeholder="Task">
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+        <button class="btn" onclick="addTask()">Add Task</button>
       </div>
-      <div class="timeline" id="roadmapTimeline"></div>
-    </section>
+      <div class="gantt-target" id="gantt"></div>
+    </div>
   </main>
-
   <footer>
     &copy; 2025 OrozcoRealty LLC. All rights reserved.
   </footer>
 
   <script>
-    let expenses = [];
-    let totalBudget = 0;
+    let projects = JSON.parse(localStorage.getItem('projects') || '{}');
+    let currentProject = null;
 
-    function updateChart() {
-      const spent = expenses.reduce((sum, item) => sum + item.amount, 0);
-      const remaining = totalBudget - spent;
+    function saveProject() {
+      const name = document.getElementById('projectName').value;
+      const budget = parseFloat(document.getElementById('totalBudget').value);
+      if (!name || isNaN(budget)) return alert('Provide name and budget');
+      if (!projects[name]) projects[name] = { expenses: [], tasks: [], budget };
+      projects[name].budget = budget;
+      localStorage.setItem('projects', JSON.stringify(projects));
+      updateProjectList();
+      alert('Project saved!');
+    }
 
-      const ctx = document.getElementById('budgetChart').getContext('2d');
-      if (window.budgetPie) window.budgetPie.destroy();
+    function updateProjectList() {
+      const selector = document.getElementById('projectSelector');
+      selector.innerHTML = '<option value="">-- Select Project --</option>';
+      for (let key in projects) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.text = key;
+        selector.appendChild(option);
+      }
+    }
 
-      window.budgetPie = new Chart(ctx, {
-        type: 'doughnut',
+    function loadProject() {
+      const name = document.getElementById('projectSelector').value;
+      if (!name) return;
+      currentProject = name;
+      const project = projects[name];
+      document.getElementById('projectName').value = name;
+      document.getElementById('totalBudget').value = project.budget;
+      renderExpenses();
+      renderChart();
+      renderGantt();
+    }
+
+    function addExpense() {
+      if (!currentProject) return alert('Select a project first');
+      const name = document.getElementById('expenseName').value;
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+      if (!name || isNaN(amount)) return;
+      projects[currentProject].expenses.push({ name, amount });
+      localStorage.setItem('projects', JSON.stringify(projects));
+      renderExpenses();
+      renderChart();
+    }
+
+    function renderExpenses() {
+      const list = document.getElementById('expenses');
+      list.innerHTML = '';
+      let total = 0;
+      for (let item of projects[currentProject].expenses) {
+        total += item.amount;
+        const div = document.createElement('div');
+        div.className = 'expense-item';
+        div.innerText = `${item.name}: $${item.amount}`;
+        list.appendChild(div);
+      }
+      document.getElementById('remainingBudget').innerText = `Remaining Budget: $${(projects[currentProject].budget - total).toFixed(2)}`;
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById('budgetChart');
+      const used = projects[currentProject].expenses.reduce((a, b) => a + b.amount, 0);
+      const remaining = projects[currentProject].budget - used;
+      new Chart(ctx, {
+        type: 'pie',
         data: {
-          labels: ['Spent', 'Remaining'],
+          labels: ['Used', 'Remaining'],
           datasets: [{
-            label: 'Budget',
-            data: [spent, remaining],
-            backgroundColor: ['#ff6b6b', '#1dd1a1'],
-            borderColor: '#1B1814',
-            borderWidth: 2
+            data: [used, remaining],
+            backgroundColor: ['#ff6384', '#36a2eb'],
+            borderWidth: 0
           }]
         },
         options: {
-          cutout: '70%',
-          responsive: true,
-          plugins: {
-            legend: {
-              labels: {
-                color: '#fff'
-              }
-            }
-          }
+          plugins: { legend: { labels: { color: '#fff' } } }
         }
       });
     }
 
-    function addExpense() {
-      const name = document.getElementById('expenseName').value;
-      const amount = parseFloat(document.getElementById('expenseAmount').value);
-      if (!name || isNaN(amount)) return;
-      expenses.push({ name, amount });
-      updateChart();
+    function editProject() {
+      const newName = prompt('Edit Project Name:', currentProject);
+      const newBudget = parseFloat(prompt('Edit Budget:', projects[currentProject].budget));
+      if (!newName || isNaN(newBudget)) return;
+      const data = projects[currentProject];
+      delete projects[currentProject];
+      data.budget = newBudget;
+      projects[newName] = data;
+      currentProject = newName;
+      localStorage.setItem('projects', JSON.stringify(projects));
+      updateProjectList();
+      loadProject();
     }
 
-    function saveProject() {
-      const name = document.getElementById('projectName').value;
-      totalBudget = parseFloat(document.getElementById('totalBudget').value);
-      if (!name || isNaN(totalBudget)) return;
-      const data = { expenses, totalBudget };
-      localStorage.setItem(`project_${name}`, JSON.stringify(data));
-      alert(`Project '${name}' saved.`);
+    function addTask() {
+      const task = document.getElementById('taskName').value;
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      if (!task || !start || !end || !currentProject) return;
+      projects[currentProject].tasks.push({ id: task, name: task, start, end, progress: 0 });
+      localStorage.setItem('projects', JSON.stringify(projects));
+      renderGantt();
     }
 
-    function loadProjects() {
-      const keys = Object.keys(localStorage).filter(k => k.startsWith('project_'));
-      const name = prompt("Enter project name to load:\n" + keys.map(k => k.replace('project_', '')).join('\n'));
-      if (!name) return;
-      const data = JSON.parse(localStorage.getItem(`project_${name}`));
-      if (!data) return alert('Project not found.');
-      expenses = data.expenses;
-      totalBudget = data.totalBudget;
-      document.getElementById('totalBudget').value = totalBudget;
-      updateChart();
+    function renderGantt() {
+      const target = document.getElementById('gantt');
+      target.innerHTML = '';
+      const gantt = new Gantt(target, projects[currentProject].tasks, {
+        custom_popup_html: null
+      });
     }
 
-    function addToRoadmap() {
-      const deliverable = document.getElementById('deliverable').value;
-      const date = document.getElementById('dueDate').value;
-      if (!deliverable || !date) return;
-      const entry = document.createElement('div');
-      entry.className = 'timeline-item';
-      entry.innerText = `${date}: ${deliverable}`;
-      document.getElementById('roadmapTimeline').appendChild(entry);
-    }
+    updateProjectList();
   </script>
 </body>
 </html>
