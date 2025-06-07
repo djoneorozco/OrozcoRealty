@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Projects | OrozcoRealty LLC</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js/dist/Chart.min.css">
   <style>
     body {
       margin: 0;
@@ -13,7 +13,6 @@
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     header {
       height: 300px;
       background-image: url('banner.jpg');
@@ -24,13 +23,11 @@
       justify-content: flex-end;
       padding: 2rem;
     }
-
     header img {
       max-width: 300px;
       height: auto;
       animation: pulseGlow 3s ease-in-out infinite;
     }
-
     nav {
       background: #111;
       padding: 1rem;
@@ -41,7 +38,6 @@
       top: 0;
       z-index: 10;
     }
-
     nav a {
       color: #fff;
       text-decoration: none;
@@ -49,11 +45,9 @@
       text-transform: uppercase;
       transition: color 0.3s ease;
     }
-
     nav a:hover {
       color: #ffd700;
     }
-
     main {
       max-width: 1200px;
       margin: 2rem auto;
@@ -62,67 +56,64 @@
       border-radius: 12px;
       box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
-
+    .project-icons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .project-icon {
+      background: #222;
+      color: #ffd700;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
     h1, h2 {
       text-align: center;
       color: #ffd700;
     }
-
-    .form-inline {
+    .form-inline, .budget-input, .expense-form {
       display: flex;
       gap: 0.5rem;
+      margin: 1rem 0;
       flex-wrap: wrap;
-      margin-bottom: 1rem;
     }
-
-    .project-header-icons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-      justify-content: center;
+    input, button {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: none;
     }
-
-    .project-icon {
-      background: #333;
-      border: 2px solid #ffd700;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+    button {
+      background: #ffd700;
+      color: #111;
       cursor: pointer;
     }
-
-    .project {
-      background-color: #222;
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .budget-section {
+    .expense-section {
       display: flex;
       gap: 2rem;
     }
-
-    .budget-info {
-      flex: 1;
+    #budgetPie {
+      max-width: 250px;
     }
-
-    .chart-container {
-      width: 250px;
-      height: 250px;
-    }
-
     .timeline {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 1rem;
+      background: #222;
+      border-radius: 10px;
       margin-top: 2rem;
     }
-
-    .timeline-item {
-      background: #333;
-      margin-bottom: 1rem;
-      padding: 0.5rem;
+    .timeline-event {
+      display: inline-block;
+      background: #444;
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      border-left: 4px solid #ffd700;
       border-radius: 6px;
+      color: #fff;
     }
-
     footer {
       background: #111;
       color: #aaa;
@@ -130,7 +121,6 @@
       padding: 1.5rem;
       font-size: 0.95rem;
     }
-
     @keyframes pulseGlow {
       0%, 100% { transform: scale(1); filter: brightness(1); }
       50% { transform: scale(1.05); filter: brightness(1.3); }
@@ -141,81 +131,77 @@
   <header>
     <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
   </header>
-
   <nav>
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
     <a href="roadmap.html">Roadmap</a>
-    <a href="listings.html">Listings</a>
-    <a href="rehab.html">Projects</a>
-    <a href="contact.html">Contact</a>
+    <a href="projects.html">Projects</a>
   </nav>
-
   <main>
-    <div class="project-header-icons" id="savedProjects"></div>
-    <h1>Project Management Dashboard</h1>
+    <div class="project-icons" id="projectIcons"></div>
+    <h1>Project Management</h1>
 
     <div class="form-inline">
-      <input id="projectName" placeholder="Project Name" />
-      <input id="totalBudget" placeholder="Total Budget" type="number" />
+      <input type="text" id="projectName" placeholder="Project Name">
+      <input type="number" id="projectBudget" placeholder="Total Budget">
       <button onclick="saveProject()">Save Project</button>
-      <button onclick="editProject()">Edit</button>
     </div>
 
-    <div class="budget-section">
-      <div class="budget-info">
+    <div class="expense-section">
+      <div>
         <h2>Expenses</h2>
-        <div class="form-inline">
-          <input id="expenseName" placeholder="Expense Name" />
-          <input id="expenseAmount" placeholder="Amount" type="number" />
+        <div class="expense-form">
+          <input type="text" id="expenseName" placeholder="Expense Name">
+          <input type="number" id="expenseAmount" placeholder="Amount">
           <button onclick="addExpense()">Add</button>
         </div>
         <div id="expenseList"></div>
-        <h3>Total Spent: $<span id="totalSpent">0</span></h3>
-        <h3>Remaining Budget: $<span id="remainingBudget">0</span></h3>
+        <p><strong>Total Expenses:</strong> $<span id="totalExpenses">0</span></p>
       </div>
-      <div class="chart-container">
-        <canvas id="budgetChart"></canvas>
-      </div>
+      <canvas id="budgetPie"></canvas>
     </div>
 
-    <div class="timeline">
-      <h2>Timeline</h2>
-      <div class="form-inline">
-        <input id="deliverable" placeholder="Deliverable" />
-        <input id="dueDate" type="date" />
-        <button onclick="addTimelineItem()">Add</button>
-      </div>
-      <div id="timelineList"></div>
+    <h2>Project Timeline</h2>
+    <div class="form-inline">
+      <input type="text" id="deliverableName" placeholder="Deliverable">
+      <input type="date" id="deliverableDate">
+      <button onclick="addDeliverable()">Add Deliverable</button>
     </div>
+    <div class="timeline" id="timeline"></div>
   </main>
 
   <footer>
-    &copy; 2025 OrozcoRealty LLC. All rights reserved.
+    &copy; 2025 OrozcoRealty LLC - All Rights Reserved
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     let currentProject = {};
-    let savedProjects = {};
+    let projects = JSON.parse(localStorage.getItem('projects')) || {};
 
-    function updateChart() {
-      const total = parseFloat(document.getElementById('totalBudget').value || 0);
-      const spent = parseFloat(document.getElementById('totalSpent').innerText || 0);
-      const remaining = total - spent;
+    function saveProject() {
+      const name = document.getElementById('projectName').value;
+      const budget = parseFloat(document.getElementById('projectBudget').value);
+      if (!name || isNaN(budget)) return;
+      currentProject = { name, budget, expenses: [], timeline: [] };
+      projects[name] = currentProject;
+      localStorage.setItem('projects', JSON.stringify(projects));
+      renderProjectIcons();
+      updateDisplay();
+    }
 
-      const data = {
-        labels: ['Spent', 'Remaining'],
-        datasets: [{
-          data: [spent, remaining],
-          backgroundColor: ['#FF6384', '#36A2EB'],
-          borderWidth: 0
-        }]
-      };
-
-      new Chart(document.getElementById('budgetChart'), {
-        type: 'doughnut',
-        data: data,
-        options: { responsive: true, cutout: '60%' }
+    function renderProjectIcons() {
+      const container = document.getElementById('projectIcons');
+      container.innerHTML = '';
+      Object.keys(projects).forEach(name => {
+        const icon = document.createElement('div');
+        icon.className = 'project-icon';
+        icon.innerText = name;
+        icon.onclick = () => {
+          currentProject = projects[name];
+          updateDisplay();
+        };
+        container.appendChild(icon);
       });
     }
 
@@ -223,94 +209,72 @@
       const name = document.getElementById('expenseName').value;
       const amount = parseFloat(document.getElementById('expenseAmount').value);
       if (!name || isNaN(amount)) return;
-
-      const item = document.createElement('div');
-      item.className = 'timeline-item';
-      item.textContent = `${name}: $${amount}`;
-      document.getElementById('expenseList').appendChild(item);
-
-      currentProject.expenses = currentProject.expenses || [];
       currentProject.expenses.push({ name, amount });
-      updateExpenses();
+      saveProject();
     }
 
-    function updateExpenses() {
-      const total = currentProject.expenses.reduce((acc, e) => acc + e.amount, 0);
-      document.getElementById('totalSpent').innerText = total;
-      document.getElementById('remainingBudget').innerText = parseFloat(document.getElementById('totalBudget').value || 0) - total;
-      updateChart();
+    function addDeliverable() {
+      const name = document.getElementById('deliverableName').value;
+      const date = document.getElementById('deliverableDate').value;
+      if (!name || !date) return;
+      currentProject.timeline.push({ name, date });
+      saveProject();
     }
 
-    function addTimelineItem() {
-      const task = document.getElementById('deliverable').value;
-      const date = document.getElementById('dueDate').value;
-      if (!task || !date) return;
-
-      const item = document.createElement('div');
-      item.className = 'timeline-item';
-      item.textContent = `${task} - Due: ${date}`;
-      document.getElementById('timelineList').appendChild(item);
-
-      currentProject.timeline = currentProject.timeline || [];
-      currentProject.timeline.push({ task, date });
+    function updateDisplay() {
+      document.getElementById('projectName').value = currentProject.name || '';
+      document.getElementById('projectBudget').value = currentProject.budget || '';
+      renderExpenses();
+      renderTimeline();
     }
 
-    function saveProject() {
-      const name = document.getElementById('projectName').value;
-      const budget = parseFloat(document.getElementById('totalBudget').value);
-      if (!name || isNaN(budget)) return;
-
-      currentProject.name = name;
-      currentProject.budget = budget;
-
-      savedProjects[name] = JSON.parse(JSON.stringify(currentProject));
-      refreshProjectIcons();
-      alert('Project Saved');
+    function renderExpenses() {
+      const list = document.getElementById('expenseList');
+      list.innerHTML = '';
+      let total = 0;
+      currentProject.expenses.forEach(exp => {
+        total += exp.amount;
+        const item = document.createElement('div');
+        item.innerText = `${exp.name}: $${exp.amount}`;
+        list.appendChild(item);
+      });
+      document.getElementById('totalExpenses').innerText = total.toFixed(2);
+      renderPie(total);
     }
 
-    function refreshProjectIcons() {
-      const container = document.getElementById('savedProjects');
-      container.innerHTML = '';
-      Object.keys(savedProjects).forEach(name => {
-        const icon = document.createElement('div');
-        icon.className = 'project-icon';
-        icon.textContent = name;
-        icon.onclick = () => loadProject(name);
-        container.appendChild(icon);
+    function renderPie(totalExpenses) {
+      const ctx = document.getElementById('budgetPie').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Spent', 'Remaining'],
+          datasets: [{
+            data: [totalExpenses, currentProject.budget - totalExpenses],
+            backgroundColor: ['#ff4c4c', '#00cc88'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' }
+          },
+          cutout: '70%'
+        }
       });
     }
 
-    function loadProject(name) {
-      currentProject = JSON.parse(JSON.stringify(savedProjects[name]));
-      document.getElementById('projectName').value = currentProject.name;
-      document.getElementById('totalBudget').value = currentProject.budget;
-
-      document.getElementById('expenseList').innerHTML = '';
-      document.getElementById('timelineList').innerHTML = '';
-
-      if (currentProject.expenses) {
-        currentProject.expenses.forEach(e => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item';
-          item.textContent = `${e.name}: $${e.amount}`;
-          document.getElementById('expenseList').appendChild(item);
-        });
-        updateExpenses();
-      }
-
-      if (currentProject.timeline) {
-        currentProject.timeline.forEach(t => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item';
-          item.textContent = `${t.task} - Due: ${t.date}`;
-          document.getElementById('timelineList').appendChild(item);
-        });
-      }
+    function renderTimeline() {
+      const container = document.getElementById('timeline');
+      container.innerHTML = '';
+      currentProject.timeline.forEach(entry => {
+        const event = document.createElement('div');
+        event.className = 'timeline-event';
+        event.innerText = `${entry.name} (${entry.date})`;
+        container.appendChild(event);
+      });
     }
 
-    function editProject() {
-      document.getElementById('projectName').focus();
-    }
+    renderProjectIcons();
   </script>
 </body>
 </html>
