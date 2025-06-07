@@ -28,7 +28,20 @@
     header img {
       max-width: 300px;
       height: auto;
-      animation: slideFade 2s ease-in-out;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 2.5s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     nav {
@@ -105,16 +118,11 @@
       padding: 1.5rem;
       font-size: 0.95rem;
     }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.05); filter: brightness(1.3); }
-    }
   </style>
 </head>
 <body>
 
-  <!-- HEADER with banner and logo -->
+  <!-- HEADER with banner and animated logo -->
   <header>
     <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo" />
   </header>
