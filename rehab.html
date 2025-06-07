@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Projects | OrozcoRealty LLC</title>
-  <link href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.5.0/dist/frappe-gantt.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.5.0/dist/frappe-gantt.css">
   <style>
     body {
       margin: 0;
@@ -65,6 +65,15 @@
       box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
 
+    h1, h2 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    label, input, button {
+      font-size: 1rem;
+    }
+
     .form-inline {
       display: flex;
       gap: 0.5rem;
@@ -72,28 +81,31 @@
       flex-wrap: wrap;
     }
 
-    .project-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chart-container {
-      width: 250px;
-      height: 250px;
+    #budget-chart {
+      max-width: 250px;
       margin-left: auto;
-      margin-right: 0;
     }
 
-    .expense-item {
-      background: #333;
-      padding: 0.5rem;
-      border-radius: 6px;
-      margin-bottom: 0.5rem;
+    .timeline-section {
+      margin-top: 3rem;
     }
 
     #gantt {
-      margin-top: 2rem;
+      background-color: #222;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .timeline-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .timeline-inputs input {
+      padding: 0.5rem;
     }
 
     footer {
@@ -102,6 +114,11 @@
       text-align: center;
       padding: 1.5rem;
       font-size: 0.95rem;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.3); }
     }
   </style>
 </head>
@@ -121,31 +138,40 @@
 
   <main>
     <h1>Project Management Dashboard</h1>
-    <div class="project-header">
-      <input id="projectName" value="New Project" />
-      <input type="number" id="totalBudget" placeholder="Total Budget" />
+
+    <div class="form-inline">
+      <input id="projectName" placeholder="Enter Project Name" />
+      <input id="totalBudget" type="number" placeholder="Total Budget ($)" />
+      <button onclick="saveProject()">Save Project</button>
       <button onclick="editProject()">Edit</button>
     </div>
 
     <div class="form-inline">
       <input id="expenseName" placeholder="Expense Name" />
-      <input type="number" id="expenseAmount" placeholder="Amount" />
+      <input id="expenseAmount" type="number" placeholder="Amount ($)" />
       <button onclick="addExpense()">Add Expense</button>
     </div>
-    <div id="expenses"></div>
 
-    <div class="chart-container">
-      <canvas id="budgetChart"></canvas>
-    </div>
-
-    <h2>Project Timeline</h2>
     <div class="form-inline">
-      <input id="taskName" placeholder="Task" />
-      <input type="date" id="startDate" />
-      <input type="date" id="endDate" />
-      <button onclick="addTask()">Add Task</button>
+      <canvas id="budget-chart" width="250" height="250"></canvas>
     </div>
-    <svg id="gantt" width="100%" height="300"></svg>
+
+    <div>
+      <h2>Expenses</h2>
+      <ul id="expenseList"></ul>
+      <p><strong>Total Expenses:</strong> $<span id="totalExpenses">0</span></p>
+    </div>
+
+    <div class="timeline-section">
+      <h2>Project Timeline</h2>
+      <div class="timeline-inputs">
+        <input type="text" id="taskName" placeholder="Deliverable Name" />
+        <input type="date" id="startDate" placeholder="Start Date" />
+        <input type="date" id="endDate" placeholder="End Date" />
+        <button onclick="addTaskToTimeline()">Add Deliverable</button>
+      </div>
+      <div id="gantt"></div>
+    </div>
   </main>
 
   <footer>
@@ -153,11 +179,26 @@
   </footer>
 
   <script>
+    let chart;
     let expenses = [];
+    let gantt;
     let tasks = [];
 
+    function saveProject() {
+      const name = document.getElementById('projectName').value;
+      const budget = parseFloat(document.getElementById('totalBudget').value);
+      localStorage.setItem('project', JSON.stringify({ name, budget, expenses, tasks }));
+      updateChart(budget);
+    }
+
     function editProject() {
-      updateChart();
+      const project = JSON.parse(localStorage.getItem('project')) || {};
+      document.getElementById('projectName').value = project.name || '';
+      document.getElementById('totalBudget').value = project.budget || 0;
+      expenses = project.expenses || [];
+      tasks = project.tasks || [];
+      renderExpenses();
+      renderTimeline();
     }
 
     function addExpense() {
@@ -165,70 +206,71 @@
       const amount = parseFloat(document.getElementById('expenseAmount').value);
       if (!name || isNaN(amount)) return;
       expenses.push({ name, amount });
-      displayExpenses();
-      updateChart();
+      renderExpenses();
+      updateChart(parseFloat(document.getElementById('totalBudget').value));
     }
 
-    function displayExpenses() {
-      const div = document.getElementById('expenses');
-      div.innerHTML = '';
+    function renderExpenses() {
+      const list = document.getElementById('expenseList');
+      list.innerHTML = '';
       let total = 0;
       expenses.forEach(exp => {
+        const li = document.createElement('li');
+        li.textContent = `${exp.name}: $${exp.amount.toFixed(2)}`;
+        list.appendChild(li);
         total += exp.amount;
-        div.innerHTML += `<div class='expense-item'>${exp.name}: $${exp.amount.toFixed(2)}</div>`;
       });
+      document.getElementById('totalExpenses').textContent = total.toFixed(2);
     }
 
-    function updateChart() {
-      const total = parseFloat(document.getElementById('totalBudget').value) || 0;
-      const spent = expenses.reduce((acc, val) => acc + val.amount, 0);
-      const remaining = total - spent;
-
-      budgetChart.data.datasets[0].data = [spent, remaining > 0 ? remaining : 0];
-      budgetChart.update();
-    }
-
-    const ctx = document.getElementById('budgetChart').getContext('2d');
-    const budgetChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Spent', 'Remaining'],
-        datasets: [{
-          data: [0, 100],
-          backgroundColor: ['#e63946', '#2a9d8f'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: {
-              color: '#fff'
+    function updateChart(budget) {
+      const spent = expenses.reduce((sum, e) => sum + e.amount, 0);
+      const remaining = Math.max(0, budget - spent);
+      const ctx = document.getElementById('budget-chart').getContext('2d');
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Spent', 'Remaining'],
+          datasets: [{
+            data: [spent, remaining],
+            backgroundColor: ['#ff3b3f', '#32cd32'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          cutout: '65%',
+          plugins: {
+            legend: {
+              labels: { color: '#fff' }
             }
           }
         }
-      }
-    });
+      });
+    }
 
-    function addTask() {
+    function addTaskToTimeline() {
       const name = document.getElementById('taskName').value;
       const start = document.getElementById('startDate').value;
       const end = document.getElementById('endDate').value;
       if (!name || !start || !end) return;
-      const id = `task-${tasks.length + 1}`;
-      tasks.push({ id, name, start, end });
-      renderGantt();
+      const task = {
+        id: `Task${tasks.length + 1}`,
+        name,
+        start,
+        end,
+        progress: 0,
+        dependencies: ''
+      };
+      tasks.push(task);
+      renderTimeline();
     }
 
-    function renderGantt() {
-      new Gantt("#gantt", tasks.map(t => ({
-        id: t.id,
-        name: t.name,
-        start: t.start,
-        end: t.end
-      })), {
-        view_mode: 'Week',
+    function renderTimeline() {
+      const container = document.getElementById('gantt');
+      container.innerHTML = '';
+      gantt = new Gantt("#gantt", tasks, {
+        view_mode: 'Day',
         custom_popup_html: null
       });
     }
