@@ -25,22 +25,42 @@
       padding: 2rem;
     }
 
+    /* Fade + shimmer logo animation */
     header img {
       max-width: 300px;
       height: auto;
       opacity: 0;
-      transform: translateY(30px);
-      animation: fadeInUp 2.5s ease-out forwards;
+      transform: scale(0.8);
+      animation: logoFadeIn 2.5s ease-out forwards, logoGlow 2.5s ease-in-out 2.5s 1 forwards;
     }
 
-    @keyframes fadeInUp {
+    @keyframes logoFadeIn {
       0% {
         opacity: 0;
-        transform: translateY(30px);
+        transform: scale(0.8);
+        filter: brightness(0.5) blur(2px);
+      }
+      60% {
+        opacity: 1;
+        transform: scale(1.05);
+        filter: brightness(1.2);
       }
       100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: scale(1);
+        filter: brightness(1);
+      }
+    }
+
+    @keyframes logoGlow {
+      0% {
+        filter: drop-shadow(0 0 0px #ffd700);
+      }
+      50% {
+        filter: drop-shadow(0 0 25px #ffd700);
+      }
+      100% {
+        filter: drop-shadow(0 0 0px #ffd700);
       }
     }
 
@@ -122,7 +142,7 @@
 </head>
 <body>
 
-  <!-- HEADER with banner and animated logo -->
+  <!-- HEADER with banner and logo -->
   <header>
     <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo" />
   </header>
