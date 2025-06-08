@@ -135,6 +135,7 @@
       <input id="projectName" placeholder="Enter Project Name" />
       <input id="projectBudget" type="number" placeholder="Total Budget ($)" />
       <button onclick="saveProject()">Save Project</button>
+      <button onclick="editProject()">Edit Project</button>
     </div>
     <div class="project-icons" id="projectIcons"></div>
     <h2 id="currentProject">Current Project: None</h2>
@@ -182,6 +183,18 @@
       if (!name || isNaN(budget)) return;
       currentProject = { name, budget, expenses: [], gantt: [] };
       savedProjects.push(currentProject);
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
+      renderProjectIcons();
+      updateProjectDisplay();
+    }
+
+    function editProject() {
+      const name = prompt("Edit project name:", currentProject.name);
+      const budget = prompt("Edit project budget:", currentProject.budget);
+      if (name) currentProject.name = name;
+      if (budget) currentProject.budget = parseFloat(budget);
+      const index = savedProjects.findIndex(p => p.name === currentProject.name);
+      if (index !== -1) savedProjects[index] = currentProject;
       localStorage.setItem("projects", JSON.stringify(savedProjects));
       renderProjectIcons();
       updateProjectDisplay();
