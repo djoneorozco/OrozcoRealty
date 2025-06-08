@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Image Upload Preview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Upload and Save</title>
   <style>
     body {
       background-color: #1B1814;
@@ -11,25 +11,24 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       padding: 2rem;
     }
-
     h1 {
       text-align: center;
       color: #ffd700;
     }
-
-    input[type="file"] {
-      display: block;
+    form {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    input[type="file"], button {
+      font-size: 1rem;
       margin: 1rem auto;
     }
-
     .gallery {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 1rem;
-      margin-top: 1rem;
     }
-
     .gallery img {
       width: 200px;
       height: auto;
@@ -39,27 +38,19 @@
   </style>
 </head>
 <body>
-  <h1>Upload Project Photos</h1>
-  <input type="file" id="imageUpload" accept="image/*" multiple />
-  <div id="imagePreview" class="gallery"></div>
-
-  <script>
-    document.getElementById('imageUpload').addEventListener('change', function (event) {
-      const files = event.target.files;
-      const preview = document.getElementById('imagePreview');
-      preview.innerHTML = '';
-
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.alt = file.name;
-          preview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-  </script>
+  <h1>Upload and Save Image</h1>
+  <form action="upload.php" method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*" required />
+    <br />
+    <button type="submit">Upload & Save</button>
+  </form>
+  <div class="gallery">
+    <?php
+      $images = glob("uploads/*.{jpg,jpeg,png,gif}", GLOB_BRACE);
+      foreach ($images as $image) {
+        echo '<img src="' . $image . '" alt="Uploaded Image">';
+      }
+    ?>
+  </div>
 </body>
 </html>
