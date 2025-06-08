@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | OrozcoRealty LLC</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
   <style>
     body {
       margin: 0;
@@ -156,6 +158,10 @@
       cursor: grab;
     }
 
+    #ganttContainer {
+      margin-top: 2rem;
+    }
+
     footer {
       background: #111;
       color: #aaa;
@@ -241,6 +247,8 @@
           <h4>Done</h4>
         </div>
       </div>
+
+      <div id="ganttContainer"></div>
     </div>
   </main>
 
@@ -257,6 +265,7 @@
       renderExpenses();
       renderTimeline();
       renderChart();
+      renderGanttChart();
     }
 
     function saveProject() {
@@ -288,14 +297,11 @@
           currentProject = p;
           updateProjectDisplay();
         };
-
         const img = document.createElement("img");
         img.src = "OrozcoRealtyLLC.png";
         img.alt = p.name;
-
         const span = document.createElement("span");
         span.textContent = p.name;
-
         div.appendChild(img);
         div.appendChild(span);
         container.appendChild(div);
@@ -362,6 +368,7 @@
       if (!text || !date) return;
       currentProject.timeline.push({ text, date });
       renderTimeline();
+      renderGanttChart();
     }
 
     function renderTimeline() {
@@ -380,6 +387,21 @@
         task.innerText = item.text;
         document.querySelector(".kanban-column").appendChild(task);
       });
+    }
+
+    function renderGanttChart() {
+      const tasks = currentProject.timeline.map((item, index) => {
+        return {
+          id: `Task${index}`,
+          name: item.text,
+          start: item.date,
+          end: item.date,
+          progress: 0
+        };
+      });
+
+      document.getElementById("ganttContainer").innerHTML = "";
+      new Gantt("#ganttContainer", tasks);
     }
 
     function allowDrop(e) {
