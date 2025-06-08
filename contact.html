@@ -158,11 +158,15 @@
       cursor: grab;
     }
 
-    #gantt {
+    .gantt-section {
       margin-top: 2rem;
-      background: #222;
-      border-radius: 12px;
+    }
+
+    #gantt {
+      background: #fff;
+      border-radius: 8px;
       padding: 1rem;
+      overflow-x: scroll;
     }
 
     footer {
@@ -239,8 +243,6 @@
       </div>
       <div class="timeline-events" id="timeline"></div>
 
-      <div id="gantt"></div>
-
       <div class="kanban-board">
         <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
           <h4>To Do</h4>
@@ -252,6 +254,17 @@
           <h4>Done</h4>
         </div>
       </div>
+
+      <div class="gantt-section">
+        <h3>Gantt Chart</h3>
+        <div class="form-inline">
+          <input id="ganttTask" placeholder="Task Name" />
+          <input id="ganttStart" type="date" />
+          <input id="ganttEnd" type="date" />
+          <button onclick="addGanttTask()">Add to Gantt</button>
+        </div>
+        <div id="gantt"></div>
+      </div>
     </div>
   </main>
 
@@ -262,20 +275,23 @@
   <script>
     let currentProject = {};
     let savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+    let gantt;
+    let ganttTasks = [];
 
     function updateProjectDisplay() {
       document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
+      ganttTasks = currentProject.gantt || [];
       renderExpenses();
       renderTimeline();
       renderChart();
-      renderGanttChart();
+      renderGantt();
     }
 
     function saveProject() {
       const name = document.getElementById("projectName").value;
       const budget = parseFloat(document.getElementById("projectBudget").value);
       if (!name || isNaN(budget)) return;
-      currentProject = { name, budget, expenses: [], timeline: [] };
+      currentProject = { name, budget, expenses: [], timeline: [], gantt: [] };
       savedProjects.push(currentProject);
       localStorage.setItem("projects", JSON.stringify(savedProjects));
       renderProjectIcons();
@@ -374,7 +390,6 @@
       if (!text || !date) return;
       currentProject.timeline.push({ text, date });
       renderTimeline();
-      renderGanttChart();
     }
 
     function renderTimeline() {
@@ -395,19 +410,6 @@
       });
     }
 
-    function renderGanttChart() {
-      const tasks = currentProject.timeline.map((item, i) => ({
-        id: "Task" + i,
-        name: item.text,
-        start: item.date,
-        end: item.date,
-        progress: 100
-      }));
-
-      document.getElementById("gantt").innerHTML = "";
-      new Gantt("#gantt", tasks);
-    }
-
     function allowDrop(e) {
       e.preventDefault();
     }
@@ -416,6 +418,29 @@
       e.preventDefault();
       const data = e.dataTransfer.getData("text");
       e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
+    }
+
+    function addGanttTask() {
+      const task = document.getElementById("ganttTask").value;
+      const start = document.getElementById("ganttStart").value;
+      const end = document.getElementById("ganttEnd").value;
+      if (!task || !start || !end) return;
+
+      const taskObj = { id: task + Date.now(), name: task, start, end, progress: 0 };
+      ganttTasks.push(taskObj);
+      currentProject.gantt.push(taskObj);
+      renderGantt();
+    }
+
+    function renderGantt() {
+      const target = document.getElementById("gantt");
+      target.innerHTML = "";
+      if (ganttTasks.length > 0) {
+        gantt = new Gantt(target, ganttTasks, {
+          view_mode: 'Day',
+          custom_popup_html: null
+        });
+      }
     }
 
     renderProjectIcons();
