@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Google Gantt Chart</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+    <title>Editable Google Gantt</title>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
       google.charts.load('current', {'packages':['gantt']});
-      google.charts.setOnLoadCallback(drawChart);
+      google.charts.setOnLoadCallback(initChart);
 
       let data, chart;
+      let selectedRowIndex = null;
 
-      function drawChart() {
+      function initChart() {
         data = new google.visualization.DataTable();
         data.addColumn('string', 'Task ID');
         data.addColumn('string', 'Task Name');
@@ -21,15 +22,31 @@
         data.addColumn('string', 'Dependencies');
 
         chart = new google.visualization.Gantt(document.getElementById('chart_div'));
-        chart.draw(data, {
-          height: 275,
-          gantt: {
-            trackHeight: 30
+        drawChart();
+
+        google.visualization.events.addListener(chart, 'select', () => {
+          const selection = chart.getSelection();
+          if (selection.length > 0) {
+            selectedRowIndex = selection[0].row;
+            const row = data.getRowProperties(selectedRowIndex);
+            const task = data.getValue(selectedRowIndex, 1);
+            const start = data.getValue(selectedRowIndex, 3);
+            const end = data.getValue(selectedRowIndex, 4);
+            document.getElementById("taskName").value = task;
+            document.getElementById("startDate").value = formatDateInput(start);
+            document.getElementById("endDate").value = formatDateInput(end);
           }
         });
       }
 
-      function addTask() {
+      function drawChart() {
+        chart.draw(data, {
+          height: data.getNumberOfRows() * 45 + 50,
+          gantt: { trackHeight: 30 }
+        });
+      }
+
+      function addOrUpdateTask() {
         const taskName = document.getElementById("taskName").value;
         const startDate = new Date(document.getElementById("startDate").value);
         const endDate = new Date(document.getElementById("endDate").value);
@@ -39,34 +56,113 @@
           return;
         }
 
-        const taskId = "T" + Date.now();
+        if (selectedRowIndex !== null) {
+          // Update existing task
+          data.setValue(selectedRowIndex, 1, taskName);
+          data.setValue(selectedRowIndex, 3, startDate);
+          data.setValue(selectedRowIndex, 4, endDate);
+          selectedRowIndex = null;
+        } else {
+          // Add new task
+          const taskId = "T" + Date.now();
+          data.addRow([
+            taskId,
+            taskName,
+            null,
+            startDate,
+            endDate,
+            null,
+            0,
+            null
+          ]);
+        }
 
-        data.addRow([
-          taskId,            // Task ID
-          taskName,          // Task Name
-          null,              // Resource
-          startDate,         // Start Date
-          endDate,           // End Date
-          null,              // Duration (null if using start & end)
-          0,                 // % Complete
-          null               // Dependencies
-        ]);
+        resetForm();
+        drawChart();
+      }
 
-        chart.draw(data, {
-          height: data.getNumberOfRows() * 40 + 50,
-          gantt: { trackHeight: 30 }
-        });
+      function deleteTask() {
+        if (selectedRowIndex !== null) {
+          data.removeRow(selectedRowIndex);
+          selectedRowIndex = null;
+          resetForm();
+          drawChart();
+        } else {
+          alert("Please select a task to delete.");
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("taskName").value = "";
+        document.getElementById("startDate").value = "";
+        document.getElementById("endDate").value = "";
+      }
+
+      function formatDateInput(date) {
+        const d = new Date(date);
+        const month = ("0" + (d.getMonth() + 1)).slice(-2);
+        const day = ("0" + d.getDate()).slice(-2);
+        return `${d.getFullYear()}-${month}-${day}`;
       }
     </script>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #1B1814;
+        color: #fff;
+        padding: 2rem;
+      }
+
+      h1 {
+        text-align: center;
+        color: #ffd700;
+      }
+
+      .form-inline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        justify-content: center;
+      }
+
+      input, button {
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 4px;
+      }
+
+      input[type="date"] {
+        color: #333;
+      }
+
+      button {
+        cursor: pointer;
+        background-color: #ffd700;
+        color: #1B1814;
+        font-weight: bold;
+      }
+
+      #chart_div {
+        background: #fff;
+        border-radius: 10px;
+        padding: 1rem;
+        overflow-x: auto;
+      }
+    </style>
   </head>
-  <body style="font-family:sans-serif; background:#1B1814; color:#fff; padding:2rem">
-    <h1 style="color:#ffd700">Google Gantt Chart</h1>
-    <div style="margin-bottom: 1rem;">
+  <body>
+    <h1>Editable Gantt Chart</h1>
+
+    <div class="form-inline">
       <input id="taskName" placeholder="Task Name" />
       <input id="startDate" type="date" />
       <input id="endDate" type="date" />
-      <button onclick="addTask()">Add Task</button>
+      <button onclick="addOrUpdateTask()">Add / Update Task</button>
+      <button onclick="deleteTask()">Delete Task</button>
     </div>
+
     <div id="chart_div"></div>
   </body>
 </html>
