@@ -75,7 +75,7 @@
       margin-bottom: 1rem;
     }
 
-    input, select, button {
+    input, button, select {
       font-size: 1rem;
       padding: 0.5rem;
     }
@@ -188,8 +188,8 @@
         <input id="expenseName" placeholder="Expense Name" />
         <input id="expenseAmount" type="number" placeholder="Amount ($)" />
         <select id="expenseType">
-          <option value="Purchase">Purchase</option>
-          <option value="Service">Service</option>
+          <option value="Purchases">Purchases</option>
+          <option value="Services">Services</option>
           <option value="Other">Other</option>
         </select>
         <button onclick="addExpense()">Add Expense</button>
@@ -204,6 +204,26 @@
         </div>
         <div class="chart-container">
           <canvas id="budgetChart"></canvas>
+        </div>
+      </div>
+
+      <h3>Project Timeline</h3>
+      <div class="form-inline">
+        <input id="deliverable" placeholder="Deliverable" />
+        <input id="dueDate" type="date" />
+        <button onclick="addTimelineEvent()">Add to Timeline</button>
+      </div>
+      <div class="timeline-events" id="timeline"></div>
+
+      <div class="kanban-board">
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h4>To Do</h4>
+        </div>
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h4>In Progress</h4>
+        </div>
+        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h4>Done</h4>
         </div>
       </div>
     </div>
@@ -227,6 +247,7 @@
       currentProject.name = document.getElementById("projectName").value;
       currentProject.budget = parseFloat(document.getElementById("projectBudget").value);
       currentProject.expenses = currentProject.expenses || [];
+      currentProject.timeline = currentProject.timeline || [];
       savedProjects.push(currentProject);
       localStorage.setItem("projects", JSON.stringify(savedProjects));
       renderSavedProjects();
@@ -246,11 +267,17 @@
       const container = document.getElementById("savedProjects");
       container.innerHTML = "";
       savedProjects.forEach((p, i) => {
-        const icon = document.createElement("span");
-        icon.textContent = p.name;
+        const icon = document.createElement("img");
+        icon.src = "OrozcoRealtyLLC.png";
+        icon.alt = p.name;
+        icon.style.width = "40px";
+        icon.style.marginRight = "10px";
+        icon.style.cursor = "pointer";
+        icon.title = p.name;
         icon.onclick = () => {
           currentProject = p;
           updateProjectDisplay();
+          renderTimeline();
         };
         container.appendChild(icon);
       });
@@ -274,7 +301,7 @@
         total += exp.amount;
         const item = document.createElement("div");
         item.className = "expense-item";
-        item.innerHTML = `${exp.name} - $${exp.amount.toFixed(2)} (${exp.type}) <button onclick="editExpense(${index})">Edit</button>`;
+        item.innerHTML = `${exp.name} (${exp.type}): $${exp.amount.toFixed(2)} <button onclick="editExpense(${index})">Edit</button>`;
         list.appendChild(item);
       });
       document.getElementById("totalExpenses").innerText = total.toFixed(2);
@@ -282,10 +309,11 @@
     }
 
     function editExpense(index) {
-      const exp = currentProject.expenses[index];
-      const newAmount = parseFloat(prompt("Enter new amount:", exp.amount));
-      if (!isNaN(newAmount)) {
-        exp.amount = newAmount;
+      const newName = prompt("Edit expense name:", currentProject.expenses[index].name);
+      const newAmount = parseFloat(prompt("Edit expense amount:", currentProject.expenses[index].amount));
+      const newType = prompt("Edit expense type (Purchases, Services, Other):", currentProject.expenses[index].type);
+      if (newName && !isNaN(newAmount) && newType) {
+        currentProject.expenses[index] = { name: newName, amount: newAmount, type: newType };
         renderExpenses();
         renderChart();
       }
@@ -313,6 +341,42 @@
           cutout: "50%"
         }
       });
+    }
+
+    function addTimelineEvent() {
+      const text = document.getElementById("deliverable").value;
+      const date = document.getElementById("dueDate").value;
+      if (!text || !date) return;
+      currentProject.timeline.push({ text, date });
+      renderTimeline();
+    }
+
+    function renderTimeline() {
+      const container = document.getElementById("timeline");
+      container.innerHTML = "";
+      currentProject.timeline.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "timeline-item";
+        div.textContent = `${item.date}: ${item.text}`;
+        container.appendChild(div);
+
+        const task = document.createElement("div");
+        task.className = "task";
+        task.draggable = true;
+        task.ondragstart = e => e.dataTransfer.setData("text", e.target.outerHTML);
+        task.innerText = item.text;
+        document.querySelector(".kanban-column").appendChild(task);
+      });
+    }
+
+    function allowDrop(e) {
+      e.preventDefault();
+    }
+
+    function drop(e) {
+      e.preventDefault();
+      const data = e.dataTransfer.getData("text");
+      e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
     }
 
     renderSavedProjects();
