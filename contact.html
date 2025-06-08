@@ -2,467 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projects | OrozcoRealty LLC</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Gantt Chart</title>
   <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #1B1814;
+      background-color: #1b1814;
       color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    header {
-      height: 300px;
-      background-image: url('banner.jpg');
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+      font-family: sans-serif;
       padding: 2rem;
     }
 
-    header img {
-      max-width: 300px;
-      height: auto;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-
-    nav {
-      background: #111;
-      padding: 1rem;
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      text-transform: uppercase;
-      transition: color 0.3s ease;
-    }
-
-    nav a:hover {
-      color: #ffd700;
-    }
-
-    main {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background-color: #111;
-      border-radius: 12px;
-      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
-    }
-
-    h1, h2 {
+    h1 {
       text-align: center;
       color: #ffd700;
     }
 
-    .form-inline, .budget-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-
-    input, button, select {
-      font-size: 1rem;
-      padding: 0.5rem;
-    }
-
-    .project-icons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    .project-icon {
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .project-icon img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid #ffd700;
-    }
-
-    .project-icon span {
-      margin-top: 0.3rem;
-      font-size: 0.8rem;
-    }
-
-    .project {
-      background-color: #222;
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .expense-list, .timeline-events, .kanban-board {
-      margin-top: 1rem;
-    }
-
-    .expense-item, .timeline-item {
-      background: #333;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
-      border-radius: 6px;
-    }
-
-    .chart-container {
-      width: 250px;
-      margin-left: auto;
-    }
-
-    .kanban-board {
+    .form-inline {
       display: flex;
       gap: 1rem;
+      margin-bottom: 1rem;
     }
 
-    .kanban-column {
-      flex: 1;
-      background-color: #333;
+    input, button {
       padding: 0.5rem;
-      border-radius: 10px;
-      min-height: 200px;
-    }
-
-    .kanban-column h4 {
-      color: #ffd700;
-      text-align: center;
-    }
-
-    .task {
-      background-color: #555;
-      padding: 0.5rem;
-      margin: 0.5rem;
-      border-radius: 6px;
-      cursor: grab;
-    }
-
-    .gantt-section {
-      margin-top: 2rem;
+      font-size: 1rem;
     }
 
     #gantt {
       background: #fff;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 1rem;
       overflow-x: scroll;
-    }
-
-    footer {
-      background: #111;
-      color: #aaa;
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 0.95rem;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.05); filter: brightness(1.3); }
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
-  </header>
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="roadmap.html">Roadmap</a>
-    <a href="listings.html">Listings</a>
-    <a href="rehab.html">Projects</a>
-    <a href="contact.html">Contact</a>
-  </nav>
+  <h1>Simple Gantt Chart</h1>
 
-  <main>
-    <h1>Project Management Dashboard</h1>
+  <div class="form-inline">
+    <input id="taskName" placeholder="Task Name" />
+    <input id="startDate" type="date" />
+    <input id="endDate" type="date" />
+    <button onclick="addTask()">Add Task</button>
+  </div>
 
-    <div class="form-inline">
-      <input id="projectName" placeholder="Enter Project Name" />
-      <input id="projectBudget" type="number" placeholder="Total Budget ($)" />
-      <button onclick="saveProject()">Save Project</button>
-      <button onclick="editProject()">Edit Project</button>
-    </div>
-
-    <div class="project-icons" id="projectIcons"></div>
-
-    <div class="project">
-      <h2 id="currentProject">Current Project: None</h2>
-
-      <div class="budget-form">
-        <input id="expenseName" placeholder="Expense Name" />
-        <input id="expenseAmount" type="number" placeholder="Amount ($)" />
-        <select id="expenseType">
-          <option value="Purchase">Purchase</option>
-          <option value="Service">Service</option>
-          <option value="Other">Other</option>
-        </select>
-        <button onclick="addExpense()">Add Expense</button>
-      </div>
-
-      <div style="display: flex; gap: 2rem; align-items: flex-start;">
-        <div>
-          <h3>Expenses</h3>
-          <div class="expense-list" id="expenseList"></div>
-          <p><strong>Total Expenses:</strong> $<span id="totalExpenses">0</span></p>
-        </div>
-        <div class="chart-container">
-          <p><strong>Remaining Budget:</strong> $<span id="remainingBudget">0</span></p>
-          <canvas id="budgetChart"></canvas>
-        </div>
-      </div>
-
-      <h3>Project Timeline</h3>
-      <div class="form-inline">
-        <input id="deliverable" placeholder="Deliverable" />
-        <input id="dueDate" type="date" />
-        <button onclick="addTimelineEvent()">Add to Timeline</button>
-      </div>
-      <div class="timeline-events" id="timeline"></div>
-
-      <div class="kanban-board">
-        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h4>To Do</h4>
-        </div>
-        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h4>In Progress</h4>
-        </div>
-        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h4>Done</h4>
-        </div>
-      </div>
-
-      <div class="gantt-section">
-        <h3>Gantt Chart</h3>
-        <div class="form-inline">
-          <input id="ganttTask" placeholder="Task Name" />
-          <input id="ganttStart" type="date" />
-          <input id="ganttEnd" type="date" />
-          <button onclick="addGanttTask()">Add to Gantt</button>
-        </div>
-        <div id="gantt"></div>
-      </div>
-    </div>
-  </main>
-
-  <footer>
-    &copy; 2025 OrozcoRealty LLC. All rights reserved.
-  </footer>
+  <div id="gantt"></div>
 
   <script>
-    let currentProject = {};
-    let savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    let gantt;
-    let ganttTasks = [];
+    let tasks = [];
 
-    function saveProjectsToStorage() {
-      localStorage.setItem("projects", JSON.stringify(savedProjects));
-    }
+    function addTask() {
+      const name = document.getElementById("taskName").value;
+      const start = document.getElementById("startDate").value;
+      const end = document.getElementById("endDate").value;
 
-    function updateProjectDisplay() {
-      document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
-      ganttTasks = currentProject.gantt || [];
-      renderExpenses();
-      renderTimeline();
-      renderChart();
-      renderGantt();
-    }
+      if (!name || !start || !end) {
+        alert("Please fill in all fields.");
+        return;
+      }
 
-    function saveProject() {
-      const name = document.getElementById("projectName").value;
-      const budget = parseFloat(document.getElementById("projectBudget").value);
-      if (!name || isNaN(budget)) return;
-      currentProject = { name, budget, expenses: [], timeline: [], gantt: [] };
-      savedProjects.push(currentProject);
-      saveProjectsToStorage();
-      renderProjectIcons();
-      updateProjectDisplay();
-    }
+      const task = {
+        id: name + Date.now(),
+        name,
+        start,
+        end,
+        progress: 0,
+      };
 
-    function editProject() {
-      const name = prompt("Enter new project name:", currentProject.name);
-      const budget = prompt("Enter new total budget:", currentProject.budget);
-      if (name) currentProject.name = name;
-      if (budget) currentProject.budget = parseFloat(budget);
-      const index = savedProjects.findIndex(p => p.name === currentProject.name);
-      if (index > -1) savedProjects[index] = currentProject;
-      saveProjectsToStorage();
-      updateProjectDisplay();
-    }
-
-    function renderProjectIcons() {
-      const container = document.getElementById("projectIcons");
-      container.innerHTML = "";
-      savedProjects.forEach((p, i) => {
-        const div = document.createElement("div");
-        div.className = "project-icon";
-        div.onclick = () => {
-          currentProject = p;
-          updateProjectDisplay();
-        };
-
-        const img = document.createElement("img");
-        img.src = "OrozcoRealtyLLC.png";
-        img.alt = p.name;
-
-        const span = document.createElement("span");
-        span.textContent = p.name;
-
-        div.appendChild(img);
-        div.appendChild(span);
-        container.appendChild(div);
-      });
-    }
-
-    function addExpense() {
-      const name = document.getElementById("expenseName").value;
-      const amount = parseFloat(document.getElementById("expenseAmount").value);
-      const type = document.getElementById("expenseType").value;
-      if (!name || isNaN(amount)) return;
-      currentProject.expenses.push({ name, amount, type });
-      const index = savedProjects.findIndex(p => p.name === currentProject.name);
-      if (index > -1) savedProjects[index] = currentProject;
-      saveProjectsToStorage();
-      renderExpenses();
-      renderChart();
-    }
-
-    function renderExpenses() {
-      const list = document.getElementById("expenseList");
-      list.innerHTML = "";
-      let total = 0;
-      currentProject.expenses.forEach(exp => {
-        total += exp.amount;
-        const item = document.createElement("div");
-        item.className = "expense-item";
-        item.textContent = `${exp.name} (${exp.type}): $${exp.amount.toFixed(2)}`;
-        list.appendChild(item);
-      });
-      document.getElementById("totalExpenses").innerText = total.toFixed(2);
-      document.getElementById("remainingBudget").innerText = (currentProject.budget - total).toFixed(2);
-    }
-
-    function renderChart() {
-      const ctx = document.getElementById("budgetChart").getContext("2d");
-      const totalExpenses = currentProject.expenses.reduce((sum, e) => sum + e.amount, 0);
-      const remaining = currentProject.budget - totalExpenses;
-      if (window.budgetPieChart) window.budgetPieChart.destroy();
-      window.budgetPieChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: ["Expenses", "Remaining"],
-          datasets: [{
-            data: [totalExpenses, remaining],
-            backgroundColor: ["#ff4d4d", "#28a745"],
-            borderWidth: 3,
-            borderColor: "#000"
-          }]
-        },
-        options: {
-          plugins: {
-            legend: { labels: { color: "#fff" } }
-          },
-          cutout: "40%",
-          animation: {
-            animateRotate: true,
-            duration: 1000
-          }
-        }
-      });
-    }
-
-    function addTimelineEvent() {
-      const text = document.getElementById("deliverable").value;
-      const date = document.getElementById("dueDate").value;
-      if (!text || !date) return;
-      currentProject.timeline.push({ text, date });
-      const index = savedProjects.findIndex(p => p.name === currentProject.name);
-      if (index > -1) savedProjects[index] = currentProject;
-      saveProjectsToStorage();
-      renderTimeline();
-    }
-
-    function renderTimeline() {
-      const container = document.getElementById("timeline");
-      container.innerHTML = "";
-      currentProject.timeline.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "timeline-item";
-        div.textContent = `${item.date}: ${item.text}`;
-        container.appendChild(div);
-
-        const task = document.createElement("div");
-        task.className = "task";
-        task.draggable = true;
-        task.ondragstart = e => e.dataTransfer.setData("text", e.target.outerHTML);
-        task.innerText = item.text;
-        document.querySelector(".kanban-column").appendChild(task);
-      });
-    }
-
-    function allowDrop(e) {
-      e.preventDefault();
-    }
-
-    function drop(e) {
-      e.preventDefault();
-      const data = e.dataTransfer.getData("text");
-      e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
-    }
-
-    function addGanttTask() {
-      const task = document.getElementById("ganttTask").value;
-      const start = document.getElementById("ganttStart").value;
-      const end = document.getElementById("ganttEnd").value;
-      if (!task || !start || !end) return;
-
-      const taskObj = { id: task + Date.now(), name: task, start, end, progress: 0 };
-      ganttTasks.push(taskObj);
-
-      if (!currentProject.gantt) currentProject.gantt = [];
-      currentProject.gantt.push(taskObj);
-
-      const index = savedProjects.findIndex(p => p.name === currentProject.name);
-      if (index > -1) savedProjects[index] = currentProject;
-      saveProjectsToStorage();
+      tasks.push(task);
       renderGantt();
     }
 
     function renderGantt() {
-      const target = document.getElementById("gantt");
-      target.innerHTML = "";
-      if (ganttTasks.length > 0) {
-        gantt = new Gantt(target, ganttTasks, {
-          view_mode: 'Day',
-          custom_popup_html: null
-        });
-      }
+      const ganttArea = document.getElementById("gantt");
+      ganttArea.innerHTML = "";
+      new Gantt(ganttArea, tasks, {
+        view_mode: 'Day'
+      });
     }
-
-    renderProjectIcons();
   </script>
+
 </body>
 </html>
