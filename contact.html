@@ -68,7 +68,7 @@
       color: #ffd700;
     }
 
-    .form-inline, .budget-form, .expense-form {
+    .form-inline, .budget-form {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
@@ -129,17 +129,10 @@
       cursor: grab;
     }
 
-    .saved-projects {
-      margin-bottom: 1rem;
-    }
-
-    .saved-projects span {
-      background-color: #444;
-      border-radius: 4px;
-      padding: 0.3rem 0.5rem;
-      margin-right: 0.5rem;
+    .saved-projects img {
+      height: 30px;
+      margin: 0 5px;
       cursor: pointer;
-      font-size: 0.9rem;
     }
 
     footer {
@@ -188,21 +181,21 @@
         <input id="expenseName" placeholder="Expense Name" />
         <input id="expenseAmount" type="number" placeholder="Amount ($)" />
         <select id="expenseType">
-          <option value="Purchases">Purchases</option>
-          <option value="Services">Services</option>
+          <option value="Purchase">Purchase</option>
+          <option value="Service">Service</option>
           <option value="Other">Other</option>
         </select>
         <button onclick="addExpense()">Add Expense</button>
       </div>
 
-      <div style="display: flex; gap: 2rem;">
+      <div style="display: flex; gap: 2rem; align-items: flex-start;">
         <div>
           <h3>Expenses</h3>
           <div class="expense-list" id="expenseList"></div>
           <p><strong>Total Expenses:</strong> $<span id="totalExpenses">0</span></p>
-          <p><strong>Remaining Budget:</strong> $<span id="remainingBudget">0</span></p>
         </div>
         <div class="chart-container">
+          <p><strong>Remaining Budget:</strong> $<span id="remainingBudget">0</span></p>
           <canvas id="budgetChart"></canvas>
         </div>
       </div>
@@ -235,11 +228,12 @@
 
   <script>
     let currentProject = {};
-    const savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+    let savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
 
     function updateProjectDisplay() {
       document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
       renderExpenses();
+      renderTimeline();
       renderChart();
     }
 
@@ -248,7 +242,7 @@
       currentProject.budget = parseFloat(document.getElementById("projectBudget").value);
       currentProject.expenses = currentProject.expenses || [];
       currentProject.timeline = currentProject.timeline || [];
-      savedProjects.push(currentProject);
+      savedProjects.push({...currentProject});
       localStorage.setItem("projects", JSON.stringify(savedProjects));
       renderSavedProjects();
       updateProjectDisplay();
@@ -270,14 +264,10 @@
         const icon = document.createElement("img");
         icon.src = "OrozcoRealtyLLC.png";
         icon.alt = p.name;
-        icon.style.width = "40px";
-        icon.style.marginRight = "10px";
-        icon.style.cursor = "pointer";
         icon.title = p.name;
         icon.onclick = () => {
-          currentProject = p;
+          currentProject = {...p};
           updateProjectDisplay();
-          renderTimeline();
         };
         container.appendChild(icon);
       });
@@ -297,26 +287,15 @@
       const list = document.getElementById("expenseList");
       list.innerHTML = "";
       let total = 0;
-      currentProject.expenses.forEach((exp, index) => {
+      currentProject.expenses.forEach(exp => {
         total += exp.amount;
         const item = document.createElement("div");
         item.className = "expense-item";
-        item.innerHTML = `${exp.name} (${exp.type}): $${exp.amount.toFixed(2)} <button onclick="editExpense(${index})">Edit</button>`;
+        item.textContent = `${exp.name} (${exp.type}): $${exp.amount.toFixed(2)}`;
         list.appendChild(item);
       });
       document.getElementById("totalExpenses").innerText = total.toFixed(2);
       document.getElementById("remainingBudget").innerText = (currentProject.budget - total).toFixed(2);
-    }
-
-    function editExpense(index) {
-      const newName = prompt("Edit expense name:", currentProject.expenses[index].name);
-      const newAmount = parseFloat(prompt("Edit expense amount:", currentProject.expenses[index].amount));
-      const newType = prompt("Edit expense type (Purchases, Services, Other):", currentProject.expenses[index].type);
-      if (newName && !isNaN(newAmount) && newType) {
-        currentProject.expenses[index] = { name: newName, amount: newAmount, type: newType };
-        renderExpenses();
-        renderChart();
-      }
     }
 
     function renderChart() {
@@ -331,14 +310,19 @@
           datasets: [{
             data: [totalExpenses, remaining],
             backgroundColor: ["#ff4d4d", "#28a745"],
-            borderWidth: 0
+            borderWidth: 3,
+            borderColor: "#000"
           }]
         },
         options: {
           plugins: {
             legend: { labels: { color: "#fff" } }
           },
-          cutout: "50%"
+          cutout: "40%",
+          animation: {
+            animateRotate: true,
+            duration: 1000,
+          }
         }
       });
     }
