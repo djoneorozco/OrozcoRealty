@@ -1,89 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simple Gantt Chart</title>
-  <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
-  <style>
-    body {
-      background-color: #1b1814;
-      color: #fff;
-      font-family: sans-serif;
-      padding: 2rem;
-    }
+<html>
+  <head>
+    <title>Google Gantt Chart</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['gantt']});
+      google.charts.setOnLoadCallback(drawChart);
 
-    h1 {
-      text-align: center;
-      color: #ffd700;
-    }
+      let data, chart;
 
-    .form-inline {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
+      function drawChart() {
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('string', 'Resource');
+        data.addColumn('date', 'Start Date');
+        data.addColumn('date', 'End Date');
+        data.addColumn('number', 'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string', 'Dependencies');
 
-    input, button {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
-    #gantt {
-      background: #fff;
-      border-radius: 10px;
-      padding: 1rem;
-      overflow-x: scroll;
-    }
-  </style>
-</head>
-<body>
-
-  <h1>Simple Gantt Chart</h1>
-
-  <div class="form-inline">
-    <input id="taskName" placeholder="Task Name" />
-    <input id="startDate" type="date" />
-    <input id="endDate" type="date" />
-    <button onclick="addTask()">Add Task</button>
-  </div>
-
-  <div id="gantt"></div>
-
-  <script>
-    let tasks = [];
-
-    function addTask() {
-      const name = document.getElementById("taskName").value;
-      const start = document.getElementById("startDate").value;
-      const end = document.getElementById("endDate").value;
-
-      if (!name || !start || !end) {
-        alert("Please fill in all fields.");
-        return;
+        chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+        chart.draw(data, {
+          height: 275,
+          gantt: {
+            trackHeight: 30
+          }
+        });
       }
 
-      const task = {
-        id: name + Date.now(),
-        name,
-        start,
-        end,
-        progress: 0,
-      };
+      function addTask() {
+        const taskName = document.getElementById("taskName").value;
+        const startDate = new Date(document.getElementById("startDate").value);
+        const endDate = new Date(document.getElementById("endDate").value);
 
-      tasks.push(task);
-      renderGantt();
-    }
+        if (!taskName || isNaN(startDate) || isNaN(endDate)) {
+          alert("Please fill in all fields.");
+          return;
+        }
 
-    function renderGantt() {
-      const ganttArea = document.getElementById("gantt");
-      ganttArea.innerHTML = "";
-      new Gantt(ganttArea, tasks, {
-        view_mode: 'Day'
-      });
-    }
-  </script>
+        const taskId = "T" + Date.now();
 
-</body>
+        data.addRow([
+          taskId,            // Task ID
+          taskName,          // Task Name
+          null,              // Resource
+          startDate,         // Start Date
+          endDate,           // End Date
+          null,              // Duration (null if using start & end)
+          0,                 // % Complete
+          null               // Dependencies
+        ]);
+
+        chart.draw(data, {
+          height: data.getNumberOfRows() * 40 + 50,
+          gantt: { trackHeight: 30 }
+        });
+      }
+    </script>
+  </head>
+  <body style="font-family:sans-serif; background:#1B1814; color:#fff; padding:2rem">
+    <h1 style="color:#ffd700">Google Gantt Chart</h1>
+    <div style="margin-bottom: 1rem;">
+      <input id="taskName" placeholder="Task Name" />
+      <input id="startDate" type="date" />
+      <input id="endDate" type="date" />
+      <button onclick="addTask()">Add Task</button>
+    </div>
+    <div id="chart_div"></div>
+  </body>
 </html>
