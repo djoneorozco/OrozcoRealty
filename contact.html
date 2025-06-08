@@ -68,7 +68,19 @@
       color: #ffd700;
     }
 
-    .form-inline, .budget-form {
+    .project-icons {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .project-icons img {
+      width: 40px;
+      height: 40px;
+      margin: 0.2rem;
+      cursor: pointer;
+    }
+
+    .form-inline, .budget-form, .expense-form {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
@@ -129,33 +141,6 @@
       cursor: grab;
     }
 
-    .saved-projects {
-      margin-bottom: 1rem;
-    }
-
-    .saved-projects span {
-      background-color: #444;
-      border-radius: 4px;
-      padding: 0.3rem 0.5rem;
-      margin-right: 0.5rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: #ffd700;
-      transition: background 0.3s;
-    }
-
-    .saved-projects span:hover {
-      background-color: #666;
-    }
-
-    .dashboard-icon {
-      font-size: 2rem;
-      text-align: center;
-      display: none;
-      cursor: pointer;
-      margin-bottom: 0.5rem;
-    }
-
     footer {
       background: #111;
       color: #aaa;
@@ -185,9 +170,7 @@
   </nav>
 
   <main>
-    <div class="saved-projects" id="savedProjects"></div>
-
-    <div id="projectIcon" class="dashboard-icon" onclick="showProjectDetails()">💼</div>
+    <div class="project-icons" id="projectIcons"></div>
     <h1>Project Management Dashboard</h1>
 
     <div class="form-inline">
@@ -250,10 +233,8 @@
 
     function updateProjectDisplay() {
       document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
-      document.getElementById("projectIcon").style.display = "block";
       renderExpenses();
       renderChart();
-      renderTimeline();
     }
 
     function saveProject() {
@@ -261,16 +242,9 @@
       currentProject.budget = parseFloat(document.getElementById("projectBudget").value);
       currentProject.expenses = currentProject.expenses || [];
       currentProject.timeline = currentProject.timeline || [];
-
-      const index = savedProjects.findIndex(p => p.name === currentProject.name);
-      if (index >= 0) {
-        savedProjects[index] = currentProject;
-      } else {
-        savedProjects.push(currentProject);
-      }
-
+      savedProjects.push(currentProject);
       localStorage.setItem("projects", JSON.stringify(savedProjects));
-      renderSavedProjects();
+      renderSavedProjectIcons();
       updateProjectDisplay();
     }
 
@@ -283,24 +257,21 @@
       renderChart();
     }
 
-    function renderSavedProjects() {
-      const container = document.getElementById("savedProjects");
+    function renderSavedProjectIcons() {
+      const container = document.getElementById("projectIcons");
       container.innerHTML = "";
-      savedProjects.forEach((p) => {
-        const span = document.createElement("span");
-        span.textContent = p.name;
-        span.onclick = () => {
-          currentProject = p;
+      savedProjects.forEach((project, index) => {
+        const icon = document.createElement("img");
+        icon.src = "OrozcoRealtyLLC.png";
+        icon.alt = project.name;
+        icon.title = project.name;
+        icon.onclick = () => {
+          currentProject = project;
           updateProjectDisplay();
+          renderTimeline();
         };
-        container.appendChild(span);
+        container.appendChild(icon);
       });
-    }
-
-    function showProjectDetails() {
-      if (!currentProject.name) return;
-      const timelineDetails = currentProject.timeline.map(t => `- ${t.deliverable} (Due: ${t.dueDate})`).join("\n");
-      alert(`Project: ${currentProject.name}\nBudget: $${currentProject.budget.toFixed(2)}\nTimeline:\n${timelineDetails}`);
     }
 
     function addExpense() {
@@ -338,50 +309,56 @@
           labels: ["Expenses", "Remaining"],
           datasets: [{
             data: [totalExpenses, remaining],
-            backgroundColor: ["#ff4c4c", "#4caf50"]
+            backgroundColor: ["#ff4d4d", "#28a745"],
+            borderWidth: 0
           }]
         },
         options: {
           plugins: {
-            legend: {
-              labels: { color: "#fff" }
-            }
-          }
+            legend: { labels: { color: "#fff" } }
+          },
+          cutout: "50%"
         }
       });
     }
 
     function addTimelineEvent() {
-      const deliverable = document.getElementById("deliverable").value;
-      const dueDate = document.getElementById("dueDate").value;
-      if (!deliverable || !dueDate) return;
-      currentProject.timeline.push({ deliverable, dueDate });
+      const text = document.getElementById("deliverable").value;
+      const date = document.getElementById("dueDate").value;
+      if (!text || !date) return;
+      currentProject.timeline.push({ text, date });
       renderTimeline();
     }
 
     function renderTimeline() {
-      const timeline = document.getElementById("timeline");
-      timeline.innerHTML = "";
-      currentProject.timeline.forEach(event => {
-        const item = document.createElement("div");
-        item.className = "timeline-item";
-        item.textContent = `${event.deliverable} - Due: ${event.dueDate}`;
-        timeline.appendChild(item);
+      const container = document.getElementById("timeline");
+      container.innerHTML = "";
+      currentProject.timeline.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "timeline-item";
+        div.textContent = `${item.date}: ${item.text}`;
+        container.appendChild(div);
+
+        const task = document.createElement("div");
+        task.className = "task";
+        task.draggable = true;
+        task.ondragstart = e => e.dataTransfer.setData("text", e.target.outerHTML);
+        task.innerText = item.text;
+        document.querySelector(".kanban-column").appendChild(task);
       });
     }
 
-    function allowDrop(ev) {
-      ev.preventDefault();
+    function allowDrop(e) {
+      e.preventDefault();
     }
 
-    function drop(ev) {
-      ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
-      const task = document.getElementById(data);
-      ev.target.appendChild(task);
+    function drop(e) {
+      e.preventDefault();
+      const data = e.dataTransfer.getData("text");
+      e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
     }
 
-    renderSavedProjects();
+    renderSavedProjectIcons();
   </script>
 </body>
 </html>
