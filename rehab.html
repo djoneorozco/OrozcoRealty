@@ -116,7 +116,7 @@
       margin-bottom: 2rem;
     }
 
-    .expense-list, .timeline-events, .kanban-board {
+    .expense-list, .timeline-events {
       margin-top: 1rem;
     }
 
@@ -135,6 +135,7 @@
     .kanban-board {
       display: flex;
       gap: 1rem;
+      margin-top: 1rem;
     }
 
     .kanban-column {
@@ -238,7 +239,8 @@
       <h3>Project Timeline</h3>
       <div class="form-inline">
         <input id="deliverable" placeholder="Deliverable" />
-        <input id="dueDate" type="date" />
+        <input id="startDate" type="date" />
+        <input id="endDate" type="date" />
         <button onclick="addTimelineEvent()">Add to Timeline</button>
       </div>
       <div class="timeline-events" id="timeline"></div>
@@ -257,15 +259,8 @@
 
       <div class="gantt-section">
         <h3>Gantt Chart</h3>
-        <div class="form-inline">
-          <input id="ganttTask" placeholder="Task Name" />
-          <input id="ganttStart" type="date" />
-          <input id="ganttEnd" type="date" />
-          <button onclick="addGanttTask()">Add to Gantt</button>
-        </div>
         <div id="gantt"></div>
       </div>
-
     </div>
   </main>
 
@@ -276,23 +271,15 @@
   <script>
     let currentProject = {};
     let savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    let gantt;
-    let ganttTasks = [];
-
-    function updateProjectDisplay() {
-      document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
-      renderExpenses();
-      renderTimeline();
-      renderChart();
-    }
 
     function saveProject() {
       const name = document.getElementById("projectName").value;
       const budget = parseFloat(document.getElementById("projectBudget").value);
       if (!name || isNaN(budget)) return;
-      currentProject = { name, budget, expenses: [], timeline: [] };
+      currentProject = { name, budget, expenses: [], timeline: [], gantt: [] };
       savedProjects.push(currentProject);
       localStorage.setItem("projects", JSON.stringify(savedProjects));
+      localStorage.setItem("lastProject", savedProjects.length - 1);
       renderProjectIcons();
       updateProjectDisplay();
     }
@@ -302,7 +289,17 @@
       const budget = prompt("Enter new total budget:", currentProject.budget);
       if (name) currentProject.name = name;
       if (budget) currentProject.budget = parseFloat(budget);
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
+      renderProjectIcons();
       updateProjectDisplay();
+    }
+
+    function updateProjectDisplay() {
+      document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
+      renderExpenses();
+      renderTimeline();
+      renderChart();
+      renderGantt();
     }
 
     function renderProjectIcons() {
@@ -312,17 +309,15 @@
         const div = document.createElement("div");
         div.className = "project-icon";
         div.onclick = () => {
-          currentProject = p;
+          currentProject = savedProjects[i];
+          localStorage.setItem("lastProject", i);
           updateProjectDisplay();
         };
-
         const img = document.createElement("img");
         img.src = "OrozcoRealtyLLC.png";
         img.alt = p.name;
-
         const span = document.createElement("span");
         span.textContent = p.name;
-
         div.appendChild(img);
         div.appendChild(span);
         container.appendChild(div);
@@ -335,6 +330,7 @@
       const type = document.getElementById("expenseType").value;
       if (!name || isNaN(amount)) return;
       currentProject.expenses.push({ name, amount, type });
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
       renderExpenses();
       renderChart();
     }
@@ -375,31 +371,32 @@
             legend: { labels: { color: "#fff" } }
           },
           cutout: "40%",
-          animation: {
-            animateRotate: true,
-            duration: 1000
-          }
+          animation: { animateRotate: true, duration: 1000 }
         }
       });
     }
 
     function addTimelineEvent() {
       const text = document.getElementById("deliverable").value;
-      const date = document.getElementById("dueDate").value;
-      if (!text || !date) return;
-      currentProject.timeline.push({ text, date });
+      const start = document.getElementById("startDate").value;
+      const end = document.getElementById("endDate").value;
+      if (!text || !start || !end) return;
+      currentProject.timeline.push({ text, start, end });
+      currentProject.gantt.push({ id: text + Date.now(), name: text, start, end, progress: 0 });
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
       renderTimeline();
+      renderGantt();
     }
 
     function renderTimeline() {
       const container = document.getElementById("timeline");
       container.innerHTML = "";
+      document.querySelectorAll(".kanban-column").forEach(col => col.innerHTML = `<h4>${col.querySelector("h4").textContent}</h4>`);
       currentProject.timeline.forEach(item => {
         const div = document.createElement("div");
         div.className = "timeline-item";
-        div.textContent = `${item.date}: ${item.text}`;
+        div.textContent = `${item.start} to ${item.end}: ${item.text}`;
         container.appendChild(div);
-
         const task = document.createElement("div");
         task.className = "task";
         task.draggable = true;
@@ -419,20 +416,19 @@
       e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
     }
 
-    function addGanttTask() {
-      const task = document.getElementById("ganttTask").value;
-      const start = document.getElementById("ganttStart").value;
-      const end = document.getElementById("ganttEnd").value;
-      if (!task || !start || !end) return;
-
-      ganttTasks.push({ id: task + Date.now(), name: task, start, end, progress: 0 });
-      renderGantt();
-    }
-
     function renderGantt() {
       const target = document.getElementById("gantt");
       target.innerHTML = "";
-      gantt = new Gantt(target, ganttTasks);
+      if (currentProject.gantt && currentProject.gantt.length > 0) {
+        new Gantt(target, currentProject.gantt);
+      }
+    }
+
+    // Auto-load last active project
+    const lastIndex = parseInt(localStorage.getItem("lastProject"));
+    if (!isNaN(lastIndex) && savedProjects[lastIndex]) {
+      currentProject = savedProjects[lastIndex];
+      updateProjectDisplay();
     }
 
     renderProjectIcons();
