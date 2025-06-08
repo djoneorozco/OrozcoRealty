@@ -148,6 +148,14 @@
       background-color: #666;
     }
 
+    .dashboard-icon {
+      font-size: 2rem;
+      text-align: center;
+      display: none;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+
     footer {
       background: #111;
       color: #aaa;
@@ -178,6 +186,8 @@
 
   <main>
     <div class="saved-projects" id="savedProjects"></div>
+
+    <div id="projectIcon" class="dashboard-icon" onclick="showProjectDetails()">💼</div>
     <h1>Project Management Dashboard</h1>
 
     <div class="form-inline">
@@ -240,8 +250,10 @@
 
     function updateProjectDisplay() {
       document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
+      document.getElementById("projectIcon").style.display = "block";
       renderExpenses();
       renderChart();
+      renderTimeline();
     }
 
     function saveProject() {
@@ -250,9 +262,9 @@
       currentProject.expenses = currentProject.expenses || [];
       currentProject.timeline = currentProject.timeline || [];
 
-      const existingIndex = savedProjects.findIndex(p => p.name === currentProject.name);
-      if (existingIndex >= 0) {
-        savedProjects[existingIndex] = currentProject;
+      const index = savedProjects.findIndex(p => p.name === currentProject.name);
+      if (index >= 0) {
+        savedProjects[index] = currentProject;
       } else {
         savedProjects.push(currentProject);
       }
@@ -274,15 +286,21 @@
     function renderSavedProjects() {
       const container = document.getElementById("savedProjects");
       container.innerHTML = "";
-      savedProjects.forEach((p, i) => {
-        const icon = document.createElement("span");
-        icon.textContent = p.name;
-        icon.onclick = () => {
+      savedProjects.forEach((p) => {
+        const span = document.createElement("span");
+        span.textContent = p.name;
+        span.onclick = () => {
           currentProject = p;
           updateProjectDisplay();
         };
-        container.appendChild(icon);
+        container.appendChild(span);
       });
+    }
+
+    function showProjectDetails() {
+      if (!currentProject.name) return;
+      const timelineDetails = currentProject.timeline.map(t => `- ${t.deliverable} (Due: ${t.dueDate})`).join("\n");
+      alert(`Project: ${currentProject.name}\nBudget: $${currentProject.budget.toFixed(2)}\nTimeline:\n${timelineDetails}`);
     }
 
     function addExpense() {
@@ -363,7 +381,6 @@
       ev.target.appendChild(task);
     }
 
-    // Initialize on load
     renderSavedProjects();
   </script>
 </body>
