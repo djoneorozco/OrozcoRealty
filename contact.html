@@ -3,119 +3,156 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projects | OrozcoRealty LLC</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Project Dashboard</title>
   <style>
-    .kanban-col {
-      min-height: 200px;
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .field {
+      margin-bottom: 12px;
+    }
+    input, textarea, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .task, .expense {
+      padding: 8px;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+    .task-controls button {
+      margin: 4px 2px;
     }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <!-- Navigation -->
-  <nav class="bg-gray-800 text-white p-4 flex justify-center space-x-6">
-    <a href="index.html" class="hover:text-yellow-400">Home</a>
-    <a href="about.html" class="hover:text-yellow-400">About</a>
-    <a href="roadmap.html" class="hover:text-yellow-400">Roadmap</a>
-    <a href="listings.html" class="hover:text-yellow-400">Listings</a>
-    <a href="projects.html" class="hover:text-yellow-400 font-bold">Projects</a>
-    <a href="contact.html" class="hover:text-yellow-400">Contact</a>
-  </nav>
+<body>
+  <h1>Project Management Dashboard</h1>
 
-  <main class="max-w-7xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6 text-center">Project Management</h1>
-
-    <!-- New Project Form -->
-    <div class="bg-white shadow p-4 rounded mb-6">
-      <label class="block font-semibold">New Project Name:</label>
-      <input id="newProjectName" class="w-full border mt-2 p-2 rounded" placeholder="e.g., El Cenizo Rehab"/>
-      <button onclick="addProject()" class="bg-blue-600 hover:bg-blue-700 text-white mt-4 px-4 py-2 rounded">Add Project</button>
+  <div class="card">
+    <div class="field">
+      <label>Project Name:</label>
+      <input type="text" id="projectName" />
     </div>
+    <div class="field">
+      <label>Description:</label>
+      <textarea id="description"></textarea>
+    </div>
+    <button onclick="saveProject()">Save Project</button>
+    <p id="savedMessage"></p>
+  </div>
 
-    <!-- Project Container -->
-    <div id="projectsContainer" class="space-y-10"></div>
-  </main>
+  <div class="card">
+    <h2>Tasks</h2>
+    <div class="field">
+      <label>Task Name:</label>
+      <input type="text" id="taskInput" />
+    </div>
+    <div class="field">
+      <label>Start Date:</label>
+      <input type="date" id="startDate" />
+    </div>
+    <div class="field">
+      <label>End Date:</label>
+      <input type="date" id="endDate" />
+    </div>
+    <div class="field">
+      <label>Color:</label>
+      <input type="color" id="taskColor" value="#00aaff" />
+    </div>
+    <button onclick="addTask()">Add Task</button>
+    <div id="tasks"></div>
+  </div>
+
+  <div class="card">
+    <h2>Expenses</h2>
+    <div class="field">
+      <label>Expense:</label>
+      <input type="text" id="expenseInput" />
+    </div>
+    <div class="field">
+      <label>Type:</label>
+      <select id="expenseType">
+        <option value="purchase">Purchase</option>
+        <option value="service">Service</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <button onclick="addExpense()">Add Expense</button>
+    <div id="expenses"></div>
+  </div>
 
   <script>
-    function addProject() {
-      const name = document.getElementById('newProjectName').value.trim();
-      if (!name) return alert('Please enter a project name.');
-      const id = name.replace(/\s+/g, '-').toLowerCase();
+    const tasks = [];
+    const expenses = [];
 
-      const template = `
-        <div class="bg-white shadow p-4 rounded">
-          <h2 class="text-xl font-bold mb-2">${name}</h2>
-
-          <!-- Budget -->
-          <div class="mb-4">
-            <label class="block font-semibold">Budget (USD):</label>
-            <input type="number" placeholder="Enter budget" class="w-full border mt-1 p-2 rounded"/>
-          </div>
-
-          <!-- Timeline -->
-          <div class="mb-4">
-            <label class="block font-semibold">Project Timeline</label>
-            <ul id="timeline-${id}" class="list-disc pl-6 mb-2"></ul>
-            <button onclick="addTimelineItem('${id}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Add Timeline Item</button>
-          </div>
-
-          <!-- Kanban -->
-          <div class="grid grid-cols-3 gap-4">
-            ${['To Do', 'In Progress', 'Done'].map(status => `
-              <div class="kanban-col bg-gray-100 p-2 rounded" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <h3 class="text-center font-semibold">${status}</h3>
-                <div id="${status.toLowerCase().replace(/\s/g, '')}-${id}" class="min-h-[150px] p-2 space-y-2"></div>
-                <input type="text" id="task-${status}-${id}" class="w-full mt-2 p-1 border rounded" placeholder="New Task">
-                <button onclick="addTask('${status}', '${id}')" class="mt-1 w-full bg-blue-500 text-white rounded py-1">Add Task</button>
-              </div>`).join('')}
-          </div>
-        </div>`;
-
-      document.getElementById('projectsContainer').insertAdjacentHTML('beforeend', template);
-      document.getElementById('newProjectName').value = '';
+    function saveProject() {
+      const name = document.getElementById("projectName").value;
+      document.getElementById("savedMessage").innerText = `Project "${name}" saved!`;
     }
 
-    function addTimelineItem(id) {
-      const task = prompt("Enter timeline item:");
-      if (!task) return;
-      const date = prompt("Enter target date (e.g., July 1, 2025):");
-      const timeline = document.getElementById(`timeline-${id}`);
-      const li = document.createElement('li');
-      li.textContent = `${task} – ${date}`;
-      timeline.appendChild(li);
+    function addTask() {
+      const task = document.getElementById("taskInput").value;
+      const start = document.getElementById("startDate").value;
+      const end = document.getElementById("endDate").value;
+      const color = document.getElementById("taskColor").value;
+      if (!task || !start || !end) return alert("Fill all task fields.");
+
+      tasks.push({ task, start, end, color });
+      renderTasks();
+
+      document.getElementById("taskInput").value = "";
     }
 
-    function addTask(status, id) {
-      const inputId = `task-${status}-${id}`;
-      const input = document.getElementById(inputId);
-      const value = input.value.trim();
-      if (!value) return;
-
-      const card = document.createElement('div');
-      card.className = "bg-white border p-2 rounded shadow cursor-move";
-      card.draggable = true;
-      card.ondragstart = drag;
-      card.textContent = value;
-
-      document.getElementById(`${status.toLowerCase().replace(/\s/g, '')}-${id}`).appendChild(card);
-      input.value = '';
+    function renderTasks() {
+      const container = document.getElementById("tasks");
+      container.innerHTML = "";
+      tasks.forEach((t, i) => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.style.backgroundColor = t.color;
+        div.innerHTML = `<strong>${t.task}</strong><br>${t.start} to ${t.end}`;
+        container.appendChild(div);
+      });
     }
 
-    function allowDrop(ev) {
-      ev.preventDefault();
+    function addExpense() {
+      const expense = document.getElementById("expenseInput").value;
+      const type = document.getElementById("expenseType").value;
+      if (!expense) return alert("Enter an expense.");
+
+      expenses.push({ expense, type });
+      renderExpenses();
+
+      document.getElementById("expenseInput").value = "";
     }
 
-    function drag(ev) {
-      ev.dataTransfer.setData("text", ev.target.outerHTML);
-      ev.target.remove();
-    }
-
-    function drop(ev) {
-      ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
-      ev.target.insertAdjacentHTML("beforeend", data);
-      const newCard = ev.target.lastElementChild;
-      newCard.ondragstart = drag;
+    function renderExpenses() {
+      const container = document.getElementById("expenses");
+      container.innerHTML = "";
+      expenses.forEach((e, i) => {
+        const div = document.createElement("div");
+        div.className = "expense";
+        div.innerHTML = `${e.expense} <small>(${e.type})</small>`;
+        container.appendChild(div);
+      });
     }
   </script>
 </body>
