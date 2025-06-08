@@ -68,18 +68,6 @@
       color: #ffd700;
     }
 
-    .project-icons {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .project-icons img {
-      width: 40px;
-      height: 40px;
-      margin: 0.2rem;
-      cursor: pointer;
-    }
-
     .form-inline, .budget-form, .expense-form {
       display: flex;
       flex-wrap: wrap;
@@ -87,7 +75,7 @@
       margin-bottom: 1rem;
     }
 
-    input, button {
+    input, select, button {
       font-size: 1rem;
       padding: 0.5rem;
     }
@@ -141,6 +129,19 @@
       cursor: grab;
     }
 
+    .saved-projects {
+      margin-bottom: 1rem;
+    }
+
+    .saved-projects span {
+      background-color: #444;
+      border-radius: 4px;
+      padding: 0.3rem 0.5rem;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
     footer {
       background: #111;
       color: #aaa;
@@ -170,7 +171,7 @@
   </nav>
 
   <main>
-    <div class="project-icons" id="projectIcons"></div>
+    <div class="saved-projects" id="savedProjects"></div>
     <h1>Project Management Dashboard</h1>
 
     <div class="form-inline">
@@ -186,6 +187,11 @@
       <div class="budget-form">
         <input id="expenseName" placeholder="Expense Name" />
         <input id="expenseAmount" type="number" placeholder="Amount ($)" />
+        <select id="expenseType">
+          <option value="Purchase">Purchase</option>
+          <option value="Service">Service</option>
+          <option value="Other">Other</option>
+        </select>
         <button onclick="addExpense()">Add Expense</button>
       </div>
 
@@ -198,26 +204,6 @@
         </div>
         <div class="chart-container">
           <canvas id="budgetChart"></canvas>
-        </div>
-      </div>
-
-      <h3>Project Timeline</h3>
-      <div class="form-inline">
-        <input id="deliverable" placeholder="Deliverable" />
-        <input id="dueDate" type="date" />
-        <button onclick="addTimelineEvent()">Add to Timeline</button>
-      </div>
-      <div class="timeline-events" id="timeline"></div>
-
-      <div class="kanban-board">
-        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h4>To Do</h4>
-        </div>
-        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h4>In Progress</h4>
-        </div>
-        <div class="kanban-column" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h4>Done</h4>
         </div>
       </div>
     </div>
@@ -241,10 +227,9 @@
       currentProject.name = document.getElementById("projectName").value;
       currentProject.budget = parseFloat(document.getElementById("projectBudget").value);
       currentProject.expenses = currentProject.expenses || [];
-      currentProject.timeline = currentProject.timeline || [];
       savedProjects.push(currentProject);
       localStorage.setItem("projects", JSON.stringify(savedProjects));
-      renderSavedProjectIcons();
+      renderSavedProjects();
       updateProjectDisplay();
     }
 
@@ -257,18 +242,15 @@
       renderChart();
     }
 
-    function renderSavedProjectIcons() {
-      const container = document.getElementById("projectIcons");
+    function renderSavedProjects() {
+      const container = document.getElementById("savedProjects");
       container.innerHTML = "";
-      savedProjects.forEach((project, index) => {
-        const icon = document.createElement("img");
-        icon.src = "OrozcoRealtyLLC.png";
-        icon.alt = project.name;
-        icon.title = project.name;
+      savedProjects.forEach((p, i) => {
+        const icon = document.createElement("span");
+        icon.textContent = p.name;
         icon.onclick = () => {
-          currentProject = project;
+          currentProject = p;
           updateProjectDisplay();
-          renderTimeline();
         };
         container.appendChild(icon);
       });
@@ -277,8 +259,9 @@
     function addExpense() {
       const name = document.getElementById("expenseName").value;
       const amount = parseFloat(document.getElementById("expenseAmount").value);
+      const type = document.getElementById("expenseType").value;
       if (!name || isNaN(amount)) return;
-      currentProject.expenses.push({ name, amount });
+      currentProject.expenses.push({ name, amount, type });
       renderExpenses();
       renderChart();
     }
@@ -287,15 +270,25 @@
       const list = document.getElementById("expenseList");
       list.innerHTML = "";
       let total = 0;
-      currentProject.expenses.forEach(exp => {
+      currentProject.expenses.forEach((exp, index) => {
         total += exp.amount;
         const item = document.createElement("div");
         item.className = "expense-item";
-        item.textContent = `${exp.name}: $${exp.amount.toFixed(2)}`;
+        item.innerHTML = `${exp.name} - $${exp.amount.toFixed(2)} (${exp.type}) <button onclick="editExpense(${index})">Edit</button>`;
         list.appendChild(item);
       });
       document.getElementById("totalExpenses").innerText = total.toFixed(2);
       document.getElementById("remainingBudget").innerText = (currentProject.budget - total).toFixed(2);
+    }
+
+    function editExpense(index) {
+      const exp = currentProject.expenses[index];
+      const newAmount = parseFloat(prompt("Enter new amount:", exp.amount));
+      if (!isNaN(newAmount)) {
+        exp.amount = newAmount;
+        renderExpenses();
+        renderChart();
+      }
     }
 
     function renderChart() {
@@ -322,43 +315,7 @@
       });
     }
 
-    function addTimelineEvent() {
-      const text = document.getElementById("deliverable").value;
-      const date = document.getElementById("dueDate").value;
-      if (!text || !date) return;
-      currentProject.timeline.push({ text, date });
-      renderTimeline();
-    }
-
-    function renderTimeline() {
-      const container = document.getElementById("timeline");
-      container.innerHTML = "";
-      currentProject.timeline.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "timeline-item";
-        div.textContent = `${item.date}: ${item.text}`;
-        container.appendChild(div);
-
-        const task = document.createElement("div");
-        task.className = "task";
-        task.draggable = true;
-        task.ondragstart = e => e.dataTransfer.setData("text", e.target.outerHTML);
-        task.innerText = item.text;
-        document.querySelector(".kanban-column").appendChild(task);
-      });
-    }
-
-    function allowDrop(e) {
-      e.preventDefault();
-    }
-
-    function drop(e) {
-      e.preventDefault();
-      const data = e.dataTransfer.getData("text");
-      e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
-    }
-
-    renderSavedProjectIcons();
+    renderSavedProjects();
   </script>
 </body>
 </html>
