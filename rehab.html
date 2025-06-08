@@ -178,11 +178,19 @@
     let savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
 
     function saveProject() {
-      const name = document.getElementById("projectName").value;
+      const name = document.getElementById("projectName").value.trim();
       const budget = parseFloat(document.getElementById("projectBudget").value);
       if (!name || isNaN(budget)) return;
-      currentProject = { name, budget, expenses: [], gantt: [] };
-      savedProjects.push(currentProject);
+
+      const existingIndex = savedProjects.findIndex(p => p.name === name);
+      if (existingIndex !== -1) {
+        savedProjects[existingIndex] = { name, budget, expenses: [], gantt: [] };
+        currentProject = savedProjects[existingIndex];
+      } else {
+        currentProject = { name, budget, expenses: [], gantt: [] };
+        savedProjects.push(currentProject);
+      }
+
       localStorage.setItem("projects", JSON.stringify(savedProjects));
       renderProjectIcons();
       updateProjectDisplay();
