@@ -2,158 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Project Dashboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    .card {
-      background: white;
-      padding: 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .field {
-      margin-bottom: 12px;
-    }
-    input, textarea, select, button {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    .task, .expense {
-      padding: 8px;
-      border-radius: 4px;
-      margin-top: 8px;
-    }
-    .task-controls button {
-      margin: 4px 2px;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OrozcoRealty Rehab Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-  <h1>Project Management Dashboard</h1>
+<body class="bg-gray-100 text-gray-800 p-6">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-6">🏗️ OrozcoRealty Rehab Dashboard</h1>
 
-  <div class="card">
-    <div class="field">
-      <label>Project Name:</label>
-      <input type="text" id="projectName" />
-    </div>
-    <div class="field">
-      <label>Description:</label>
-      <textarea id="description"></textarea>
-    </div>
-    <button onclick="saveProject()">Save Project</button>
-    <p id="savedMessage"></p>
+    <!-- Project Management -->
+    <section class="mb-8 bg-white shadow p-6 rounded-lg">
+      <h2 class="text-2xl font-semibold mb-4">Project Setup</h2>
+      <form id="project-form" class="flex gap-4">
+        <input type="text" id="project-title" placeholder="Enter new project title" class="border p-2 rounded w-full">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save Project</button>
+      </form>
+      <ul id="saved-projects" class="mt-4 list-disc list-inside text-blue-700 cursor-pointer"></ul>
+    </section>
+
+    <!-- Timeline / Deliverables -->
+    <section class="mb-8 bg-white shadow p-6 rounded-lg">
+      <h2 class="text-2xl font-semibold mb-4">Project Timeline</h2>
+      <form id="timeline-form" class="flex gap-4 mb-4">
+        <input type="text" id="timeline-task" placeholder="Task (e.g., Paint Walls)" class="border p-2 rounded w-full">
+        <input type="date" id="timeline-date" class="border p-2 rounded">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Add</button>
+      </form>
+      <ul id="timeline-list" class="list-disc list-inside"></ul>
+    </section>
+
+    <!-- Kanban Board -->
+    <section class="mb-8 bg-white shadow p-6 rounded-lg">
+      <h2 class="text-2xl font-semibold mb-4">Renovation Tasks</h2>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="kanban-column bg-gray-50 p-4 rounded border">
+          <h3 class="text-xl font-bold mb-2">To Do</h3>
+          <div class="kanban-card bg-white p-2 mb-2 rounded shadow">Demo Kitchen</div>
+          <div class="kanban-card bg-white p-2 mb-2 rounded shadow">Order Cabinets</div>
+        </div>
+        <div class="kanban-column bg-gray-50 p-4 rounded border">
+          <h3 class="text-xl font-bold mb-2">In Progress</h3>
+          <div class="kanban-card bg-white p-2 mb-2 rounded shadow">Drywall Living Room</div>
+        </div>
+        <div class="kanban-column bg-gray-50 p-4 rounded border">
+          <h3 class="text-xl font-bold mb-2">Completed</h3>
+          <div class="kanban-card bg-white p-2 mb-2 rounded shadow">Clean Yard</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Budget Overview -->
+    <section class="mb-8 bg-white shadow p-6 rounded-lg">
+      <h2 class="text-2xl font-semibold mb-4">Budget Overview</h2>
+      <canvas id="budget-chart" height="120"></canvas>
+    </section>
   </div>
 
-  <div class="card">
-    <h2>Tasks</h2>
-    <div class="field">
-      <label>Task Name:</label>
-      <input type="text" id="taskInput" />
-    </div>
-    <div class="field">
-      <label>Start Date:</label>
-      <input type="date" id="startDate" />
-    </div>
-    <div class="field">
-      <label>End Date:</label>
-      <input type="date" id="endDate" />
-    </div>
-    <div class="field">
-      <label>Color:</label>
-      <input type="color" id="taskColor" value="#00aaff" />
-    </div>
-    <button onclick="addTask()">Add Task</button>
-    <div id="tasks"></div>
-  </div>
-
-  <div class="card">
-    <h2>Expenses</h2>
-    <div class="field">
-      <label>Expense:</label>
-      <input type="text" id="expenseInput" />
-    </div>
-    <div class="field">
-      <label>Type:</label>
-      <select id="expenseType">
-        <option value="purchase">Purchase</option>
-        <option value="service">Service</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-    <button onclick="addExpense()">Add Expense</button>
-    <div id="expenses"></div>
-  </div>
-
+  <!-- JavaScript Functionality -->
   <script>
-    const tasks = [];
-    const expenses = [];
+    document.addEventListener("DOMContentLoaded", () => {
+      // ==== Project Setup ====
+      const projectForm = document.getElementById("project-form");
+      const savedProjectsList = document.getElementById("saved-projects");
+      const projectTitleInput = document.getElementById("project-title");
+      let projects = JSON.parse(localStorage.getItem("projects")) || [];
 
-    function saveProject() {
-      const name = document.getElementById("projectName").value;
-      document.getElementById("savedMessage").innerText = `Project "${name}" saved!`;
-    }
+      const saveProjects = () => {
+        localStorage.setItem("projects", JSON.stringify(projects));
+        renderSavedProjects();
+      };
 
-    function addTask() {
-      const task = document.getElementById("taskInput").value;
-      const start = document.getElementById("startDate").value;
-      const end = document.getElementById("endDate").value;
-      const color = document.getElementById("taskColor").value;
-      if (!task || !start || !end) return alert("Fill all task fields.");
+      const renderSavedProjects = () => {
+        savedProjectsList.innerHTML = '';
+        projects.forEach(title => {
+          const li = document.createElement("li");
+          li.textContent = title;
+          li.onclick = () => alert('Loaded project: ' + title); // placeholder
+          savedProjectsList.appendChild(li);
+        });
+      };
 
-      tasks.push({ task, start, end, color });
-      renderTasks();
-
-      document.getElementById("taskInput").value = "";
-    }
-
-    function renderTasks() {
-      const container = document.getElementById("tasks");
-      container.innerHTML = "";
-      tasks.forEach((t, i) => {
-        const div = document.createElement("div");
-        div.className = "task";
-        div.style.backgroundColor = t.color;
-        div.innerHTML = `<strong>${t.task}</strong><br>${t.start} to ${t.end}`;
-        container.appendChild(div);
+      projectForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const title = projectTitleInput.value.trim();
+        if (title && !projects.includes(title)) {
+          projects.push(title);
+          saveProjects();
+          projectTitleInput.value = '';
+        }
       });
-    }
 
-    function addExpense() {
-      const expense = document.getElementById("expenseInput").value;
-      const type = document.getElementById("expenseType").value;
-      if (!expense) return alert("Enter an expense.");
+      renderSavedProjects();
 
-      expenses.push({ expense, type });
-      renderExpenses();
+      // ==== Kanban Drag and Drop ====
+      const draggables = document.querySelectorAll(".kanban-card");
+      const columns = document.querySelectorAll(".kanban-column");
 
-      document.getElementById("expenseInput").value = "";
-    }
-
-    function renderExpenses() {
-      const container = document.getElementById("expenses");
-      container.innerHTML = "";
-      expenses.forEach((e, i) => {
-        const div = document.createElement("div");
-        div.className = "expense";
-        div.innerHTML = `${e.expense} <small>(${e.type})</small>`;
-        container.appendChild(div);
+      draggables.forEach(card => {
+        card.setAttribute("draggable", true);
+        card.addEventListener("dragstart", () => card.classList.add("dragging"));
+        card.addEventListener("dragend", () => card.classList.remove("dragging"));
       });
-    }
+
+      columns.forEach(column => {
+        column.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          const dragging = document.querySelector(".dragging");
+          if (dragging) column.appendChild(dragging);
+        });
+      });
+
+      // ==== Chart.js for Budget ====
+      const ctx = document.getElementById('budget-chart').getContext('2d');
+      const budgetChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Renovation', 'Permit Fees', 'Staging', 'Other'],
+          datasets: [{
+            label: 'Budget',
+            data: [4000, 1000, 1500, 500],
+            backgroundColor: ['#0ea5e9', '#22c55e', '#facc15', '#f472b6'],
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+        }
+      });
+
+      // ==== Timeline Entry Logic ====
+      const timelineForm = document.getElementById("timeline-form");
+      const timelineList = document.getElementById("timeline-list");
+
+      timelineForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const task = document.getElementById("timeline-task").value.trim();
+        const due = document.getElementById("timeline-date").value;
+
+        if (task && due) {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${task}</strong> — <em>${due}</em>`;
+          timelineList.appendChild(li);
+          document.getElementById("timeline-task").value = '';
+          document.getElementById("timeline-date").value = '';
+        }
+      });
+    });
   </script>
 </body>
 </html>
