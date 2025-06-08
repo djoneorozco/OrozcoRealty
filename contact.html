@@ -278,6 +278,10 @@
     let gantt;
     let ganttTasks = [];
 
+    function saveProjectsToStorage() {
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
+    }
+
     function updateProjectDisplay() {
       document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
       ganttTasks = currentProject.gantt || [];
@@ -293,7 +297,7 @@
       if (!name || isNaN(budget)) return;
       currentProject = { name, budget, expenses: [], timeline: [], gantt: [] };
       savedProjects.push(currentProject);
-      localStorage.setItem("projects", JSON.stringify(savedProjects));
+      saveProjectsToStorage();
       renderProjectIcons();
       updateProjectDisplay();
     }
@@ -303,6 +307,9 @@
       const budget = prompt("Enter new total budget:", currentProject.budget);
       if (name) currentProject.name = name;
       if (budget) currentProject.budget = parseFloat(budget);
+      const index = savedProjects.findIndex(p => p.name === currentProject.name);
+      if (index > -1) savedProjects[index] = currentProject;
+      saveProjectsToStorage();
       updateProjectDisplay();
     }
 
@@ -336,6 +343,9 @@
       const type = document.getElementById("expenseType").value;
       if (!name || isNaN(amount)) return;
       currentProject.expenses.push({ name, amount, type });
+      const index = savedProjects.findIndex(p => p.name === currentProject.name);
+      if (index > -1) savedProjects[index] = currentProject;
+      saveProjectsToStorage();
       renderExpenses();
       renderChart();
     }
@@ -389,6 +399,9 @@
       const date = document.getElementById("dueDate").value;
       if (!text || !date) return;
       currentProject.timeline.push({ text, date });
+      const index = savedProjects.findIndex(p => p.name === currentProject.name);
+      if (index > -1) savedProjects[index] = currentProject;
+      saveProjectsToStorage();
       renderTimeline();
     }
 
@@ -428,7 +441,13 @@
 
       const taskObj = { id: task + Date.now(), name: task, start, end, progress: 0 };
       ganttTasks.push(taskObj);
+
+      if (!currentProject.gantt) currentProject.gantt = [];
       currentProject.gantt.push(taskObj);
+
+      const index = savedProjects.findIndex(p => p.name === currentProject.name);
+      if (index > -1) savedProjects[index] = currentProject;
+      saveProjectsToStorage();
       renderGantt();
     }
 
