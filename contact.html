@@ -80,6 +80,33 @@
       padding: 0.5rem;
     }
 
+    .project-icons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .project-icon {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .project-icon img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #ffd700;
+    }
+
+    .project-icon span {
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
+    }
+
     .project {
       background-color: #222;
       border-radius: 10px;
@@ -129,12 +156,6 @@
       cursor: grab;
     }
 
-    .saved-projects img {
-      height: 30px;
-      margin: 0 5px;
-      cursor: pointer;
-    }
-
     footer {
       background: #111;
       color: #aaa;
@@ -164,7 +185,6 @@
   </nav>
 
   <main>
-    <div class="saved-projects" id="savedProjects"></div>
     <h1>Project Management Dashboard</h1>
 
     <div class="form-inline">
@@ -173,6 +193,8 @@
       <button onclick="saveProject()">Save Project</button>
       <button onclick="editProject()">Edit Project</button>
     </div>
+
+    <div class="project-icons" id="projectIcons"></div>
 
     <div class="project">
       <h2 id="currentProject">Current Project: None</h2>
@@ -238,13 +260,13 @@
     }
 
     function saveProject() {
-      currentProject.name = document.getElementById("projectName").value;
-      currentProject.budget = parseFloat(document.getElementById("projectBudget").value);
-      currentProject.expenses = currentProject.expenses || [];
-      currentProject.timeline = currentProject.timeline || [];
-      savedProjects.push({...currentProject});
+      const name = document.getElementById("projectName").value;
+      const budget = parseFloat(document.getElementById("projectBudget").value);
+      if (!name || isNaN(budget)) return;
+      currentProject = { name, budget, expenses: [], timeline: [] };
+      savedProjects.push(currentProject);
       localStorage.setItem("projects", JSON.stringify(savedProjects));
-      renderSavedProjects();
+      renderProjectIcons();
       updateProjectDisplay();
     }
 
@@ -254,22 +276,29 @@
       if (name) currentProject.name = name;
       if (budget) currentProject.budget = parseFloat(budget);
       updateProjectDisplay();
-      renderChart();
     }
 
-    function renderSavedProjects() {
-      const container = document.getElementById("savedProjects");
+    function renderProjectIcons() {
+      const container = document.getElementById("projectIcons");
       container.innerHTML = "";
       savedProjects.forEach((p, i) => {
-        const icon = document.createElement("img");
-        icon.src = "OrozcoRealtyLLC.png";
-        icon.alt = p.name;
-        icon.title = p.name;
-        icon.onclick = () => {
-          currentProject = {...p};
+        const div = document.createElement("div");
+        div.className = "project-icon";
+        div.onclick = () => {
+          currentProject = p;
           updateProjectDisplay();
         };
-        container.appendChild(icon);
+
+        const img = document.createElement("img");
+        img.src = "OrozcoRealtyLLC.png";
+        img.alt = p.name;
+
+        const span = document.createElement("span");
+        span.textContent = p.name;
+
+        div.appendChild(img);
+        div.appendChild(span);
+        container.appendChild(div);
       });
     }
 
@@ -321,7 +350,7 @@
           cutout: "40%",
           animation: {
             animateRotate: true,
-            duration: 1000,
+            duration: 1000
           }
         }
       });
@@ -363,7 +392,7 @@
       e.target.closest(".kanban-column").insertAdjacentHTML("beforeend", data);
     }
 
-    renderSavedProjects();
+    renderProjectIcons();
   </script>
 </body>
 </html>
