@@ -2,53 +2,55 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>jsGanttImproved Demo</title>
-  <script src="https://cdn.jsdelivr.net/npm/jsgantt-improved/dist/jsgantt.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsgantt-improved/dist/jsgantt.css" />
+  <title>jsGanttImproved Working Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsgantt-improved@2.7.7/dist/jsgantt.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsgantt-improved@2.7.7/dist/jsgantt.css" />
   <style>
     body {
       background-color: #1B1814;
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
       padding: 2rem;
     }
+
     h1 {
       color: #ffd700;
       text-align: center;
     }
+
     #GanttChartDIV {
       width: 100%;
       height: 600px;
-      border: 1px solid #ccc;
-      background-color: white;
-      color: black;
+      border: 2px solid #ffd700;
+      background: #fff;
+      color: #000;
     }
   </style>
 </head>
 <body>
 
-  <h1>OrozcoRealty Gantt Chart</h1>
+  <h1>OrozcoRealty Project Timeline</h1>
   <div id="GanttChartDIV"></div>
 
   <script>
     const g = new JSGantt.GanttChart(document.getElementById('GanttChartDIV'), 'week');
 
     if (g.getDivId()) {
-      g.setCaptionType('Complete'); // Caption : None, Caption, Resource, Duration, Complete
-      g.setShowRes(1);              // Show resource names
-      g.setShowDur(1);              // Show task duration
-      g.setShowComp(1);             // Show task completion
-      g.setShowStartDate(1);        // Show start date
-      g.setShowEndDate(1);          // Show end date
-      g.setShowTaskInfoLink(1);     // Enable task info link
-      g.setShowEndWeekDate(0);      // Show last day of the week
+      g.setCaptionType('Complete');
+      g.setShowRes(1);
+      g.setShowDur(1);
+      g.setShowComp(1);
+      g.setShowStartDate(1);
+      g.setShowEndDate(1);
       g.setFormatArr('day','week','month');
 
+      // Sample project timeline with proper date strings
       g.AddTaskItem(new JSGantt.TaskItem(
         1, 'Site Acquisition', '', '2025-06-10', '2025-06-15', 'ff0000', '', 100, 0, 1, 0, '', '', '', '', '', 1, '', '', 'Owner'
       ));
       g.AddTaskItem(new JSGantt.TaskItem(
-        2, 'Design & Permits', '', '2025-06-16', '2025-06-22', '00ff00', '', 50, 1, 1, 0, '', '', '', '', '', 1, '', '', 'Engineer'
+        2, 'Design & Permits', '', '2025-06-16', '2025-06-22', '00ff00', '', 75, 1, 1, 0, '', '', '', '', '', 1, '', '', 'Engineer'
       ));
       g.AddTaskItem(new JSGantt.TaskItem(
         3, 'Foundation Work', '', '2025-06-23', '2025-06-30', '0000ff', '', 0, 2, 1, 0, '', '', '', '', '', 1, '', '', 'Contractor'
