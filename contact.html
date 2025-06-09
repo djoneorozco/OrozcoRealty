@@ -8,9 +8,8 @@
   <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
   <script type="module">
-    // Firebase import
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDkS2K8aLmO1cn4eF2D_5w3-N0usmodPto",
@@ -25,50 +24,47 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let currentProjectName = null;
-    let gantt;
+    let currentProject = null;
     let tasks = [];
 
-    window.saveProject = async function() {
+    window.saveProject = async function () {
       const name = document.getElementById("projectName").value.trim();
-      if (!name) return alert("Project name is required.");
-      currentProjectName = name;
-      document.getElementById("currentProject").textContent = `Current Project: ${name}`;
+      if (!name) return alert("Enter a project name.");
+      currentProject = name;
+      document.getElementById("currentProject").innerText = `Current Project: ${name}`;
       await loadTasks();
     };
 
-    window.addGanttTask = async function() {
-      if (!currentProjectName) return alert("Save a project first.");
+    window.addGanttTask = async function () {
+      if (!currentProject) return alert("Save a project first.");
       const name = document.getElementById("taskName").value;
       const start = document.getElementById("taskStart").value;
       const end = document.getElementById("taskEnd").value;
-      if (!name || !start || !end) return alert("All task fields are required.");
-
+      if (!name || !start || !end) return alert("All fields required.");
       const taskId = "task-" + Date.now();
       const task = { id: taskId, name, start, end, progress: 0 };
       tasks.push(task);
-
-      await setDoc(doc(db, "projects", currentProjectName), { tasks });
+      await setDoc(doc(db, "projects", currentProject), { tasks });
       renderGantt();
     };
 
     async function loadTasks() {
-      const docRef = doc(db, "projects", currentProjectName);
+      const docRef = doc(db, "projects", currentProject);
       const docSnap = await getDoc(docRef);
       tasks = docSnap.exists() ? docSnap.data().tasks : [];
       renderGantt();
     }
 
     function renderGantt() {
-      const container = document.getElementById("gantt");
-      container.innerHTML = "";
-      gantt = new Gantt(container, tasks, {
-        on_date_change(task, start, end) {
+      const target = document.getElementById("gantt");
+      target.innerHTML = "";
+      new Gantt(target, tasks, {
+        on_date_change: (task, start, end) => {
           const index = tasks.findIndex(t => t.id === task.id);
           if (index !== -1) {
             tasks[index].start = start.toISOString().split("T")[0];
             tasks[index].end = end.toISOString().split("T")[0];
-            updateDoc(doc(db, "projects", currentProjectName), { tasks });
+            setDoc(doc(db, "projects", currentProject), { tasks });
           }
         }
       });
