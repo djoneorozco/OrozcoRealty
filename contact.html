@@ -1,57 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Simple Gantt Chart</title>
-  <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
+  <meta charset="UTF-8" />
+  <title>Gantt Chart | OrozcoRealty LLC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css" />
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background-color: #f4f4f4;
       margin: 0;
       padding: 20px;
     }
     h1 {
       text-align: center;
+      color: #333;
     }
-    #gantt {
-      margin: 40px auto;
-      width: 90%;
+    #gantt-target {
+      width: 100%;
       height: 600px;
-      border: 1px solid #ccc;
+      margin-top: 40px;
       background: #fff;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
-  <h1>Simple Gantt Chart</h1>
-  <div id="gantt"></div>
-  <script>
-    const tasks = [
-      {
-        id: 'Task 1',
-        name: 'Design Phase',
-        start: '2025-06-01',
-        end: '2025-06-10',
-        progress: 20
-      },
-      {
-        id: 'Task 2',
-        name: 'Development Phase',
-        start: '2025-06-11',
-        end: '2025-06-20',
-        progress: 40
-      },
-      {
-        id: 'Task 3',
-        name: 'Testing Phase',
-        start: '2025-06-21',
-        end: '2025-06-25',
-        progress: 0
-      }
-    ];
+  <h1>OrozcoRealty Gantt Chart</h1>
+  <div id="gantt-target"></div>
 
-    const gantt = new Gantt("#gantt", tasks);
+  <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const tasks = [
+        {
+          id: "1",
+          name: "Design",
+          start: "2025-06-01",
+          end: "2025-06-05",
+          progress: 25
+        },
+        {
+          id: "2",
+          name: "Permits",
+          start: "2025-06-06",
+          end: "2025-06-09",
+          progress: 0,
+          dependencies: "1"
+        },
+        {
+          id: "3",
+          name: "Construction",
+          start: "2025-06-10",
+          end: "2025-06-20",
+          progress: 50,
+          dependencies: "2"
+        },
+        {
+          id: "4",
+          name: "Inspection",
+          start: "2025-06-21",
+          end: "2025-06-24",
+          progress: 0,
+          dependencies: "3"
+        }
+      ];
+
+      const gantt = new Gantt("#gantt-target", tasks, {
+        view_mode: "Day",
+        language: "en"
+      });
+    });
   </script>
 </body>
 </html>
