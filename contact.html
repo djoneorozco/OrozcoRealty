@@ -1,194 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gantt Chart | OrozcoRealty LLC</title>
-  <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
+  <meta charset="UTF-8">
+  <title>Advanced Gantt Chart | OrozcoRealty LLC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://code.jquery.com/ui/1.13.2/themes/smoothness/jquery-ui.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-gantt/1.2.1/css/jquery.gantt.css" rel="stylesheet">
   <style>
     body {
       background-color: #1B1814;
       color: #fff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
       padding: 2rem;
     }
-
     h1 {
       text-align: center;
       color: #ffd700;
     }
-
-    #gantt-container {
-      overflow-x: auto;
-      background: #222;
-      border-radius: 10px;
-      padding: 1rem;
+    #ganttChart {
       margin-top: 2rem;
     }
-
-    .controls {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .controls button {
-      margin: 0.2rem;
-      padding: 0.5rem 1rem;
-      background-color: #ffd700;
-      border: none;
-      color: #000;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .controls button:hover {
-      background-color: #e6c200;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: #333;
-      color: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
-      z-index: 999;
-    }
-
-    .modal input {
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0;
-      background: #555;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-
-    .modal button {
-      margin-top: 1rem;
+    .gantt .bar {
+      background-color: #ffd700 !important;
     }
   </style>
 </head>
 <body>
 
-  <h1>Project Timeline</h1>
+  <h1>Project Management Timeline</h1>
+  <div id="ganttChart"></div>
 
-  <div class="controls">
-    <button onclick="gantt.change_view_mode('Day')">Day</button>
-    <button onclick="gantt.change_view_mode('Week')">Week</button>
-    <button onclick="gantt.change_view_mode('Month')">Month</button>
-    <button onclick="exportJSON()">Export JSON</button>
-    <button onclick="window.print()">Print to PDF</button>
-  </div>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-gantt/1.2.1/js/jquery.gantt.min.js"></script>
 
-  <div id="gantt-container">
-    <svg id="gantt"></svg>
-  </div>
-
-  <div class="modal" id="editModal">
-    <h2>Edit Task</h2>
-    <input id="taskName" placeholder="Task name">
-    <input id="startDate" type="date">
-    <input id="endDate" type="date">
-    <button onclick="saveTask()">Save</button>
-  </div>
-
-  <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
   <script>
-    let selectedTask = null;
-
-    const tasks = [
-      {
-        id: 'Task1',
-        name: 'Site Acquisition',
-        start: '2025-06-10',
-        end: '2025-06-20',
-        progress: 30,
-        dependencies: '',
-        custom_class: 'bar-red'
-      },
-      {
-        id: 'Task2',
-        name: 'Foundation Work',
-        start: '2025-06-21',
-        end: '2025-06-28',
-        progress: 10,
-        dependencies: 'Task1',
-        custom_class: 'bar-yellow'
-      },
-      {
-        id: 'Task3',
-        name: 'Inspections',
-        start: '2025-06-29',
-        end: '2025-07-02',
-        progress: 0,
-        dependencies: 'Task2',
-        custom_class: 'bar-blue'
-      },
-      {
-        id: 'Milestone',
-        name: 'Milestone: Roof Complete',
-        start: '2025-07-03',
-        end: '2025-07-03',
-        progress: 0,
-        custom_class: 'bar-milestone'
-      }
-    ];
-
-    const gantt = new Gantt("#gantt", tasks, {
-      view_mode: 'Week',
-      date_format: 'YYYY-MM-DD',
-      bar_height: 25,
-      padding: 20,
-      custom_popup_html: task => `
-        <div style="padding: 10px;">
-          <strong>${task.name}</strong><br>
-          Start: ${task._start.toDateString()}<br>
-          End: ${task._end.toDateString()}<br>
-          Progress: ${task.progress}%
-        </div>`,
-      on_click: task => {
-        alert(`Clicked on: ${task.name}`);
-      },
-      on_date_change: (task, start, end) => {
-        console.log(`Date changed: ${task.name}`, start, end);
-      },
-      on_progress_change: (task, progress) => {
-        console.log(`Progress updated: ${task.name} - ${progress}%`);
-      },
-      on_view_change: mode => {
-        console.log(`View changed to ${mode}`);
-      },
-      on_click: task => {
-        selectedTask = task;
-        document.getElementById('taskName').value = task.name;
-        document.getElementById('startDate').value = task.start;
-        document.getElementById('endDate').value = task.end;
-        document.getElementById('editModal').style.display = 'block';
-      }
+    $(function() {
+      $("#ganttChart").gantt({
+        source: [{
+          name: "Project Setup",
+          desc: "Site Acquisition",
+          values: [{
+            from: "/Date(1717891200000)/", // 2025-06-09
+            to: "/Date(1718496000000)/",   // 2025-06-16
+            label: "Acquire Lot",
+            customClass: "ganttRed",
+            dataObj: { id: 1 }
+          }]
+        }, {
+          name: "Project Setup",
+          desc: "Permits & Design",
+          values: [{
+            from: "/Date(1718582400000)/", // 2025-06-17
+            to: "/Date(1719187200000)/",   // 2025-06-24
+            label: "Design & Permit",
+            customClass: "ganttGreen",
+            dataObj: { id: 2 }
+          }]
+        }, {
+          name: "Construction",
+          desc: "Foundation Work",
+          values: [{
+            from: "/Date(1719273600000)/", // 2025-06-25
+            to: "/Date(1719878400000)/",   // 2025-07-02
+            label: "Foundation",
+            customClass: "ganttBlue",
+            dataObj: { id: 3 }
+          }]
+        }],
+        navigate: "scroll",
+        scale: "days",
+        maxScale: "months",
+        minScale: "hours",
+        itemsPerPage: 10,
+        onItemClick: function(data) {
+          alert("Clicked task: " + data.label);
+        },
+        onAddClick: function(dt, rowId) {
+          alert("Add task clicked at " + dt + " on row " + rowId);
+        },
+        onRender: function() {
+          console.log("Gantt chart rendered");
+        }
+      });
     });
-
-    function saveTask() {
-      if (!selectedTask) return;
-      selectedTask.name = document.getElementById('taskName').value;
-      selectedTask.start = document.getElementById('startDate').value;
-      selectedTask.end = document.getElementById('endDate').value;
-      gantt.refresh(tasks);
-      document.getElementById('editModal').style.display = 'none';
-    }
-
-    function exportJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tasks, null, 2));
-      const dl = document.createElement('a');
-      dl.setAttribute("href", dataStr);
-      dl.setAttribute("download", "gantt-tasks.json");
-      dl.click();
-    }
   </script>
 
 </body>
