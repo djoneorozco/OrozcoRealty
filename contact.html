@@ -1,118 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projects | OrozcoRealty LLC</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Simple Gantt Chart</title>
   <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDkS2K8aLmO1cn4eF2D_5w3-N0usmodPto",
-      authDomain: "orozcorealty-a7ce6.firebaseapp.com",
-      projectId: "orozcorealty-a7ce6",
-      storageBucket: "orozcorealty-a7ce6.firebasestorage.app",
-      messagingSenderId: "510699377586",
-      appId: "1:510699377586:web:de0887b54664a8edf08aab",
-      measurementId: "G-761XKT7LBN"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let currentProject = null;
-    let tasks = [];
-
-    window.saveProject = async function () {
-      const name = document.getElementById("projectName").value.trim();
-      if (!name) return alert("Enter a project name.");
-      currentProject = name;
-      document.getElementById("currentProject").innerText = `Current Project: ${name}`;
-      await loadTasks();
-    };
-
-    window.addGanttTask = async function () {
-      if (!currentProject) return alert("Save a project first.");
-      const name = document.getElementById("taskName").value;
-      const start = document.getElementById("taskStart").value;
-      const end = document.getElementById("taskEnd").value;
-      if (!name || !start || !end) return alert("All fields required.");
-      const taskId = "task-" + Date.now();
-      const task = { id: taskId, name, start, end, progress: 0 };
-      tasks.push(task);
-      await setDoc(doc(db, "projects", currentProject), { tasks });
-      renderGantt();
-    };
-
-    async function loadTasks() {
-      const docRef = doc(db, "projects", currentProject);
-      const docSnap = await getDoc(docRef);
-      tasks = docSnap.exists() ? docSnap.data().tasks : [];
-      renderGantt();
-    }
-
-    function renderGantt() {
-      const target = document.getElementById("gantt");
-      target.innerHTML = "";
-      new Gantt(target, tasks, {
-        on_date_change: (task, start, end) => {
-          const index = tasks.findIndex(t => t.id === task.id);
-          if (index !== -1) {
-            tasks[index].start = start.toISOString().split("T")[0];
-            tasks[index].end = end.toISOString().split("T")[0];
-            setDoc(doc(db, "projects", currentProject), { tasks });
-          }
-        }
-      });
-    }
-  </script>
   <style>
     body {
-      background-color: #1B1814;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 2rem;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
     }
-    h1, h2 {
-      color: #ffd700;
+    h1 {
       text-align: center;
     }
-    .form-inline {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      justify-content: center;
-    }
-    input, button {
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
     #gantt {
-      background-color: #fff;
-      border-radius: 10px;
-      padding: 1rem;
-      overflow-x: auto;
+      margin: 40px auto;
+      width: 90%;
+      height: 600px;
+      border: 1px solid #ccc;
+      background: #fff;
     }
   </style>
 </head>
 <body>
-  <h1>Project Management | OrozcoRealty LLC</h1>
-  <div class="form-inline">
-    <input id="projectName" placeholder="Enter Project Name" />
-    <button onclick="saveProject()">Save Project</button>
-  </div>
-  <h2 id="currentProject">Current Project: None</h2>
-  <div class="form-inline">
-    <input id="taskName" placeholder="Task Name" />
-    <input id="taskStart" type="date" />
-    <input id="taskEnd" type="date" />
-    <button onclick="addGanttTask()">Add Task</button>
-  </div>
+  <h1>Simple Gantt Chart</h1>
   <div id="gantt"></div>
+  <script>
+    const tasks = [
+      {
+        id: 'Task 1',
+        name: 'Design Phase',
+        start: '2025-06-01',
+        end: '2025-06-10',
+        progress: 20
+      },
+      {
+        id: 'Task 2',
+        name: 'Development Phase',
+        start: '2025-06-11',
+        end: '2025-06-20',
+        progress: 40
+      },
+      {
+        id: 'Task 3',
+        name: 'Testing Phase',
+        start: '2025-06-21',
+        end: '2025-06-25',
+        progress: 0
+      }
+    ];
+
+    const gantt = new Gantt("#gantt", tasks);
+  </script>
 </body>
 </html>
