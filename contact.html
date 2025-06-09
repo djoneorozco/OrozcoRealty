@@ -2,75 +2,386 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Gantt Chart | OrozcoRealty LLC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css" />
+  <title>Projects | OrozcoRealty LLC</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      background-color: #1B1814;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    h1 {
+    header {
+      height: 300px;
+      background-image: url('banner.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 2rem;
+    }
+    header img {
+      max-width: 300px;
+      height: auto;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+    nav {
+      background: #111;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #ffd700;
+    }
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+    }
+    h1, h2 {
       text-align: center;
-      color: #333;
+      color: #ffd700;
     }
-    #gantt-target {
-      width: 100%;
-      height: 600px;
-      margin-top: 40px;
+    .form-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    input, button, select {
+      font-size: 1rem;
+      padding: 0.5rem;
+    }
+    .project-icons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .project-icon {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .project-icon img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #ffd700;
+    }
+    .project-icon span {
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
+    }
+    .chart-container {
+      width: 250px;
+      margin-left: auto;
+    }
+    #chart_div {
       background: #fff;
-      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    footer {
+      background: #111;
+      color: #aaa;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.3); }
     }
   </style>
 </head>
 <body>
-  <h1>OrozcoRealty Gantt Chart</h1>
-  <div id="gantt-target"></div>
+  <header>
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
+  </header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="listings.html">Listings</a>
+    <a href="rehab.html">Projects</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <main>
+    <!-- Moved the icons above title as requested -->
+    <div class="project-icons" id="projectIcons"></div>
+    <h1>Project Management Dashboard</h1>
 
-  <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
+    <div class="form-inline">
+      <input id="projectName" placeholder="Enter Project Name" />
+      <input id="projectBudget" type="number" placeholder="Total Budget ($)" />
+      <button onclick="saveProject()">Save Project</button>
+      <button onclick="editProject()">Edit Project</button>
+    </div>
+
+    <h2 id="currentProject">Current Project: None</h2>
+
+    <div class="form-inline">
+      <input id="expenseName" placeholder="Expense Name" />
+      <input id="expenseAmount" type="number" placeholder="Amount ($)" />
+      <select id="expenseType">
+        <option value="Purchase">Purchase</option>
+        <option value="Service">Service</option>
+        <option value="Other">Other</option>
+      </select>
+      <button onclick="addExpense()">Add Expense</button>
+    </div>
+
+    <div style="display: flex; gap: 2rem; align-items: flex-start;">
+      <div>
+        <h3>Expenses</h3>
+        <div id="expenseList"></div>
+        <p><strong>Total Expenses:</strong> $<span id="totalExpenses">0</span></p>
+      </div>
+      <div class="chart-container">
+        <p><strong>Remaining Budget:</strong> $<span id="remainingBudget">0</span></p>
+        <canvas id="budgetChart"></canvas>
+      </div>
+    </div>
+
+    <h2>Gantt Chart</h2>
+    <div class="form-inline">
+      <input id="taskName" placeholder="Task Name" />
+      <input id="startDate" type="date" />
+      <input id="endDate" type="date" />
+      <button onclick="addOrUpdateTask()">Add / Update Task</button>
+      <button onclick="deleteTask()">Delete Task</button>
+    </div>
+
+    <div id="chart_div"></div>
+  </main>
+  <footer>
+    &copy; 2025 OrozcoRealty LLC. All rights reserved.
+  </footer>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const tasks = [
-        {
-          id: "1",
-          name: "Design",
-          start: "2025-06-01",
-          end: "2025-06-05",
-          progress: 25
-        },
-        {
-          id: "2",
-          name: "Permits",
-          start: "2025-06-06",
-          end: "2025-06-09",
-          progress: 0,
-          dependencies: "1"
-        },
-        {
-          id: "3",
-          name: "Construction",
-          start: "2025-06-10",
-          end: "2025-06-20",
-          progress: 50,
-          dependencies: "2"
-        },
-        {
-          id: "4",
-          name: "Inspection",
-          start: "2025-06-21",
-          end: "2025-06-24",
-          progress: 0,
-          dependencies: "3"
-        }
-      ];
+    let currentProject = {};
+    let savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
 
-      const gantt = new Gantt("#gantt-target", tasks, {
-        view_mode: "Day",
-        language: "en"
+    function saveProject() {
+      const name = document.getElementById("projectName").value.trim();
+      const budget = parseFloat(document.getElementById("projectBudget").value);
+      if (!name || isNaN(budget)) return;
+
+      const existingIndex = savedProjects.findIndex(p => p.name === name);
+      if (existingIndex !== -1) {
+        savedProjects[existingIndex] = { name, budget, expenses: [], gantt: [] };
+        currentProject = savedProjects[existingIndex];
+      } else {
+        currentProject = { name, budget, expenses: [], gantt: [] };
+        savedProjects.push(currentProject);
+      }
+
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
+      renderProjectIcons();
+      updateProjectDisplay();
+    }
+
+    function editProject() {
+      const name = prompt("Edit project name:", currentProject.name);
+      const budget = prompt("Edit project budget:", currentProject.budget);
+      if (name) currentProject.name = name;
+      if (budget) currentProject.budget = parseFloat(budget);
+      const index = savedProjects.findIndex(p => p.name === currentProject.name);
+      if (index !== -1) savedProjects[index] = currentProject;
+      localStorage.setItem("projects", JSON.stringify(savedProjects));
+      renderProjectIcons();
+      updateProjectDisplay();
+    }
+
+    function renderProjectIcons() {
+      const container = document.getElementById("projectIcons");
+      container.innerHTML = "";
+      savedProjects.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.className = "project-icon";
+        div.onclick = () => {
+          currentProject = p;
+          updateProjectDisplay();
+        };
+        const img = document.createElement("img");
+        img.src = "OrozcoRealtyLLC.png";
+        img.alt = p.name;
+        const span = document.createElement("span");
+        span.textContent = p.name;
+        div.appendChild(img);
+        div.appendChild(span);
+        container.appendChild(div);
       });
-    });
+    }
+
+    function addExpense() {
+      const name = document.getElementById("expenseName").value;
+      const amount = parseFloat(document.getElementById("expenseAmount").value);
+      const type = document.getElementById("expenseType").value;
+      if (!name || isNaN(amount)) return;
+      currentProject.expenses.push({ name, amount, type });
+      updateProjectDisplay();
+    }
+
+    function updateProjectDisplay() {
+      document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
+      renderExpenses();
+      renderChart();
+      drawChart();
+    }
+
+    function renderExpenses() {
+      const list = document.getElementById("expenseList");
+      list.innerHTML = "";
+      let total = 0;
+      currentProject.expenses.forEach(exp => {
+        total += exp.amount;
+        const item = document.createElement("div");
+        item.textContent = `${exp.name} (${exp.type}): $${exp.amount.toFixed(2)}`;
+        list.appendChild(item);
+      });
+      document.getElementById("totalExpenses").innerText = total.toFixed(2);
+      document.getElementById("remainingBudget").innerText = (currentProject.budget - total).toFixed(2);
+    }
+
+    function renderChart() {
+      const ctx = document.getElementById("budgetChart").getContext("2d");
+      const totalExpenses = currentProject.expenses.reduce((sum, e) => sum + e.amount, 0);
+      const remaining = currentProject.budget - totalExpenses;
+      if (window.budgetPieChart) window.budgetPieChart.destroy();
+      window.budgetPieChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Expenses", "Remaining"],
+          datasets: [{
+            data: [totalExpenses, remaining],
+            backgroundColor: ["#ff4d4d", "#28a745"],
+            borderWidth: 3,
+            borderColor: "#000"
+          }]
+        },
+        options: {
+          plugins: { legend: { labels: { color: "#fff" } } },
+          cutout: "40%",
+          animation: { animateRotate: true, duration: 1000 }
+        }
+      });
+    }
+
+    let data, chart;
+    let selectedRowIndex = null;
+
+    google.charts.load('current', {'packages':['gantt']});
+    google.charts.setOnLoadCallback(initChart);
+
+    function initChart() {
+      data = new google.visualization.DataTable();
+      data.addColumn('string', 'Task ID');
+      data.addColumn('string', 'Task Name');
+      data.addColumn('string', 'Resource');
+      data.addColumn('date', 'Start Date');
+      data.addColumn('date', 'End Date');
+      data.addColumn('number', 'Duration');
+      data.addColumn('number', 'Percent Complete');
+      data.addColumn('string', 'Dependencies');
+
+      chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+      drawChart();
+
+      google.visualization.events.addListener(chart, 'select', () => {
+        const selection = chart.getSelection();
+        if (selection.length > 0) {
+          selectedRowIndex = selection[0].row;
+          const task = data.getValue(selectedRowIndex, 1);
+          const start = data.getValue(selectedRowIndex, 3);
+          const end = data.getValue(selectedRowIndex, 4);
+          document.getElementById("taskName").value = task;
+          document.getElementById("startDate").value = formatDateInput(start);
+          document.getElementById("endDate").value = formatDateInput(end);
+        }
+      });
+    }
+
+    function drawChart() {
+      chart.draw(data, {
+        height: data.getNumberOfRows() * 45 + 50,
+        gantt: { trackHeight: 30 }
+      });
+    }
+
+    function addOrUpdateTask() {
+      const taskName = document.getElementById("taskName").value;
+      const startDate = new Date(document.getElementById("startDate").value);
+      const endDate = new Date(document.getElementById("endDate").value);
+
+      if (!taskName || isNaN(startDate) || isNaN(endDate)) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      if (selectedRowIndex !== null) {
+        data.setValue(selectedRowIndex, 1, taskName);
+        data.setValue(selectedRowIndex, 3, startDate);
+        data.setValue(selectedRowIndex, 4, endDate);
+        selectedRowIndex = null;
+      } else {
+        const taskId = "T" + Date.now();
+        data.addRow([
+          taskId, taskName, null, startDate, endDate, null, 0, null
+        ]);
+      }
+
+      resetForm();
+      drawChart();
+    }
+
+    function deleteTask() {
+      if (selectedRowIndex !== null) {
+        data.removeRow(selectedRowIndex);
+        selectedRowIndex = null;
+        resetForm();
+        drawChart();
+      } else {
+        alert("Please select a task to delete.");
+      }
+    }
+
+    function resetForm() {
+      document.getElementById("taskName").value = "";
+      document.getElementById("startDate").value = "";
+      document.getElementById("endDate").value = "";
+    }
+
+    function formatDateInput(date) {
+      const d = new Date(date);
+      const month = ("0" + (d.getMonth() + 1)).slice(-2);
+      const day = ("0" + d.getDate()).slice(-2);
+      return `${d.getFullYear()}-${month}-${day}`;
+    }
+
+    renderProjectIcons();
   </script>
 </body>
 </html>
