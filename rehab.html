@@ -130,15 +130,19 @@
     <a href="contact.html">Contact</a>
   </nav>
   <main>
+    <!-- Moved the icons above title as requested -->
+    <div class="project-icons" id="projectIcons"></div>
     <h1>Project Management Dashboard</h1>
+
     <div class="form-inline">
       <input id="projectName" placeholder="Enter Project Name" />
       <input id="projectBudget" type="number" placeholder="Total Budget ($)" />
       <button onclick="saveProject()">Save Project</button>
       <button onclick="editProject()">Edit Project</button>
     </div>
-    <div class="project-icons" id="projectIcons"></div>
+
     <h2 id="currentProject">Current Project: None</h2>
+
     <div class="form-inline">
       <input id="expenseName" placeholder="Expense Name" />
       <input id="expenseAmount" type="number" placeholder="Amount ($)" />
@@ -149,6 +153,7 @@
       </select>
       <button onclick="addExpense()">Add Expense</button>
     </div>
+
     <div style="display: flex; gap: 2rem; align-items: flex-start;">
       <div>
         <h3>Expenses</h3>
@@ -160,6 +165,7 @@
         <canvas id="budgetChart"></canvas>
       </div>
     </div>
+
     <h2>Gantt Chart</h2>
     <div class="form-inline">
       <input id="taskName" placeholder="Task Name" />
@@ -168,6 +174,7 @@
       <button onclick="addOrUpdateTask()">Add / Update Task</button>
       <button onclick="deleteTask()">Delete Task</button>
     </div>
+
     <div id="chart_div"></div>
   </main>
   <footer>
