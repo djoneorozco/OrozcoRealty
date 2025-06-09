@@ -5,196 +5,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | OrozcoRealty LLC</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="https://unpkg.com/frappe-gantt/dist/frappe-gantt.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/frappe-gantt/dist/frappe-gantt.css">
+  <script type="module">
+    // Firebase import
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkS2K8aLmO1cn4eF2D_5w3-N0usmodPto",
+      authDomain: "orozcorealty-a7ce6.firebaseapp.com",
+      projectId: "orozcorealty-a7ce6",
+      storageBucket: "orozcorealty-a7ce6.firebasestorage.app",
+      messagingSenderId: "510699377586",
+      appId: "1:510699377586:web:de0887b54664a8edf08aab",
+      measurementId: "G-761XKT7LBN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let currentProjectName = null;
+    let gantt;
+    let tasks = [];
+
+    window.saveProject = async function() {
+      const name = document.getElementById("projectName").value.trim();
+      if (!name) return alert("Project name is required.");
+      currentProjectName = name;
+      document.getElementById("currentProject").textContent = `Current Project: ${name}`;
+      await loadTasks();
+    };
+
+    window.addGanttTask = async function() {
+      if (!currentProjectName) return alert("Save a project first.");
+      const name = document.getElementById("taskName").value;
+      const start = document.getElementById("taskStart").value;
+      const end = document.getElementById("taskEnd").value;
+      if (!name || !start || !end) return alert("All task fields are required.");
+
+      const taskId = "task-" + Date.now();
+      const task = { id: taskId, name, start, end, progress: 0 };
+      tasks.push(task);
+
+      await setDoc(doc(db, "projects", currentProjectName), { tasks });
+      renderGantt();
+    };
+
+    async function loadTasks() {
+      const docRef = doc(db, "projects", currentProjectName);
+      const docSnap = await getDoc(docRef);
+      tasks = docSnap.exists() ? docSnap.data().tasks : [];
+      renderGantt();
+    }
+
+    function renderGantt() {
+      const container = document.getElementById("gantt");
+      container.innerHTML = "";
+      gantt = new Gantt(container, tasks, {
+        on_date_change(task, start, end) {
+          const index = tasks.findIndex(t => t.id === task.id);
+          if (index !== -1) {
+            tasks[index].start = start.toISOString().split("T")[0];
+            tasks[index].end = end.toISOString().split("T")[0];
+            updateDoc(doc(db, "projects", currentProjectName), { tasks });
+          }
+        }
+      });
+    }
+  </script>
   <style>
     body {
-      margin: 0;
-      padding: 0;
       background-color: #1B1814;
       color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    header {
-      height: 300px;
-      background-image: url('banner.jpg');
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+      font-family: 'Segoe UI', sans-serif;
       padding: 2rem;
-    }
-    header img {
-      max-width: 300px;
-      height: auto;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-    nav {
-      background: #111;
-      padding: 1rem;
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      text-transform: uppercase;
-      transition: color 0.3s ease;
-    }
-    nav a:hover {
-      color: #ffd700;
-    }
-    main {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background-color: #111;
-      border-radius: 12px;
-      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
     }
     h1, h2 {
-      text-align: center;
       color: #ffd700;
+      text-align: center;
     }
     .form-inline {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
       margin-bottom: 1rem;
-    }
-    input, button, select {
-      font-size: 1rem;
-      padding: 0.5rem;
-    }
-    .project-icons {
-      display: flex;
       justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
     }
-    .project-icon {
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    input, button {
+      padding: 0.5rem;
+      font-size: 1rem;
     }
-    .project-icon img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid #ffd700;
-    }
-    .project-icon span {
-      margin-top: 0.3rem;
-      font-size: 0.8rem;
-    }
-    .chart-container {
-      width: 250px;
-      margin-left: auto;
-    }
-    #chart_div {
-      background: #fff;
+    #gantt {
+      background-color: #fff;
       border-radius: 10px;
       padding: 1rem;
       overflow-x: auto;
     }
-    footer {
-      background: #111;
-      color: #aaa;
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 0.95rem;
-    }
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.05); filter: brightness(1.3); }
-    }
   </style>
 </head>
 <body>
-  <header>
-    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
-  </header>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="roadmap.html">Roadmap</a>
-    <a href="listings.html">Listings</a>
-    <a href="rehab.html">Projects</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-  <main>
-    <h1>Project Management Dashboard</h1>
-    <div class="form-inline">
-      <input id="projectName" placeholder="Enter Project Name" />
-      <input id="projectBudget" type="number" placeholder="Total Budget ($)" />
-      <button onclick="saveProject()">Save Project</button>
-      <button onclick="editProject()">Edit Project</button>
-    </div>
-    <div class="project-icons" id="projectIcons"></div>
-    <h2 id="currentProject">Current Project: None</h2>
-    <!-- Remaining content stays the same -->
-  </main>
-  <footer>
-    &copy; 2025 OrozcoRealty LLC. All rights reserved.
-  </footer>
-  <script>
-    let currentProject = null;
-    let savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-
-    function saveProject() {
-      const name = document.getElementById("projectName").value.trim();
-      const budget = parseFloat(document.getElementById("projectBudget").value);
-      if (!name || isNaN(budget)) return;
-
-      const existingIndex = savedProjects.findIndex(p => p.name === name);
-
-      if (existingIndex !== -1) {
-        savedProjects[existingIndex].budget = budget;
-        currentProject = savedProjects[existingIndex];
-      } else {
-        currentProject = { name, budget, expenses: [], gantt: [] };
-        savedProjects.push(currentProject);
-      }
-
-      localStorage.setItem("projects", JSON.stringify(savedProjects));
-      renderProjectIcons();
-      updateProjectDisplay();
-    }
-
-    function renderProjectIcons() {
-      const container = document.getElementById("projectIcons");
-      container.innerHTML = "";
-      savedProjects.forEach((p) => {
-        const div = document.createElement("div");
-        div.className = "project-icon";
-        div.onclick = () => {
-          currentProject = p;
-          updateProjectDisplay();
-        };
-        const img = document.createElement("img");
-        img.src = "OrozcoRealtyLLC.png";
-        img.alt = p.name;
-        const span = document.createElement("span");
-        span.textContent = p.name;
-        div.appendChild(img);
-        div.appendChild(span);
-        container.appendChild(div);
-      });
-    }
-
-    function updateProjectDisplay() {
-      if (!currentProject) return;
-      document.getElementById("currentProject").innerText = `Current Project: ${currentProject.name}`;
-    }
-
-    renderProjectIcons();
-  </script>
+  <h1>Project Management | OrozcoRealty LLC</h1>
+  <div class="form-inline">
+    <input id="projectName" placeholder="Enter Project Name" />
+    <button onclick="saveProject()">Save Project</button>
+  </div>
+  <h2 id="currentProject">Current Project: None</h2>
+  <div class="form-inline">
+    <input id="taskName" placeholder="Task Name" />
+    <input id="taskStart" type="date" />
+    <input id="taskEnd" type="date" />
+    <button onclick="addGanttTask()">Add Task</button>
+  </div>
+  <div id="gantt"></div>
 </body>
 </html>
