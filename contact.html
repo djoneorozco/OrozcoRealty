@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Advanced Gantt Chart | OrozcoRealty LLC</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://code.jquery.com/ui/1.13.2/themes/smoothness/jquery-ui.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-gantt/1.2.1/css/jquery.gantt.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <title>jsGanttImproved Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsgantt-improved/dist/jsgantt.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsgantt-improved/dist/jsgantt.css" />
   <style>
     body {
       background-color: #1B1814;
@@ -14,76 +13,51 @@
       padding: 2rem;
     }
     h1 {
-      text-align: center;
       color: #ffd700;
+      text-align: center;
     }
-    #ganttChart {
-      margin-top: 2rem;
-    }
-    .gantt .bar {
-      background-color: #ffd700 !important;
+    #GanttChartDIV {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ccc;
+      background-color: white;
+      color: black;
     }
   </style>
 </head>
 <body>
 
-  <h1>Project Management Timeline</h1>
-  <div id="ganttChart"></div>
-
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-gantt/1.2.1/js/jquery.gantt.min.js"></script>
+  <h1>OrozcoRealty Gantt Chart</h1>
+  <div id="GanttChartDIV"></div>
 
   <script>
-    $(function() {
-      $("#ganttChart").gantt({
-        source: [{
-          name: "Project Setup",
-          desc: "Site Acquisition",
-          values: [{
-            from: "/Date(1717891200000)/", // 2025-06-09
-            to: "/Date(1718496000000)/",   // 2025-06-16
-            label: "Acquire Lot",
-            customClass: "ganttRed",
-            dataObj: { id: 1 }
-          }]
-        }, {
-          name: "Project Setup",
-          desc: "Permits & Design",
-          values: [{
-            from: "/Date(1718582400000)/", // 2025-06-17
-            to: "/Date(1719187200000)/",   // 2025-06-24
-            label: "Design & Permit",
-            customClass: "ganttGreen",
-            dataObj: { id: 2 }
-          }]
-        }, {
-          name: "Construction",
-          desc: "Foundation Work",
-          values: [{
-            from: "/Date(1719273600000)/", // 2025-06-25
-            to: "/Date(1719878400000)/",   // 2025-07-02
-            label: "Foundation",
-            customClass: "ganttBlue",
-            dataObj: { id: 3 }
-          }]
-        }],
-        navigate: "scroll",
-        scale: "days",
-        maxScale: "months",
-        minScale: "hours",
-        itemsPerPage: 10,
-        onItemClick: function(data) {
-          alert("Clicked task: " + data.label);
-        },
-        onAddClick: function(dt, rowId) {
-          alert("Add task clicked at " + dt + " on row " + rowId);
-        },
-        onRender: function() {
-          console.log("Gantt chart rendered");
-        }
-      });
-    });
+    const g = new JSGantt.GanttChart(document.getElementById('GanttChartDIV'), 'week');
+
+    if (g.getDivId()) {
+      g.setCaptionType('Complete'); // Caption : None, Caption, Resource, Duration, Complete
+      g.setShowRes(1);              // Show resource names
+      g.setShowDur(1);              // Show task duration
+      g.setShowComp(1);             // Show task completion
+      g.setShowStartDate(1);        // Show start date
+      g.setShowEndDate(1);          // Show end date
+      g.setShowTaskInfoLink(1);     // Enable task info link
+      g.setShowEndWeekDate(0);      // Show last day of the week
+      g.setFormatArr('day','week','month');
+
+      g.AddTaskItem(new JSGantt.TaskItem(
+        1, 'Site Acquisition', '', '2025-06-10', '2025-06-15', 'ff0000', '', 100, 0, 1, 0, '', '', '', '', '', 1, '', '', 'Owner'
+      ));
+      g.AddTaskItem(new JSGantt.TaskItem(
+        2, 'Design & Permits', '', '2025-06-16', '2025-06-22', '00ff00', '', 50, 1, 1, 0, '', '', '', '', '', 1, '', '', 'Engineer'
+      ));
+      g.AddTaskItem(new JSGantt.TaskItem(
+        3, 'Foundation Work', '', '2025-06-23', '2025-06-30', '0000ff', '', 0, 2, 1, 0, '', '', '', '', '', 1, '', '', 'Contractor'
+      ));
+
+      g.Draw();
+    } else {
+      alert("Error: unable to create Gantt chart.");
+    }
   </script>
 
 </body>
