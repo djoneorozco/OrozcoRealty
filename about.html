@@ -48,6 +48,28 @@
       animation: floatPulse 6s ease-in-out infinite;
     }
 
+    .audio-trigger {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .audio-trigger button {
+      background-color: #ffd700;
+      color: #111;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: background 0.3s ease;
+    }
+
+    .audio-trigger button:hover {
+      background-color: #e6c200;
+    }
+
     main {
       max-width: 900px;
       margin: 2rem auto;
@@ -122,8 +144,11 @@
     <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
   </div>
 
-  <!-- 🔊 Hidden autoplay audio -->
-  <audio autoplay hidden>
+  <div class="audio-trigger">
+    <button onclick="document.getElementById('bioAudio').play()">🎧 Hear My Story</button>
+  </div>
+
+  <audio id="bioAudio">
     <source src="https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/voice.mp3" type="audio/mpeg">
     Your browser does not support the audio element.
   </audio>
@@ -149,7 +174,7 @@
   </main>
 
   <footer>
-    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & Laredo, TX
+    &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
 
 </body>
