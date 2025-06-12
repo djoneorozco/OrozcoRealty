@@ -13,24 +13,6 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    header {
-      position: relative;
-      height: 300px;
-      background-image: url('banner.jpg');
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 2rem;
-    }
-
-    header img {
-      max-width: 300px;
-      height: auto;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-
     nav {
       background: #111;
       padding: 1rem;
@@ -54,53 +36,84 @@
       color: #ffd700;
     }
 
-    main {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background-color: #111;
-      border-radius: 12px;
-      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+    .logo-container {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      animation: slideFade 2s ease-in-out;
     }
 
-    h1, h2 {
+    .logo-container img {
+      max-width: 400px;
+      width: 80%;
+      animation: floatPulse 6s ease-in-out infinite;
+    }
+
+    h1 {
       text-align: center;
       color: #ffd700;
-    }
-
-    .listing-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: center;
       margin-top: 2rem;
     }
 
-    .listing-card {
-      background-color: #222;
-      border-radius: 10px;
+    .listing-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .listing {
+      background-color: #111;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
-      max-width: 350px;
-      width: 100%;
-      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
     }
 
-    .listing-card img {
-      width: 100%;
-      height: auto;
-      display: block;
+    .listing:hover {
+      transform: scale(1.02);
     }
 
-    .listing-card h3 {
+    .listing img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .listing-content {
+      padding: 1rem;
+    }
+
+    .listing h2 {
       color: #ffd700;
-      margin: 1rem 0 0.5rem;
+      margin: 0 0 0.5rem;
     }
 
-    .listing-card p {
-      padding: 0 1rem 1rem;
-      color: #ccc;
-      font-size: 0.95rem;
+    .listing p {
+      margin: 0.25rem 0;
+    }
+
+    .status {
+      font-weight: bold;
+      color: #32cd32;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      background-color: #ffd700;
+      color: #111;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #e6c200;
     }
 
     footer {
@@ -111,20 +124,29 @@
       font-size: 0.95rem;
     }
 
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); filter: brightness(1); }
-      50% { transform: scale(1.05); filter: brightness(1.3); }
+    @keyframes floatPulse {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+      }
+      50% {
+        transform: translateY(-10px) scale(1.03);
+      }
+    }
+
+    @keyframes slideFade {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER with banner and logo -->
-  <header>
-    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo" />
-  </header>
-
-  <!-- NAVIGATION -->
   <nav>
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
@@ -134,33 +156,38 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-  <!-- MAIN SECTION -->
-  <main>
-    <h1>Property Listings</h1>
-    <p style="text-align: center;">Browse available homes and investment opportunities.</p>
+  <div class="logo-container">
+    <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
+  </div>
 
-    <div class="listing-grid">
-      <div class="listing-card">
-        <img src="listing1.jpg" alt="Modern Home" />
-        <h3>3BR / 2BA - San Antonio</h3>
-        <p>Recently renovated property in the heart of the city. Perfect for first-time buyers or investors.</p>
-      </div>
+  <h1>Available Properties</h1>
 
-      <div class="listing-card">
-        <img src="listing2.jpg" alt="Family Home" />
-        <h3>4BR / 3BA - El Cenizo</h3>
-        <p>Spacious single-family home with a large backyard. Eligible for Section 8 tenants.</p>
-      </div>
+  <div class="listing-container">
 
-      <div class="listing-card">
-        <img src="listing3.jpg" alt="Fixer Upper" />
-        <h3>2BR / 1BA - South Side</h3>
-        <p>Needs some TLC, but full of potential. Great value-add rehab project with veteran loan support options.</p>
+    <div class="listing">
+      <img src="property1.jpg" alt="Property 1">
+      <div class="listing-content">
+        <h2>3506 Lara St, San Antonio, TX</h2>
+        <p><strong>Price:</strong> $145,000</p>
+        <p><strong>3 Bed | 2 Bath | 1,280 sqft</strong></p>
+        <p class="status">Available • RTO Eligible</p>
+        <a href="contact.html" class="btn">View Details</a>
       </div>
     </div>
-  </main>
 
-  <!-- FOOTER -->
+    <div class="listing">
+      <img src="property2.jpg" alt="Property 2">
+      <div class="listing-content">
+        <h2>525 Cadena St, San Antonio, TX</h2>
+        <p><strong>Price:</strong> $132,000</p>
+        <p><strong>2 Bed | 1 Bath | 980 sqft</strong></p>
+        <p class="status">Available • Section 8 Approved</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+  </div>
+
   <footer>
     &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
