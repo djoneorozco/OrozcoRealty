@@ -39,7 +39,6 @@
     .logo-container {
       text-align: center;
       padding: 2rem 1rem 1rem;
-      animation: slideFade 2s ease-in-out;
     }
 
     .logo-container img {
@@ -57,7 +56,7 @@
 
     .listing-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 2rem;
       padding: 2rem;
       max-width: 1200px;
@@ -65,10 +64,12 @@
     }
 
     .listing {
-      background-color: #111;
+      background-color: #222;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
       transition: transform 0.3s ease;
     }
 
@@ -78,26 +79,32 @@
 
     .listing img {
       width: 100%;
-      height: 200px;
+      height: 180px;
       object-fit: cover;
     }
 
     .listing-content {
       padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .listing h2 {
       color: #ffd700;
       margin: 0 0 0.5rem;
+      font-size: 1.1rem;
     }
 
     .listing p {
       margin: 0.25rem 0;
+      font-size: 0.95rem;
     }
 
     .status {
       font-weight: bold;
       color: #32cd32;
+      margin-top: auto;
     }
 
     .btn {
@@ -111,6 +118,7 @@
       border-radius: 6px;
       text-decoration: none;
       transition: background 0.3s ease;
+      text-align: center;
     }
 
     .btn:hover {
@@ -126,23 +134,8 @@
     }
 
     @keyframes floatPulse {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-      }
-      50% {
-        transform: translateY(-10px) scale(1.03);
-      }
-    }
-
-    @keyframes slideFade {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.03); }
     }
   </style>
 </head>
@@ -161,24 +154,110 @@
     <img src="OrozcoRealtyLLC.png" alt="OrozcoRealty Crest Logo">
   </div>
 
-  <h1>Available Homes Under $150K</h1>
+  <h1>San Antonio Homes Under $150K</h1>
 
   <div class="listing-container">
 
-    <!-- You can duplicate this listing block and change details/images -->
+    <!-- Property cards -->
     <div class="listing">
       <img src="property1.jpg" alt="Property 1">
       <div class="listing-content">
-        <h2>3506 Lara St, San Antonio, TX</h2>
-        <p><strong>Price:</strong> $145,000</p>
-        <p><strong>3 Bed • 2 Bath • 1,280 sqft</strong></p>
+        <h2>3506 Lara St</h2>
+        <p><strong>$145,000</strong></p>
+        <p>3 Bed • 2 Bath • 1,280 sqft</p>
         <p class="status">Available • RTO Eligible</p>
         <a href="contact.html" class="btn">View Details</a>
       </div>
     </div>
 
-    <!-- Add 8 more listings by duplicating this structure -->
-    <!-- ... -->
+    <div class="listing">
+      <img src="property2.jpg" alt="Property 2">
+      <div class="listing-content">
+        <h2>525 Cadena St</h2>
+        <p><strong>$132,000</strong></p>
+        <p>2 Bed • 1 Bath • 980 sqft</p>
+        <p class="status">Available • Section 8 Approved</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+    <!-- Add 7 more cards below (same format) -->
+    <div class="listing">
+      <img src="property3.jpg" alt="Property 3">
+      <div class="listing-content">
+        <h2>4101 Leon Creek Rd</h2>
+        <p><strong>$149,000</strong></p>
+        <p>3 Bed • 2 Bath • 1,480 sqft</p>
+        <p class="status">Available</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+    <div class="listing">
+      <img src="property4.jpg" alt="Property 4">
+      <div class="listing-content">
+        <h2>1342 Navidad St</h2>
+        <p><strong>$139,500</strong></p>
+        <p>2 Bed • 1 Bath • 1,100 sqft</p>
+        <p class="status">Available</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+    <div class="listing">
+      <img src="property5.jpg" alt="Property 5">
+      <div class="listing-content">
+        <h2>7823 Hidalgo St</h2>
+        <p><strong>$128,000</strong></p>
+        <p>3 Bed • 2 Bath • 1,200 sqft</p>
+        <p class="status">Pending</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+    <div class="listing">
+      <img src="property6.jpg" alt="Property 6">
+      <div class="listing-content">
+        <h2>914 Ceralvo St</h2>
+        <p><strong>$140,000</strong></p>
+        <p>2 Bed • 1 Bath • 1,050 sqft</p>
+        <p class="status">Available</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+    <div class="listing">
+      <img src="property7.jpg" alt="Property 7">
+      <div class="listing-content">
+        <h2>208 Blanco Rd</h2>
+        <p><strong>$135,000</strong></p>
+        <p>3 Bed • 2 Bath • 1,300 sqft</p>
+        <p class="status">Available • RTO Eligible</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+    <div class="listing">
+      <img src="property8.jpg" alt="Property 8">
+      <div class="listing-content">
+        <h2>100 Medina Base Rd</h2>
+        <p><strong>$149,999</strong></p>
+        <p>4 Bed • 2 Bath • 1,700 sqft</p>
+        <p class="status">Available</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
+
+    <div class="listing">
+      <img src="property9.jpg" alt="Property 9">
+      <div class="listing-content">
+        <h2>6924 S Flores St</h2>
+        <p><strong>$115,000</strong></p>
+        <p>2 Bed • 1 Bath • 950 sqft</p>
+        <p class="status">Available</p>
+        <a href="contact.html" class="btn">View Details</a>
+      </div>
+    </div>
 
   </div>
 
