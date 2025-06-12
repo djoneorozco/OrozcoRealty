@@ -55,74 +55,16 @@
     }
 
     .listing-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      padding: 2rem;
       max-width: 1200px;
       margin: auto;
-    }
-
-    .listing {
-      background-color: #222;
+      padding: 2rem;
+      background-color: #111;
       border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s ease;
-    }
-
-    .listing:hover {
-      transform: scale(1.02);
-    }
-
-    .listing img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-
-    .listing-content {
-      padding: 1rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .listing h2 {
-      color: #ffd700;
-      margin: 0 0 0.5rem;
-      font-size: 1.1rem;
-    }
-
-    .listing p {
-      margin: 0.25rem 0;
-      font-size: 0.95rem;
-    }
-
-    .status {
-      font-weight: bold;
-      color: #32cd32;
-      margin-top: auto;
-    }
-
-    .btn {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.6rem 1rem;
-      background-color: #ffd700;
-      color: #111;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: background 0.3s ease;
-      text-align: center;
-    }
-
-    .btn:hover {
-      background-color: #e6c200;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-x: auto;
     }
 
     footer {
@@ -156,114 +98,32 @@
 
   <h1>San Antonio Homes Under $150K</h1>
 
-  <div class="listing-container">
-
-    <!-- Property cards -->
-    <div class="listing">
-      <img src="property1.jpg" alt="Property 1">
-      <div class="listing-content">
-        <h2>3506 Lara St</h2>
-        <p><strong>$145,000</strong></p>
-        <p>3 Bed • 2 Bath • 1,280 sqft</p>
-        <p class="status">Available • RTO Eligible</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <div class="listing">
-      <img src="property2.jpg" alt="Property 2">
-      <div class="listing-content">
-        <h2>525 Cadena St</h2>
-        <p><strong>$132,000</strong></p>
-        <p>2 Bed • 1 Bath • 980 sqft</p>
-        <p class="status">Available • Section 8 Approved</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <!-- Add 7 more cards below (same format) -->
-    <div class="listing">
-      <img src="property3.jpg" alt="Property 3">
-      <div class="listing-content">
-        <h2>4101 Leon Creek Rd</h2>
-        <p><strong>$149,000</strong></p>
-        <p>3 Bed • 2 Bath • 1,480 sqft</p>
-        <p class="status">Available</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <div class="listing">
-      <img src="property4.jpg" alt="Property 4">
-      <div class="listing-content">
-        <h2>1342 Navidad St</h2>
-        <p><strong>$139,500</strong></p>
-        <p>2 Bed • 1 Bath • 1,100 sqft</p>
-        <p class="status">Available</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <div class="listing">
-      <img src="property5.jpg" alt="Property 5">
-      <div class="listing-content">
-        <h2>7823 Hidalgo St</h2>
-        <p><strong>$128,000</strong></p>
-        <p>3 Bed • 2 Bath • 1,200 sqft</p>
-        <p class="status">Pending</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <div class="listing">
-      <img src="property6.jpg" alt="Property 6">
-      <div class="listing-content">
-        <h2>914 Ceralvo St</h2>
-        <p><strong>$140,000</strong></p>
-        <p>2 Bed • 1 Bath • 1,050 sqft</p>
-        <p class="status">Available</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <div class="listing">
-      <img src="property7.jpg" alt="Property 7">
-      <div class="listing-content">
-        <h2>208 Blanco Rd</h2>
-        <p><strong>$135,000</strong></p>
-        <p>3 Bed • 2 Bath • 1,300 sqft</p>
-        <p class="status">Available • RTO Eligible</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <div class="listing">
-      <img src="property8.jpg" alt="Property 8">
-      <div class="listing-content">
-        <h2>100 Medina Base Rd</h2>
-        <p><strong>$149,999</strong></p>
-        <p>4 Bed • 2 Bath • 1,700 sqft</p>
-        <p class="status">Available</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
-    <div class="listing">
-      <img src="property9.jpg" alt="Property 9">
-      <div class="listing-content">
-        <h2>6924 S Flores St</h2>
-        <p><strong>$115,000</strong></p>
-        <p>2 Bed • 1 Bath • 950 sqft</p>
-        <p class="status">Available</p>
-        <a href="contact.html" class="btn">View Details</a>
-      </div>
-    </div>
-
+  <div class="listing-container" id="listingContainer">
+    Loading listings from Zillow...
   </div>
 
   <footer>
     &copy; 2025 OrozcoRealty LLC | Veteran-Owned | Serving San Antonio & El Cenizo, TX
   </footer>
+
+  <script>
+    async function loadListings() {
+      const url = 'https://api.zenrows.com/v1/?apikey=d2301a986545e0f83ad87e65182e17ffa2564c58&url=https%3A%2F%2Fwww.zillow.com%2Fsan-antonio-tx%2Fhouse_under-150000%2F&autoparse=true';
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const container = document.getElementById("listingContainer");
+        container.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      } catch (e) {
+        console.error(e);
+        document.getElementById("listingContainer").innerHTML = "<p style='color:#ccc;'>Failed to load listings. Please check the API key or domain whitelist settings.</p>";
+      }
+    }
+
+    window.addEventListener("load", loadListings);
+  </script>
 
 </body>
 </html>
