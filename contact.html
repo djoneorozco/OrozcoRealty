@@ -1,8 +1,180 @@
-from zenrows import ZenRowsClient
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact | The Orozco Realty</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1B1814;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-client = ZenRowsClient("d2301a986545e0f83ad87e65182e17ffa2564c58")
-url = "https://www.zillow.com/san-antonio-tx/house_under-150000/"
-params = {"autoparse":"true"}
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      position: relative;
+    }
 
-response = client.get(url, params=params)
-print(response.text)
+    .banner-container {
+      width: 100%;
+      height: 475px;
+      background-image: url('banner.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .logo-container img {
+      max-width: 425px;
+      height: auto;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: logoFadeIn 5s ease-out forwards, logoGlow 3s ease-in-out 0s 1 forwards;
+    }
+
+    @keyframes logoFadeIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+        filter: brightness(0.5) blur(2px);
+      }
+      60% {
+        opacity: 1;
+        transform: scale(1.05);
+        filter: brightness(1.2);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: brightness(1);
+      }
+    }
+
+    @keyframes logoGlow {
+      0% { filter: drop-shadow(0 0 0px #8f5525); }
+      50% { filter: drop-shadow(0 0 25px #8f5525); }
+      100% { filter: drop-shadow(0 0 0px #3b230f); }
+    }
+
+    nav {
+      background: #260202;
+      padding: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav a {
+      color: #dbd8d7;
+      text-decoration: none;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+    }
+
+    h1 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    .contact-info {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    .contact-info p {
+      margin: 0.5rem 0;
+    }
+
+    footer {
+      background: #111;
+      color: #aaa;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      .banner-container { height: 220px; }
+      .logo-container img { max-width: 300px; }
+      main { padding: 1rem; margin: 1rem; }
+      h1 { font-size: 1.5rem; }
+      nav { flex-direction: column; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="banner-container">
+      <div class="logo-container">
+        <img src="theorozcorealty.png" alt="The Orozco Realty Logo" />
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="listings.html">Listings</a>
+    <a href="rehab.html">Projects</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <h1>Contact The Orozco Realty</h1>
+    <div class="contact-info">
+      <p><strong>Email:</strong> info@TheOrozcoRealty.com</p>
+      <p><strong>Phone:</strong> (210) 555-0123</p>
+      <p><strong>Location:</strong> San Antonio & El Cenizo, TX</p>
+      <p><strong>Mailing Address:</strong> PO Box 1975, San Antonio, TX 78207</p>
+      <p><strong>Business Hours:</strong> Mon–Fri 9am–6pm</p>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; 2025 The Orozco Realty | Veteran-Owned | Serving South Texas with Integrity
+  </footer>
+</body>
+</html>
