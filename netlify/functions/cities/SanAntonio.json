@@ -1,0 +1,39 @@
+{
+  "place": "San Antonio, TX",
+  "geo_id": "16000US4865000",
+  "year": 2023,
+  "population": {
+    "estimate": 1458954,
+    "median_age": 34.6,
+    "persons_per_household": 2.6
+  },
+  "households": {
+    "total_households": 547883
+  },
+  "income": {
+    "median_household_income": 62917,
+    "per_capita_income": 32983,
+    "poverty_rate_percent": 17.1
+  },
+  "education": {
+    "high_school_grad_or_higher_percent": 84.3,
+    "bachelors_degree_or_higher_percent": 28.7
+  },
+  "veterans": {
+    "veteran_population_percent": 8.2
+  },
+  "immigration": {
+    "foreign_born_percent": 14.3
+  },
+  "labor": {
+    "mean_travel_time_to_work_minutes": 24.6
+  },
+  "housing": {
+    "housing_units": 603213,
+    "median_value_owner_occupied": 219700
+  },
+  "notes": {
+    "data_source": "ACS 2023 5-Year Estimates",
+    "margin_of_error_not_included": true
+  }
+}
