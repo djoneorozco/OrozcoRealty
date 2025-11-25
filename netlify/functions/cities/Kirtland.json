@@ -1,0 +1,69 @@
+{
+  "place": "Albuquerque / Kirtland AFB, NM",
+  "geo_id": "16000US3502000",
+  "base_code": "KIRTLAND-AFB",
+  "year": 2023,
+
+  "population": {
+    "estimate": 562599,
+    "median_age": 37.2,
+    "persons_per_household": 2.5
+  },
+
+  "households": {
+    "total_households": 231120
+  },
+
+  "income": {
+    "median_household_income": 59700,
+    "per_capita_income": 30840,
+    "poverty_rate_percent": 17.2
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 88.6,
+    "bachelors_degree_or_higher_percent": 34.5
+  },
+
+  "veterans": {
+    "veteran_population_percent": 9.9
+  },
+
+  "immigration": {
+    "foreign_born_percent": 12.6
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 21.5
+  },
+
+  "housing": {
+    "housing_units": 256800,
+    "median_value_owner_occupied": 278900,
+
+    "market": {
+      "zillow_average_home_value": 314200,
+      "zillow_one_year_change_percent": 1.6,
+
+      "median_sale_price_redfin": 335000,
+      "median_sale_price_yoy_change_percent": 1.1,
+      "median_sale_price_per_sqft": 199,
+
+      "median_listing_price_realtor": 365000,
+      "median_listing_price_per_sqft": 212,
+
+      "q1_2025_median_home_price_reported": 372000,
+      "average_days_on_market_range": {
+        "low": 38,
+        "high": 62
+      },
+
+      "market_type_summary": "Balanced to slightly seller-leaning, steady demand, moderate inventory"
+    }
+  },
+
+  "notes": {
+    "data_source": "ACS 2023 5-Year Estimates + Zillow + Redfin + Realtor.com + ABQ Market Reports (2024–2025)",
+    "margin_of_error_not_included": true
+  }
+}
