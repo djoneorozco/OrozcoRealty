@@ -1,0 +1,69 @@
+{
+  "place": "Tucson / Davis-Monthan AFB, AZ",
+  "geo_id": "16000US0477000",
+  "base_code": "DAVIS-MONTHAN",
+  "year": 2023,
+
+  "population": {
+    "estimate": 546574,
+    "median_age": 34.0,
+    "persons_per_household": 2.5
+  },
+
+  "households": {
+    "total_households": 221442
+  },
+
+  "income": {
+    "median_household_income": 52800,
+    "per_capita_income": 29910,
+    "poverty_rate_percent": 19.1
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 86.5,
+    "bachelors_degree_or_higher_percent": 31.1
+  },
+
+  "veterans": {
+    "veteran_population_percent": 9.4
+  },
+
+  "immigration": {
+    "foreign_born_percent": 13.7
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 23.3
+  },
+
+  "housing": {
+    "housing_units": 251800,
+    "median_value_owner_occupied": 243700,
+
+    "market": {
+      "zillow_average_home_value": 296210,
+      "zillow_one_year_change_percent": 1.8,
+
+      "median_sale_price_redfin": 315000,
+      "median_sale_price_yoy_change_percent": 1.2,
+      "median_sale_price_per_sqft": 208,
+
+      "median_listing_price_realtor": 349900,
+      "median_listing_price_per_sqft": 220,
+
+      "q1_2025_median_home_price_reported": 355000,
+      "average_days_on_market_range": {
+        "low": 41,
+        "high": 67
+      },
+
+      "market_type_summary": "Neutral-leaning market with slow price growth and steady demand"
+    }
+  },
+
+  "notes": {
+    "data_source": "ACS 2023 5-Year Estimates + Zillow + Redfin + Realtor.com + Tucson Market Reports (2024–2025)",
+    "margin_of_error_not_included": true
+  }
+}
