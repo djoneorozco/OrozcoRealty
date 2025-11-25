@@ -1,0 +1,69 @@
+{
+  "place": "Abilene / Dyess AFB, TX",
+  "geo_id": "16000US4801000",
+  "base_code": "DYESS-AFB",
+  "year": 2023,
+
+  "population": {
+    "estimate": 127129,
+    "median_age": 33.6,
+    "persons_per_household": 2.6
+  },
+
+  "households": {
+    "total_households": 47200
+  },
+
+  "income": {
+    "median_household_income": 61850,
+    "per_capita_income": 30840,
+    "poverty_rate_percent": 14.9
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 88.1,
+    "bachelors_degree_or_higher_percent": 26.9
+  },
+
+  "veterans": {
+    "veteran_population_percent": 11.4
+  },
+
+  "immigration": {
+    "foreign_born_percent": 7.9
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 16.8
+  },
+
+  "housing": {
+    "housing_units": 51700,
+    "median_value_owner_occupied": 176900,
+
+    "market": {
+      "zillow_average_home_value": 214600,
+      "zillow_one_year_change_percent": 1.2,
+
+      "median_sale_price_redfin": 225000,
+      "median_sale_price_yoy_change_percent": 1.0,
+      "median_sale_price_per_sqft": 142,
+
+      "median_listing_price_realtor": 247900,
+      "median_listing_price_per_sqft": 153,
+
+      "q1_2025_median_home_price_reported": 252000,
+      "average_days_on_market_range": {
+        "low": 48,
+        "high": 75
+      },
+
+      "market_type_summary": "Neutral market with stable inventory and modest year-over-year appreciation"
+    }
+  },
+
+  "notes": {
+    "data_source": "ACS 2023 5-Year Estimates + Zillow + Redfin + Realtor.com + Abilene Market Data (2024–2025)",
+    "margin_of_error_not_included": true
+  }
+}
