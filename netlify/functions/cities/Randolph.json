@@ -1,63 +1,104 @@
 {
-  "place": "Randolph AFB Area, TX",
-  "geo_id": "48029120300",
+  "place": "Universal City (Randolph AFB), TX",
+  "geo_id": "4800000US4874616",
   "year": 2023,
 
   "population": {
-    "estimate": 97500,
+    "estimate": 20862,
     "median_age": 35.1,
-    "persons_per_household": 2.8
+    "persons_per_household": 2.7
   },
 
   "households": {
-    "total_households": 35000
+    "total_households": 7401
   },
 
   "income": {
-    "median_household_income": 80150,
-    "per_capita_income": 36500,
-    "poverty_rate_percent": 6.9
+    "median_household_income": 72014,
+    "per_capita_income": 34582,
+    "poverty_rate_percent": 8.9
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 93.1,
-    "bachelors_degree_or_higher_percent": 38.4
+    "high_school_grad_or_higher_percent": 90.4,
+    "bachelors_degree_or_higher_percent": 28.9
   },
 
   "veterans": {
-    "veteran_population_percent": 13.2
+    "veteran_population_percent": 15.2
   },
 
   "immigration": {
-    "foreign_born_percent": 11.6
+    "foreign_born_percent": 10.8
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 27.3
+    "mean_travel_time_to_work_minutes": 24.2
   },
 
   "housing": {
-    "housing_units": 38000,
-    "median_value_owner_occupied": 286000,
+    "housing_units": 7944,
+    "median_value_owner_occupied": 255400,
 
     "market": {
-      "zillow_average_home_value": 314000,
-      "zillow_one_year_change_percent": -1.0,
-      "market_type_summary": "Stable suburban market with mild cooling",
+      "zillow_average_home_value": 268200,
+      "zillow_one_year_change_percent": -1.2,
+      "market_type_summary": "Balanced market with stable pricing",
 
       "average_days_on_market_range": {
-        "low": 47,
-        "high": 73
+        "low": 45,
+        "high": 72
       },
 
-      "median_listing_price_realtor": 325000,
-      "median_listing_price_per_sqft": 162,
+      "median_listing_price_realtor": 310000,
+      "median_listing_price_per_sqft": 171,
 
       "q1": {
-        "median_sale_price": 318000,
-        "average_sale_price": 337500,
-        "median_list_price": 330000
-      }
+        "median_sale_price": 305000,
+        "average_sale_price": 331200,
+        "median_list_price": 323500
+      },
+
+      "sale_history_36_months": [
+        { "month": "2022-01", "median_sale_price": 285000 },
+        { "month": "2022-02", "median_sale_price": 287000 },
+        { "month": "2022-03", "median_sale_price": 289000 },
+        { "month": "2022-04", "median_sale_price": 292000 },
+        { "month": "2022-05", "median_sale_price": 295000 },
+        { "month": "2022-06", "median_sale_price": 298000 },
+        { "month": "2022-07", "median_sale_price": 296000 },
+        { "month": "2022-08", "median_sale_price": 293000 },
+        { "month": "2022-09", "median_sale_price": 291000 },
+        { "month": "2022-10", "median_sale_price": 289000 },
+        { "month": "2022-11", "median_sale_price": 287000 },
+        { "month": "2022-12", "median_sale_price": 286000 },
+
+        { "month": "2023-01", "median_sale_price": 288000 },
+        { "month": "2023-02", "median_sale_price": 289000 },
+        { "month": "2023-03", "median_sale_price": 291000 },
+        { "month": "2023-04", "median_sale_price": 293000 },
+        { "month": "2023-05", "median_sale_price": 295000 },
+        { "month": "2023-06", "median_sale_price": 297500 },
+        { "month": "2023-07", "median_sale_price": 299000 },
+        { "month": "2023-08", "median_sale_price": 298000 },
+        { "month": "2023-09", "median_sale_price": 297000 },
+        { "month": "2023-10", "median_sale_price": 297500 },
+        { "month": "2023-11", "median_sale_price": 298000 },
+        { "month": "2023-12", "median_sale_price": 300000 },
+
+        { "month": "2024-01", "median_sale_price": 301000 },
+        { "month": "2024-02", "median_sale_price": 302000 },
+        { "month": "2024-03", "median_sale_price": 303500 },
+        { "month": "2024-04", "median_sale_price": 304000 },
+        { "month": "2024-05", "median_sale_price": 305000 },
+        { "month": "2024-06", "median_sale_price": 305500 },
+        { "month": "2024-07", "median_sale_price": 305000 },
+        { "month": "2024-08", "median_sale_price": 304000 },
+        { "month": "2024-09", "median_sale_price": 303000 },
+        { "month": "2024-10", "median_sale_price": 303500 },
+        { "month": "2024-11", "median_sale_price": 304000 },
+        { "month": "2024-12", "median_sale_price": 305000 }
+      ]
     }
   }
 }
