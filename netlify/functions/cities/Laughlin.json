@@ -1,7 +1,6 @@
 {
-  "place": "Del Rio / Laughlin AFB, TX",
-  "geo_id": "16000US4819456",
-  "base_code": "LAUGHLIN-AFB",
+  "place": "Del Rio, TX",
+  "geo_id": "48465000400",
   "year": 2023,
 
   "population": {
@@ -11,59 +10,54 @@
   },
 
   "households": {
-    "total_households": 12180
+    "total_households": 12300
   },
 
   "income": {
-    "median_household_income": 57300,
-    "per_capita_income": 25260,
-    "poverty_rate_percent": 20.6
+    "median_household_income": 52410,
+    "per_capita_income": 23900,
+    "poverty_rate_percent": 23.8
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 80.9,
-    "bachelors_degree_or_higher_percent": 19.7
+    "high_school_grad_or_higher_percent": 78.1,
+    "bachelors_degree_or_higher_percent": 19.2
   },
 
   "veterans": {
-    "veteran_population_percent": 7.3
+    "veteran_population_percent": 5.8
   },
 
   "immigration": {
-    "foreign_born_percent": 27.4
+    "foreign_born_percent": 13.9
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 17.2
+    "mean_travel_time_to_work_minutes": 17.1
   },
 
   "housing": {
-    "housing_units": 13900,
-    "median_value_owner_occupied": 147500,
+    "housing_units": 14700,
+    "median_value_owner_occupied": 168000,
 
     "market": {
-      "zillow_average_home_value": 161200,
+      "zillow_average_home_value": 182100,
       "zillow_one_year_change_percent": -1.1,
+      "market_type_summary": "Moderately declining prices",
 
-      "median_sale_price_redfin": 172000,
-      "median_sale_price_yoy_change_percent": -0.9,
-      "median_sale_price_per_sqft": 118,
-
-      "median_listing_price_realtor": 189900,
-      "median_listing_price_per_sqft": 130,
-
-      "q1_2025_median_home_price_reported": 194000,
       "average_days_on_market_range": {
-        "low": 56,
-        "high": 92
+        "low": 58,
+        "high": 91
       },
 
-      "market_type_summary": "Buyer-friendly market with slow price movement and high inventory"
-    }
-  },
+      "median_listing_price_realtor": 189000,
+      "median_listing_price_per_sqft": 115,
 
-  "notes": {
-    "data_source": "ACS 2023 5-Year Estimates + Zillow + Redfin + Realtor.com + Val Verde County Market Reports (2024–2025)",
-    "margin_of_error_not_included": true
+      "q1": {
+        "median_sale_price": 180000,
+        "average_sale_price": 195000,
+        "median_list_price": 188000
+      }
+    }
   }
 }
