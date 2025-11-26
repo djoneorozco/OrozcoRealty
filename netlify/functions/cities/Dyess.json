@@ -1,12 +1,11 @@
 {
-  "place": "Abilene / Dyess AFB, TX",
-  "geo_id": "16000US4801000",
-  "base_code": "DYESS-AFB",
+  "place": "Abilene, TX",
+  "geo_id": "4803094000",
   "year": 2023,
 
   "population": {
-    "estimate": 127129,
-    "median_age": 33.6,
+    "estimate": 127385,
+    "median_age": 33.1,
     "persons_per_household": 2.6
   },
 
@@ -15,55 +14,50 @@
   },
 
   "income": {
-    "median_household_income": 61850,
-    "per_capita_income": 30840,
-    "poverty_rate_percent": 14.9
+    "median_household_income": 58420,
+    "per_capita_income": 30110,
+    "poverty_rate_percent": 15.7
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 88.1,
-    "bachelors_degree_or_higher_percent": 26.9
+    "high_school_grad_or_higher_percent": 88.4,
+    "bachelors_degree_or_higher_percent": 28.2
   },
 
   "veterans": {
-    "veteran_population_percent": 11.4
+    "veteran_population_percent": 8.9
   },
 
   "immigration": {
-    "foreign_born_percent": 7.9
+    "foreign_born_percent": 6.9
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 16.8
+    "mean_travel_time_to_work_minutes": 17.7
   },
 
   "housing": {
-    "housing_units": 51700,
-    "median_value_owner_occupied": 176900,
+    "housing_units": 51500,
+    "median_value_owner_occupied": 173000,
 
     "market": {
-      "zillow_average_home_value": 214600,
-      "zillow_one_year_change_percent": 1.2,
+      "zillow_average_home_value": 188900,
+      "zillow_one_year_change_percent": -2.0,
+      "market_type_summary": "Stable to slightly cooling market",
 
-      "median_sale_price_redfin": 225000,
-      "median_sale_price_yoy_change_percent": 1.0,
-      "median_sale_price_per_sqft": 142,
-
-      "median_listing_price_realtor": 247900,
-      "median_listing_price_per_sqft": 153,
-
-      "q1_2025_median_home_price_reported": 252000,
       "average_days_on_market_range": {
-        "low": 48,
-        "high": 75
+        "low": 42,
+        "high": 64
       },
 
-      "market_type_summary": "Neutral market with stable inventory and modest year-over-year appreciation"
-    }
-  },
+      "median_listing_price_realtor": 220000,
+      "median_listing_price_per_sqft": 135,
 
-  "notes": {
-    "data_source": "ACS 2023 5-Year Estimates + Zillow + Redfin + Realtor.com + Abilene Market Data (2024–2025)",
-    "margin_of_error_not_included": true
+      "q1": {
+        "median_sale_price": 210000,
+        "average_sale_price": 235000,
+        "median_list_price": 225000
+      }
+    }
   }
 }
