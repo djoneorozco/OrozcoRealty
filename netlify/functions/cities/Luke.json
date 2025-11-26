@@ -1,69 +1,63 @@
 {
-  "place": "Phoenix / Luke AFB, AZ",
-  "geo_id": "16000US0455000",
-  "base_code": "LUKE-AFB",
+  "place": "Phoenix, AZ",
+  "geo_id": "04013000100",
   "year": 2023,
 
   "population": {
-    "estimate": 1684800,
-    "median_age": 34.4,
-    "persons_per_household": 2.8
+    "estimate": 1660272,
+    "median_age": 34.2,
+    "persons_per_household": 2.7
   },
 
   "households": {
-    "total_households": 590000
+    "total_households": 575000
   },
 
   "income": {
-    "median_household_income": 74800,
-    "per_capita_income": 36650,
-    "poverty_rate_percent": 13.0
+    "median_household_income": 68350,
+    "per_capita_income": 35220,
+    "poverty_rate_percent": 15.7
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 86.2,
-    "bachelors_degree_or_higher_percent": 32.4
+    "high_school_grad_or_higher_percent": 86.4,
+    "bachelors_degree_or_higher_percent": 30.7
   },
 
   "veterans": {
-    "veteran_population_percent": 6.8
+    "veteran_population_percent": 5.7
   },
 
   "immigration": {
-    "foreign_born_percent": 20.7
+    "foreign_born_percent": 18.3
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 26.8
+    "mean_travel_time_to_work_minutes": 25.4
   },
 
   "housing": {
-    "housing_units": 650000,
-    "median_value_owner_occupied": 389000,
+    "housing_units": 670000,
+    "median_value_owner_occupied": 383000,
 
     "market": {
-      "zillow_average_home_value": 429800,
-      "zillow_one_year_change_percent": 3.4,
+      "zillow_average_home_value": 423500,
+      "zillow_one_year_change_percent": +0.9,
+      "market_type_summary": "Urban market with modest growth",
 
-      "median_sale_price_redfin": 450000,
-      "median_sale_price_yoy_change_percent": 2.9,
-      "median_sale_price_per_sqft": 270,
-
-      "median_listing_price_realtor": 480000,
-      "median_listing_price_per_sqft": 285,
-
-      "q1_2025_median_home_price_reported": 492000,
       "average_days_on_market_range": {
-        "low": 32,
-        "high": 54
+        "low": 38,
+        "high": 63
       },
 
-      "market_type_summary": "Leaning seller-friendly with strong demand and tight resale inventory"
-    }
-  },
+      "median_listing_price_realtor": 450000,
+      "median_listing_price_per_sqft": 270,
 
-  "notes": {
-    "data_source": "ACS 2023 5-Year Estimates + Zillow + Redfin + Realtor.com + Phoenix/West Valley Market Reports (2024–2025)",
-    "margin_of_error_not_included": true
+      "q1": {
+        "median_sale_price": 438000,
+        "average_sale_price": 465000,
+        "median_list_price": 455000
+      }
+    }
   }
 }
