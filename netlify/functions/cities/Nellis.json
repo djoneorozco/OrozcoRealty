@@ -1,69 +1,63 @@
 {
-  "place": "Las Vegas / Nellis AFB, NV",
-  "geo_id": "16000US3204000",
-  "base_code": "NELLIS",
+  "place": "Las Vegas, NV",
+  "geo_id": "32003000100",
   "year": 2023,
 
   "population": {
-    "estimate": 675647,
-    "median_age": 37.9,
+    "estimate": 656274,
+    "median_age": 37.5,
     "persons_per_household": 2.7
   },
 
   "households": {
-    "total_households": 259560
+    "total_households": 252000
   },
 
   "income": {
-    "median_household_income": 66700,
-    "per_capita_income": 35420,
-    "poverty_rate_percent": 13.3
+    "median_household_income": 64000,
+    "per_capita_income": 33300,
+    "poverty_rate_percent": 14.2
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 86.7,
-    "bachelors_degree_or_higher_percent": 26.8
+    "high_school_grad_or_higher_percent": 86.9,
+    "bachelors_degree_or_higher_percent": 25.9
   },
 
   "veterans": {
-    "veteran_population_percent": 10.1
+    "veteran_population_percent": 6.1
   },
 
   "immigration": {
-    "foreign_born_percent": 22.5
+    "foreign_born_percent": 22.4
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 25.4
+    "mean_travel_time_to_work_minutes": 25.1
   },
 
   "housing": {
-    "housing_units": 292400,
-    "median_value_owner_occupied": 353900,
+    "housing_units": 290000,
+    "median_value_owner_occupied": 358000,
 
     "market": {
-      "zillow_average_home_value": 389345,
-      "zillow_one_year_change_percent": 4.2,
+      "zillow_average_home_value": 402700,
+      "zillow_one_year_change_percent": +1.4,
+      "market_type_summary": "Steady price growth with competitive demand",
 
-      "median_sale_price_redfin": 415000,
-      "median_sale_price_yoy_change_percent": 3.7,
-      "median_sale_price_per_sqft": 253,
-
-      "median_listing_price_realtor": 430000,
-      "median_listing_price_per_sqft": 260,
-
-      "q1_2025_median_home_price_reported": 445000,
       "average_days_on_market_range": {
-        "low": 38,
-        "high": 59
+        "low": 33,
+        "high": 54
       },
 
-      "market_type_summary": "Slightly seller-leaning market with rising prices and tight inventory"
-    }
-  },
+      "median_listing_price_realtor": 430000,
+      "median_listing_price_per_sqft": 247,
 
-  "notes": {
-    "data_source": "ACS 2023 5-Year Estimates + Zillow + Redfin + Realtor.com + LV Market Reports (2024–2025)",
-    "margin_of_error_not_included": true
+      "q1": {
+        "median_sale_price": 420000,
+        "average_sale_price": 445000,
+        "median_list_price": 435000
+      }
+    }
   }
 }
