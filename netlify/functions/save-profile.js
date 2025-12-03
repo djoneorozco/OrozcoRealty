@@ -6,15 +6,14 @@ const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
-export async function handler(event) {
+export default async (event) => {
   try {
     if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "Method Not Allowed" };
+      return new Response("Method Not Allowed", { status: 405 });
     }
 
     const data = JSON.parse(event.body);
 
-    // Insert or update based on email
     const { error } = await supabase
       .from("profiles")
       .upsert(
@@ -34,23 +33,29 @@ export async function handler(event) {
       );
 
     if (error) {
-      console.error("Supabase Error:", error);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: "Failed to save profile", error })
-      };
+      console.error("Supabase Upsert Error:", error);
+      return new Response(
+        JSON.stringify({
+          message: "Failed to save profile",
+          error: error.message
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
     }
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: "Profile saved successfully" })
-    };
+    return new Response(
+      JSON.stringify({ message: "Profile saved successfully" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
 
   } catch (err) {
-    console.error("Handler Error:", err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: "Server error", err })
-    };
+    console.error("Server Error:", err);
+    return new Response(
+      JSON.stringify({ message: "Server error", error: err.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
-}
+};
