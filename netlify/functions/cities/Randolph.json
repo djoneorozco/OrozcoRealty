@@ -1,11 +1,12 @@
 {
   "place": "Universal City (Randolph AFB), TX",
   "geo_id": "4800000US4874616",
-  "year": 2023,
+  "year": 2024,
+  "last_updated_data_from_sources": "December 2025",
 
   "population": {
-    "estimate": 20862,
-    "median_age": 35.1,
+    "estimate": 20267,
+    "median_age": 35.3,
     "persons_per_household": 2.7
   },
 
@@ -14,7 +15,7 @@
   },
 
   "income": {
-    "median_household_income": 72014,
+    "median_household_income": 75439,
     "per_capita_income": 34582,
     "poverty_rate_percent": 8.9
   },
@@ -29,35 +30,28 @@
   },
 
   "immigration": {
-    "foreign_born_percent": 10.8
+    "foreign_born_percent": 8.32
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 24.2
+    "mean_travel_time_to_work_minutes": 27.5,
+    "unemployment_rate_percent": 4.1
   },
 
   "housing": {
     "housing_units": 7944,
-    "median_value_owner_occupied": 255400,
+    "median_value_owner_occupied": 249400,
 
     "market": {
-      "zillow_average_home_value": 268200,
-      "zillow_one_year_change_percent": -1.2,
-      "market_type_summary": "Balanced market with stable pricing",
+      "zillow_average_home_value": 262936,
+      "zillow_one_year_change_percent": -4.1,
+      "market_type_summary": "Buyer's market with decreasing prices and higher days on market",
 
-      "average_days_on_market_range": {
-        "low": 45,
-        "high": 72
-      },
+      "average_days_on_market": 73,
 
-      "median_listing_price_realtor": 310000,
-      "median_listing_price_per_sqft": 171,
-
-      "q1": {
-        "median_sale_price": 305000,
-        "average_sale_price": 331200,
-        "median_list_price": 323500
-      },
+      "median_sale_price_current": 257000,
+      "median_listing_price_realtor": 282000,
+      "median_listing_price_per_sqft": 148,
 
       "sale_history_36_months": [
         { "month": "2022-01", "median_sale_price": 285000 },
@@ -95,9 +89,11 @@
         { "month": "2024-07", "median_sale_price": 305000 },
         { "month": "2024-08", "median_sale_price": 304000 },
         { "month": "2024-09", "median_sale_price": 303000 },
-        { "month": "2024-10", "median_sale_price": 303500 },
-        { "month": "2024-11", "median_sale_price": 304000 },
-        { "month": "2024-12", "median_sale_price": 305000 }
+        { "month": "2024-10", "median_sale_price": 265000 },
+        { "month": "2024-11", "median_sale_price": 260000 },
+        { "month": "2024-12", "median_sale_price": 258000 },
+
+        { "month": "2025-10", "median_sale_price": 257000 }
       ]
     }
   }
