@@ -4,15 +4,14 @@
 // - Accept POST { email, rank, lastName, phone }
 // - Generate 6-digit code
 // - Hash code (never store raw code)
-// - Insert row into Supabase (email_codes table)
+// - Insert row into Supabase (email_codes table: id, email, code_hash, attempts, expires_at, created_at)
 // - Send code via Resend email (HTML + text)
-// - Return {ok:true} or {error, detail} for debugging
+// - Return { ok: true }
 
 const crypto = require("crypto");
 const { Resend } = require("resend");
 const { createClient } = require("@supabase/supabase-js");
 
-// ---------- CORS + RESPONSE HELPER ----------
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
@@ -28,7 +27,6 @@ function respond(statusCode, payloadObj) {
   };
 }
 
-// ---------- CODE HELPERS ----------
 function makeCode() {
   const n = crypto.randomInt(0, 1000000);
   return n.toString().padStart(6, "0");
@@ -38,55 +36,49 @@ function hashCode(code) {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
-// =====================================================
-// MAIN HANDLER
-// =====================================================
-exports.handler = async function (event, context) {
-  // CORS preflight
+exports.handler = async function (event) {
+  // ===== CORS preflight =====
   if (event.httpMethod === "OPTIONS") return respond(200, {});
   if (event.httpMethod !== "POST") {
     return respond(405, { error: "Method not allowed" });
   }
 
-  // ---------- Parse body ----------
+  // ===== Parse body =====
   let body;
   try {
     body = JSON.parse(event.body || "{}");
   } catch (err) {
-    return respond(400, { error: "Invalid JSON body", detail: String(err) });
+    return respond(400, { error: "Invalid JSON body" });
   }
 
   const email = (body.email || "").trim().toLowerCase();
-  const rank = body.rank || "";
-  const lastName = body.lastName || "";
-  const phone = body.phone || "";
+  const rank = body.rank || "";        // used only in email copy
+  const lastName = body.lastName || ""; // used only in email copy
+  const phone = body.phone || "";       // used only in email copy
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return respond(400, { error: "Valid email required" });
   }
 
-  // ---------- Generate and hash code ----------
+  // ===== Generate + hash code =====
   const code = makeCode();
   const code_hash = hashCode(code);
   const now = new Date().toISOString();
-  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString(); // no real expiry for now
+  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString(); // effectively no expiration
 
-  // ---------- Supabase setup ----------
+  // ===== Supabase client =====
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    return respond(500, {
-      error: "Supabase env not configured",
-      detail: "Check SUPABASE_URL and SUPABASE_SERVICE_KEY in Netlify env vars.",
-    });
+    return respond(500, { error: "Supabase env not configured" });
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
     auth: { persistSession: false },
   });
 
-  // ---------- Insert into email_codes ----------
+  // ===== Insert into email_codes (ONLY columns that exist) =====
   const { error: insertErr } = await supabase.from("email_codes").insert([
     {
       email,
@@ -94,39 +86,32 @@ exports.handler = async function (event, context) {
       attempts: 0,
       created_at: now,
       expires_at: expiresAt,
-      rank,
-      last_name: lastName,
-      phone,
-      context: { rank, lastName, phone },
+      // ⚠️ No rank / last_name / phone / context here,
+      // because those columns do NOT exist in the email_codes table anymore.
     },
   ]);
 
   if (insertErr) {
     console.error("Supabase insert error:", insertErr);
-    return respond(500, {
-      error: "DB insert failed",
-      detail: insertErr.message || insertErr.details || String(insertErr),
-    });
+    return respond(500, { error: "DB insert failed" });
   }
 
-  // ---------- Resend setup ----------
+  // ===== Resend setup =====
   const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) {
+    console.error("Missing RESEND_API_KEY");
+    return respond(500, { error: "Email service not configured" });
+  }
+
   const fromAddress =
     process.env.EMAIL_FROM ||
     process.env.FROM_EMAIL ||
     "RealtySaSS <noreply@example.com>";
 
-  if (!resendKey) {
-    // This is very likely if you see "Email send failed" 500s
-    return respond(500, {
-      error: "Resend API key missing",
-      detail: "Set RESEND_API_KEY in Netlify env vars.",
-    });
-  }
-
   const resend = new Resend(resendKey);
 
   const subject = "Your RealtySaSS Verification Code";
+
   const textBody = `Hi ${rank ? rank + " " : ""}${lastName || ""},
 
 Your verification code is: ${code}
@@ -235,15 +220,9 @@ Do not share this code. It is for you only.
     });
   } catch (mailErr) {
     console.error("Resend error:", mailErr);
-    return respond(500, {
-      error: "Email send failed",
-      detail:
-        (mailErr && (mailErr.message || mailErr.name || mailErr.toString())) ||
-        "Unknown Resend error",
-    });
+    return respond(500, { error: "Email send failed" });
   }
 
-  // ---------- Success ----------
   return respond(200, {
     ok: true,
     message: "Code created, stored, and emailed.",
