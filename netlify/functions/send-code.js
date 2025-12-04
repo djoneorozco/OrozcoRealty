@@ -6,11 +6,11 @@
 // - Hash code (never store raw code)
 // - Insert row into Supabase (email_codes table)
 // - Send code via Resend email (HTML + text)
-// - Return {ok:true}
+// - Return { ok: true }
 
-const crypto = require("crypto");
-const { Resend } = require("resend");
-const { createClient } = require("@supabase/supabase-js");
+import crypto from "crypto";
+import { Resend } from "resend";
+import { createClient } from "@supabase/supabase-js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -36,10 +36,11 @@ function hashCode(code) {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
-exports.handler = async function (event, context) {
+export async function handler(event, context) {
   if (event.httpMethod === "OPTIONS") return respond(200, {});
-  if (event.httpMethod !== "POST")
+  if (event.httpMethod !== "POST") {
     return respond(405, { error: "Method not allowed" });
+  }
 
   let body;
   try {
@@ -57,10 +58,13 @@ exports.handler = async function (event, context) {
     return respond(400, { error: "Valid email required" });
   }
 
+  // === Generate and hash 6-digit code ===
   const code = makeCode();
   const code_hash = hashCode(code);
   const now = new Date().toISOString();
-  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString(); // ✨ Fixed: no expiration
+
+  // Josue preference: no real expiration yet, fixed far-future date
+  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString();
 
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -73,6 +77,7 @@ exports.handler = async function (event, context) {
     auth: { persistSession: false },
   });
 
+  // === Insert into email_codes ===
   const { error: insertErr } = await supabase.from("email_codes").insert([
     {
       email,
@@ -93,6 +98,11 @@ exports.handler = async function (event, context) {
   }
 
   const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) {
+    console.error("Missing RESEND_API_KEY");
+    return respond(500, { error: "Email env not configured" });
+  }
+
   const fromAddress =
     process.env.EMAIL_FROM ||
     process.env.FROM_EMAIL ||
@@ -101,6 +111,7 @@ exports.handler = async function (event, context) {
   const resend = new Resend(resendKey);
 
   const subject = "Your RealtySaSS Verification Code";
+
   const textBody = `Hi ${rank ? rank + " " : ""}${lastName || ""},
 
 Your verification code is: ${code}
@@ -216,4 +227,4 @@ Do not share this code. It is for you only.
     ok: true,
     message: "Code created, stored, and emailed.",
   });
-};
+}
