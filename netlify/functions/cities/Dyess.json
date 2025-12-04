@@ -1,11 +1,12 @@
 {
   "place": "Abilene (Dyess AFB), TX",
   "geo_id": "1600000US4801000",
-  "year": 2023,
+  "year": 2024,
+  "last_updated_data_from_sources": "December 2025",
 
   "population": {
-    "estimate": 126735,
-    "median_age": 32.7,
+    "estimate": 130501,
+    "median_age": 32.8,
     "persons_per_household": 2.6
   },
 
@@ -14,9 +15,9 @@
   },
 
   "income": {
-    "median_household_income": 59500,
-    "per_capita_income": 28500,
-    "poverty_rate_percent": 15.3
+    "median_household_income": 62720,
+    "per_capita_income": 32230,
+    "poverty_rate_percent": 17.1
   },
 
   "education": {
@@ -33,7 +34,8 @@
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 17.5
+    "mean_travel_time_to_work_minutes": 17.5,
+    "unemployment_rate_percent": 4.0
   },
 
   "housing": {
@@ -41,23 +43,15 @@
     "median_value_owner_occupied": 168000,
 
     "market": {
-      "zillow_average_home_value": 197500,
-      "zillow_one_year_change_percent": 0.8,
-      "market_type_summary": "Stable, modest appreciation",
+      "zillow_average_home_value": 198308,
+      "zillow_one_year_change_percent": 1.6,
+      "market_type_summary": "Active market, homes selling quickly (seller-leaning)",
 
-      "average_days_on_market_range": {
-        "low": 55,
-        "high": 92
-      },
+      "average_days_on_market": 23,
 
-      "median_listing_price_realtor": 235000,
-      "median_listing_price_per_sqft": 138,
-
-      "q1": {
-        "median_sale_price": 220000,
-        "average_sale_price": 245900,
-        "median_list_price": 232000
-      },
+      "median_sale_price_current": 250100,
+      "median_listing_price_realtor": 265000,
+      "median_listing_price_per_sqft": 159,
 
       "sale_history_36_months": [
         { "month": "2022-01", "median_sale_price": 205000 },
@@ -95,9 +89,11 @@
         { "month": "2024-07", "median_sale_price": 220000 },
         { "month": "2024-08", "median_sale_price": 219500 },
         { "month": "2024-09", "median_sale_price": 219000 },
-        { "month": "2024-10", "median_sale_price": 219500 },
-        { "month": "2024-11", "median_sale_price": 220000 },
-        { "month": "2024-12", "median_sale_price": 221000 }
+        { "month": "2024-10", "median_sale_price": 242500 },
+        { "month": "2024-11", "median_sale_price": 245000 },
+        { "month": "2024-12", "median_sale_price": 247000 },
+
+        { "month": "2025-09", "median_sale_price": 250100 }
       ]
     }
   }
