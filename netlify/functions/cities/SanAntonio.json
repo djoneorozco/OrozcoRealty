@@ -1,10 +1,11 @@
 {
   "place": "San Antonio, TX",
   "geo_id": "1600000US4865000",
-  "year": 2023,
+  "year": 2025,
+  "last_updated_data_from_sources": "December 2025",
 
   "population": {
-    "estimate": 1458594,
+    "estimate": 1526656,
     "median_age": 34.6,
     "persons_per_household": 2.6
   },
@@ -14,9 +15,9 @@
   },
 
   "income": {
-    "median_household_income": 62917,
-    "per_capita_income": 32983,
-    "poverty_rate_percent": 17.1
+    "median_household_income": 69906,
+    "per_capita_income": 37133,
+    "poverty_rate_percent": 14.4
   },
 
   "education": {
@@ -33,7 +34,8 @@
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 24.6
+    "mean_travel_time_to_work_minutes": 24.6,
+    "unemployment_rate_percent": 4.3
   },
 
   "housing": {
@@ -43,20 +45,16 @@
     "market": {
       "zillow_average_home_value": 247152,
       "zillow_one_year_change_percent": -3.3,
-      "market_type_summary": "Buyer-leaning market with moderating prices",
+      "market_type_summary": "Buyer-leaning/balanced market with moderating prices and higher inventory",
 
-      "average_days_on_market_range": {
-        "low": 52,
-        "high": 87
-      },
+      "average_days_on_market": 75,
 
+      "median_sale_price_current": 257000,
       "median_listing_price_realtor": 295000,
       "median_listing_price_per_sqft": 165,
 
-      "q1": {
-        "median_sale_price": 297000,
-        "average_sale_price": 378792,
-        "median_list_price": 339926
+      "q1_2025": {
+        "median_sale_price": 298000
       },
 
       "sale_history_36_months": [
@@ -95,9 +93,11 @@
         { "month": "2024-07", "median_sale_price": 302000 },
         { "month": "2024-08", "median_sale_price": 302500 },
         { "month": "2024-09", "median_sale_price": 303000 },
-        { "month": "2024-10", "median_sale_price": 304000 },
-        { "month": "2024-11", "median_sale_price": 305000 },
-        { "month": "2024-12", "median_sale_price": 306000 }
+        { "month": "2024-10", "median_sale_price": 265000 },
+        { "month": "2024-11", "median_sale_price": 260000 },
+        { "month": "2024-12", "median_sale_price": 258000 },
+        
+        { "month": "2025-10", "median_sale_price": 257000 }
       ]
     }
   }
