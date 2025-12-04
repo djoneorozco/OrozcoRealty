@@ -1,11 +1,12 @@
 {
   "place": "Phoenix (Luke AFB), AZ",
   "geo_id": "1600000US0455000",
-  "year": 2023,
+  "year": 2024,
+  "last_updated_data_from_sources": "December 2025",
 
   "population": {
-    "estimate": 1681700,
-    "median_age": 34.9,
+    "estimate": 1709477,
+    "median_age": 35.1,
     "persons_per_household": 2.7
   },
 
@@ -14,9 +15,9 @@
   },
 
   "income": {
-    "median_household_income": 72700,
-    "per_capita_income": 37700,
-    "poverty_rate_percent": 13.9
+    "median_household_income": 76900,
+    "per_capita_income": 40990,
+    "poverty_rate_percent": 14.7
   },
 
   "education": {
@@ -33,7 +34,8 @@
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 26.4
+    "mean_travel_time_to_work_minutes": 26.4,
+    "unemployment_rate_percent": 4.5
   },
 
   "housing": {
@@ -41,23 +43,15 @@
     "median_value_owner_occupied": 412000,
 
     "market": {
-      "zillow_average_home_value": 455300,
-      "zillow_one_year_change_percent": 1.4,
-      "market_type_summary": "High-growth metro, stabilizing price curve",
+      "zillow_average_home_value": 427495,
+      "zillow_one_year_change_percent": -6.6,
+      "market_type_summary": "Cooling buyer-leaning market, prices have moderated from peak",
 
-      "average_days_on_market_range": {
-        "low": 29,
-        "high": 58
-      },
+      "average_days_on_market": 45,
 
-      "median_listing_price_realtor": 499000,
-      "median_listing_price_per_sqft": 292,
-
-      "q1": {
-        "median_sale_price": 475000,
-        "average_sale_price": 521000,
-        "median_list_price": 499000
-      },
+      "median_sale_price_current": 440000,
+      "median_listing_price_realtor": 475000,
+      "median_listing_price_per_sqft": 268,
 
       "sale_history_36_months": [
         { "month": "2022-01", "median_sale_price": 460000 },
@@ -95,9 +89,11 @@
         { "month": "2024-07", "median_sale_price": 487000 },
         { "month": "2024-08", "median_sale_price": 487500 },
         { "month": "2024-09", "median_sale_price": 488000 },
-        { "month": "2024-10", "median_sale_price": 489000 },
-        { "month": "2024-11", "median_sale_price": 490000 },
-        { "month": "2024-12", "median_sale_price": 491000 }
+        { "month": "2024-10", "median_sale_price": 455000 },
+        { "month": "2024-11", "median_sale_price": 450000 },
+        { "month": "2024-12", "median_sale_price": 445000 },
+        
+        { "month": "2025-10", "median_sale_price": 440000 }
       ]
     }
   }
