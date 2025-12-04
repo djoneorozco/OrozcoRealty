@@ -202,7 +202,7 @@ Do not share this code. It is for you only.
           <img src="https://cdn.prod.website-files.com/68cecb820ec3dbdca3ef9099/68db342a77ed69fc1044ebee_5aaaff2bff71a700da3fa14548ad049f_Landing%20Footer%20Background.png" alt="Elena Signature Image" />
         </div>
         <div class="footer">
-          SaSS™ — Naughty Realty, Serious Returns<br />
+          "OrozcoReatly.ai™ — An A.I Powered Real Estate & Intelligence Company<br />
           © 2025 The Orozco Realty. All rights reserved.
         </div>
       </div>
