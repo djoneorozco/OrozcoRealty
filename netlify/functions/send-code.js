@@ -6,12 +6,13 @@
 // - Hash code (never store raw code)
 // - Insert row into Supabase (email_codes table)
 // - Send code via Resend email (HTML + text)
-// - Return { ok: true }
+// - Return {ok:true} or {error, detail} for debugging
 
-import crypto from "crypto";
-import { Resend } from "resend";
-import { createClient } from "@supabase/supabase-js";
+const crypto = require("crypto");
+const { Resend } = require("resend");
+const { createClient } = require("@supabase/supabase-js");
 
+// ---------- CORS + RESPONSE HELPER ----------
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
@@ -27,6 +28,7 @@ function respond(statusCode, payloadObj) {
   };
 }
 
+// ---------- CODE HELPERS ----------
 function makeCode() {
   const n = crypto.randomInt(0, 1000000);
   return n.toString().padStart(6, "0");
@@ -36,17 +38,22 @@ function hashCode(code) {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
-export async function handler(event, context) {
+// =====================================================
+// MAIN HANDLER
+// =====================================================
+exports.handler = async function (event, context) {
+  // CORS preflight
   if (event.httpMethod === "OPTIONS") return respond(200, {});
   if (event.httpMethod !== "POST") {
     return respond(405, { error: "Method not allowed" });
   }
 
+  // ---------- Parse body ----------
   let body;
   try {
     body = JSON.parse(event.body || "{}");
   } catch (err) {
-    return respond(400, { error: "Invalid JSON body" });
+    return respond(400, { error: "Invalid JSON body", detail: String(err) });
   }
 
   const email = (body.email || "").trim().toLowerCase();
@@ -58,26 +65,28 @@ export async function handler(event, context) {
     return respond(400, { error: "Valid email required" });
   }
 
-  // === Generate and hash 6-digit code ===
+  // ---------- Generate and hash code ----------
   const code = makeCode();
   const code_hash = hashCode(code);
   const now = new Date().toISOString();
+  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString(); // no real expiry for now
 
-  // Josue preference: no real expiration yet, fixed far-future date
-  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString();
-
+  // ---------- Supabase setup ----------
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    return respond(500, { error: "Supabase env not configured" });
+    return respond(500, {
+      error: "Supabase env not configured",
+      detail: "Check SUPABASE_URL and SUPABASE_SERVICE_KEY in Netlify env vars.",
+    });
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
     auth: { persistSession: false },
   });
 
-  // === Insert into email_codes ===
+  // ---------- Insert into email_codes ----------
   const { error: insertErr } = await supabase.from("email_codes").insert([
     {
       email,
@@ -94,24 +103,30 @@ export async function handler(event, context) {
 
   if (insertErr) {
     console.error("Supabase insert error:", insertErr);
-    return respond(500, { error: "DB insert failed." });
+    return respond(500, {
+      error: "DB insert failed",
+      detail: insertErr.message || insertErr.details || String(insertErr),
+    });
   }
 
+  // ---------- Resend setup ----------
   const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) {
-    console.error("Missing RESEND_API_KEY");
-    return respond(500, { error: "Email env not configured" });
-  }
-
   const fromAddress =
     process.env.EMAIL_FROM ||
     process.env.FROM_EMAIL ||
     "RealtySaSS <noreply@example.com>";
 
+  if (!resendKey) {
+    // This is very likely if you see "Email send failed" 500s
+    return respond(500, {
+      error: "Resend API key missing",
+      detail: "Set RESEND_API_KEY in Netlify env vars.",
+    });
+  }
+
   const resend = new Resend(resendKey);
 
   const subject = "Your RealtySaSS Verification Code";
-
   const textBody = `Hi ${rank ? rank + " " : ""}${lastName || ""},
 
 Your verification code is: ${code}
@@ -202,7 +217,7 @@ Do not share this code. It is for you only.
           <img src="https://cdn.prod.website-files.com/68cecb820ec3dbdca3ef9099/68db342a77ed69fc1044ebee_5aaaff2bff71a700da3fa14548ad049f_Landing%20Footer%20Background.png" alt="Elena Signature Image" />
         </div>
         <div class="footer">
-          "OrozcoReatly.ai™ — An A.I Powered Real Estate & Intelligence Company<br />
+          SaSS™ — Naughty Realty, Serious Returns<br />
           © 2025 The Orozco Realty. All rights reserved.
         </div>
       </div>
@@ -220,11 +235,17 @@ Do not share this code. It is for you only.
     });
   } catch (mailErr) {
     console.error("Resend error:", mailErr);
-    return respond(500, { error: "Email send failed" });
+    return respond(500, {
+      error: "Email send failed",
+      detail:
+        (mailErr && (mailErr.message || mailErr.name || mailErr.toString())) ||
+        "Unknown Resend error",
+    });
   }
 
+  // ---------- Success ----------
   return respond(200, {
     ok: true,
     message: "Code created, stored, and emailed.",
   });
-}
+};
