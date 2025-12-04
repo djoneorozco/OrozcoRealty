@@ -1,11 +1,12 @@
 {
   "place": "Tucson (Davis-Monthan AFB), AZ",
   "geo_id": "1600000US0477000",
-  "year": 2023,
+  "year": 2024,
+  "last_updated_data_from_sources": "December 2025",
 
   "population": {
-    "estimate": 546574,
-    "median_age": 34.3,
+    "estimate": 558906,
+    "median_age": 34.6,
     "persons_per_household": 2.4
   },
 
@@ -14,9 +15,9 @@
   },
 
   "income": {
-    "median_household_income": 53500,
-    "per_capita_income": 28700,
-    "poverty_rate_percent": 19.4
+    "median_household_income": 60483,
+    "per_capita_income": 40124,
+    "poverty_rate_percent": 18.83
   },
 
   "education": {
@@ -33,31 +34,24 @@
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 23.4
+    "mean_travel_time_to_work_minutes": 23.4,
+    "unemployment_rate_percent": 4.8
   },
 
   "housing": {
     "housing_units": 243000,
-    "median_value_owner_occupied": 281000,
+    "median_value_owner_occupied": 266700,
 
     "market": {
-      "zillow_average_home_value": 318500,
-      "zillow_one_year_change_percent": 1.9,
-      "market_type_summary": "Slightly cooling but stabilizing",
+      "zillow_average_home_value": 343679,
+      "zillow_one_year_change_percent": -3.1,
+      "market_type_summary": "Cooling buyer-leaning market with moderate inventory and stabilizing prices",
 
-      "average_days_on_market_range": {
-        "low": 45,
-        "high": 88
-      },
+      "average_days_on_market": 33,
 
-      "median_listing_price_realtor": 360000,
-      "median_listing_price_per_sqft": 218,
-
-      "q1": {
-        "median_sale_price": 335000,
-        "average_sale_price": 383000,
-        "median_list_price": 359900
-      },
+      "median_sale_price_current": 355000,
+      "median_listing_price_realtor": 370000,
+      "median_listing_price_per_sqft": 228,
 
       "sale_history_36_months": [
         { "month": "2022-01", "median_sale_price": 325000 },
@@ -97,7 +91,9 @@
         { "month": "2024-09", "median_sale_price": 338000 },
         { "month": "2024-10", "median_sale_price": 338500 },
         { "month": "2024-11", "median_sale_price": 339000 },
-        { "month": "2024-12", "median_sale_price": 340000 }
+        { "month": "2024-12", "median_sale_price": 340000 },
+        
+        { "month": "2025-10", "median_sale_price": 355000 }
       ]
     }
   }
