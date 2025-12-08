@@ -31,7 +31,7 @@ function respond(statusCode, payload) {
 }
 
 exports.handler = async function (event) {
-  // --- 0. CORS preflight ---
+  // --- 0. CORS ---
   if (event.httpMethod === "OPTIONS") {
     return respond(200, {});
   }
@@ -66,24 +66,19 @@ exports.handler = async function (event) {
   const cleanEmail = (email || "").trim().toLowerCase();
   const cleanFullName = (fullName || "").trim();
 
-  if (!cleanFullName) {
-    return respond(400, { error: "Full name is required." });
-  }
-  if (!cleanEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) {
+  if (!cleanFullName) return respond(400, { error: "Full name is required." });
+  if (!cleanEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail))
     return respond(400, { error: "Valid email is required." });
-  }
-  if (!password || password.length < 8) {
+
+  if (!password || password.length < 8)
     return respond(400, { error: "Password must be at least 8 characters." });
-  }
 
   // derive last name
-  let lastName = cleanFullName;
-  if (cleanFullName.includes(" ")) {
-    const parts = cleanFullName.split(" ");
-    lastName = parts[parts.length - 1];
-  }
+  let lastName = cleanFullName.includes(" ")
+    ? cleanFullName.split(" ").slice(-1)[0]
+    : cleanFullName;
 
-  // --- 3. Init Supabase (SERVICE KEY) ---
+  // --- 3. Init Supabase (service key) ---
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -95,52 +90,46 @@ exports.handler = async function (event) {
     auth: { persistSession: false, autoRefreshToken: false }
   });
 
-  // --- 4. Create Auth user (password stored ONLY in Auth) ---
+  // --- 4. Create Auth user ---
   const { data: userData, error: authError } =
     await supabase.auth.admin.createUser({
       email: cleanEmail,
       password,
-      email_confirm: false   // we are doing our own 6-digit verification
+      email_confirm: false
     });
 
   if (authError) {
-    // This is where “A user with this email already exists” comes from.
     return respond(400, {
       error: authError.message || "Auth registration failed."
     });
   }
 
-  const userId = userData?.user?.id || null;
-
-  // --- 5. Insert profile row (NO password here) ---
+  // --- 5. Insert into profiles (NO auth_user_id) ---
   const { error: profileError } = await supabase
     .from("profiles")
     .insert({
-      // only columns that actually exist in your profiles table:
       email: cleanEmail,
       full_name: cleanFullName,
       last_name: lastName,
       phone: phone || null,
-      mode: mode || null,                 // "ad" or "vet"
+      mode: mode || null,
       rank: rank || null,
       va_disability: va_disability || null,
-      yos: yos ? Number(yos) : null,      // int4 in DB
+      yos: yos ? Number(yos) : null,
       family: family || null,
       base: base || null,
-      notes: notes || null,
-      // optional: keep auth user id for linkage later
-      auth_user_id: userId || null        // only if you add this column
+      notes: notes || null
     });
 
   if (profileError) {
     console.error("PROFILE INSERT ERROR:", profileError);
     return respond(500, {
       error: "Profile save failed.",
-      details: profileError.message || null
+      details: profileError.message
     });
   }
 
-  // --- 6. Success ---
+  // --- 6. SUCCESS ---
   return respond(200, {
     ok: true,
     message: "Registered successfully."
