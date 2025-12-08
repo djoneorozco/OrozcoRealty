@@ -95,7 +95,7 @@ exports.handler = async function (event) {
     await supabase.auth.admin.createUser({
       email: cleanEmail,
       password,
-      email_confirm: false
+      email_confirm: true
     });
 
   if (authError) {
