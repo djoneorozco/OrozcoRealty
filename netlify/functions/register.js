@@ -1,17 +1,20 @@
 // netlify/functions/register.js
 //
-// PURPOSE:
-//  - Create a Supabase Auth user (email + password)
-//  - Store profile data in public.profiles (no password there)
-//  - Return { ok: true, user_id, profile } on success
+// Creates a Supabase Auth user (email + password)
+// + inserts a row in public.profiles
 //
-// ENV VARS REQUIRED:
-//  - SUPABASE_URL
-//  - SUPABASE_SERVICE_KEY  (service role key – NOT anon key)
+// EXPECTS ENV:
+//   SUPABASE_URL
+//   SUPABASE_SERVICE_KEY   (service role key, NOT anon)
+//
+// BODY:
+//   {
+//     fullName, email, password, phone,
+//     mode, rank, va_disability, yos, family, base, notes
+//   }
 
 const { createClient } = require("@supabase/supabase-js");
 
-// ----- CORS HELPERS -----
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
@@ -19,27 +22,26 @@ const CORS_HEADERS = {
   "Content-Type": "application/json"
 };
 
-function respond(statusCode, bodyObj) {
+function respond(statusCode, payload) {
   return {
     statusCode,
     headers: CORS_HEADERS,
-    body: JSON.stringify(bodyObj || {})
+    body: JSON.stringify(payload || {})
   };
 }
 
-// ----- MAIN HANDLER -----
 exports.handler = async function (event) {
-  // 0) Handle preflight
+  // --- 0. CORS preflight ---
   if (event.httpMethod === "OPTIONS") {
     return respond(200, {});
   }
 
-  // 1) Enforce POST
+  // --- 1. Enforce POST ---
   if (event.httpMethod !== "POST") {
     return respond(405, { error: "Method not allowed" });
   }
 
-  // 2) Parse body
+  // --- 2. Parse body ---
   let body;
   try {
     body = JSON.parse(event.body || "{}");
@@ -48,9 +50,9 @@ exports.handler = async function (event) {
   }
 
   const {
+    fullName,
     email,
     password,
-    fullName,
     phone,
     mode,
     rank,
@@ -61,93 +63,86 @@ exports.handler = async function (event) {
     notes
   } = body;
 
-  // 3) Basic validation
   const cleanEmail = (email || "").trim().toLowerCase();
-  const cleanPassword = (password || "").trim();
   const cleanFullName = (fullName || "").trim();
 
   if (!cleanFullName) {
     return respond(400, { error: "Full name is required." });
   }
-
   if (!cleanEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) {
     return respond(400, { error: "Valid email is required." });
   }
-
-  if (!cleanPassword || cleanPassword.length < 8) {
+  if (!password || password.length < 8) {
     return respond(400, { error: "Password must be at least 8 characters." });
   }
 
-  // 4) Init Supabase (service role)
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+  // derive last name
+  let lastName = cleanFullName;
+  if (cleanFullName.includes(" ")) {
+    const parts = cleanFullName.split(" ");
+    lastName = parts[parts.length - 1];
+  }
 
-  if (!SUPABASE_URL || !SERVICE_KEY) {
+  // --- 3. Init Supabase (SERVICE KEY) ---
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
     return respond(500, { error: "Supabase env not configured." });
   }
 
-  const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
-    auth: { persistSession: false }
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false }
   });
 
-  try {
-    // 5) Create Auth user (password lives ONLY in Supabase Auth)
-    const { data: authData, error: authError } =
-      await supabase.auth.admin.createUser({
-        email: cleanEmail,
-        password: cleanPassword,
-        email_confirm: false // they will still verify via your 6-digit flow
-      });
+  // --- 4. Create Auth user (password stored ONLY in Auth) ---
+  const { data: userData, error: authError } =
+    await supabase.auth.admin.createUser({
+      email: cleanEmail,
+      password,
+      email_confirm: false   // we are doing our own 6-digit verification
+    });
 
-    if (authError) {
-      console.error("Auth createUser error:", authError);
-      return respond(400, { error: authError.message || "Auth signup failed." });
-    }
+  if (authError) {
+    // This is where “A user with this email already exists” comes from.
+    return respond(400, {
+      error: authError.message || "Auth registration failed."
+    });
+  }
 
-    const user = authData.user;
+  const userId = userData?.user?.id || null;
 
-    // 6) Derive last_name from full name
-    let lastName = cleanFullName;
-    const parts = cleanFullName.split(" ");
-    if (parts.length > 1) {
-      lastName = parts[parts.length - 1];
-    }
-
-    // 7) Upsert into profiles (NO PASSWORD SAVED HERE)
-    const profileRow = {
+  // --- 5. Insert profile row (NO password here) ---
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .insert({
+      // only columns that actually exist in your profiles table:
       email: cleanEmail,
       full_name: cleanFullName,
       last_name: lastName,
       phone: phone || null,
-      mode: mode || null,              // "ad" or "vet"
+      mode: mode || null,                 // "ad" or "vet"
       rank: rank || null,
       va_disability: va_disability || null,
-      yos: yos ? Number(yos) : null,
+      yos: yos ? Number(yos) : null,      // int4 in DB
       family: family || null,
       base: base || null,
-      notes: notes || null
-      // password_has column can stay NULL (we are not storing password)
-    };
-
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .upsert(profileRow, { onConflict: "email" });
-
-    if (profileError) {
-      console.error("Profile upsert error:", profileError);
-      // still return ok=false so you see the error in UI
-      return respond(500, { error: "Profile save failed." });
-    }
-
-    // 8) Success
-    return respond(200, {
-      ok: true,
-      message: "User registered.",
-      user_id: user.id,
-      profile: profileRow
+      notes: notes || null,
+      // optional: keep auth user id for linkage later
+      auth_user_id: userId || null        // only if you add this column
     });
-  } catch (err) {
-    console.error("REGISTER UNEXPECTED ERROR:", err);
-    return respond(500, { error: "Unexpected server error." });
+
+  if (profileError) {
+    console.error("PROFILE INSERT ERROR:", profileError);
+    return respond(500, {
+      error: "Profile save failed.",
+      details: profileError.message || null
+    });
   }
+
+  // --- 6. Success ---
+  return respond(200, {
+    ok: true,
+    message: "Registered successfully."
+  });
 };
