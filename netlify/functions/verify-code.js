@@ -13,7 +13,7 @@
 //  - SUPABASE_SERVICE_KEY
 //
 // TABLE: public.email_codes
-//   email          text (PK-ish, or indexed, 1 row per active code is fine right now)
+//   email          text
 //   code_hash      text
 //   attempts       int4
 //   expires_at     timestamptz
@@ -108,7 +108,7 @@ exports.handler = async function (event, context) {
 
   const record = rows[0];
 
-  // 5. simple attempt lockout (optional)
+  // 5. simple attempt lockout
   const MAX_ATTEMPTS = 5;
   if (record.attempts >= MAX_ATTEMPTS) {
     return respond(400, { error: "Too many attempts. Request new code." });
@@ -139,20 +139,32 @@ exports.handler = async function (event, context) {
     return respond(400, { error: "Invalid code." });
   }
 
-  // 8. SUCCESS 🎉
-  // you are verified. we can return whatever the app needs:
-  // - ok:true
-  // - identity info (rank, lastName, phone) pulled from context jsonb
-  // - maybe a lightweight session token later
-  const profile = {
+  // 8. SUCCESS 🎉 – base profile from email_codes.context
+  let profile = {
     email: record.email,
     ...record.context // pulls rank / lastName / phone etc.
   };
 
+  // 9. OPTIONAL ENRICH: pull matching row from profiles table (if it exists)
+  try {
+    const { data: profRows, error: profErr } = await supabase
+      .from("profiles")
+      .select(
+        "email, full_name, last_name, phone, mode, rank, va_disability, yos, family, base, notes"
+      )
+      .eq("email", email)
+      .limit(1);
+
+    if (!profErr && profRows && profRows.length > 0) {
+      profile = { ...profile, ...profRows[0] };
+    } else if (profErr) {
+      console.error("Supabase profiles lookup error:", profErr);
+    }
+  } catch (e) {
+    console.error("Profiles enrichment error:", e);
+  }
+
   // OPTIONAL CLEANUP:
-  // If you want “one-time code,” you can delete the row here so
-  // it can’t be reused:
-  //
   // await supabase
   //   .from("email_codes")
   //   .delete()
