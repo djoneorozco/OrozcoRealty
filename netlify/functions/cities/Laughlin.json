@@ -1,0 +1,104 @@
+{
+  "place": "Del Rio (Laughlin AFB), TX",
+  "geo_id": "1600000US4819756",
+  "year": 2023,
+
+  "population": {
+    "estimate": 34473,
+    "median_age": 33.8,
+    "persons_per_household": 3.1
+  },
+
+  "households": {
+    "total_households": 11600
+  },
+
+  "income": {
+    "median_household_income": 52000,
+    "per_capita_income": 23500,
+    "poverty_rate_percent": 24.2
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 75.3,
+    "bachelors_degree_or_higher_percent": 17.1
+  },
+
+  "veterans": {
+    "veteran_population_percent": 7.3
+  },
+
+  "immigration": {
+    "foreign_born_percent": 25.8
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 18.6
+  },
+
+  "housing": {
+    "housing_units": 13700,
+    "median_value_owner_occupied": 148000,
+
+    "market": {
+      "zillow_average_home_value": 172400,
+      "zillow_one_year_change_percent": 1.5,
+      "market_type_summary": "Stable, rural-growth market",
+
+      "average_days_on_market_range": {
+        "low": 70,
+        "high": 118
+      },
+
+      "median_listing_price_realtor": 199000,
+      "median_listing_price_per_sqft": 131,
+
+      "q1": {
+        "median_sale_price": 185000,
+        "average_sale_price": 210400,
+        "median_list_price": 198000
+      },
+
+      "sale_history_36_months": [
+        { "month": "2022-01", "median_sale_price": 168000 },
+        { "month": "2022-02", "median_sale_price": 169000 },
+        { "month": "2022-03", "median_sale_price": 170000 },
+        { "month": "2022-04", "median_sale_price": 171500 },
+        { "month": "2022-05", "median_sale_price": 173000 },
+        { "month": "2022-06", "median_sale_price": 174000 },
+        { "month": "2022-07", "median_sale_price": 173000 },
+        { "month": "2022-08", "median_sale_price": 172000 },
+        { "month": "2022-09", "median_sale_price": 170500 },
+        { "month": "2022-10", "median_sale_price": 169500 },
+        { "month": "2022-11", "median_sale_price": 168500 },
+        { "month": "2022-12", "median_sale_price": 168000 },
+
+        { "month": "2023-01", "median_sale_price": 169000 },
+        { "month": "2023-02", "median_sale_price": 170000 },
+        { "month": "2023-03", "median_sale_price": 172000 },
+        { "month": "2023-04", "median_sale_price": 173500 },
+        { "month": "2023-05", "median_sale_price": 175000 },
+        { "month": "2023-06", "median_sale_price": 176000 },
+        { "month": "2023-07", "median_sale_price": 176500 },
+        { "month": "2023-08", "median_sale_price": 176000 },
+        { "month": "2023-09", "median_sale_price": 175000 },
+        { "month": "2023-10", "median_sale_price": 175500 },
+        { "month": "2023-11", "median_sale_price": 176000 },
+        { "month": "2023-12", "median_sale_price": 177000 },
+
+        { "month": "2024-01", "median_sale_price": 178000 },
+        { "month": "2024-02", "median_sale_price": 178500 },
+        { "month": "2024-03", "median_sale_price": 179000 },
+        { "month": "2024-04", "median_sale_price": 180000 },
+        { "month": "2024-05", "median_sale_price": 181000 },
+        { "month": "2024-06", "median_sale_price": 181500 },
+        { "month": "2024-07", "median_sale_price": 181000 },
+        { "month": "2024-08", "median_sale_price": 180500 },
+        { "month": "2024-09", "median_sale_price": 180000 },
+        { "month": "2024-10", "median_sale_price": 180500 },
+        { "month": "2024-11", "median_sale_price": 181000 },
+        { "month": "2024-12", "median_sale_price": 182000 }
+      ]
+    }
+  }
+}

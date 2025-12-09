@@ -4,9 +4,9 @@
 // - Accept POST { email, rank, lastName, phone }
 // - Generate 6-digit code
 // - Hash code (never store raw code)
-// - Insert row into Supabase (email_codes table)
+// - Insert row into Supabase (email_codes table: id, email, code_hash, attempts, expires_at, created_at)
 // - Send code via Resend email (HTML + text)
-// - Return {ok:true}
+// - Return { ok: true }
 
 const crypto = require("crypto");
 const { Resend } = require("resend");
@@ -36,11 +36,14 @@ function hashCode(code) {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
-exports.handler = async function (event, context) {
+exports.handler = async function (event) {
+  // ===== CORS preflight =====
   if (event.httpMethod === "OPTIONS") return respond(200, {});
-  if (event.httpMethod !== "POST")
+  if (event.httpMethod !== "POST") {
     return respond(405, { error: "Method not allowed" });
+  }
 
+  // ===== Parse body =====
   let body;
   try {
     body = JSON.parse(event.body || "{}");
@@ -49,19 +52,21 @@ exports.handler = async function (event, context) {
   }
 
   const email = (body.email || "").trim().toLowerCase();
-  const rank = body.rank || "";
-  const lastName = body.lastName || "";
-  const phone = body.phone || "";
+  const rank = body.rank || "";        // used only in email copy
+  const lastName = body.lastName || ""; // used only in email copy
+  const phone = body.phone || "";       // used only in email copy
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return respond(400, { error: "Valid email required" });
   }
 
+  // ===== Generate + hash code =====
   const code = makeCode();
   const code_hash = hashCode(code);
   const now = new Date().toISOString();
-  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString(); // ✨ Fixed: no expiration
+  const expiresAt = new Date("2075-01-01T00:00:00Z").toISOString(); // effectively no expiration
 
+  // ===== Supabase client =====
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -73,6 +78,7 @@ exports.handler = async function (event, context) {
     auth: { persistSession: false },
   });
 
+  // ===== Insert into email_codes (ONLY columns that exist) =====
   const { error: insertErr } = await supabase.from("email_codes").insert([
     {
       email,
@@ -80,19 +86,23 @@ exports.handler = async function (event, context) {
       attempts: 0,
       created_at: now,
       expires_at: expiresAt,
-      rank,
-      last_name: lastName,
-      phone,
-      context: { rank, lastName, phone },
+      // ⚠️ No rank / last_name / phone / context here,
+      // because those columns do NOT exist in the email_codes table anymore.
     },
   ]);
 
   if (insertErr) {
     console.error("Supabase insert error:", insertErr);
-    return respond(500, { error: "DB insert failed." });
+    return respond(500, { error: "DB insert failed" });
   }
 
+  // ===== Resend setup =====
   const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) {
+    console.error("Missing RESEND_API_KEY");
+    return respond(500, { error: "Email service not configured" });
+  }
+
   const fromAddress =
     process.env.EMAIL_FROM ||
     process.env.FROM_EMAIL ||
@@ -101,6 +111,7 @@ exports.handler = async function (event, context) {
   const resend = new Resend(resendKey);
 
   const subject = "Your RealtySaSS Verification Code";
+
   const textBody = `Hi ${rank ? rank + " " : ""}${lastName || ""},
 
 Your verification code is: ${code}

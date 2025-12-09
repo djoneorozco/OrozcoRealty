@@ -3,9 +3,10 @@
 // CommonJS + Node 18 native fetch
 
 const ALLOW_ORIGINS = [
+  "https://theorozcorealty.com",
   "https://new-real-estate-purchase.webflow.io",
   "https://theorozcorealty.netlify.app",
-  "http://localhost:8888",
+  "http://localhost:8888"
 ];
 
 function corsHeaders(origin) {
