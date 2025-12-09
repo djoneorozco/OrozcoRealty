@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Mon Nov 17 2025 00:32:40 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Tue Dec 09 2025 08:01:04 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="68fad0393e405a7cd0d856d2" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
 <head>
   <meta charset="utf-8">
@@ -18,10 +18,10 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
-  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Droid Sans:400,700","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
   <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
-  <link href="images/favicon.svg" rel="shortcut icon" type="image/x-icon">
-  <link href="images/webclip.jpg" rel="apple-touch-icon">
+  <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="images/webclip.png" rel="apple-touch-icon">
 </head>
 <body>
   <div class="landing">
@@ -62,18 +62,23 @@
                 <header class="style-two-header">
                   <section>
                     <div class="w-embed w-script"><!--  =========================================================
-  RealtySaSS • Frosted Glass Lock (Updated to support .html)
-  - Global lock for /realtysass and /realtysass.html
-  - Keep ONE embed sitewide
+  RealtySaSS • Frosted Glass Login Lock (Email + Password)
+  - Uses /api/login (Supabase Auth check)
+  - Unlocks /realtysass + /realtysass.html
 =========================================================  -->
                       <div id="rs-lock-overlay" aria-hidden="true" style="visibility:hidden; opacity:0;">
                         <div class="rs-lock-centered" role="dialog" aria-labelledby="rs-lock-title" aria-modal="true">
                           <div class="rs-lock-card" id="rs-lock-card">
-                            <h1 id="rs-lock-title">Enter Your 6-Digit Access Code</h1>
-                            <p class="rs-lock-sub">This page is private — please enter the unlock code we provided.</p>
-                            <div class="rs-code-row">
-                              <input id="rs-code-input" inputmode="numeric" maxlength="6" pattern="[0-9]*" autocomplete="one-time-code" aria-label="6-digit code">
-                              <button id="rs-code-btn" type="button">Unlock</button>
+                            <h1 id="rs-lock-title">Sign In to Continue</h1>
+                            <p class="rs-lock-sub">This page is private — please enter your credentials.</p>
+                            <div class="rs-field">
+                              <input id="rs-email-input" type="email" placeholder="Email Address" autocomplete="email">
+                            </div>
+                            <div class="rs-field">
+                              <input id="rs-pass-input" type="password" placeholder="Password" minlength="8" autocomplete="current-password">
+                            </div>
+                            <div class="rs-login-row">
+                              <button id="rs-login-btn" type="button">Log In</button>
                             </div>
                             <p id="rs-lock-msg" class="rs-lock-msg" aria-live="polite"></p>
                           </div>
@@ -96,8 +101,12 @@
     font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     transition:opacity .25s ease, visibility .25s ease;
   }
-  #rs-lock-overlay.rs-hidden{ opacity:0; pointer-events:none; visibility:hidden; }
-  .rs-lock-centered{ width:100%; max-width:520px; padding:20px; }
+  #rs-lock-overlay.rs-hidden{
+    opacity:0; pointer-events:none; visibility:hidden;
+  }
+  .rs-lock-centered{
+    width:100%; max-width:520px; padding:20px;
+  }
   .rs-lock-card{
     background:rgba(255,255,255,0.03);
     border-radius:var(--rs-radius);
@@ -105,88 +114,133 @@
     box-shadow:0 8px 30px rgba(3,6,15,0.6);
     padding:28px 24px; color:var(--rs-ink);
   }
-  .rs-lock-card h1{ margin:0 0 8px; font-size:20px; font-weight:700; }
-  .rs-lock-sub{ margin:0 0 18px; color:var(--rs-muted); font-size:13px; }
-  .rs-code-row{ display:flex; gap:12px; }
-  #rs-code-input{
-    flex:1; padding:12px 14px; border-radius:10px;
+  .rs-lock-card h1{
+    margin:0 0 8px; font-size:20px; font-weight:700;
+  }
+  .rs-lock-sub{
+    margin:0 0 18px; color:var(--rs-muted); font-size:13px;
+  }
+  .rs-field{
+    margin-bottom:14px;
+  }
+  #rs-email-input,
+  #rs-pass-input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
     border:1px solid rgba(255,255,255,0.06);
     background:rgba(255,255,255,0.02);
-    color:var(--rs-ink); font-size:16px; outline:none;
+    color:var(--rs-ink); 
+    font-size:16px;
+    outline:none;
   }
-  #rs-code-btn{
-    padding:11px 16px; border-radius:10px; border:none;
+  #rs-email-input::placeholder,
+  #rs-pass-input::placeholder{
+    color:var(--rs-muted);
+  }
+  #rs-login-btn{
+    width:100%;
+    padding:12px 16px;
+    border-radius:10px;
+    border:none;
     background:linear-gradient(180deg,var(--rs-accent),rgba(100,230,190,0.85));
-    color:#02110b; font-weight:700; cursor:pointer;
+    color:#02110b; font-weight:700; cursor:pointer; font-size:15px;
   }
-  .rs-lock-msg{ margin-top:12px; color:var(--rs-muted); font-size:13px; min-height:18px; }
+  .rs-lock-msg{
+    margin-top:12px; 
+    color:var(--rs-muted); 
+    font-size:13px; 
+    min-height:18px;
+  }
 </style>
                       <script>
 (function(){
   "use strict";
-  // --- CONFIG ---
-  const VALID_CODE = "123456";
-  // Supports both /realtysass and /realtysass.html
-  const USE_ALLOW_LIST = true;
+  const API_BASE = "https://theorozcorealty.netlify.app/api";
+  // Which pages should be locked
   const ALLOW_PATHS = [
     /\/realtysass(?:\.html)?$/i,
   ];
-  const EXEMPT_PATHS = [];
   const path = (location.pathname || "/").toLowerCase();
-  const isAllowed = ALLOW_PATHS.some(re => re.test(path));
-  const shouldLock = USE_ALLOW_LIST ? isAllowed : !EXEMPT_PATHS.some(re => re.test(path));
-  if (!shouldLock) {
+  const shouldLock = ALLOW_PATHS.some(re => re.test(path));
+  if (!shouldLock){
     document.querySelectorAll('#rs-lock-overlay').forEach(el => el.remove());
     return;
   }
-  const overlay = document.getElementById('rs-lock-overlay');
-  const input   = document.getElementById('rs-code-input');
-  const btn     = document.getElementById('rs-code-btn');
-  const msg     = document.getElementById('rs-lock-msg');
+  const overlay  = document.getElementById('rs-lock-overlay');
+  const msg      = document.getElementById('rs-lock-msg');
+  const emailInp = document.getElementById('rs-email-input');
+  const passInp  = document.getElementById('rs-pass-input');
+  const loginBtn = document.getElementById('rs-login-btn');
+  const card     = document.getElementById('rs-lock-card');
+  // Show overlay
   overlay.classList.remove('rs-hidden');
-  overlay.setAttribute('aria-hidden','false');
   overlay.style.visibility = 'visible';
   overlay.style.opacity = '1';
-  const digitsOnly = s => String(s || '').replace(/\D+/g, '');
-  const cleanCode  = s => digitsOnly(s).slice(0, 6);
+  // ARIA fix
+  overlay.removeAttribute("aria-hidden");
   function showMsg(text, isError){
     msg.textContent = text || '';
     msg.style.color = isError ? '#ffb3b3' : 'var(--rs-muted)';
   }
-  function unlockAllOverlays(){
-    document.querySelectorAll('#rs-lock-overlay').forEach(el => {
+  function unlock(){
+    document.querySelectorAll('#rs-lock-overlay').forEach(el=>{
       el.classList.add('rs-hidden');
-      el.setAttribute('aria-hidden','true');
       el.style.visibility = 'hidden';
       el.style.opacity = '0';
+      el.setAttribute("aria-hidden","true");
     });
   }
-  function onSubmit(){
-    const entered  = cleanCode(input.value);
-    const expected = cleanCode(VALID_CODE);
-    if (entered.length !== 6){
-      showMsg('Please enter a valid 6-digit code.', true);
+  async function loginWithServer(email, password){
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false){
+      throw new Error(data.error || "Incorrect email or password.");
+    }
+    return data;
+  }
+  async function onLogin(){
+    const em = emailInp.value.trim().toLowerCase();
+    const pw = passInp.value.trim();
+    if (!em){
+      showMsg("Please enter your email.", true);
       return;
     }
-    if (entered === expected){
-      unlockAllOverlays();
-      showMsg('');
-    } else {
-      showMsg('That code is not valid. Try again.', true);
-      const card = document.getElementById('rs-lock-card');
+    if (pw.length < 8){
+      showMsg("Password must be at least 8 characters.", true);
+      return;
+    }
+    loginBtn.disabled = true;
+    showMsg("Checking credentials...");
+    try {
+      await loginWithServer(em, pw);
+      showMsg("");
+      unlock();
+    } catch (err){
+      showMsg(err.message || "Incorrect email or password.", true);
       if(card && card.animate){
         card.animate(
-          [{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],
-          {duration:260}
+          [
+            { transform:'translateX(-5px)' },
+            { transform:'translateX(5px)' },
+            { transform:'translateX(0)' }
+          ],
+          { duration:260 }
         );
       }
+    } finally {
+      loginBtn.disabled = false;
     }
   }
-  if (btn) btn.addEventListener('click', onSubmit);
-  if (input){
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') onSubmit(); });
-    setTimeout(()=> input.focus(), 0);
-  }
+  loginBtn.addEventListener("click", onLogin);
+  passInp.addEventListener("keydown", e=>{
+    if (e.key === "Enter") onLogin();
+  });
+  setTimeout(()=> emailInp.focus(), 0);
 })();
 </script>
                     </div>
@@ -195,7 +249,7 @@
                     <div class="container-two">
                       <div class="navbar-wrapper-3">
                         <div class="style-three-nav-brand">
-                          <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"><img width="150" height="40" alt="" src="images/TOR.png" loading="lazy" srcset="images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, images/TOR.png 2851w" sizes="(max-width: 479px) 88vw, 150px"></a>
+                          <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"><img width="150" height="40" alt="" src="images/TOR.png" loading="lazy" srcset="images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, images/TOR.png 2851w" sizes="150px"></a>
                         </div>
                         <div class="w-layout-hflex nav-link-box">
                           <div class="w-layout-hflex nav-one-button-wrap">
@@ -348,194 +402,458 @@
             <div class="w-layout-blockcontainer container-one-11 w-container"></div>
           </section>
         </div>
-        <div class="hp_hero_banner_wrapper-4 hp-hero-inner">
-          <div class="hp_hero_banner_wrapper">
-            <h2 class="centered-15">Welcome to<br> the House of SaSS</h2>
-            <p class="paragraph-6">Our Software as a Service (S.A.A.S) are available free of charge to our Military Community. Simply Complete Your Profile and Request your Activation Code, its that Simple. Activation Code Gives you Access to all our Services and Future Ones.</p>
-            <div class="hp_hero_banner_wrapper-11">
-              <div data-poster-url="https://cdn.prod.website-files.com/683d438cb5f7527c291506e1%2F68605e967b02f6fd87678cfc_6-poster-00001.jpg" data-video-urls="https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.mp4,https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="home-video w-background-video w-background-video-atom"><video id="8b184d34-7fc2-cb35-b05d-db163f1adb41-video" autoplay="" loop="" style="background-image:url(&quot;https://cdn.prod.website-files.com/683d438cb5f7527c291506e1%2F68605e967b02f6fd87678cfc_6-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
-                  <source src="https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.mp4" data-wf-ignore="true">
-                  <source src="https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.webm" data-wf-ignore="true">
-                </video></div>
-            </div>
-          </div>
-        </div>
         <section class="section-193">
-          <div data-poster-url="https://uploads-ssl.webflow.com/6569b214e912016a672d14f6/6593e7e173954868b9c55f32_pexels-marros-11187237-1080p-poster-00001.jpg" data-video-urls="videos/pexels-marros-11187237-1080p-poster-00001.jpg,videos/pexels-marros-11187237-1080p-transcode.mp4,videos/pexels-marros-11187237-1080p-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="home-one-destination-large-image-wrap-3 w-background-video w-background-video-atom"><video id="fc8246c9-6c46-fddd-a464-d6572edaf435-video" autoplay="" loop="" style="background-image:url(&quot;https://uploads-ssl.webflow.com/6569b214e912016a672d14f6/6593e7e173954868b9c55f32_pexels-marros-11187237-1080p-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
-              <source src="videos/pexels-marros-11187237-1080p-poster-00001.jpg" data-wf-ignore="true">
-              <source src="videos/pexels-marros-11187237-1080p-transcode.mp4" data-wf-ignore="true">
-              <source src="videos/pexels-marros-11187237-1080p-transcode.webm" data-wf-ignore="true">
-            </video></div>
           <div class="ask-elena-content">
             <div class="w-layout-blockcontainer container-62 w-container"></div>
-            <div class="hp-template-grid">
-              <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247c98" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
-                <div class="hp-template-item-content-wrap">
-                  <div class="hp-template-item-banner-wrap-copy">
-                    <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247c9b" style="opacity:0" class="hero-title-wrapper-2-copy second-version have--position">
-                      <div class="slide-animation-wrapper">
-                        <div class="text-overflow-hidden-18">
-                          <div class="first-line">
-                            <div class="small-text"><strong class="bold-text-6">A.I Concierge</strong></div>
+            <section>
+              <div class="landing-home-page-big-text-copy-copy">Premium Member</div>
+              <h1 class="heading-61-copy">User Profile Dashboard Overview</h1>
+              <section class="section-258">
+                <div class="code-embed-19 w-embed w-script"><!--  =========================================
+   HOUSE OF SASS • USER PROFILE PANEL (v2.3)
+   Uses Supabase profile via /api/profile
+   Uses serverless /api/pay-tables for Base Pay + BAH
+=========================================  -->
+                  <div id="profile-shell" style="all: initial;">
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+                    <style>
+    #profile-shell, #profile-shell * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    :root {
+      --bg: #15110a;
+      --panel: #15110a;
+      --panel-2: #15110a;
+      --ink: #e9ecff;
+      --muted: #a8b0d6;
+      --accent: #f2f2f2;
+      --accent2: #6aa7ff;
+      --border: rgba(255,255,255,0.1);
+      --radius: 18px;
+      --shadow: 0 24px 48px rgba(0,0,0,0.6);
+    }
+    /* OUTER CONTAINER (NOW TRANSPARENT) */
+    #profile-container {
+      background: transparent !important;
+      padding: 40px 0;
+      border-radius: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      box-shadow: none !important;
+      border: none !important;
+    }
+    .profile-title {
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 30px;
+      color: var(--ink);
+    }
+    /* IDENTITY CARD (KEEP FULL FROSTED STYLE) */
+    .identity-card {
+      background: linear-gradient(135deg, var(--panel) 0%, var(--panel-2) 100%);
+      border-radius: var(--radius);
+      padding: 25px 30px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .id-block {
+      display: flex;
+      flex-direction: column;
+    }
+    .email {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .name {
+      font-size: 16px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .identity-stats {
+      display: flex;
+      gap: 40px;
+      font-size: 16px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .stat-value {
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 600;
+    }
+    /* SECTION GRID */
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+    .sec-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 22px;
+      border-radius: var(--radius);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+    .sec-header {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      text-align: right;
+    }
+    .value.accent {
+      color: var(--accent2);
+    }
+  </style>
+                    <!--  ===== HTML STRUCTURE =====  -->
+                    <div id="profile-container">
+                      <div class="identity-card">
+                        <div class="id-block">
+                          <!--  Greeting line  -->
+                          <div class="email" id="email-field">loading…</div>
+                          <!--  First name (or full name fallback)  -->
+                          <div class="name" id="name-field">loading…</div>
+                        </div>
+                        <div class="identity-stats">
+                          <div>
+                            <div class="stat-label">Total Amount</div>
+                            <div class="stat-value" id="rank-field">--</div>
+                          </div>
+                          <div>
+                            <div class="stat-label">Base Pay</div>
+                            <div class="stat-value" id="income-field">--</div>
+                          </div>
+                          <div>
+                            <div class="stat-label">BAH</div>
+                            <div class="stat-value" id="bah-field">--</div>
                           </div>
                         </div>
                       </div>
-                      <div class="slide-animation-wrapper">
-                        <div class="text-overflow-hidden-18">
-                          <div class="second-line">
-                            <h1 class="text-align-center-14 none-margin second-home-title left">Ask-Elena, <span class="is--color-green-variable-4">A.I Agent</span></h1>
+                      <div class="section-grid">
+                        <div class="sec-card">
+                          <div class="sec-header">Financial</div>
+                          <div class="row">
+                            <div class="label">Credit Score</div>
+                            <div class="value" id="credit-score">--</div>
+                          </div>
+                          <div class="row">
+                            <div class="label">Mortgage Est.</div>
+                            <div class="value" id="mortgage-est">$--</div>
+                          </div>
+                          <div class="row">
+                            <div class="label">DTI</div>
+                            <div class="value" id="dti-field">--</div>
+                          </div>
+                        </div>
+                        <div class="sec-card">
+                          <div class="sec-header">Psychology</div>
+                          <div class="row">
+                            <div class="label">Type</div>
+                            <div class="value" id="personality-field">--</div>
+                          </div>
+                          <div class="row">
+                            <div class="label">Risk</div>
+                            <div class="value" id="risk-field">--</div>
+                          </div>
+                          <div class="row">
+                            <div class="label">Behavior</div>
+                            <div class="value" id="buying-style-field">--</div>
+                          </div>
+                        </div>
+                        <div class="sec-card">
+                          <div class="sec-header">Real Estate</div>
+                          <div class="row">
+                            <div class="label">Current Base</div>
+                            <div class="value" id="current-base">--</div>
+                          </div>
+                          <div class="row">
+                            <div class="label">Next Base</div>
+                            <div class="value" id="next-base">--</div>
+                          </div>
+                          <div class="row">
+                            <div class="label">Timeline</div>
+                            <div class="value" id="timeline-field">--</div>
+                          </div>
+                        </div>
+                        <div class="sec-card">
+                          <div class="sec-header">Investment</div>
+                          <div class="row">
+                            <div class="label">ROI Goal</div>
+                            <div class="value" id="roi-field">--</div>
+                          </div>
+                          <div class="row">
+                            <div class="label">Cashflow</div>
+                            <div class="value" id="cashflow-field">--</div>
                           </div>
                         </div>
                       </div>
-                      <div class="slide-animation-wrapper">
-                        <div class="text-overflow-hidden-18">
-                          <div class="third-line">
-                            <p class="large-paragraph-copy for--hero for--second-home">Meet Elena, our A.I Agent specifically design with you in mind. With Mastery in the Subject of Real Estate, Elena can answer Any &amp; All Question related to your unique circumstance. Now with the Power of A.I, you can dive deeper in what meets your needs!</p>
-                          </div>
+                    </div>
+                    <!--  ===== PROFILE DATA LOADER =====  -->
+                    <script>
+    (function() {
+      "use strict";
+      const API_BASE = "https://theorozcorealty.netlify.app/api";
+      /* ============================
+         RANK TITLES (AIR FORCE focus)
+         ============================ */
+      const RANK_TITLES = {
+        "E-1": "Airman Basic",
+        "E-2": "Airman",
+        "E-3": "Airman First Class",
+        "E-4": "Senior Airman",
+        "E-5": "Staff Sergeant",
+        "E-6": "Technical Sergeant",
+        "E-7": "Master Sergeant",
+        "E-8": "Senior Master Sergeant",
+        "E-9": "Chief Master Sergeant"
+      };
+      /* =====================
+         GENERIC HELPERS
+         ===================== */
+      function setText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value != null && value !== "" ? value : "--";
+      }
+      function setMoney(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const num = Number(value);
+        if (!value || isNaN(num)) {
+          el.innerText = "$--";
+        } else {
+          el.innerText = "$" + num.toLocaleString(undefined, {
+            maximumFractionDigits: 2
+          });
+        }
+      }
+      function getStoredIdentity() {
+        try {
+          return JSON.parse(localStorage.getItem("realtysass.identity") || "{}");
+        } catch (_) {
+          return {};
+        }
+      }
+      function getLastName(fullName) {
+        if (!fullName) return "";
+        const parts = fullName.trim().split(/\s+/);
+        return parts.length ? parts[parts.length - 1] : "";
+      }
+      function getFirstName(fullName) {
+        if (!fullName) return "";
+        const parts = fullName.trim().split(/\s+/);
+        return parts[0] || "";
+      }
+      function getRankTitle(rank) {
+        if (!rank) return "";
+        return RANK_TITLES[rank] || rank;
+      }
+      function buildWelcome(rank, fullName) {
+        const title = getRankTitle(rank);
+        const last  = getLastName(fullName);
+        if (title && last) return `Welcome ${title} ${last}`;
+        if (last) return `Welcome ${last}`;
+        if (title) return `Welcome ${title}`;
+        return "Welcome";
+      }
+      /* =========================================
+         COMPENSATION VIA SERVERLESS PAY TABLES
+         Calls /api/pay-tables (netlify/functions/pay-tables.js)
+         BODY (example):
+           { rank, yos, base, family }
+         Expected response:
+           { ok:true, basePay, bah, total }
+         (We are flexible with key names.)
+         ========================================= */
+      async function updateCompensation(rank, yos, base, family) {
+        // If we don't even know the rank, just reset amounts
+        if (!rank) {
+          setMoney("income-field", null);
+          setMoney("bah-field", null);
+          setMoney("rank-field", null);
+          return;
+        }
+        try {
+          const res = await fetch(API_BASE + "/pay-tables", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              rank,
+              yos: yos != null ? yos : null,
+              base: base || null,
+              family: family || null
+            })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || data.ok === false) {
+            console.warn("pay-tables error:", data.error || res.status);
+            setMoney("income-field", null);
+            setMoney("bah-field", null);
+            setMoney("rank-field", null);
+            return;
+          }
+          // Be forgiving with property names
+          const basePay =
+            Number(data.basePay ?? data.base_pay ?? data.base) || null;
+          const bah =
+            Number(data.bah ?? data.bahAmount ?? data.bah_allowance) || null;
+          const total =
+            basePay || bah ? (basePay || 0) + (bah || 0) : null;
+          setMoney("income-field", basePay);
+          setMoney("bah-field", bah);
+          setMoney("rank-field", total);
+        } catch (err) {
+          console.error("Compensation fetch failed:", err);
+          setMoney("income-field", null);
+          setMoney("bah-field", null);
+          setMoney("rank-field", null);
+        }
+      }
+      /* ===========================
+         APPLY FROM LOCAL IDENTITY
+         =========================== */
+      function applyFromIdentity(id) {
+        const fullName = id.fullName || "";
+        const rank     = id.rankPaygrade || "";
+        const base     = id.base || "";
+        const family   = id.family || "";
+        const yos      = id.yos || id.years_of_service || null;
+        const welcome  = buildWelcome(rank, fullName);
+        const first    = getFirstName(fullName) || fullName;
+        setText("email-field", welcome || "Welcome");
+        setText("name-field", first || "--");
+        setText("current-base", base || "--");
+        // Kick off compensation calculation using identity only
+        updateCompensation(rank, yos, base, family).catch(console.error);
+      }
+      /* ===========================
+         APPLY FROM SUPABASE PROFILE
+         =========================== */
+      function applyFromProfile(profile, identity) {
+        const fullName = profile.full_name || identity.fullName || "";
+        const email    = profile.email || identity.email || "";
+        const rank     = profile.rank || identity.rankPaygrade || "";
+        const base     = profile.base || identity.base || "";
+        const family   = profile.family || identity.family || "";
+        const yos      = profile.yos != null ? profile.yos : identity.yos;
+        const welcome  = buildWelcome(rank, fullName);
+        const first    = getFirstName(fullName) || fullName;
+        // Top-left card: greeting + first name
+        setText("email-field", welcome || "Welcome");
+        setText("name-field", first || "--");
+        setText("current-base", base || "--");
+        // (Email is available if we want it later)
+        console.debug("Profile email:", email);
+        // Timeline & psychology placeholders until wired to A.I.O.U / FRS
+        setText("timeline-field", profile.notes || "--");
+        setText("personality-field", "--");
+        setText("risk-field", "--");
+        setText(
+          "buying-style-field",
+          family ? family + " family members" : "--"
+        );
+        // Financial placeholders from FRS (to be connected later)
+        setText("credit-score", "--");
+        setMoney("mortgage-est", null);
+        setText("dti-field", "--");
+        setText("roi-field", "--");
+        setText("cashflow-field", "--");
+        // REAL money numbers via serverless pay-tables
+        updateCompensation(rank, yos, base, family).catch(console.error);
+      }
+      /* ===========================
+         MAIN LOAD
+         =========================== */
+      async function loadProfile() {
+        const identity = getStoredIdentity();
+        const email    = (identity.email || "").trim().toLowerCase();
+        if (!email) {
+          setText("email-field", "Welcome");
+          setText("name-field", "--");
+          return;
+        }
+        // Show local info immediately
+        applyFromIdentity(identity);
+        try {
+          const res = await fetch(API_BASE + "/profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || data.ok === false) {
+            console.warn("Profile API error:", data.error || res.status);
+            // Identity-only view already applied (including pay-tables)
+            return;
+          }
+          applyFromProfile(data.profile || {}, identity);
+        } catch (err) {
+          console.error("Profile fetch failed:", err);
+          // Identity-only already visible
+        }
+      }
+      loadProfile();
+    })();
+  </script>
+                  </div>
+                </div>
+              </section>
+              <div data-w-id="24285364-7b60-d7ee-50d3-84a0940863e5" style="opacity:0" class="buttons-row-5">
+                <a href="#" data-w-id="24285364-7b60-d7ee-50d3-84a0940863e6" class="primary-glow-wrapper-22 full w-inline-block">
+                  <div data-w-id="24285364-7b60-d7ee-50d3-84a0940863e7" class="button-overflow-hidden mobile-full-width">
+                    <div class="box-shadow-block-16">
+                      <div class="pedding-stroke-12">
+                        <div class="inside-button-31">
+                          <div class="button-text-32">Personalized A.I Readiness Report</div>
+                          <div style="-webkit-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="hover-line-43"></div>
                         </div>
                       </div>
-                      <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247cb0" style="opacity:0" class="center-flex">
-                        <a href="features/ask-elena.html" data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247cb1" class="primary-glow-wrapper-19 w-inline-block">
-                          <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247cb2" class="button-overflow-hidden">
-                            <div class="box-shadow-block-16">
-                              <div class="pedding-stroke-12">
-                                <div class="inside-button-14">
-                                  <div class="button-text-20">Enter</div>
-                                  <div style="-webkit-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="hover-line-33"></div>
-                                </div>
-                              </div>
-                              <div style="opacity:0.6" class="glow-wrapper stroke">
-                                <div class="glow-item left"></div>
-                                <div class="glow-item"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </a>
+                      <div style="opacity:0.6" class="glow-wrapper stroke">
+                        <div class="glow-item left"></div>
+                        <div class="glow-item"></div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               </div>
-              <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247cbc" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
-                <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247cbd" style="opacity:0" class="platform-child-7-copy">
-                  <div class="primary-glow-wrapper-22 full-width">
-                    <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247cbf" class="primary-glow-wrapper-22 full-width">
-                      <div class="button-overflow-hidden for--third-version-features full-size ai-child">
-                        <div>
-                          <div class="pedding-stroke-12">
-                            <div class="inside-button-14 none-padding ai-child">
-                              <div class="principle-second-block-copy ai-child">
-                                <a href="features/re-defined.html" class="link-block-5 w-inline-block"><img src="images/22.jpg" loading="lazy" alt="" class="image-87-copy"></a>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="glow-wrapper stroke for--boxes">
-                            <div class="glow-item left"></div>
-                            <div class="glow-item"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="primary-glow-wrapper-22 full-width">
-                    <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247ccb" class="primary-glow-wrapper-22 full-width"></div>
-                  </div>
-                  <div class="primary-glow-wrapper-22 full-width">
-                    <div data-w-id="61340d38-45bd-2ea6-03ae-2e38a7247ccd" class="primary-glow-wrapper-22 full-width"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </section>
           </div>
         </section>
         <section>
-          <div class="hp-template-content-wrap-6">
-            <div class="w-layout-blockcontainer container-62 w-container"></div>
-            <div class="hp-template-grid">
-              <div data-w-id="3524c4ac-cb47-6838-cb6d-822b5f84308a" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
-                <div class="hp-template-item-content-wrap">
-                  <div class="hp-template-item-banner-wrap-copy">
-                    <div data-w-id="3524c4ac-cb47-6838-cb6d-822b5f84308d" style="opacity:0" class="hero-title-wrapper-2-copy second-version have--position">
-                      <div class="slide-animation-wrapper">
-                        <div class="text-overflow-hidden-18">
-                          <div class="first-line">
-                            <div class="small-text"><strong class="bold-text-7">Image Enhancement &amp;  Creation</strong></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="slide-animation-wrapper">
-                        <div class="text-overflow-hidden-18">
-                          <div class="second-line">
-                            <h1 class="text-align-center-14 none-margin second-home-title left">RE-DEfined, <span class="is--color-green-variable-4"><br>Image Enhancer</span></h1>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="slide-animation-wrapper">
-                        <div class="text-overflow-hidden-18">
-                          <div class="third-line">
-                            <p class="large-paragraph-copy for--hero for--second-home">Create, Optimize, Dominate: AI for Digital<br>Marketing Success</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div data-w-id="0eb0229e-a8e6-5303-8e2d-bc056a365e33" style="opacity:0" class="center-flex">
-                        <a href="features/re-defined.html" data-w-id="0eb0229e-a8e6-5303-8e2d-bc056a365e34" class="primary-glow-wrapper-19 w-inline-block">
-                          <div data-w-id="0eb0229e-a8e6-5303-8e2d-bc056a365e35" class="button-overflow-hidden">
-                            <div class="box-shadow-block-16">
-                              <div class="pedding-stroke-12">
-                                <div class="inside-button-14">
-                                  <div class="button-text-20">Enter</div>
-                                  <div style="-webkit-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="hover-line-33"></div>
-                                </div>
-                              </div>
-                              <div style="opacity:0.6" class="glow-wrapper stroke">
-                                <div class="glow-item left"></div>
-                                <div class="glow-item"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div data-w-id="3524c4ac-cb47-6838-cb6d-822b5f8430a2" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
-                <div data-w-id="3524c4ac-cb47-6838-cb6d-822b5f8430a3" style="opacity:0" class="platform-child-7-copy">
-                  <div class="primary-glow-wrapper-22 full-width">
-                    <div data-w-id="3524c4ac-cb47-6838-cb6d-822b5f8430a5" class="primary-glow-wrapper-22 full-width">
-                      <div class="button-overflow-hidden for--third-version-features full-size ai-child">
-                        <div>
-                          <div class="pedding-stroke-12">
-                            <div class="inside-button-14 none-padding ai-child">
-                              <div class="principle-second-block ai-child">
-                                <a href="features/re-defined.html" class="link-block-6 w-inline-block"><img src="images/TOR-A.I.jpg" loading="lazy" sizes="(max-width: 6250px) 100vw, 6250px" srcset="images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-500.jpg 500w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-800.jpg 800w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1080.jpg 1080w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1600.jpg 1600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2000.jpg 2000w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2600.jpg 2600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-3200.jpg 3200w, images/TOR-A.I.jpg 6250w" alt="" class="image-87-copy"></a>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="glow-wrapper stroke for--boxes">
-                            <div class="glow-item left"></div>
-                            <div class="glow-item"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="primary-glow-wrapper-22 full-width">
-                    <div data-w-id="3524c4ac-cb47-6838-cb6d-822b5f8430b0" class="primary-glow-wrapper-22 full-width"></div>
-                  </div>
-                  <div class="primary-glow-wrapper-22 full-width">
-                    <div data-w-id="3524c4ac-cb47-6838-cb6d-822b5f8430b2" class="primary-glow-wrapper-22 full-width"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           <section>
             <section class="section-195">
               <section class="section-196">
                 <div class="w-layout-vflex landing-home-page-wrap-copy">
                   <div class="w-layout-vflex landing-home-page-wrap-copy">
-                    <div class="landing-home-page-big-text-copy">Services</div>
+                    <div class="landing-home-page-big-text-copy">Premium Member</div>
                     <div data-w-id="6b9421b2-7f84-7e1c-725c-b30525ce2d72" style="opacity:0" class="center-flex">
                       <a href="agent-page/realtor-agents.html" data-w-id="6b9421b2-7f84-7e1c-725c-b30525ce2d73" style="opacity:0" target="_blank" class="primary-glow-wrapper-19 w-inline-block">
                         <div data-w-id="6b9421b2-7f84-7e1c-725c-b30525ce2d74" class="button-overflow-hidden">
@@ -549,139 +867,528 @@
                         </div>
                       </a>
                     </div>
-                    <h2 data-w-id="6b9421b2-7f84-7e1c-725c-b30525ce2d7d" style="opacity:0" class="text-center">Empowering the military community</h2>
+                    <h2 data-w-id="6b9421b2-7f84-7e1c-725c-b30525ce2d7d" style="opacity:0" class="text-center">A.I Driven Analysis and Psychology Insight</h2>
                   </div>
                   <div class="text-marquee-wrap">
                     <div class="text-marquee-box the-orozco-realty"></div>
                     <div class="text-marquee-box-copy the-orozco-realty">
-                      <a href="agent-page/realtor-agents.html" class="w-inline-block">
+                      <a href="agent-page/realtor-agents.html" class="link-block-7 w-inline-block">
                         <div class="home-one-marquee-large-text-two-copy landing-large-marquee-text">Orozco Realty</div>
                       </a>
                     </div>
                     <div class="text-marquee-box the-orozco-realty"></div>
                   </div>
+                  <div class="hp-template-content-wrap-6-copy-copy">
+                    <div class="w-layout-blockcontainer container-62 w-container"></div>
+                    <div class="hp-template-grid">
+                      <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef99f" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
+                        <div class="hp-template-item-content-wrap">
+                          <div class="hp-template-item-banner-wrap-copy">
+                            <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9a2" style="opacity:0" class="hero-title-wrapper-2-copy second-version have--position">
+                              <h1 class="text-align-center-14 none-margin second-home-title left">financial - <span class="is--color-green-variable-4">Dashboard</span></h1>
+                              <div class="slide-animation-wrapper">
+                                <div class="text-overflow-hidden-18">
+                                  <div class="first-line">
+                                    <p class="large-paragraph-copy for--hero for--second-home">Create, Optimize, Dominate: AI for Digital<br>Marketing Success</p>
+                                    <div class="small-text"></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9b7" style="opacity:0" class="center-flex">
+                                <a href="features/re-defined.html" data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9b8" class="primary-glow-wrapper-19 w-inline-block">
+                                  <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9b9" class="button-overflow-hidden">
+                                    <div class="box-shadow-block-16">
+                                      <div class="pedding-stroke-12">
+                                        <div class="inside-button-14">
+                                          <div class="button-text-20">Enter</div>
+                                          <div style="-webkit-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="hover-line-33"></div>
+                                        </div>
+                                      </div>
+                                      <div style="opacity:0.6" class="glow-wrapper stroke">
+                                        <div class="glow-item left"></div>
+                                        <div class="glow-item"></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9c3" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
+                        <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9c4" style="opacity:0" class="platform-child-7-copy">
+                          <div class="primary-glow-wrapper-22 full-width">
+                            <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9c6" class="primary-glow-wrapper-22 full-width">
+                              <div class="button-overflow-hidden for--third-version-features full-size ai-child">
+                                <div>
+                                  <div class="pedding-stroke-12">
+                                    <div class="inside-button-14 none-padding ai-child">
+                                      <div class="principle-second-block ai-child">
+                                        <a href="features/re-defined.html" class="link-block-6 w-inline-block"><img src="images/TOR-A.I.jpg" loading="lazy" sizes="100vw" srcset="images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-500.jpg 500w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-800.jpg 800w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1080.jpg 1080w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1600.jpg 1600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2000.jpg 2000w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2600.jpg 2600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-3200.jpg 3200w, images/TOR-A.I.jpg 6250w" alt="" class="image-87-copy"></a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="glow-wrapper stroke for--boxes">
+                                    <div class="glow-item left"></div>
+                                    <div class="glow-item"></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="primary-glow-wrapper-22 full-width">
+                            <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9d2" class="primary-glow-wrapper-22 full-width"></div>
+                          </div>
+                          <div class="primary-glow-wrapper-22 full-width">
+                            <div data-w-id="278cddea-5e6e-3f3a-60ef-ea68008ef9d4" class="primary-glow-wrapper-22 full-width"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hp-template-content-wrap-6-copy">
+                    <div class="w-layout-blockcontainer container-62 w-container"></div>
+                    <div class="hp-template-grid">
+                      <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc61" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
+                        <div class="hp-template-item-content-wrap">
+                          <div class="hp-template-item-banner-wrap-copy">
+                            <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc64" style="opacity:0" class="hero-title-wrapper-2-copy second-version have--position">
+                              <div class="slide-animation-wrapper">
+                                <div class="text-overflow-hidden-18">
+                                  <div class="first-line">
+                                    <div class="small-text"><strong class="bold-text-7">Image Enhancement &amp;  Creation</strong></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="slide-animation-wrapper">
+                                <div class="text-overflow-hidden-18">
+                                  <div class="second-line">
+                                    <h1 class="text-align-center-14 none-margin second-home-title left">psychological - <span class="is--color-green-variable-4"><br>dashboard</span></h1>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="slide-animation-wrapper">
+                                <div class="text-overflow-hidden-18">
+                                  <div class="third-line">
+                                    <p class="large-paragraph-copy for--hero for--second-home">Create, Optimize, Dominate: AI for Digital<br>Marketing Success</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc7a" style="opacity:0" class="center-flex">
+                                <a href="features/re-defined.html" data-w-id="b498b31d-b957-165c-0e42-41440fe6dc7b" class="primary-glow-wrapper-19 w-inline-block">
+                                  <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc7c" class="button-overflow-hidden">
+                                    <div class="box-shadow-block-16">
+                                      <div class="pedding-stroke-12">
+                                        <div class="inside-button-14">
+                                          <div class="button-text-20">Enter</div>
+                                          <div style="-webkit-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="hover-line-33"></div>
+                                        </div>
+                                      </div>
+                                      <div style="opacity:0.6" class="glow-wrapper stroke">
+                                        <div class="glow-item left"></div>
+                                        <div class="glow-item"></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc86" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
+                        <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc87" style="opacity:0" class="platform-child-7-copy">
+                          <div class="primary-glow-wrapper-22 full-width">
+                            <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc89" class="primary-glow-wrapper-22 full-width">
+                              <div class="button-overflow-hidden for--third-version-features full-size ai-child">
+                                <div>
+                                  <div class="pedding-stroke-12">
+                                    <div class="inside-button-14 none-padding ai-child">
+                                      <div class="principle-second-block ai-child">
+                                        <a href="features/re-defined.html" class="link-block-6 w-inline-block"><img src="images/TOR-A.I.jpg" loading="lazy" sizes="100vw" srcset="images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-500.jpg 500w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-800.jpg 800w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1080.jpg 1080w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1600.jpg 1600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2000.jpg 2000w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2600.jpg 2600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-3200.jpg 3200w, images/TOR-A.I.jpg 6250w" alt="" class="image-87-copy"></a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="glow-wrapper stroke for--boxes">
+                                    <div class="glow-item left"></div>
+                                    <div class="glow-item"></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="primary-glow-wrapper-22 full-width">
+                            <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc95" class="primary-glow-wrapper-22 full-width"></div>
+                          </div>
+                          <div class="primary-glow-wrapper-22 full-width">
+                            <div data-w-id="b498b31d-b957-165c-0e42-41440fe6dc97" class="primary-glow-wrapper-22 full-width"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </section>
             </section>
           </section>
-          <section class="section-214">
-            <div class="hp-template-content-wrap-6">
-              <div class="w-layout-blockcontainer container-62 w-container"></div>
-              <div class="hp-template-grid">
-                <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122bc" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
-                  <div class="hp-template-item-content-wrap">
-                    <div class="hp-template-item-banner-wrap-copy">
-                      <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122bf" style="opacity:0" class="hero-title-wrapper-2-copy second-version have--position">
-                        <div class="slide-animation-wrapper">
-                          <div class="text-overflow-hidden-18">
-                            <div class="first-line">
-                              <div class="small-text"><strong class="bold-text-8">Image Enhancement &amp;  Creation</strong></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="slide-animation-wrapper">
-                          <div class="text-overflow-hidden-18">
-                            <div class="second-line">
-                              <h1 class="text-align-center-14 none-margin second-home-title left">RE-DEfined, <span class="is--color-green-variable-4">Hassle-Free</span></h1>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="slide-animation-wrapper">
-                          <div class="text-overflow-hidden-18">
-                            <div class="third-line">
-                              <p class="large-paragraph-copy for--hero for--second-home">Create, Optimize, Dominate: AI for Digital<br>Marketing Success</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122d4" style="opacity:0" class="center-flex">
-                          <a href="features/re-defined.html" data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122d5" class="primary-glow-wrapper-19 w-inline-block">
-                            <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122d6" class="button-overflow-hidden">
-                              <div class="box-shadow-block-16">
-                                <div class="pedding-stroke-12">
-                                  <div class="inside-button-14">
-                                    <div class="button-text-20">Enter</div>
-                                    <div style="-webkit-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(-100%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="hover-line-33"></div>
-                                  </div>
-                                </div>
-                                <div style="opacity:0.6" class="glow-wrapper stroke">
-                                  <div class="glow-item left"></div>
-                                  <div class="glow-item"></div>
-                                </div>
-                              </div>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122e0" style="-webkit-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(null, 60%, 0) scale3d(0.9, 0.9, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="hp-template-item">
-                  <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122e1" style="opacity:0" class="platform-child-7-copy">
-                    <div class="primary-glow-wrapper-22 full-width">
-                      <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122e3" class="primary-glow-wrapper-22 full-width">
-                        <div class="button-overflow-hidden for--third-version-features full-size ai-child">
-                          <div>
-                            <div class="pedding-stroke-12">
-                              <div class="inside-button-14 none-padding ai-child">
-                                <div class="principle-second-block ai-child">
-                                  <a href="features/re-defined.html" class="link-block-6 w-inline-block"><img src="images/TOR-A.I.jpg" loading="lazy" sizes="(max-width: 6250px) 100vw, 6250px" srcset="images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-500.jpg 500w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-800.jpg 800w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1080.jpg 1080w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-1600.jpg 1600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2000.jpg 2000w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-2600.jpg 2600w, images/1f8bbbb4bc069296ff326983fa249807_TOR-A.I-p-3200.jpg 3200w, images/TOR-A.I.jpg 6250w" alt="" class="image-87-copy"></a>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="glow-wrapper stroke for--boxes">
-                              <div class="glow-item left"></div>
-                              <div class="glow-item"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="primary-glow-wrapper-22 full-width">
-                      <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122ef" class="primary-glow-wrapper-22 full-width"></div>
-                    </div>
-                    <div class="primary-glow-wrapper-22 full-width">
-                      <div data-w-id="a3c52c4f-64b7-10ac-0a9e-2751649122f1" class="primary-glow-wrapper-22 full-width"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
           <section class="section-198">
             <section class="section-201">
               <div class="w-layout-vflex landing-home-page-wrap-copy">
-                <div class="w-layout-vflex landing-home-page-wrap-copy">
-                  <div class="landing-home-page-big-text-copy">Contact US</div>
-                  <div data-w-id="91665d35-b34d-e5f9-036f-6b17f176598e" style="opacity:0" class="center-flex">
-                    <a href="agent-page/realtor-agents.html" data-w-id="91665d35-b34d-e5f9-036f-6b17f176598f" style="opacity:0" target="_blank" class="primary-glow-wrapper-19 w-inline-block">
-                      <div data-w-id="91665d35-b34d-e5f9-036f-6b17f1765990" class="button-overflow-hidden">
-                        <div class="box-shadow-block-16">
-                          <div class="pedding-stroke-12">
-                            <div class="inside-button-14">
-                              <div class="button-text-20-copy">CONTACT  US</div>
+                <section class="section-254">
+                  <section class="section-256">
+                    <div class="hp_hero_banner_wrapper">
+                      <h2 class="centered-15">Welcome to<br> the House of SaSS</h2>
+                      <p class="paragraph-6">Our Software as a Service (S.A.A.S) are available free of charge to our Military Community. Simply Complete Your Profile and Request your Activation Code, its that Simple. Activation Code Gives you Access to all our Services and Future Ones.</p>
+                      <div class="hp_hero_banner_wrapper-11">
+                        <div data-poster-url="https://cdn.prod.website-files.com/683d438cb5f7527c291506e1%2F68605e967b02f6fd87678cfc_6-poster-00001.jpg" data-video-urls="https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.mp4,https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="home-video w-background-video w-background-video-atom"><video id="cf83cdce-1544-7322-e61a-dcffaf6c547f-video" autoplay="" loop="" style="background-image:url(&quot;https://cdn.prod.website-files.com/683d438cb5f7527c291506e1%2F68605e967b02f6fd87678cfc_6-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                            <source src="https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.mp4" data-wf-ignore="true">
+                            <source src="https://cdn.prod.website-files.com/68ca18fc2015b116e7ed7aed/68ca18fd2015b116e7ed7e20_6-transcode.webm" data-wf-ignore="true">
+                          </video></div>
+                      </div>
+                    </div>
+                    <h2 data-w-id="6ad6d611-b0fe-7948-49a0-580ce9f2c481" style="opacity:0" class="text-center">Empowering the military community</h2>
+                    <section class="section-253">
+                      <div class="cards-grid-7">
+                        <div id="w-node-_8aa5e7d6-227e-6c59-b4cd-c7f428cefb26-d0d856d2" data-w-id="8aa5e7d6-227e-6c59-b4cd-c7f428cefb26" style="opacity:0" class="card-item-4">
+                          <div class="card-link-6">
+                            <div data-poster-url="videos/RE-Defined-poster-00001.jpg" data-video-urls="videos/RE-Defined-poster-00001.jpg,videos/RE-Defined-transcode.mp4,videos/RE-Defined-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-4 w-background-video w-background-video-atom"><video id="8aa5e7d6-227e-6c59-b4cd-c7f428cefb28-video" autoplay="" loop="" style="background-image:url(&quot;videos/RE-Defined-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                                <source src="videos/RE-Defined-poster-00001.jpg" data-wf-ignore="true">
+                                <source src="videos/RE-Defined-transcode.mp4" data-wf-ignore="true">
+                                <source src="videos/RE-Defined-transcode.webm" data-wf-ignore="true">
+                              </video>
+                              <div style="opacity:0" class="home-two-card-marquee">
+                                <div class="w-layout-hflex home-two-card-marquee-wrap">
+                                  <div class="w-layout-hflex home-two-card-marquee-block">
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                  </div>
+                                  <div class="w-layout-hflex home-two-card-marquee-block">
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div style="opacity:1" class="card-text-details-8">
+                              <h3 class="text-center-12">RE-CBT<br>‍</h3><img width="123" height="102" alt="" src="images/92070394-54DB-4D73-992E-2166B9FC7C04.png" loading="lazy" srcset="images/92070394-54DB-4D73-992E-2166B9FC7C04-p-500.png 500w, images/92070394-54DB-4D73-992E-2166B9FC7C04.png 800w" sizes="123px" class="image-117">
+                              <p class="text-center-12 margin-top-forty">Cognitive Behavioral Testing: <br>Do you Really want a Pool and Extra Room or do you just love the Idea of them. What do you Value the most?</p>
                             </div>
                           </div>
-                          <div class="glow-wrapper stroke">
-                            <div class="glow-item left"></div>
-                            <div class="glow-item"></div>
+                        </div>
+                        <div id="w-node-_8aa5e7d6-227e-6c59-b4cd-c7f428cefb3d-d0d856d2" data-w-id="8aa5e7d6-227e-6c59-b4cd-c7f428cefb3d" style="opacity:0" class="card-item-4">
+                          <div class="card-link-6">
+                            <div data-poster-url="videos/text-to-video-f9b3f647-poster-00001.jpg" data-video-urls="videos/text-to-video-f9b3f647-poster-00001.jpg,videos/text-to-video-f9b3f647-transcode.mp4,videos/text-to-video-f9b3f647-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-4 w-background-video w-background-video-atom"><video id="8aa5e7d6-227e-6c59-b4cd-c7f428cefb3f-video" autoplay="" loop="" style="background-image:url(&quot;videos/text-to-video-f9b3f647-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                                <source src="videos/text-to-video-f9b3f647-poster-00001.jpg" data-wf-ignore="true">
+                                <source src="videos/text-to-video-f9b3f647-transcode.mp4" data-wf-ignore="true">
+                                <source src="videos/text-to-video-f9b3f647-transcode.webm" data-wf-ignore="true">
+                              </video>
+                              <div style="opacity:0" class="home-two-card-marquee">
+                                <div class="w-layout-hflex home-two-card-marquee-wrap">
+                                  <div class="w-layout-hflex home-two-card-marquee-block">
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                  </div>
+                                  <div class="w-layout-hflex home-two-card-marquee-block">
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div style="opacity:1" class="card-text-details-8">
+                                <h3 class="text-center-12">Ask-Elena<br>‍</h3><img width="150" height="102" alt="" src="images/92070394-54DB-4D73-992E-2166B9FC7C04.png" loading="lazy" srcset="images/92070394-54DB-4D73-992E-2166B9FC7C04-p-500.png 500w, images/92070394-54DB-4D73-992E-2166B9FC7C04.png 800w" sizes="150px" class="image-116">
+                                <p class="text-center-12 margin-top-forty">A.I Concierge: <br>Start a Conversation with a Real Estate &amp; Finance Expert. Have all your questions and inquiries answered today.</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="w-node-_8aa5e7d6-227e-6c59-b4cd-c7f428cefb54-d0d856d2" data-w-id="8aa5e7d6-227e-6c59-b4cd-c7f428cefb54" style="opacity:0" class="card-item-4">
+                          <div class="card-link-6">
+                            <div data-poster-url="videos/RE-Defined-poster-00001.jpg" data-video-urls="videos/RE-Defined-poster-00001.jpg,videos/RE-Defined-transcode.mp4,videos/RE-Defined-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="background-video-4 w-background-video w-background-video-atom"><video id="8aa5e7d6-227e-6c59-b4cd-c7f428cefb56-video" autoplay="" loop="" style="background-image:url(&quot;videos/RE-Defined-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                                <source src="videos/RE-Defined-poster-00001.jpg" data-wf-ignore="true">
+                                <source src="videos/RE-Defined-transcode.mp4" data-wf-ignore="true">
+                                <source src="videos/RE-Defined-transcode.webm" data-wf-ignore="true">
+                              </video>
+                              <div style="opacity:0" class="home-two-card-marquee">
+                                <div class="w-layout-hflex home-two-card-marquee-wrap">
+                                  <div class="w-layout-hflex home-two-card-marquee-block">
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                  </div>
+                                  <div class="w-layout-hflex home-two-card-marquee-block">
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                    <div class="home-two-card-marquee-box-4"></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div style="opacity:1" class="card-text-details-8">
+                              <h3 class="text-center-12">RE-Defined<br>‍</h3><img width="139" height="102" alt="" src="images/92070394-54DB-4D73-992E-2166B9FC7C04.png" loading="lazy" srcset="images/92070394-54DB-4D73-992E-2166B9FC7C04-p-500.png 500w, images/92070394-54DB-4D73-992E-2166B9FC7C04.png 800w" sizes="138.984375px" class="image-118">
+                              <p class="text-center-12 margin-top-forty">Image Enhancer: <br>Upload an image of your New Home, and Virtually Stage it, Change Wall Color, RE-Design the Interior and Exterior.</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </a>
-                  </div>
-                  <h2 data-w-id="d790ea1d-ddec-0068-5737-77310a9c24f5" style="opacity:0" class="text-center">Empowering the military community</h2>
-                </div>
-                <div class="text-marquee-wrap">
-                  <div class="text-marquee-box the-orozco-realty"></div>
-                  <div class="text-marquee-box-copy the-orozco-realty">
-                    <a href="agent-page/realtor-agents.html" class="w-inline-block">
-                      <div class="home-one-marquee-large-text-two-copy landing-large-marquee-text">Orozco Realty</div>
-                    </a>
-                  </div>
-                  <div class="text-marquee-box the-orozco-realty"></div>
-                </div>
+                    </section>
+                  </section>
+                  <section class="section-252">
+                    <div class="w-embed w-script"><!--  ============================================================
+  OROZCOREALTY • INTRO VIDEO + ASK-ELENA (Option A)
+  - Fixed: Ask-Elena is scrollable
+  - Added: Close button for Ask-Elena
+===============================================================  -->
+                      <!--  ============================================================
+  INTRO VIDEO (UNCHANGED EXACT VERSION)
+===============================================================  -->
+                      <div id="about-video-wrap" style="
+  position:fixed; bottom:5.5rem; right:1rem; z-index:2147480000;
+  width:360px; height:480px; max-width:90vw; border-radius:12px; overflow:hidden;
+  background:rgba(0,0,0,.85); border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  opacity:0; transform:translateY(20px) scale(.98); pointer-events:none;
+  transition:opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1);
+">
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:.5rem .75rem;">
+                          <div style="color:#a8b0d6; font:600 .8rem/1 Inter,system-ui,sans-serif;">Your Journey Begins — Now</div>
+                          <button id="about-video-close" aria-label="Close video" style="
+      appearance:none; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06);
+      color:#fff; font:.8rem/1 Inter,system-ui,sans-serif; padding:.25rem .5rem; border-radius:.5rem; cursor:pointer;
+    ">✕</button>
+                        </div>
+                        <video id="about-video" playsinline="" controls="" preload="auto" style="display:block; width:100%; height:calc(100% - 2rem); object-fit:cover; background:#000;">
+                          <source src="https://s3.amazonaws.com/webflow-prod-assets/68cecb820ec3dbdca3ef9099/690b4811fe4aacf24701e89b_TOR_3.mp4">
+                        </video>
+                      </div>
+                      <!--  Concierge Trigger (Chip)  -->
+                      <div id="voice-trigger" style="
+  position:fixed; bottom:1rem; right:1rem; z-index:2147480000;
+  display:flex; align-items:center; gap:.75rem; min-width:220px;
+  background:rgba(11,14,26,0.6); border:1px solid rgba(255,255,255,.12); border-radius:1rem;
+  padding:.75rem 1rem; color:#fff; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  cursor:pointer; box-shadow:0 18px 48px rgba(0,0,0,.6); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  opacity:0; transform:translateY(20px) scale(.98); pointer-events:none;
+  transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+">
+                        <img src="images/a-modern-living-room-with-a-large-window.png" alt="Elena Concierge" style="width:44px; height:44px; border-radius:50%; object-fit:cover;
+       border:1px solid rgba(255,255,255,.3); box-shadow:0 10px 30px rgba(142,243,197,.4);">
+                        <div style="display:flex; flex-direction:column; line-height:1.2;">
+                          <div style="font-size:.8rem; font-weight:600;">Process Overview</div>
+                          <div style="font-size:.7rem; color:#a8b0d6;">Elena • A.I. Concierge</div>
+                        </div>
+                        <div id="voice-status" style="
+    margin-left:auto; font-size:.7rem; font-weight:600; color:#8ef3c5;
+    border:1px solid rgba(142,243,197,.4); background:rgba(142,243,197,.08);
+    padding:.4rem .6rem; border-radius:.5rem; white-space:nowrap;">▶ Play</div>
+                      </div>
+                      <script>
+(function () {
+  const chip = document.getElementById('voice-trigger');
+  const statusEl = document.getElementById('voice-status');
+  const wrap = document.getElementById('about-video-wrap');
+  const video = document.getElementById('about-video');
+  const closeBtn = document.getElementById('about-video-close');
+  if (!chip || !statusEl || !wrap || !video || !closeBtn) return;
+  let revealed = false;
+  function revealChip() {
+    if (!revealed && window.scrollY > 150) {
+      revealed = true;
+      chip.style.opacity = '1';
+      chip.style.transform = 'translateY(0)';
+      chip.style.pointerEvents = 'auto';
+    }
+  }
+  revealChip();
+  window.addEventListener('scroll', revealChip, { passive: true });
+  function showPlayer() {
+    wrap.style.opacity = '1';
+    wrap.style.pointerEvents = 'auto';
+    wrap.style.transform = 'translateY(0)';
+  }
+  function hidePlayer() {
+    wrap.style.opacity = '0';
+    wrap.style.pointerEvents = 'none';
+    wrap.style.transform = 'translateY(20px)';
+  }
+  chip.addEventListener('click', () => {
+    if (wrap.style.pointerEvents !== 'auto') showPlayer();
+    if (!video.paused) {
+      video.pause();
+      statusEl.textContent = '▶ Play';
+      statusEl.style.color = '#8ef3c5';
+    } else {
+      video.play().then(() => {
+        statusEl.textContent = '● Playing';
+        statusEl.style.color = '#fff';
+      });
+    }
+  });
+  closeBtn.addEventListener('click', hidePlayer);
+  video.addEventListener('ended', () => {
+    hidePlayer();
+    chip.style.opacity = '0';
+    chip.style.pointerEvents = 'none';
+    setTimeout(() => {
+      chip.remove();
+      wrap.remove();
+      const launcher = document.getElementById('ask-elena-launcher');
+      launcher.style.opacity = '1';
+      launcher.style.pointerEvents = 'auto';
+      launcher.style.transform = 'translateY(0)';
+    }, 600);
+  });
+})();
+</script>
+                      <!--  ============================================================
+   ASK-ELENA LAUNCHER BUTTON
+===============================================================  -->
+                      <div id="ask-elena-launcher" style="
+  position:fixed; bottom:1rem; right:1rem; z-index:2147480000;
+  padding:1rem 1.2rem; border-radius:1rem; cursor:pointer;
+  background:rgba(14,18,30,0.7); backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.12);
+  color:#fff; font-family:Inter,sans-serif; display:flex;
+  align-items:center; gap:.75rem;
+  opacity:0; pointer-events:none;
+  transform:translateY(20px); transition:.4s ease;
+">
+                        <img src="https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png" style="width:42px;height:42px;border-radius:50%;object-fit:cover;">
+                        <div style="display:flex;flex-direction:column;line-height:1.2;">
+                          <div style="font-size:.8rem;font-weight:600;">Ask Elena</div>
+                          <div style="font-size:.7rem;color:#a8b0d6;">Your A.I. Concierge</div>
+                        </div>
+                      </div>
+                      <!--  ============================================================
+   ASK-ELENA COMMAND CENTER (WITH SCROLL + CLOSE)
+===============================================================  -->
+                      <div id="ask-elena-shell" data-endpoint="https://theorozcorealty.netlify.app/.netlify/functions/ask-elena" style="
+  position:fixed; bottom:1rem; right:1rem; z-index:2147480000;
+  width:420px; height:620px; max-width:95vw;
+  background:linear-gradient(180deg,#101426,#0f1324);
+  border-radius:16px; box-shadow:0 24px 48px rgba(0,0,0,.8);
+  border:1px solid rgba(255,255,255,.08);
+  display:none; overflow:hidden;
+">
+                        <style>
+  #ask-elena-shell, #ask-elena-shell * { 
+    box-sizing:border-box; 
+    font-family:Inter,sans-serif; 
+  }
+  /* SCROLL FIX — entire interior scrolls as needed */
+  #ae-wrapper-scroll {
+    width:100%; 
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto; /* <-- entire widget scrolls */
+  }
+  #ae-header {
+    padding:16px;
+    background:#0f1324;
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  #ae-header img { width:40px;height:40px;border-radius:50%; }
+  #ae-chat { 
+    flex:1; padding:18px; display:flex; flex-direction:column; 
+    gap:12px; overflow-y:auto; /* <-- chat scrolls naturally */
+  }
+  .ae-msg {
+    max-width:80%; padding:12px; border-radius:14px;
+    white-space:pre-wrap; color:#fff; backdrop-filter:blur(6px);
+  }
+  .ae-user { background:rgba(142,243,197,.08);border:1px solid rgba(142,243,197,.3);align-self:flex-end; }
+  .ae-bot { background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12); }
+  .ae-footer {
+    padding:14px; display:flex; gap:10px;
+    border-top:1px solid rgba(255,255,255,.08);
+    background:rgba(0,0,0,.25);
+  }
+  #ae-input {
+    flex:1;padding:12px;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12); color:#fff;
+    border-radius:10px;
+  }
+  #ae-send {
+    padding:12px 18px; border-radius:10px;
+    background:linear-gradient(90deg,#8ef3c5,#6aa7ff);
+    border:none; font-weight:700; cursor:pointer;
+  }
+</style>
+                        <div id="ae-wrapper-scroll">
+                          <!--  HEADER with CLOSE BUTTON  -->
+                          <div id="ae-header">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                              <img src="https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png">
+                              <div>
+                                <div style="font-weight:700;font-size:15px;">Elena</div>
+                                <div style="font-size:12px;color:#a8b0d6;">Your Concierge</div>
+                              </div>
+                            </div>
+                            <!--  CLOSE BUTTON  -->
+                            <button id="ae-close" style="
+      background:none;border:1px solid rgba(255,255,255,.2);
+      color:white;font-size:14px;border-radius:6px;
+      padding:4px 8px;cursor:pointer;
+    ">✕</button>
+                          </div>
+                          <!--  CHAT  -->
+                          <div id="ae-chat"></div>
+                          <!--  FOOTER  -->
+                          <div class="ae-footer">
+                            <input id="ae-input" type="text" placeholder="Ask Elena anything…">
+                            <button id="ae-send">Send</button>
+                          </div>
+                        </div>
+                        <!--  JS — CHAT + CLOSE BUTTON  -->
+                        <script>
+(function(){
+  const launcher = document.getElementById("ask-elena-launcher");
+  const panel = document.getElementById("ask-elena-shell");
+  const closeBtn = document.getElementById("ae-close");
+  launcher.onclick = () => { panel.style.display="block"; };
+  closeBtn.onclick = () => { panel.style.display="none"; };
+  const ENDPOINT = panel.getAttribute("data-endpoint");
+  const chat = document.getElementById("ae-chat");
+  const input = document.getElementById("ae-input");
+  const send = document.getElementById("ae-send");
+  function scroll(){ chat.scrollTop = chat.scrollHeight; }
+  function msg(role,text){
+    const el=document.createElement("div");
+    el.className="ae-msg "+(role==="user"?"ae-user":"ae-bot");
+    el.textContent=text;
+    chat.appendChild(el);
+    scroll();
+  }
+  async function ask(q){
+    msg("user",q);
+    input.value="";
+    const res=await fetch(ENDPOINT,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message:q})
+    });
+    const data=await res.json();
+    msg("assistant",data.reply||"I'm here with you.");
+  }
+  send.onclick = ()=>{ if(input.value.trim()) ask(input.value); };
+  input.onkeydown = e=>{ if(e.key==="Enter") send.click(); };
+msg("assistant", "Hello, I'm Elena,\n\nThe A.I Concierge at Orozco Realty.\nHow may I help you today?");
+})();
+</script>
+                      </div>
+                    </div>
+                  </section>
+                  <section>
+                    <div class="landing-home-page-big-text-copy">Contact US</div>
+                  </section>
+                </section>
               </div>
-              <section class="section-202"></section>
             </section>
           </section>
         </section>

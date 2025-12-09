@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Mon Nov 17 2025 00:32:40 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Tue Dec 09 2025 08:01:04 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="690b6b0785319d44fdefb2d6" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
 <head>
   <meta charset="utf-8">
@@ -13,27 +13,1179 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
-  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Droid Sans:400,700","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
   <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
-  <link href="../images/favicon.svg" rel="shortcut icon" type="image/x-icon">
-  <link href="../images/webclip.jpg" rel="apple-touch-icon">
+  <link href="../images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="../images/webclip.png" rel="apple-touch-icon">
 </head>
 <body class="body-6">
+  <div class="code-embed-17 w-embed w-script">
+    <!DOCTYPE html>
+    <!--  =========================================================
+Fiduciary Snapshot — v3.9.2
+- Fullscreen, luxury cards, deep shadows
+- Pie shows 4 slices:
+     Expenses / Mortgage / Savings Target / Disposable Income
+- Text color for headers/subheaders = #bdb5b5
+- KPI strip shows $ and Credit Score w/ band
+- Grade chip shows Letter / Disposable, plus bar meter
+- Bar chart Monthly/Yearly toggle
+- Rent vs Buy projection (removed)
+- AI Summary block added at #3.4
+- Full FRS Engine rebuilt at #4.8
+SaSS™ = Naughty Realty, Serious Returns.
+=========================================================  -->
+    <section id="fid-fullscreen-shell" style="all: initial;">
+      <!--  //#1 Chart.js CDN (must load BEFORE our script so charts work)  -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+      <!--  //#2 CORE STYLES  -->
+      <style>
+    /* Global reset just for this widget */
+    #fid-fullscreen-shell,
+    #fid-fullscreen-shell * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    /* Full-screen dark environment */
+    #fid-fullscreen-shell {
+      width: 100vw;
+      max-width: 100vw;
+      overflow-x: auto;
+      background: #0b0b12;
+      color: #fff;
+      padding-top: 24px;
+      padding-bottom: 64px;
+    }
+    /* Inner shell to resist Webflow squeezing */
+    #fid-snapshot-shell {
+      width: 100%;
+      max-width: 100vw;
+      min-width: 1024px;
+      margin: 0;
+      padding: 0 24px 0 24px;
+    }
+    :root{
+      --bg:#0f1220;
+      --panel:#15192b;
+      --card:#181b2e;
+      --ink:#fff;
+      --subink:#bdb5b5;
+      --accent:#6aa7ff;
+      --accent2:#8ef3c5;
+      --ok:#55d399;
+      --warn:#f9c74f;
+      --bad:#ff6b6b;
+    }
+    /* Main dashboard card */
+    #fid-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      padding: 18px;
+      position: relative;
+      color: var(--ink);
+      width: 100%;
+    }
+    .fid-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    @media (max-width:840px){
+      .fid-row { grid-template-columns: 1fr; }
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:#0f1326;
+      white-space:nowrap;
+      color:var(--ink);
+      font-size:13px;
+      line-height:1.2;
+    }
+    .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+    }
+    .mini-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--ink);
+    }
+    .mini-wrap b{ color:var(--ink); }
+    .mini-wrap span{ color:var(--subink); }
+    .mini-meter{
+      width:160px;
+      height:8px;
+      border-radius:999px;
+      background:#0b0f23;
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+    }
+    .mini-meter > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent2),#f9c74f,#ff6b6b);
+    }
+    .export{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:#0f1326;
+      color:var(--ink);
+      cursor:pointer;
+      font-size:13px;
+      line-height:1.2;
+    }
+    .export:hover{ filter:brightness(1.15); }
+    .kpi-strip{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+    @media (max-width:1280px){ .kpi-strip{ grid-template-columns:repeat(3,1fr); } }
+    @media (max-width:760px){ .kpi-strip{ grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:520px){ .kpi-strip{ grid-template-columns:1fr; } }
+    .kpi-card{
+      background:#12162b;
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:14px;
+      padding:14px;
+      min-height:76px;
+      color:var(--ink);
+      box-shadow:0 16px 32px rgba(0,0,0,.6);
+    }
+    .kpi-title{
+      font-size:12px;
+      color:var(--subink);
+      letter-spacing:.2px;
+      text-transform:uppercase;
+      font-weight:600;
+    }
+    .kpi-val{
+      margin-top:8px;
+      font-weight:700;
+      font-size:20px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:#bdb5b5;
+      line-height:1.2;
+    }
+    .delta{
+      font-size:11px;
+      margin-left:8px;
+      padding:2px 6px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(85,211,153,.10);
+      color:var(--ok);
+      line-height:1.2;
+    }
+    .score-bar{
+      position:relative;
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background:linear-gradient(90deg,#ff6b6b,#f9c74f,#55d399);
+      margin-top:8px;
+    }
+    .score-marker{
+      position:absolute;
+      top:-3px;
+      width:2px;
+      height:16px;
+      background:#fff;
+      border-radius:2px;
+      left:0%;
+      box-shadow:0 0 6px rgba(255,255,255,.6);
+    }
+    .mid{
+      display:grid;
+      grid-template-columns:480px 1fr;
+      gap:18px;
+      margin-top:18px;
+      align-items:stretch;
+    }
+    @media (max-width:1080px){
+      .mid{ grid-template-columns:1fr; }
+    }
+    .card-mini{
+      background:#12162b;
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:16px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      color:var(--ink);
+      box-shadow:0 16px 32px rgba(0,0,0,.6);
+    }
+    .card-mini h3{
+      margin:0 0 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .card-mini h3 span:first-child{
+      font-size:14px;
+      color:var(--subink);
+      font-weight:700;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+    }
+    .card-mini h3 span:last-child{
+      font-size:11px;
+      font-weight:400;
+      text-transform:none;
+      color:var(--subink);
+      line-height:1.4;
+    }
+    .chart-holder{
+      position:relative;
+      height: clamp(220px, 36vh, 420px);
+      width:100%;
+      display:block;
+      overflow:hidden;
+      border-radius:12px;
+      background:#0f1220;
+      border:1px solid rgba(255,255,255,.05);
+      box-shadow:0 24px 48px rgba(0,0,0,.8) inset;
+    }
+    .card-mini:first-child .chart-holder{
+      height: clamp(280px, 42vh, 460px);
+    }
+    canvas{
+      width:100% !important;
+      height:100% !important;
+      display:block;
+    }
+    .ring-center{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      font-weight:800;
+      font-size:28px;
+      color:#fff;
+      text-shadow:0 0 18px rgba(0,0,0,.5);
+    }
+    .legend{
+      display:flex;
+      gap:16px;
+      margin-top:10px;
+      flex-wrap:wrap;
+      color:var(--subink);
+      font-size:12px;
+    }
+    .l-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .l-dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:#6aa7ff;
+      box-shadow:0 0 8px rgba(106,167,255,.6);
+    }
+        .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin:4px 0 10px;
+      flex-wrap:wrap;
+    }
+    .select{
+      background:#0f1326;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:10px;
+      padding:8px 10px;
+      font-size:12px;
+    }
+    .toggle{
+      cursor:pointer;
+      padding:6px 10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#0f1326;
+      font-size:12px;
+      color:#fff;
+      line-height:1.2;
+    }
+    .toggle[aria-pressed="true"]{
+      background:#192041;
+      border-color:rgba(255,255,255,.22);
+    }
+    .bottom{
+      background:#12162b;
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:16px;
+      padding:16px;
+      margin-top:18px;
+      color:var(--ink);
+      box-shadow:0 16px 32px rgba(0,0,0,.6);
+    }
+    .row-slim{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px;
+      flex-wrap:wrap;
+    }
+    .h4{
+      font-weight:800;
+      letter-spacing:.2px;
+      color:var(--subink);
+      font-size:14px;
+      text-transform:uppercase;
+    }
+    .rent-ctrl{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-left:auto;
+      flex-wrap:wrap;
+    }
+    .rent-label{
+      font-size:11px;
+      color:var(--subink);
+      line-height:1.2;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .rent-select{
+      appearance:none;
+      background:#0f1326;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:10px;
+      padding:8px 10px;
+      min-width:140px;
+      cursor:pointer;
+      font-size:12px;
+      line-height:1.2;
+    }
+    .muted{
+      color:var(--subink);
+      font-size:12px;
+      line-height:1.4;
+    }
+    @media print{
+      body, html{ background:#fff !important; }
+    }
+  </style>
+      <!--  //#3 DASHBOARD BODY  -->
+      <div id="fid-snapshot" data-summarize="https://theorozcorealty.netlify.app/.netlify/functions/summarize" style="all: initial;">
+        <!--  Google Font  -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+        <div id="fid-snapshot-shell">
+          <div id="fid-card">
+            <!--  //#3.1 HEADER ROW  -->
+            <div class="fid-row">
+              <span class="badge" id="grade-chip">
+                <span id="fid-dot" class="dot" style="background:#888"></span>
+                <div class="mini-wrap">
+                  <div>
+                    <b id="fid-grade">Loading...</b>
+                    <span id="fid-disp" style="margin-left:8px;">$0</span>
+                  </div>
+                  <div class="mini-meter" aria-label="grade-meter">
+                    <div id="fid-meter"></div>
+                  </div>
+                </div>
+              </span>
+              <button id="fid-export" class="export">Export ▾</button>
+            </div>
+            <!--  //#3.2 KPI STRIP  -->
+            <div class="kpi-strip">
+              <div class="kpi-card">
+                <div class="kpi-title">Total Monthly Income</div>
+                <div class="kpi-val">
+                  <span id="k-income">$0</span>
+                  <span class="delta" id="k-inc-delta">+0%</span>
+                </div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">Total Monthly Expense</div>
+                <div class="kpi-val">
+                  <span id="k-expense">$0</span>
+                  <span class="delta" id="k-exp-delta" style="background:rgba(255,107,107,.12); color:var(--bad);">+0%</span>
+                </div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">Mortgage Estimate</div>
+                <div class="kpi-val" id="k-mtg">$0</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">Total Savings</div>
+                <div class="kpi-val">
+                  <span id="k-save">$0</span>
+                  <span class="delta" id="k-sav-delta">+1.3%</span>
+                </div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">
+                  Credit Score <span id="score-band" style="margin-left:6px; font-weight:700;"></span>
+                </div>
+                <div class="kpi-val"><span id="k-score">—</span></div>
+                <div class="score-bar">
+                  <div id="score-marker" class="score-marker"></div>
+                </div>
+              </div>
+            </div>
+            <!--  //#3.3 MID GRID  -->
+            <div class="mid">
+              <!--  PIE SIDE  -->
+              <div class="card-mini">
+                <h3>
+                  <span>OVERALL BUDGET</span>
+                  <span>Expenses vs Mortgage vs Savings Target vs Leftover</span>
+                </h3>
+                <div class="chart-holder">
+                  <canvas id="fid-pie"></canvas>
+                  <div class="ring-center" id="pie-center">0</div>
+                </div>
+                <div class="legend">
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#6aa7ff;box-shadow:0 0 8px rgba(106,167,255,.6);"></span>
+                    Expenses
+                  </span>
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#55d399;box-shadow:0 0 8px rgba(85,211,153,.6);"></span>
+                    Mortgage
+                  </span>
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#8ef3c5;box-shadow:0 0 8px rgba(142,243,197,.6);"></span>
+                    Savings Target
+                  </span>
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#f9c74f;box-shadow:0 0 8px rgba(249,199,79,.6);"></span>
+                    Disposable Income
+                  </span>
+                </div>
+              </div>
+              <!--  BAR SIDE  -->
+              <div class="card-mini">
+                <h3>
+                  <span>MONTHLY EXPENSES INTELLIGENCE</span>
+                  <span>This month by category / last months by trend</span>
+                </h3>
+                <div class="controls">
+                  <button id="mode-abs" class="toggle" aria-pressed="true">$ Totals</button>
+                  <button id="mode-pct" class="toggle" aria-pressed="false">% Composition</button>
+                  <select id="exp-view" class="select">
+                    <option value="monthly" selected="">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </div>
+                <div class="chart-holder">
+                  <canvas id="fid-bars"></canvas>
+                </div>
+                <div class="muted" style="margin-top:8px">
+                  Monthly view shows categories for the active budget month.
+                  Yearly view shows each saved month on the x-axis, stacked by category.
+                  Toggle $ / % to switch measure.
+                </div>
+              </div>
+            </div>
+            <!--  //#3.4 OPENAI SUMMARY (REPLACES RENT VS BUY BLOCK)  -->
+            <div class="bottom">
+              <div class="row-slim">
+                <div class="h4">A.I. SUMMARY — FINANCIAL SNAPSHOT</div>
+              </div>
+              <div id="fd-summary-box" style="
+       background:#0f1220;
+       border:1px solid rgba(255,255,255,.08);
+       border-radius:16px;
+       padding:20px;
+       min-height:120px;
+       color:#bdb5b5;
+       font-size:14px;
+       line-height:1.6;
+       box-shadow:0 16px 32px rgba(0,0,0,.6);
+       white-space:pre-line;
+     ">
+                <span id="fd-summary">Preparing your summary…</span>
+              </div>
+            </div>
+            <div class="muted" style="margin-top:10px">
+              Outputs are educational, not advice.
+            </div>
+            <!--  //#4 CORE LOGIC  -->
+            <script>
+ (()=> {
+   if (window.__FIDUCIARY_WIDGET_MOUNTED__) return;
+   window.__FIDUCIARY_WIDGET_MOUNTED__ = true;
+   /* //#4.1 Utilities / helpers ------------------------------------ */
+   const $=(q)=>document.querySelector(q);
+   const cur=(n,d=0)=> (Number(n)||0).toLocaleString('en-US',{
+     style:'currency',
+     currency:'USD',
+     minimumFractionDigits:d,
+     maximumFractionDigits:d
+   });
+   const signed=(n)=> (n>=0? cur(n,0) : ('-'+cur(Math.abs(n),0)));
+   function pmti(P,r,n){
+     if(r===0) return P/n;
+     const x=Math.pow(1+r,n);
+     return P*(r*x)/(x-1);
+   }
+   function scoreAPR(s){
+     s=Number(s)||720;
+     if(s>=780) return 6.50;
+     if(s>=760) return 6.75;
+     if(s>=720) return 7.00;
+     if(s>=700) return 7.20;
+     if(s>=680) return 7.35;
+     if(s>=660) return 7.85;
+     if(s>=640) return 8.25;
+     if(s>=620) return 9.25;
+     return 9.95;
+   }
+   function bandFromScore(s){
+     if(s>=760) return 'Excellent';
+     if(s>=720) return 'Good';
+     if(s>=680) return 'Fair';
+     if(s>=640) return 'OK-ish';
+     if(s>=620) return 'Weak';
+     return 'Subprime';
+   }
+   function currentMonthKey(){
+     const now = new Date();
+     return now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+   }
+   function monthLabelFromKey(key){
+     const [y,m]=String(key).split('-');
+     const idx = Number(m)-1;
+     const short = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][idx]||key;
+     return short;
+   }
+   let pieChart=null, barChart=null, lineChart=null;
+   let barMode='abs';
+   let barView='monthly';
+   let rentStartOverride = null;
+   /* //#4.2 Bridge intake */
+   let bridge = null;
+   try {
+     const raw = localStorage.getItem('realtysass.bridge');
+     if (raw) bridge = JSON.parse(raw);
+   } catch(e){}
+   if (!bridge && location.hash){
+     const m = location.hash.match(/(?:^|#|&)rsb=([A-Za-z0-9\-_]+)/);
+     if (m){
+       try{
+         const json = decodeURIComponent(
+           escape(
+             atob(m[1].replace(/-/g,'+').replace(/_/g,'/'))
+           )
+         );
+         bridge = JSON.parse(json);
+       }catch(e){}
+     }
+   }
+   try{
+     if(!bridge?.itemizedRows){
+       const rows = JSON.parse(localStorage.getItem('va.expenses.rows')||'[]');
+       if(rows?.length){
+         bridge = Object.assign({}, bridge, {
+           itemizedRows: rows.map(r=>({
+             name:r.name,
+             monthly:r.month,
+             cat:r.cat
+           }))
+         });
+       }
+     }
+   }catch(_){}
+   window.addEventListener('message', (ev)=>{
+     try{
+       const msg = ev.data || {};
+       if (msg.type==='realtysass-bridge' && msg.payload){
+         bridge=msg.payload;
+         rentStartOverride=null;
+         paintAll();
+       }
+     }catch(e){}
+   }, false);
+   /* //#4.3 snapshotFromBridge */
+   function snapshotFromBridge(){
+     const b = bridge || {};
+     const income   = Number(b.income)||0;
+     const expenses = Number(b.expenses)||0;
+     const savings  = Number(b.savings)||0;
+     const savingsRatePct = Number(b.savingsRatePct) || 5;
+     const savingsTargetAmount = (income * (savingsRatePct/100));
+     let housing = Number(b.housing)||0;
+     let pAndI   = Number(b.pAndI)||0;
+     const price = Number(b.price)||0;
+     const dpPct = Number(b.dpPct)||0;
+     const dpAmt = Number(b.dpAmt) || (price * (dpPct/100));
+     const apr   = Number(b.apr)|| scoreAPR(Number(b.creditScore)||720);
+     const termY = Number(b.termYears)||30;
+     const tihoa = Number(b.tihoa)||0;
+     const pmi   = Number(b.pmi)||0;
+     if (!housing){
+       const loan  = Math.max(0, price - dpAmt);
+       const mRate = (apr/100)/12;
+       const termN = Math.max(1, termY*12);
+       pAndI = loan>0 ? pmti(loan, mRate, termN) : 0;
+       housing = pAndI + tihoa + pmi;
+     }
+     const freePost = income - expenses - housing - savingsTargetAmount;
+     return {
+       income,
+       expenses,
+       savings,
+       housing,
+       freePost,
+       price,
+       dpPct,
+       dpAmt,
+       apr,
+       creditScore:Number(b.creditScore)||720,
+       termYears:termY,
+       tihoa,
+       pmi,
+       pAndI,
+       savingsRatePct,
+       savingsTargetAmount
+     };
+   }
+   /* //#4.4 Buckets */
+   const bucketDefs = {
+     Housing: /(rent|mortgage|pmi|hoa|home ?insur|property tax|tihoa|home repair|furniture)/i,
+     Utilities: /(util|electric|power|water|gas|sewer|trash|phone|internet|wifi)/i,
+     Transportation: /(car|auto|fuel|gasoline|uber|lyft|transport|parking|toll|insurance.*auto|maintenance)/i,
+     Food: /(grocery|grocer|food|meal|dining|restaurant|lunch|breakfast|coffee)/i,
+     Health: /(health|medical|dental|vision|pharmacy|rx|gym)/i,
+     Entertainment: /(netflix|hulu|prime|disney|movie|game|sport|concert|entertain)/i
+   };
+   const bucketOrder = [
+     'Housing','Utilities','Transportation','Food','Health','Entertainment','Other'
+   ];
+   function distributeToBucket(monthObj, nameLower, amt){
+     let bucket = 'Other';
+     for (const [b,rx] of Object.entries(bucketDefs)){
+       if (rx.test(nameLower)) {
+         bucket = b;
+         break;
+       }
+     }
+     monthObj[bucket] = (monthObj[bucket]||0) + Math.max(0, amt);
+   }
+   function monthlyBucketsFromBridge(){
+     const rows = Array.isArray(bridge?.itemizedRows) ? bridge.itemizedRows : [];
+     const perMonthBucketTotals = {};
+     rows.forEach(r=>{
+       let mk = r.monthKey || r.dateKey || r.month || null;
+       if(mk && typeof mk === 'string'){
+         const m = mk.match(/^(20\d{2})[-/](\d{1,2})/);
+         if(m){
+           const yyyy = m[1];
+           const mm   = String(m[2]).padStart(2,'0');
+           mk = `${yyyy}-${mm}`;
+         }else{
+           mk = null;
+         }
+       } else {
+         mk = null;
+       }
+       if(!mk){
+         mk = currentMonthKey();
+       }
+       if(!perMonthBucketTotals[mk]){
+         perMonthBucketTotals[mk] = Object.fromEntries(bucketOrder.map(b=>[b,0]));
+       }
+       const name = String(r.name||r.item||'').toLowerCase();
+       const amt  = Number(r.amount||r.monthly||r.value||0)||0;
+       distributeToBucket(perMonthBucketTotals[mk], name, amt);
+     });
+     if(Object.keys(perMonthBucketTotals).length===0){
+       const mk = currentMonthKey();
+       perMonthBucketTotals[mk] = Object.fromEntries(bucketOrder.map(b=>[b,0]));
+       const ex = Number(bridge?.expenses)||0;
+       const alloc = {
+         Housing:.35, Utilities:.12, Transportation:.14,
+         Food:.20, Health:.07, Entertainment:.07, Other:.05
+       };
+       for(const k of bucketOrder){
+         perMonthBucketTotals[mk][k] += ex * (alloc[k]||0);
+       }
+     }
+     const monthKeys = Object.keys(perMonthBucketTotals).sort();
+     const labels = monthKeys.map(k=> monthLabelFromKey(k));
+     const latestMonthKey = monthKeys[monthKeys.length-1];
+     return {
+       monthKeys,
+       labels,
+       perMonthBucketTotals,
+       latestMonthKey
+     };
+   }
+   /* //#4.5 Grade logic */
+   function localGrade(s){
+     const totalShare = (s.expenses + s.housing + s.savingsTargetAmount) / (s.income||1);
+     const housingShare = s.housing / (s.income||1);
+     let g=92;
+     if(totalShare>=0.85) g-=30; else if(totalShare>=0.70) g-=15; else g+=4;
+     if(housingShare>0.40) g-=18; else if(housingShare>0.33) g-=8; else g+=4;
+     if(s.freePost<0) g-=30;
+     else if((s.freePost/s.income)<0.10) g-=10;
+     else if((s.freePost/s.income)>=0.20) g+=4;
+     const sr = s.savingsTargetAmount/(s.income||1);
+     if(sr<0.10) g-=8;
+     else if(sr>=0.20) g+=4;
+     g=Math.max(0,Math.min(100,g));
+     const letter =
+       g>=98?'A+': g>=92?'A': g>=88?'A-'
+     : g>=82?'B+': g>=76?'B': g>=72?'B-'
+     : g>=66?'C+': g>=60?'C': g>=55?'C-'
+     : g>=50?'D+': g>=45?'D':'F';
+     return {letter, totalShare};
+   }
+   /* //#4.6 Chart init */
+   function initCharts(){
+  if (__chartsInitialized) return;   // <-- PREVENT SECOND INITIALIZATION
+  __chartsInitialized = true;
+     const pieCtx = document.getElementById('fid-pie').getContext('2d');
+     pieChart = new Chart(pieCtx,{
+       type:'doughnut',
+       data:{
+         labels:['Expenses','Mortgage','Savings Target','Disposable Income'],
+         datasets:[{
+           data:[0,0,0,1],
+           backgroundColor:[
+             '#6aa7ff',
+             '#55d399',
+             '#8ef3c5',
+             '#f9c74f'
+           ],
+           borderWidth:0
+         }]
+       },
+       options:{
+         cutout:'66%',
+         plugins:{ legend:{ display:false } },
+         responsive:true,
+         maintainAspectRatio:false
+       }
+     });
+     const barCtx = document.getElementById('fid-bars').getContext('2d');
+     barChart = new Chart(barCtx,{
+       type:'bar',
+       data:{ labels: [], datasets: [] },
+       options:{
+         plugins:{
+           legend:{
+             labels:{ color:'#fff', boxWidth:12 },
+             display:true
+           }
+         },
+         scales:{
+           x:{
+             stacked:true,
+             ticks:{ color:'#fff' },
+             grid:{ color:'rgba(255,255,255,.06)' }
+           },
+           y:{
+             stacked:true,
+             ticks:{ color:'#fff' },
+             grid:{ color:'rgba(255,255,255,.06)' }
+           }
+         },
+         responsive:true,
+         maintainAspectRatio:false,
+         datasets:{ bar:{ borderWidth:0, borderRadius:6 } }
+       }
+     });
+     const ro = new ResizeObserver(()=>{
+       pieChart?.resize();
+       barChart?.resize();
+     });
+     document
+       .querySelectorAll('#fid-fullscreen-shell .chart-holder')
+       .forEach(h=> ro.observe(h));
+   }
+   /* //#4.7 updateExpenseBars */
+   function updateExpenseBars(){
+     console.log("DEBUG_bridge", bridge);
+     console.log("DEBUG_itemizedRows", bridge?.itemizedRows);
+     console.log("DEBUG_localStorage_allKeys", Object.keys(localStorage));
+     const {
+       monthKeys,
+       labels,
+       perMonthBucketTotals,
+       latestMonthKey
+     } = monthlyBucketsFromBridge();
+     const palette = [
+       '#6aa7ff',
+       '#8ab6ff',
+       '#55d399',
+       '#8ef3c5',
+       '#f9c74f',
+       '#b58cff',
+       '#6e7a94'
+     ];
+     if(barView === 'yearly'){
+       barChart.data.labels = labels;
+       barChart.data.datasets = bucketOrder.map((bucketName, idx)=>({
+         label: bucketName,
+         data: monthKeys.map(mk=> (perMonthBucketTotals[mk]?.[bucketName] || 0)),
+         backgroundColor: palette[idx % palette.length],
+         stack:'y'
+       }));
+     } else {
+       const latestTotals = perMonthBucketTotals[latestMonthKey] || {};
+       barChart.data.labels = bucketOrder;
+       barChart.data.datasets = [{
+         label:'This Month',
+         data: bucketOrder.map(b=> latestTotals[b]||0),
+         backgroundColor: bucketOrder.map((_,idx)=> palette[idx % palette.length]),
+         stack:'m'
+       }];
+     }
+     barChart.update();
+   }
+   /* //#4.8  FRS ENGINE */
+   const snap = {
+     income:0,
+     expenses:0,
+     savings:0,
+     housing:0,
+     creditScore:720,
+     expenseBuckets:[]
+   };
+   const bucketTotals = {};
+   function bucketExpenses(rows){
+     const sum={};
+     rows.forEach((r)=>{
+       const cat = r.cat || "Other";
+       const v = Number(r.amount || r.month || r.monthly || 0) || 0;
+       sum[cat] = (sum[cat] || 0) + v;
+     });
+     return sum;
+   }
+   function computeGrade(s){
+     if (!s.income) return { g: 0, letter: "F" };
+     let g = 92;
+     const totalShare = (s.expenses + s.housing) / s.income;
+     const housingShare = s.housing / s.income;
+     const free = s.income - s.expenses - s.housing - s.savings;
+     const freePct = free / s.income;
+     const savePct = s.savings / s.income;
+     if (totalShare >= 0.85) g -= 30;
+     else if (totalShare >= 0.7) g -= 15;
+     else g += 4;
+     if (housingShare > 0.4) g -= 18;
+     else if (housingShare > 0.33) g -= 8;
+     else g += 4;
+     if (free < 0) g -= 30;
+     else if (freePct < 0.1) g -= 10;
+     else if (freePct >= 0.2) g += 4;
+     if (savePct < 0.1) g -= 8;
+     else if (savePct >= 0.2) g += 4;
+     g = Math.max(0, Math.min(100, g));
+     const letter =
+       g >= 98 ? "A+"
+       : g >= 92 ? "A"
+       : g >= 88 ? "A-"
+       : g >= 82 ? "B+"
+       : g >= 76 ? "B"
+       : g >= 72 ? "B-"
+       : g >= 66 ? "C+"
+       : g >= 60 ? "C"
+       : g >= 55 ? "C-"
+       : g >= 50 ? "D+"
+       : g >= 45 ? "D"
+       : "F";
+     return { g, letter, disp: free };
+   }
+   function creditBand(cs) {
+     if (cs >= 780) return ["Excellent", 90];
+     if (cs >= 740) return ["Very Good", 80];
+     if (cs >= 700) return ["Good", 60];
+     if (cs >= 660) return ["Fair", 40];
+     if (cs >= 620) return ["Subprime", 25];
+     return ["Poor", 10];
+   }
+   function renderKPIs() {
+     const { g, letter, disp } = computeGrade(snap);
+     const pct = g + "%";
+     $("#fid-grade").textContent = letter;
+     $("#fid-disp").textContent = cur(disp, 0);
+     $("#fid-meter").style.width = pct;
+     const dot = $("#fid-dot");
+     if (g >= 88) dot.style.background = "var(--ok)";
+     else if (g >= 66) dot.style.background = "var(--warn)";
+     else dot.style.background = "var(--bad)";
+     $("#k-income").textContent = cur(snap.income);
+     $("#k-expense").textContent = cur(snap.expenses);
+     $("#k-save").textContent = cur(snap.savings);
+     $("#k-mtg").textContent = cur(snap.housing);
+     $("#k-score").textContent = snap.creditScore;
+     const [label, pos] = creditBand(snap.creditScore);
+     $("#score-band").textContent = "• " + label;
+     $("#score-marker").style.left = pos + "%";
+   }
+   let pie;
+   function renderPie() {
+     const ctx = $("#fid-pie").getContext("2d");
+     const leftover =
+       snap.income - snap.expenses - snap.savings - snap.housing;
+     $("#pie-center").textContent = cur(leftover, 0);
+     if (pie) pie.destroy();
+     pie = new Chart(ctx, {
+       type: "doughnut",
+       data: {
+         labels: ["Expenses", "Mortgage", "Savings", "Leftover"],
+         datasets: [
+           {
+             data: [
+               snap.expenses,
+               snap.housing,
+               snap.savings,
+               leftover,
+             ],
+             backgroundColor: [
+               "#6aa7ff",
+               "#8ef3c5",
+               "#f9c74f",
+               "#ff6b6b",
+             ],
+             borderWidth: 0,
+           },
+         ],
+       },
+       options: {
+         cutout: "65%",
+         plugins: { legend: { display: false } },
+       },
+     });
+   }
+   let bars;
+   function renderBars() {
+     const ctx = $("#fid-bars").getContext("2d");
+     if (bars) bars.destroy();
+     const labels = Object.keys(bucketTotals);
+     const values = Object.values(bucketTotals);
+     const isPct = $("#mode-pct").ariaPressed === "true";
+     const view = $("#exp-view").value;
+     let outValues = values.slice();
+     if (isPct) {
+       const total = values.reduce((a, b) => a + b, 0) || 1;
+       outValues = values.map((v) => (v / total) * 100);
+     } else if (view === "yearly") {
+       outValues = values.map((v) => v * 12);
+     }
+     bars = new Chart(ctx, {
+       type: "bar",
+       data: {
+         labels,
+         datasets: [
+           {
+             label: isPct ? "% Composition" : "Amount",
+             data: outValues,
+             backgroundColor: "#6aa7ff",
+             borderRadius: 6,
+           },
+         ],
+       },
+       options: {
+         plugins: { legend: { display: false } },
+         scales: {
+           y: {
+             ticks: {
+               callback: (v) => (isPct ? v + "%" : cur(v, 0)),
+               color: "#bdb5b5"
+             },
+           },
+           x: { ticks: { color: "#bdb5b5" } },
+         },
+       },
+     });
+   }
+   /* //#4.8  renderSummary (OPENAI) */
+   async function renderSummary() {
+     const url =
+       $("#fid-snapshot").dataset.summarize?.trim() || "";
+     if (!url) {
+       $("#fd-summary").textContent =
+         "No summarize endpoint configured.";
+       return;
+     }
+     $("#fd-summary").textContent = "Summarizing…";
+     const payload = {
+       kind: "frs-summary",
+       income: snap.income,
+       expenses: snap.expenses,
+       housing: snap.housing,
+       savings: snap.savings,
+       creditScore: snap.creditScore,
+       buckets: bucketTotals,
+     };
+     try {
+       const res = await fetch(url, {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(payload),
+       });
+       if (!res.ok) throw new Error("HTTP " + res.status);
+       const data = await res.json();
+       if (data?.summaryHtml) {
+         $("#fd-summary").innerHTML = data.summaryHtml;
+       } else if (data?.summary) {
+         $("#fd-summary").textContent = String(data.summary);
+       } else {
+         $("#fd-summary").textContent = "No summary returned.";
+       }
+     } catch (e) {
+       $("#fd-summary").innerHTML =
+         `<p><strong>Financial Overview (Fallback):</strong><br>
+         Income ${cur(snap.income)}, Expenses ${cur(snap.expenses)}, Mortgage ${cur(snap.housing)}, Savings ${cur(snap.savings)}.<br>
+         Leftover: ${cur(snap.income - snap.expenses - snap.housing - snap.savings)}.</p>`;
+     }
+   }
+/* //#4.8  FRS ENGINE — PREMIUM REBUILD ... */
+/* -------------------------------------------------------
+   Simple storage helper (required by paintAll)
+-------------------------------------------------------- */
+function getStored(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("getStored() failed:", e);
+    return null;
+  }
+}
+function paintAll() {
+  try {
+    const fresh = getStored("frs.snapshot") || {};
+       snap.income = Number(fresh.income || 0);
+       snap.expenses = Number(fresh.expenses || 0);
+       snap.savings = Number(fresh.savings || 0);
+       snap.housing = Number(fresh.housing || 0);
+       snap.creditScore = Number(fresh.creditScore || 720);
+       snap.expenseBuckets = Array.isArray(fresh.rows) ? fresh.rows : [];
+       const updatedTotals = bucketExpenses(snap.expenseBuckets);
+       Object.keys(bucketTotals).forEach(k => delete bucketTotals[k]);
+       Object.assign(bucketTotals, updatedTotals);
+       renderKPIs();
+       renderPie();
+       renderBars();
+       renderSummary();
+     } catch (err) {
+       console.error("FRS paintAll() failed:", err);
+     }
+   }
+   /* //#4.8B Live sync listener */
+   window.addEventListener("storage", (e) => {
+     if (e.key === "frs.snapshot") {
+       paintAll();
+     }
+   });
+   /* //#4.8C Boot */
+   (function bootFRS() {
+     paintAll();
+   })();
+   /* //#4.10 Event handlers */
+   document.addEventListener('change', (e)=>{
+     if (e.target && e.target.id==='rent-select'){
+       rentStartOverride = Number(e.target.value)||0;
+       paintAll();
+     }
+   });
+   document.getElementById('mode-abs').addEventListener('click', ()=>{
+     barMode='abs';
+     document.getElementById('mode-abs').setAttribute('aria-pressed','true');
+     document.getElementById('mode-pct').setAttribute('aria-pressed','false');
+     renderBars();
+   });
+   document.getElementById('mode-pct').addEventListener('click', ()=>{
+     barMode='pct';
+     document.getElementById('mode-pct').setAttribute('aria-pressed','true');
+     document.getElementById('mode-abs').setAttribute('aria-pressed','false');
+     renderBars();
+   });
+   $('#exp-view').addEventListener('change', (e)=>{
+     barView = e.target.value === 'monthly' ? 'monthly' : 'yearly';
+     renderBars();
+   });
+   $('#fid-export').addEventListener('click', async ()=>{
+     const el = document.getElementById('fid-card');
+     const rect = el.getBoundingClientRect();
+     const scale = Math.max(2, window.devicePixelRatio || 2);
+     const cloned = el.cloneNode(true);
+     const serializer = new XMLSerializer();
+     const markup = serializer.serializeToString(cloned);
+     const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+(rect.width*scale)+'" height="'+(rect.height*scale)+'">' +
+                   '<foreignObject x="0" y="0" width="100%" height="100%">' +
+                     markup +
+                   '</foreignObject>' +
+                 '</svg>';
+     const blob = new Blob([svg], {type: 'image/svg+xml;charset=utf-8'});
+     const url = URL.createObjectURL(blob);
+     const img = new Image();
+     img.onload = ()=>{
+       const canvas = document.createElement('canvas');
+       canvas.width = rect.width*scale;
+       canvas.height = rect.height*scale;
+       const ctx = canvas.getContext('2d');
+       ctx.fillStyle = '#0f1220';
+       ctx.fillRect(0,0,canvas.width,canvas.height);
+       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+       URL.revokeObjectURL(url);
+       const a = document.createElement('a');
+       a.download = 'Fiduciary-Snapshot.png';
+       a.href = canvas.toDataURL('image/png');
+       a.click();
+     };
+     img.src = url;
+   });
+   /* //#4.11 Boot */
+   (function boot(){
+     initCharts();
+     paintAll();
+   })();
+ })();
+ </script>
+    </div></div></div></section>
+  </div>
   <header class="style-two-header">
     <section>
       <div class="w-embed w-script"><!--  =========================================================
-  RealtySaSS • Frosted Glass Lock (Updated to support .html)
-  - Global lock for /realtysass and /realtysass.html
-  - Keep ONE embed sitewide
+  RealtySaSS • Frosted Glass Login Lock (Email + Password)
+  - Uses /api/login (Supabase Auth check)
+  - Unlocks /realtysass + /realtysass.html
 =========================================================  -->
         <div id="rs-lock-overlay" aria-hidden="true" style="visibility:hidden; opacity:0;">
           <div class="rs-lock-centered" role="dialog" aria-labelledby="rs-lock-title" aria-modal="true">
             <div class="rs-lock-card" id="rs-lock-card">
-              <h1 id="rs-lock-title">Enter Your 6-Digit Access Code</h1>
-              <p class="rs-lock-sub">This page is private — please enter the unlock code we provided.</p>
-              <div class="rs-code-row">
-                <input id="rs-code-input" inputmode="numeric" maxlength="6" pattern="[0-9]*" autocomplete="one-time-code" aria-label="6-digit code">
-                <button id="rs-code-btn" type="button">Unlock</button>
+              <h1 id="rs-lock-title">Sign In to Continue</h1>
+              <p class="rs-lock-sub">This page is private — please enter your credentials.</p>
+              <div class="rs-field">
+                <input id="rs-email-input" type="email" placeholder="Email Address" autocomplete="email">
+              </div>
+              <div class="rs-field">
+                <input id="rs-pass-input" type="password" placeholder="Password" minlength="8" autocomplete="current-password">
+              </div>
+              <div class="rs-login-row">
+                <button id="rs-login-btn" type="button">Log In</button>
               </div>
               <p id="rs-lock-msg" class="rs-lock-msg" aria-live="polite"></p>
             </div>
@@ -56,8 +1208,12 @@
     font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
     transition:opacity .25s ease, visibility .25s ease;
   }
-  #rs-lock-overlay.rs-hidden{ opacity:0; pointer-events:none; visibility:hidden; }
-  .rs-lock-centered{ width:100%; max-width:520px; padding:20px; }
+  #rs-lock-overlay.rs-hidden{
+    opacity:0; pointer-events:none; visibility:hidden;
+  }
+  .rs-lock-centered{
+    width:100%; max-width:520px; padding:20px;
+  }
   .rs-lock-card{
     background:rgba(255,255,255,0.03);
     border-radius:var(--rs-radius);
@@ -65,88 +1221,133 @@
     box-shadow:0 8px 30px rgba(3,6,15,0.6);
     padding:28px 24px; color:var(--rs-ink);
   }
-  .rs-lock-card h1{ margin:0 0 8px; font-size:20px; font-weight:700; }
-  .rs-lock-sub{ margin:0 0 18px; color:var(--rs-muted); font-size:13px; }
-  .rs-code-row{ display:flex; gap:12px; }
-  #rs-code-input{
-    flex:1; padding:12px 14px; border-radius:10px;
+  .rs-lock-card h1{
+    margin:0 0 8px; font-size:20px; font-weight:700;
+  }
+  .rs-lock-sub{
+    margin:0 0 18px; color:var(--rs-muted); font-size:13px;
+  }
+  .rs-field{
+    margin-bottom:14px;
+  }
+  #rs-email-input,
+  #rs-pass-input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
     border:1px solid rgba(255,255,255,0.06);
     background:rgba(255,255,255,0.02);
-    color:var(--rs-ink); font-size:16px; outline:none;
+    color:var(--rs-ink); 
+    font-size:16px;
+    outline:none;
   }
-  #rs-code-btn{
-    padding:11px 16px; border-radius:10px; border:none;
+  #rs-email-input::placeholder,
+  #rs-pass-input::placeholder{
+    color:var(--rs-muted);
+  }
+  #rs-login-btn{
+    width:100%;
+    padding:12px 16px;
+    border-radius:10px;
+    border:none;
     background:linear-gradient(180deg,var(--rs-accent),rgba(100,230,190,0.85));
-    color:#02110b; font-weight:700; cursor:pointer;
+    color:#02110b; font-weight:700; cursor:pointer; font-size:15px;
   }
-  .rs-lock-msg{ margin-top:12px; color:var(--rs-muted); font-size:13px; min-height:18px; }
+  .rs-lock-msg{
+    margin-top:12px; 
+    color:var(--rs-muted); 
+    font-size:13px; 
+    min-height:18px;
+  }
 </style>
         <script>
 (function(){
   "use strict";
-  // --- CONFIG ---
-  const VALID_CODE = "123456";
-  // Supports both /realtysass and /realtysass.html
-  const USE_ALLOW_LIST = true;
+  const API_BASE = "https://theorozcorealty.netlify.app/api";
+  // Which pages should be locked
   const ALLOW_PATHS = [
     /\/realtysass(?:\.html)?$/i,
   ];
-  const EXEMPT_PATHS = [];
   const path = (location.pathname || "/").toLowerCase();
-  const isAllowed = ALLOW_PATHS.some(re => re.test(path));
-  const shouldLock = USE_ALLOW_LIST ? isAllowed : !EXEMPT_PATHS.some(re => re.test(path));
-  if (!shouldLock) {
+  const shouldLock = ALLOW_PATHS.some(re => re.test(path));
+  if (!shouldLock){
     document.querySelectorAll('#rs-lock-overlay').forEach(el => el.remove());
     return;
   }
-  const overlay = document.getElementById('rs-lock-overlay');
-  const input   = document.getElementById('rs-code-input');
-  const btn     = document.getElementById('rs-code-btn');
-  const msg     = document.getElementById('rs-lock-msg');
+  const overlay  = document.getElementById('rs-lock-overlay');
+  const msg      = document.getElementById('rs-lock-msg');
+  const emailInp = document.getElementById('rs-email-input');
+  const passInp  = document.getElementById('rs-pass-input');
+  const loginBtn = document.getElementById('rs-login-btn');
+  const card     = document.getElementById('rs-lock-card');
+  // Show overlay
   overlay.classList.remove('rs-hidden');
-  overlay.setAttribute('aria-hidden','false');
   overlay.style.visibility = 'visible';
   overlay.style.opacity = '1';
-  const digitsOnly = s => String(s || '').replace(/\D+/g, '');
-  const cleanCode  = s => digitsOnly(s).slice(0, 6);
+  // ARIA fix
+  overlay.removeAttribute("aria-hidden");
   function showMsg(text, isError){
     msg.textContent = text || '';
     msg.style.color = isError ? '#ffb3b3' : 'var(--rs-muted)';
   }
-  function unlockAllOverlays(){
-    document.querySelectorAll('#rs-lock-overlay').forEach(el => {
+  function unlock(){
+    document.querySelectorAll('#rs-lock-overlay').forEach(el=>{
       el.classList.add('rs-hidden');
-      el.setAttribute('aria-hidden','true');
       el.style.visibility = 'hidden';
       el.style.opacity = '0';
+      el.setAttribute("aria-hidden","true");
     });
   }
-  function onSubmit(){
-    const entered  = cleanCode(input.value);
-    const expected = cleanCode(VALID_CODE);
-    if (entered.length !== 6){
-      showMsg('Please enter a valid 6-digit code.', true);
+  async function loginWithServer(email, password){
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false){
+      throw new Error(data.error || "Incorrect email or password.");
+    }
+    return data;
+  }
+  async function onLogin(){
+    const em = emailInp.value.trim().toLowerCase();
+    const pw = passInp.value.trim();
+    if (!em){
+      showMsg("Please enter your email.", true);
       return;
     }
-    if (entered === expected){
-      unlockAllOverlays();
-      showMsg('');
-    } else {
-      showMsg('That code is not valid. Try again.', true);
-      const card = document.getElementById('rs-lock-card');
+    if (pw.length < 8){
+      showMsg("Password must be at least 8 characters.", true);
+      return;
+    }
+    loginBtn.disabled = true;
+    showMsg("Checking credentials...");
+    try {
+      await loginWithServer(em, pw);
+      showMsg("");
+      unlock();
+    } catch (err){
+      showMsg(err.message || "Incorrect email or password.", true);
       if(card && card.animate){
         card.animate(
-          [{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],
-          {duration:260}
+          [
+            { transform:'translateX(-5px)' },
+            { transform:'translateX(5px)' },
+            { transform:'translateX(0)' }
+          ],
+          { duration:260 }
         );
       }
+    } finally {
+      loginBtn.disabled = false;
     }
   }
-  if (btn) btn.addEventListener('click', onSubmit);
-  if (input){
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') onSubmit(); });
-    setTimeout(()=> input.focus(), 0);
-  }
+  loginBtn.addEventListener("click", onLogin);
+  passInp.addEventListener("keydown", e=>{
+    if (e.key === "Enter") onLogin();
+  });
+  setTimeout(()=> emailInp.focus(), 0);
 })();
 </script>
       </div>
@@ -155,7 +1356,7 @@
       <div class="container-two">
         <div class="navbar-wrapper-3">
           <div class="style-three-nav-brand">
-            <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"><img width="150" height="40" alt="" src="../images/TOR.png" loading="lazy" srcset="../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, ../images/TOR.png 2851w" sizes="(max-width: 479px) 88vw, 150px"></a>
+            <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"><img width="150" height="40" alt="" src="../images/TOR.png" loading="lazy" srcset="../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, ../images/TOR.png 2851w" sizes="150px"></a>
           </div>
           <div class="w-layout-hflex nav-link-box">
             <div class="w-layout-hflex nav-one-button-wrap">
@@ -273,1207 +1474,7 @@
       </div>
     </div>
   </header>
-  <section class="section-169">
-    <div class="code-embed-17 w-embed w-script">
-      <!DOCTYPE html>
-      <!--  =========================================================
-Fiduciary Snapshot — v3.9.2
-- Fullscreen, luxury cards, deep shadows
-- Pie shows 4 slices:
-     Expenses / Mortgage / Savings Target / Disposable Income
-- Text color for headers/subheaders = #bdb5b5
-- KPI strip shows $ and Credit Score w/ band
-- Grade chip shows Letter / Disposable, plus bar meter
-- Bar chart Monthly/Yearly toggle
-- Rent vs Buy projection
-- Debug logs added to updateExpenseBars() so we can see all months
-SaSS™ = Naughty Realty, Serious Returns.
-=========================================================  -->
-      <section id="fid-fullscreen-shell" style="all: initial;">
-        <!--  //#1 Chart.js CDN (must load BEFORE our script so charts work)  -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-        <!--  //#2 CORE STYLES  -->
-        <style>
-    /* Global reset just for this widget */
-    #fid-fullscreen-shell,
-    #fid-fullscreen-shell * {
-      box-sizing: border-box;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    /* Full-screen dark environment */
-    #fid-fullscreen-shell {
-      width: 100vw;
-      max-width: 100vw;
-      overflow-x: auto;
-      background: #0b0b12; /* rich near-black */
-      color: #fff;
-      padding-top: 24px;
-      padding-bottom: 64px;
-    }
-    /* Inner shell resists Webflow squeezing */
-    #fid-snapshot-shell {
-      width: 100%;
-      max-width: 100vw;
-      min-width: 1024px; /* keep desktop dashboard layout */
-      margin: 0;
-      padding: 0 24px 0 24px;
-    }
-    :root{
-      --bg:#0f1220;
-      --panel:#15192b;
-      --card:#181b2e;
-      --ink:#fff;
-      --subink:#bdb5b5; /* UPDATED per user request */
-      --accent:#6aa7ff;
-      --accent2:#8ef3c5;
-      --ok:#55d399;
-      --warn:#f9c74f;
-      --bad:#ff6b6b;
-    }
-    /* Main dashboard card */
-    #fid-card {
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      box-shadow: 0 10px 24px rgba(0,0,0,.35);
-      padding: 18px;
-      position: relative;
-      color: var(--ink);
-      width: 100%;
-    }
-    /* Header row: grade chip + export */
-    .fid-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      align-items: flex-start;
-    }
-    @media (max-width:840px){
-      .fid-row {
-        grid-template-columns: 1fr;
-      }
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);
-      background:#0f1326;
-      white-space:nowrap;
-      color:var(--ink);
-      font-size:13px;
-      line-height:1.2;
-    }
-    .dot{
-      width:12px;
-      height:12px;
-      border-radius:50%;
-    }
-    .mini-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      color:var(--ink);
-    }
-    .mini-wrap b{
-      color:var(--ink);
-    }
-    .mini-wrap span{
-      color:var(--subink); /* now #bdb5b5 */
-    }
-    .mini-meter{
-      width:160px;
-      height:8px;
-      border-radius:999px;
-      background:#0b0f23;
-      border:1px solid rgba(255,255,255,.12);
-      overflow:hidden;
-    }
-    .mini-meter > div{
-      height:100%;
-      width:0%;
-      background:linear-gradient(90deg,var(--accent2),#f9c74f,#ff6b6b);
-    }
-    .export{
-      padding:10px 14px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background:#0f1326;
-      color:var(--ink);
-      cursor:pointer;
-      font-size:13px;
-      line-height:1.2;
-    }
-    .export:hover{ filter:brightness(1.15); }
-    /* KPI strip (5 cards) */
-    .kpi-strip{
-      display:grid;
-      grid-template-columns:repeat(5,minmax(0,1fr));
-      gap:18px;
-      margin-top:18px;
-    }
-    @media (max-width:1280px){
-      .kpi-strip{ grid-template-columns:repeat(3,minmax(0,1fr)); }
-    }
-    @media (max-width:760px){
-      .kpi-strip{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-    }
-    @media (max-width:520px){
-      .kpi-strip{ grid-template-columns:1fr; }
-    }
-    .kpi-card{
-      background:#12162b;
-      border:1px solid rgba(255,255,255,.06);
-      border-radius:14px;
-      padding:14px;
-      min-height:76px;
-      color:var(--ink);
-      box-shadow:0 16px 32px rgba(0,0,0,.6);
-    }
-    .kpi-title{
-      font-size:12px;
-      color:var(--subink);           /* #bdb5b5 for titles */
-      letter-spacing:.2px;
-      text-transform:uppercase;
-      font-weight:600;
-    }
-    .kpi-val{
-      margin-top:8px;
-      font-weight:700;
-      font-size:20px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      color:#bdb5b5;
-      line-height:1.2;
-    }
-    .delta{
-      font-size:11px;
-      margin-left:8px;
-      padding:2px 6px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(85,211,153,.10);
-      color:var(--ok);
-      line-height:1.2;
-    }
-    /* Credit score gauge bar in KPI card */
-    .score-bar{
-      position:relative;
-      width:100%;
-      height:10px;
-      border-radius:999px;
-      background:linear-gradient(90deg,#ff6b6b,#f9c74f,#55d399);
-      margin-top:8px;
-    }
-    .score-marker{
-      position:absolute;
-      top:-3px;
-      width:2px;
-      height:16px;
-      background:#fff;
-      border-radius:2px;
-      left:0%;
-      box-shadow:0 0 6px rgba(255,255,255,.6);
-    }
-    /* Middle grid (Pie left, Bar right) */
-    .mid{
-      display:grid;
-      grid-template-columns:480px 1fr;
-      gap:18px;
-      margin-top:18px;
-      align-items:stretch;
-    }
-    @media (max-width:1080px){
-      .mid{ grid-template-columns:1fr; }
-    }
-    .card-mini{
-      background:#12162b;
-      border:1px solid rgba(255,255,255,.06);
-      border-radius:16px;
-      padding:16px;
-      display:flex;
-      flex-direction:column;
-      color:var(--ink);
-      box-shadow:0 16px 32px rgba(0,0,0,.6);
-    }
-    .card-mini h3{
-      margin:0 0 12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      flex-wrap:wrap;
-    }
-    .card-mini h3 span:first-child{
-      font-size:14px;
-      color:var(--subink);         /* #bdb5b5 */
-      font-weight:700;
-      letter-spacing:.3px;
-      text-transform:uppercase;
-    }
-    .card-mini h3 span:last-child{
-      font-size:11px;
-      font-weight:400;
-      text-transform:none;
-      color:var(--subink);         /* #bdb5b5 */
-      line-height:1.4;
-      letter-spacing:0;
-    }
-    .chart-holder{
-      position:relative;
-      height: clamp(220px, 36vh, 420px);
-      width:100%;
-      display:block;
-      overflow:hidden;
-      border-radius:12px;
-      background:#0f1220;
-      border:1px solid rgba(255,255,255,.05);
-      box-shadow:0 24px 48px rgba(0,0,0,.8) inset;
-    }
-    /* Make pie chart area taller */
-    .card-mini:first-child .chart-holder{
-      height: clamp(280px, 42vh, 460px);
-    }
-    canvas{
-      width:100% !important;
-      height:100% !important;
-      display:block;
-    }
-    .ring-center{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      pointer-events:none;
-      font-weight:800;
-      font-size:28px;
-      color:#fff;
-      text-shadow:0 0 18px rgba(0,0,0,.5);
-    }
-    .legend{
-      display:flex;
-      gap:16px;
-      margin-top:10px;
-      flex-wrap:wrap;
-      color:var(--subink); /* #bdb5b5 */
-      font-size:12px;
-    }
-    .l-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-    }
-    .l-dot{
-      width:10px;
-      height:10px;
-      border-radius:999px;
-      background:#6aa7ff;
-      box-shadow:0 0 8px rgba(106,167,255,.6);
-    }
-    /* Controls above bar chart */
-    .controls{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin:4px 0 10px;
-      flex-wrap:wrap;
-    }
-    .select{
-      background:#0f1326;
-      color:#fff;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:10px;
-      padding:8px 10px;
-      font-size:12px;
-    }
-    .toggle{
-      cursor:pointer;
-      padding:6px 10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.10);
-      background:#0f1326;
-      font-size:12px;
-      color:#fff;
-      line-height:1.2;
-    }
-    .toggle[aria-pressed="true"]{
-      background:#192041;
-      border-color:rgba(255,255,255,.22);
-    }
-    /* Bottom "Rent vs Buy" block */
-    .bottom{
-      background:#12162b;
-      border:1px solid rgba(255,255,255,.06);
-      border-radius:16px;
-      padding:16px;
-      margin-top:18px;
-      color:var(--ink);
-      box-shadow:0 16px 32px rgba(0,0,0,.6);
-    }
-    .row-slim{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:8px;
-      flex-wrap:wrap;
-    }
-    .h4{
-      font-weight:800;
-      letter-spacing:.2px;
-      color:var(--subink); /* #bdb5b5 */
-      font-size:14px;
-      text-transform:uppercase;
-    }
-    /* Rent selector capsule */
-    .rent-ctrl{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-left:auto;
-      flex-wrap:wrap;
-    }
-    .rent-label{
-      font-size:11px;
-      color:var(--subink); /* #bdb5b5 */
-      line-height:1.2;
-      text-transform:uppercase;
-      letter-spacing:.3px;
-    }
-    .rent-select{
-      appearance:none;
-      background:#0f1326;
-      color:#fff;
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:10px;
-      padding:8px 10px;
-      min-width:140px;
-      cursor:pointer;
-      font-size:12px;
-      line-height:1.2;
-    }
-    .muted{
-      color:var(--subink); /* #bdb5b5 */
-      font-size:12px;
-      line-height:1.4;
-    }
-    @media print{
-      body, html{ background:#fff !important; }
-    }
-  </style>
-        <!--  //#3 DASHBOARD BODY  -->
-        <div id="fid-snapshot" data-summarize="https://theorozcorealty.netlify.app/.netlify/functions/summarize" style="all: initial;">
-          <!--  Google Font  -->
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-          <div id="fid-snapshot-shell">
-            <div id="fid-card">
-              <!--  //#3.1 HEADER ROW  -->
-              <div class="fid-row">
-                <span class="badge" id="grade-chip">
-                  <span id="fid-dot" class="dot" style="background:#888"></span>
-                  <div class="mini-wrap">
-                    <div>
-                      <b id="fid-grade">Loading...</b>
-                      <span id="fid-disp" style="margin-left:8px;">$0</span>
-                    </div>
-                    <div class="mini-meter" aria-label="grade-meter">
-                      <div id="fid-meter"></div>
-                    </div>
-                  </div>
-                </span>
-                <button id="fid-export" class="export">Export ▾</button>
-              </div>
-              <!--  //#3.2 KPI STRIP  -->
-              <div class="kpi-strip">
-                <div class="kpi-card">
-                  <div class="kpi-title">Total Monthly Income</div>
-                  <div class="kpi-val">
-                    <span id="k-income">$0</span>
-                    <span class="delta" id="k-inc-delta">+0%</span>
-                  </div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">Total Monthly Expense</div>
-                  <div class="kpi-val">
-                    <span id="k-expense">$0</span>
-                    <span class="delta" id="k-exp-delta" style="background:rgba(255,107,107,.12); color:var(--bad);">+0%</span>
-                  </div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">Mortgage Estimate</div>
-                  <div class="kpi-val" id="k-mtg">$0</div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">Total Savings</div>
-                  <div class="kpi-val">
-                    <span id="k-save">$0</span>
-                    <span class="delta" id="k-sav-delta">+1.3%</span>
-                  </div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">
-                    Credit Score <span id="score-band" style="margin-left:6px; font-weight:700;"></span>
-                  </div>
-                  <div class="kpi-val"><span id="k-score">—</span></div>
-                  <div class="score-bar">
-                    <div id="score-marker" class="score-marker"></div>
-                  </div>
-                </div>
-              </div>
-              <!--  //#3.3 MID GRID  -->
-              <div class="mid">
-                <!--  PIE SIDE  -->
-                <div class="card-mini">
-                  <h3>
-                    <span>OVERALL BUDGET</span>
-                    <span>Expenses vs Mortgage vs Savings Target vs Leftover</span>
-                  </h3>
-                  <div class="chart-holder">
-                    <canvas id="fid-pie"></canvas>
-                    <div class="ring-center" id="pie-center">0</div>
-                  </div>
-                  <div class="legend">
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#6aa7ff;box-shadow:0 0 8px rgba(106,167,255,.6);"></span>
-                      Expenses
-                    </span>
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#55d399;box-shadow:0 0 8px rgba(85,211,153,.6);"></span>
-                      Mortgage
-                    </span>
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#8ef3c5;box-shadow:0 0 8px rgba(142,243,197,.6);"></span>
-                      Savings Target
-                    </span>
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#f9c74f;box-shadow:0 0 8px rgba(249,199,79,.6);"></span>
-                      Disposable Income
-                    </span>
-                  </div>
-                </div>
-                <!--  BAR SIDE  -->
-                <div class="card-mini">
-                  <h3>
-                    <span>MONTHLY EXPENSES INTELLIGENCE</span>
-                    <span>This month by category / last months by trend</span>
-                  </h3>
-                  <div class="controls">
-                    <button id="mode-abs" class="toggle" aria-pressed="true">$ Totals</button>
-                    <button id="mode-pct" class="toggle" aria-pressed="false">% Composition</button>
-                    <select id="exp-view" class="select">
-                      <option value="monthly" selected="">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
-                  </div>
-                  <div class="chart-holder">
-                    <canvas id="fid-bars"></canvas>
-                  </div>
-                  <div class="muted" style="margin-top:8px">
-                    Monthly view shows categories for the active budget month.
-                    Yearly view shows each saved month on the x-axis, stacked by category.
-                    Toggle $ / % to switch measure.
-                  </div>
-                </div>
-              </div>
-              <!--  //#3.4 RENT VS BUY  -->
-              <div class="bottom">
-                <div class="row-slim">
-                  <div class="h4">RENT vs BUY — NET COST</div>
-                  <div class="rent-ctrl">
-                    <!--  Rent select for 10-year comparison  -->
-                    <span class="badge" title="Starting monthly rent used for the 10-year comparison" style="gap:8px;">
-                      <span class="rent-label">Rent Price (mo)</span>
-                      <select id="rent-select" class="rent-select"></select>
-                    </span>
-                    <span class="badge" title="Years until Net Cost of Buying ≤ Renting" style="margin-left:6px;">
-                      <div style="display:flex; flex-direction:column; line-height:1.1;">
-                        <span style="font-size:11px; color:var(--subink)">Break-even (Years)</span>
-                        <b id="be-yrs" style="font-size:16px;">—</b>
-                      </div>
-                    </span>
-                  </div>
-                </div>
-                <div class="chart-holder" style="height: clamp(240px, 36vh, 400px);">
-                  <canvas id="fid-line"></canvas>
-                </div>
-              </div>
-              <div class="muted" style="margin-top:10px">
-                Outputs are educational, not advice.
-              </div>
-            </div>
-          </div>
-        </div>
-        <!--  //#4 CORE LOGIC  -->
-        <script>
-  (()=> {
-    if (window.__FIDUCIARY_WIDGET_MOUNTED__) return;
-    window.__FIDUCIARY_WIDGET_MOUNTED__ = true;
-    /* //#4.1 Utilities / helpers ------------------------------------ */
-    const $=(q)=>document.querySelector(q);
-    const cur=(n,d=0)=> (Number(n)||0).toLocaleString('en-US',{
-      style:'currency',
-      currency:'USD',
-      minimumFractionDigits:d,
-      maximumFractionDigits:d
-    });
-    const signed=(n)=> (n>=0? cur(n,0) : ('-'+cur(Math.abs(n),0)));
-    // Standard mortgage payment formula
-    function pmti(P,r,n){
-      if(r===0) return P/n;
-      const x=Math.pow(1+r,n);
-      return P*(r*x)/(x-1);
-    }
-    // APR estimate from credit score (rough bands)
-    function scoreAPR(s){
-      s=Number(s)||720;
-      if(s>=780) return 6.50;
-      if(s>=760) return 6.75;
-      if(s>=720) return 7.00;
-      if(s>=700) return 7.20;
-      if(s>=680) return 7.35;
-      if(s>=660) return 7.85;
-      if(s>=640) return 8.25;
-      if(s>=620) return 9.25;
-      return 9.95;
-    }
-    function bandFromScore(s){
-      if(s>=760) return 'Excellent';
-      if(s>=720) return 'Good';
-      if(s>=680) return 'Fair';
-      if(s>=640) return 'OK-ish';
-      if(s>=620) return 'Weak';
-      return 'Subprime';
-    }
-    // helper: current month key like "2025-11"
-    function currentMonthKey(){
-      const now = new Date();
-      return now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-    }
-    // helper: nice short label like "Nov"
-    function monthLabelFromKey(key){
-      const [y,m]=String(key).split('-');
-      const idx = Number(m)-1;
-      const short = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][idx]||key;
-      return short;
-    }
-    let pieChart=null, barChart=null, lineChart=null;
-    let barMode='abs';      // "$ Totals" vs "% Composition" (visual placeholder)
-    let barView='monthly';  // "monthly" (categories) vs "yearly" (timeline)
-    let rentStartOverride = null; // user-chosen rent override
-    /* //#4.2 Bridge intake & fallback data --------------------------- */
-    let bridge = null;
-    try {
-      const raw = localStorage.getItem('realtysass.bridge');
-      if (raw) bridge = JSON.parse(raw);
-    } catch(e){}
-    // Try URL hash fallback (embedded usage)
-    if (!bridge && location.hash){
-      const m = location.hash.match(/(?:^|#|&)rsb=([A-Za-z0-9\-_]+)/);
-      if (m){
-        try{
-          const json = decodeURIComponent(
-            escape(
-              atob(m[1].replace(/-/g,'+').replace(/_/g,'/'))
-            )
-          );
-          bridge = JSON.parse(json);
-        }catch(e){}
-      }
-    }
-    // Try legacy expense rows fallback (no monthKey info)
-    try{
-      if(!bridge?.itemizedRows){
-        const rows = JSON.parse(localStorage.getItem('va.expenses.rows')||'[]');
-        if(rows?.length){
-          bridge = Object.assign({}, bridge, {
-            itemizedRows: rows.map(r=>({
-              name:r.name,
-              monthly:r.month,
-              cat:r.cat
-              // legacy rows don't store which month they belong to
-            }))
-          });
-        }
-      }
-    }catch(_){}
-    // Listen for postMessage updates (iframe/parent comms)
-    window.addEventListener('message', (ev)=>{
-      try{
-        const msg = ev.data || {};
-        if (msg.type==='realtysass-bridge' && msg.payload){
-          bridge=msg.payload;
-          rentStartOverride=null;
-          paintAll();
-        }
-      }catch(e){}
-    }, false);
-    /* //#4.3 Snapshot from bridge (income/expenses/etc.) ------------- */
-    function snapshotFromBridge(){
-      const b = bridge || {};
-      const income   = Number(b.income)||0;
-      const expenses = Number(b.expenses)||0;
-      const savings  = Number(b.savings)||0; // actual $ saved now
-      // Desired savings % (slider). If missing, assume 5%.
-      const savingsRatePct = Number(b.savingsRatePct) || 5;
-      const savingsTargetAmount = (income * (savingsRatePct/100));
-      let housing = Number(b.housing)||0;
-      let pAndI   = Number(b.pAndI)||0;
-      const price = Number(b.price)||0;
-      const dpPct = Number(b.dpPct)||0;
-      const dpAmt = Number(b.dpAmt) || (price * (dpPct/100));
-      const apr   = Number(b.apr)|| scoreAPR(Number(b.creditScore)||720);
-      const termY = Number(b.termYears)||30;
-      const tihoa = Number(b.tihoa)||0;
-      const pmi   = Number(b.pmi)||0;
-      // Rebuild mortgage P&I if not provided
-      if (!housing){
-        const loan  = Math.max(0, price - dpAmt);
-        const mRate = (apr/100)/12;
-        const termN = Math.max(1, termY*12);
-        pAndI = loan>0 ? pmti(loan, mRate, termN) : 0;
-        housing = pAndI + tihoa + pmi;
-      }
-      // freePost considers planned savings target
-      const freePost = income - expenses - housing - savingsTargetAmount;
-      return {
-        income,
-        expenses,
-        savings, // tracked for KPI
-        housing,
-        freePost,
-        price,
-        dpPct,
-        dpAmt,
-        apr,
-        creditScore:Number(b.creditScore)||720,
-        termYears:termY,
-        tihoa,
-        pmi,
-        pAndI,
-        savingsRatePct,
-        savingsTargetAmount
-      };
-    }
-    /* //#4.4 Expense bucketing logic -------------------------------- */
-    const bucketDefs = {
-      Housing: /(rent|mortgage|pmi|hoa|home ?insur|property tax|tihoa|home repair|furniture)/i,
-      Utilities: /(util|electric|power|water|gas|sewer|trash|phone|internet|wifi)/i,
-      Transportation: /(car|auto|fuel|gasoline|uber|lyft|transport|parking|toll|insurance.*auto|maintenance)/i,
-      Food: /(grocery|grocer|food|meal|dining|restaurant|lunch|breakfast|coffee)/i,
-      Health: /(health|medical|dental|vision|pharmacy|rx|gym)/i,
-      Entertainment: /(netflix|hulu|prime|disney|movie|game|sport|concert|entertain)/i
-    };
-    const bucketOrder = [
-      'Housing','Utilities','Transportation','Food','Health','Entertainment','Other'
-    ];
-    // put one row amount into the right bucket
-    function distributeToBucket(monthObj, nameLower, amt){
-      let bucket = 'Other';
-      for (const [b,rx] of Object.entries(bucketDefs)){
-        if (rx.test(nameLower)) {
-          bucket = b;
-          break;
-        }
-      }
-      monthObj[bucket] = (monthObj[bucket]||0) + Math.max(0, amt);
-    }
-    /**
-     * //#4.4.1 monthlyBucketsFromBridge()
-     *
-     * Goal:
-     * - Build per-month totals for each category.
-     * - Guarantee at least ONE usable month so charts never die.
-     */
-    function monthlyBucketsFromBridge(){
-      const rows = Array.isArray(bridge?.itemizedRows) ? bridge.itemizedRows : [];
-      const perMonthBucketTotals = {}; // {monthKey:{bucket:amount}}
-      // walk rows and drop each into a month bucket
-      rows.forEach(r=>{
-        // try to guess the row's month key
-        let mk = r.monthKey || r.dateKey || r.month || null;
-        // normalize mk to YYYY-MM
-        if(mk && typeof mk === 'string'){
-          const m = mk.match(/^(20\d{2})[-/](\d{1,2})/);
-          if(m){
-            const yyyy = m[1];
-            const mm   = String(m[2]).padStart(2,'0');
-            mk = `${yyyy}-${mm}`;
-          }else{
-            mk = null;
-          }
-        } else {
-          mk = null;
-        }
-        if(!mk){
-          mk = currentMonthKey();
-        }
-        if(!perMonthBucketTotals[mk]){
-          perMonthBucketTotals[mk] = Object.fromEntries(bucketOrder.map(b=>[b,0]));
-        }
-        const name = String(r.name||r.item||'').toLowerCase();
-        const amt  = Number(r.amount||r.monthly||r.value||0)||0;
-        distributeToBucket(perMonthBucketTotals[mk], name, amt);
-      });
-      // If we STILL have no months at all (no rows?), synthesize 1 month
-      if(Object.keys(perMonthBucketTotals).length===0){
-        const mk = currentMonthKey();
-        perMonthBucketTotals[mk] = Object.fromEntries(bucketOrder.map(b=>[b,0]));
-        // fallback split: take bridge.expenses and spread across buckets
-        const ex = Number(bridge?.expenses)||0;
-        const alloc = {
-          Housing:.35, Utilities:.12, Transportation:.14,
-          Food:.20, Health:.07, Entertainment:.07, Other:.05
-        };
-        for(const k of bucketOrder){
-          perMonthBucketTotals[mk][k] += ex * (alloc[k]||0);
-        }
-      }
-      // sort keys oldest -> newest
-      const monthKeys = Object.keys(perMonthBucketTotals).sort();
-      const labels = monthKeys.map(k=> monthLabelFromKey(k));
-      const latestMonthKey = monthKeys[monthKeys.length-1];
-      return {
-        monthKeys,
-        labels,
-        perMonthBucketTotals,
-        latestMonthKey
-      };
-    }
-    /* //#4.5 Grade calculation (financial health score) ------------- */
-    function localGrade(s){
-      // use desired savings target in the pressure calc
-      const totalShare = (s.expenses + s.housing + s.savingsTargetAmount) / (s.income||1);
-      const housingShare = s.housing / (s.income||1);
-      let g=92;
-      if(totalShare>=0.85) g-=30; else if(totalShare>=0.70) g-=15; else g+=4;
-      if(housingShare>0.40) g-=18; else if(housingShare>0.33) g-=8; else g+=4;
-      if(s.freePost<0) g-=30;
-      else if((s.freePost/s.income)<0.10) g-=10;
-      else if((s.freePost/s.income)>=0.20) g+=4;
-      const sr = s.savingsTargetAmount/(s.income||1);
-      if(sr<0.10) g-=8;
-      else if(sr>=0.20) g+=4;
-      g=Math.max(0,Math.min(100,g));
-      const letter =
-        g>=98?'A+': g>=92?'A': g>=88?'A-'
-      : g>=82?'B+': g>=76?'B': g>=72?'B-'
-      : g>=66?'C+': g>=60?'C': g>=55?'C-'
-      : g>=50?'D+': g>=45?'D':'F';
-      return {letter, totalShare};
-    }
-    /* //#4.6 Chart initialization ----------------------------------- */
-    function initCharts(){
-      const pieCtx = document.getElementById('fid-pie').getContext('2d');
-      pieChart = new Chart(pieCtx,{
-        type:'doughnut',
-        data:{
-          // 4-slice model:
-          // Expenses, Mortgage, Savings Target, Disposable Income
-          labels:['Expenses','Mortgage','Savings Target','Disposable Income'],
-          datasets:[{
-            data:[0,0,0,1],
-            backgroundColor:[
-              '#6aa7ff',   // Expenses (blue)
-              '#55d399',   // Mortgage (green)
-              '#8ef3c5',   // Savings Target (mint)
-              '#f9c74f'    // Disposable Income (gold)
-            ],
-            borderWidth:0
-          }]
-        },
-        options:{
-          cutout:'66%',
-          plugins:{ legend:{ display:false } },
-          responsive:true,
-          maintainAspectRatio:false
-        }
-      });
-      const barCtx = document.getElementById('fid-bars').getContext('2d');
-      barChart = new Chart(barCtx,{
-        type:'bar',
-        data:{ labels: [], datasets: [] },
-        options:{
-          plugins:{
-            legend:{
-              labels:{ color:'#fff', boxWidth:12 },
-              display:true
-            }
-          },
-          scales:{
-            x:{
-              stacked:true,
-              ticks:{ color:'#fff' },
-              grid:{ color:'rgba(255,255,255,.06)' }
-            },
-            y:{
-              stacked:true,
-              ticks:{ color:'#fff' },
-              grid:{ color:'rgba(255,255,255,.06)' }
-            }
-          },
-          responsive:true,
-          maintainAspectRatio:false,
-          datasets:{ bar:{ borderWidth:0, borderRadius:6 } }
-        }
-      });
-      const lineCtx = document.getElementById('fid-line').getContext('2d');
-      lineChart = new Chart(lineCtx,{
-        type:'line',
-        data:{
-          labels:[],
-          datasets:[
-            {
-              label:'Buy – Net Cost',
-              data:[],
-              tension:.35,
-              fill:false,
-              borderWidth:2,
-              pointRadius:0,
-              borderColor:'#6aa7ff'
-            },
-            {
-              label:'Rent – Net Cost',
-              data:[],
-              tension:.35,
-              fill:false,
-              borderWidth:2,
-              pointRadius:0,
-              borderColor:'#55d399'
-            }
-          ]
-        },
-        options:{
-          plugins:{
-            legend:{
-              display:true,
-              labels:{ color:'#fff' }
-            },
-            tooltip:{
-              callbacks:{
-                label:(c)=>{
-                  const lbl = `${c.dataset.label}: ${cur(c.raw,0)}`;
-                  if (c.datasetIndex===0 && lineChart.__equityByYear){
-                    const eq = lineChart.__equityByYear[c.dataIndex]||0;
-                    return [lbl, `Equity: ${cur(eq,0)}`];
-                  }
-                  if (c.datasetIndex===1 && lineChart.__cumRentByYear){
-                    const cr = lineChart.__cumRentByYear[c.dataIndex]||0;
-                    return [lbl, `Cumulative Rent: ${cur(cr,0)}`];
-                  }
-                  return lbl;
-                }
-              }
-            }
-          },
-          scales:{
-            x:{
-              ticks:{ color:'#fff' },
-              grid:{ display:false }
-            },
-            y:{
-              ticks:{ color:'#fff' },
-              grid:{ color:'rgba(255,255,255,.06)' }
-            }
-          },
-          responsive:true,
-          maintainAspectRatio:false
-        }
-      });
-      // Keep charts responsive if container resizes
-      const ro = new ResizeObserver(()=>{
-        pieChart?.resize();
-        barChart?.resize();
-        lineChart?.resize();
-      });
-      document.querySelectorAll('#fid-fullscreen-shell .chart-holder').forEach(h=> ro.observe(h));
-    }
-    /* //#4.7 Update expense bar chart (MONTHLY vs YEARLY) ----------- */
-    function updateExpenseBars(){
-      /* DEBUG LOGS so we can inspect what data you actually have */
-      console.log("DEBUG_bridge", bridge);
-      console.log("DEBUG_itemizedRows", bridge?.itemizedRows);
-      console.log("DEBUG_localStorage_allKeys", Object.keys(localStorage));
-      const {
-        monthKeys,
-        labels,
-        perMonthBucketTotals,
-        latestMonthKey
-      } = monthlyBucketsFromBridge();
-      // shared color palette by bucket
-      const palette = [
-        '#6aa7ff', // Housing
-        '#8ab6ff', // Utilities
-        '#55d399', // Transportation
-        '#8ef3c5', // Food
-        '#f9c74f', // Health
-        '#b58cff', // Entertainment
-        '#6e7a94'  // Other
-      ];
-      if(barView === 'yearly'){
-        // YEARLY MODE
-        barChart.data.labels = labels; // ["Nov","Dec","Jan",...]
-        barChart.data.datasets = bucketOrder.map((bucketName, idx)=>({
-          label: bucketName,
-          data: monthKeys.map(mk=> (perMonthBucketTotals[mk]?.[bucketName] || 0)),
-          backgroundColor: palette[idx % palette.length],
-          stack:'y'
-        }));
-      } else {
-        // MONTHLY MODE
-        const latestTotals = perMonthBucketTotals[latestMonthKey] || {};
-        barChart.data.labels = bucketOrder;
-        barChart.data.datasets = [{
-          label:'This Month',
-          data: bucketOrder.map(b=> latestTotals[b]||0),
-          backgroundColor: bucketOrder.map((_,idx)=> palette[idx % palette.length]),
-          stack:'m'
-        }];
-      }
-      // barMode ($ vs %) toggle hook left in place for future
-      barChart.update();
-    }
-    /* //#4.8 Rent vs Buy — 10-year model ----------------------------- */
-    const CLOSE_PCT = 0.03;  // 3% closing costs
-    const SELL_PCT  = 0.07;  // 7% selling cost
-    const APP_Y     = 0.03;  // 3%/yr appreciation
-    const INVRET_Y  = 0.05;  // 5%/yr invested alt return
-    const MAINT_Y   = 0.01;  // 1%/yr maintenance
-    function buildRentVsBuySeries10Y_FD(s, rentStartMonthly){
-      const Y = 10;
-      const N = Y*12;
-      const labels = Array.from({length:Y+1}, (_,i)=> `Year ${i}`);
-      const price = Math.max(150000, Number(s.price)||350000);
-      const down  = Math.max(0, Number(s.dpAmt)||0);
-      const loan0 = Math.max(0, price - down);
-      const r_m   = (Number(s.apr)||7)/100/12;
-      const nTot  = (Number(s.termYears)||30)*12;
-      const piMo  = loan0>0 ? pmti(loan0, r_m, nTot) : 0;
-      const tihoa = Number(s.tihoa)||0;
-      const pmi   = Number(s.pmi)||0;
-      const maintMo = (price*MAINT_Y)/12;
-      // upfront cost to buy
-      const closing = price*CLOSE_PCT;
-      const upfront = down + closing;
-      // rent baseline (1% rule-ish, then inflates 3%/yr)
-      const rent0     = Math.max(0, Number(rentStartMonthly));
-      const rent_g_m  = Math.pow(1+0.03, 1/12)-1;
-      // appreciation monthly
-      const appr_m    = Math.pow(1+APP_Y, 1/12)-1;
-      // alt investment monthly
-      const inv_m     = Math.pow(1+INVRET_Y, 1/12)-1;
-      let bal = loan0, homeVal = price;
-      let cumRent = 0, cumOwner = upfront;
-      const rentSeries=[0], buySeries=[upfront], equityByYear=[down], cumRentByYear=[0];
-      let altInvest = down;
-      let beMonth = null; // first month where buy ≤ rent net
-      for(let m=1; m<=N; m++){
-        // --- RENT path
-        const rent_m = rent0 * Math.pow(1+rent_g_m, m-1);
-        cumRent += rent_m;
-        altInvest *= (1 + inv_m);
-        // --- BUY path
-        const interest = bal * r_m;
-        const principal = Math.max(0, piMo - interest);
-        bal = Math.max(0, bal - principal);
-        cumOwner += (piMo + tihoa + pmi + maintMo);
-        // Assets (house value grows, equity builds)
-        homeVal *= (1 + appr_m);
-        const equity = Math.max(0, homeVal - bal);
-        // Compute net position at month m
-        const sellCost_m = homeVal * SELL_PCT;
-        const netIfSold_m = Math.max(homeVal - sellCost_m - bal, 0);
-        const buyNet_m  = Math.max(0, cumOwner - netIfSold_m);
-        const rentNet_m = Math.max(0, cumRent - (altInvest - down));
-        if (beMonth===null && buyNet_m <= rentNet_m){
-          beMonth = m;
-        }
-        // Record each year (12 mo)
-        if (m % 12 === 0){
-          buySeries.push(buyNet_m);
-          rentSeries.push(rentNet_m);
-          equityByYear.push(equity);
-          cumRentByYear.push(cumRent);
-        }
-      }
-      const beYears = beMonth!==null ? (beMonth/12) : null;
-      return {
-        labels,
-        rentSeries,
-        buySeries,
-        equityByYear,
-        cumRentByYear,
-        beYears
-      };
-    }
-    function currentRentStartFromBridge(s){
-      // Default base rent ~1% of price
-      const base = Math.max(0, (Number(s.price)||350000) * 0.01);
-      return rentStartOverride==null
-        ? base
-        : Math.max(0, rentStartOverride);
-    }
-    function populateRentSelect(base){
-      const sel = document.getElementById('rent-select');
-      const vals = [];
-      for(let d=-6; d<=6; d++){
-        const v = Math.max(0, Math.round((base + d*500)));
-        if(!vals.includes(v)) vals.push(v);
-      }
-      sel.innerHTML = vals.map(v=> (
-        `<option value="${v}">${cur(v,0)}</option>`
-      )).join('');
-      const target = Math.max(0, Math.round(currentRentStartFromBridge(snapshotFromBridge())));
-      if (!vals.includes(target)){
-        sel.insertAdjacentHTML('afterbegin',
-          `<option value="${target}">${cur(target,0)}</option>`
-        );
-      }
-      sel.value = String(target);
-    }
-    /* //#4.9 Paint everything on screen ------------------------------ */
-    function paintAll(){
-      const s = snapshotFromBridge();
-      // --- KPIs
-      $('#k-income').textContent  = cur(s.income,0);
-      $('#k-expense').textContent = cur(s.expenses,0);
-      $('#k-mtg').textContent     = cur(s.housing,0);
-      $('#k-save').textContent    = cur(s.savings,0);
-      // Credit score KPI + band + gauge marker
-      const cs = Number(s.creditScore)||720;
-      $('#k-score').textContent = cs;
-      $('#score-band').textContent = `(${bandFromScore(cs)})`;
-      const pct = Math.max(0, Math.min(1, (cs - 300) / (850 - 300)));
-      $('#score-marker').style.left = (pct*100)+'%';
-      // Grade chip + meter width + color
-      // We'll report disposable AFTER planned savings target
-      const postPlanDisposable = s.income - s.expenses - s.housing - s.savingsTargetAmount;
-      $('#fid-disp').textContent = signed(postPlanDisposable);
-      const {letter, totalShare} = localGrade({
-        ...s,
-        totalShare:(s.expenses + s.housing + s.savingsTargetAmount)/(s.income||1)
-      });
-      $('#fid-grade').textContent = letter+' / Disposable';
-      $('#fid-dot').style.background =
-        (letter[0]==='A'||letter[0]==='B')
-          ? 'var(--ok)'
-          : (letter[0]==='C'
-              ? 'var(--warn)'
-              : 'var(--bad)');
-      $('#fid-meter').style.width =
-        (Math.max(0, Math.min(1, totalShare))*100)+'%';
-      // --- Initialize charts if needed
-      if(!pieChart || !barChart || !lineChart) initCharts();
-      // PIE chart (Expenses, Mortgage, Savings Target, Disposable Income)
-      $('#pie-center').textContent = s.income>0
-        ? s.income.toLocaleString()
-        : '0';
-      const disposableAfterPlan = Math.max(
-        0,
-        s.income - s.expenses - s.housing - s.savingsTargetAmount
-      );
-      pieChart.data.datasets[0].data = [
-        s.expenses,
-        s.housing,
-        s.savingsTargetAmount,
-        disposableAfterPlan
-      ];
-      pieChart.update();
-      // BAR chart
-      updateExpenseBars();
-      // Rent select options (1% rule around price)
-      const baseRent = Math.max(
-        0,
-        (Number(s.price)||350000) * 0.01
-      );
-      populateRentSelect(baseRent);
-      // RENT vs BUY projection using full FD math
-      const rentStart = currentRentStartFromBridge(s);
-      const rvb = buildRentVsBuySeries10Y_FD(s, rentStart);
-      lineChart.data.labels = rvb.labels;
-      lineChart.data.datasets[0].data = rvb.buySeries;
-      lineChart.data.datasets[1].data = rvb.rentSeries;
-      lineChart.__equityByYear   = rvb.equityByYear;
-      lineChart.__cumRentByYear  = rvb.cumRentByYear;
-      lineChart.update();
-      // Break-even display
-      const be = rvb.beYears;
-      $('#be-yrs').textContent =
-        (be==null)
-          ? '—'
-          : ((Math.round(be*10)/10)
-              .toFixed(1)+' yrs')
-              .replace('.0 yrs',' yrs');
-    }
-    /* //#4.10 Event handlers (rent change, toggles, export) ---------- */
-    // Rent dropdown changes the model live
-    document.addEventListener('change', (e)=>{
-      if (e.target && e.target.id==='rent-select'){
-        rentStartOverride = Number(e.target.value)||0;
-        paintAll();
-      }
-    });
-    // $ Totals vs % Composition buttons
-    document.getElementById('mode-abs').addEventListener('click', ()=>{
-      barMode='abs';
-      document.getElementById('mode-abs').setAttribute('aria-pressed','true');
-      document.getElementById('mode-pct').setAttribute('aria-pressed','false');
-      updateExpenseBars();
-    });
-    document.getElementById('mode-pct').addEventListener('click', ()=>{
-      barMode='pct';
-      document.getElementById('mode-pct').setAttribute('aria-pressed','true');
-      document.getElementById('mode-abs').setAttribute('aria-pressed','false');
-      updateExpenseBars();
-    });
-    // Monthly vs Yearly dropdown
-    $('#exp-view').addEventListener('change', (e)=>{
-      barView = e.target.value === 'monthly' ? 'monthly' : 'yearly';
-      updateExpenseBars();
-    });
-    // Export button → PNG snapshot
-    $('#fid-export').addEventListener('click', async ()=>{
-      const el = document.getElementById('fid-card');
-      const rect = el.getBoundingClientRect();
-      const scale = Math.max(2, window.devicePixelRatio || 2);
-      const cloned = el.cloneNode(true);
-      const serializer = new XMLSerializer();
-      const markup = serializer.serializeToString(cloned);
-      const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+(rect.width*scale)+'" height="'+(rect.height*scale)+'">' +
-                    '<foreignObject x="0" y="0" width="100%" height="100%">' +
-                      markup +
-                    '</foreignObject>' +
-                  '</svg>';
-      const blob = new Blob([svg], {type: 'image/svg+xml;charset=utf-8'});
-      const url = URL.createObjectURL(blob);
-      const img = new Image();
-      img.onload = ()=>{
-        const canvas = document.createElement('canvas');
-        canvas.width = rect.width*scale;
-        canvas.height = rect.height*scale;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#0f1220';
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        URL.revokeObjectURL(url);
-        const a = document.createElement('a');
-        a.download = 'Fiduciary-Snapshot.png';
-        a.href = canvas.toDataURL('image/png');
-        a.click();
-      };
-      img.src = url;
-    });
-    /* //#4.11 Boot --------------------------------------------------- */
-    (function boot(){
-      initCharts();
-      paintAll();
-    })();
-  })();
-  </script>
-      </section>
-    </div>
-  </section>
+  <section class="section-169"></section>
   <section>
     <div class="w-embed w-script"><!--  Fiduciary Memo — v1.4 (Rank + Last Name guaranteed)  -->
       <div id="fid-memo" data-summarize="https://theorozcorealty.netlify.app/.netlify/functions/summarize" style="all: initial;">

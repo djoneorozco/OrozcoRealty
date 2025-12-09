@@ -1,0 +1,277 @@
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Tue Dec 09 2025 08:01:04 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="691c890827da49178fc96035" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rent Vs Buy</title>
+  <meta content="Rent Vs Buy" property="og:title">
+  <meta content="Rent Vs Buy" property="twitter:title">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="Webflow" name="generator">
+  <link href="../css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="../css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="../css/new-real-estate-purchase.webflow.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Droid Sans:400,700","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
+  <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+  <link href="../images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="../images/webclip.png" rel="apple-touch-icon">
+</head>
+<body>
+  <section>
+    <div class="w-embed w-script"><!--  =========================================================
+RENT vs BUY — NET COST (Standalone Extract)
+Source: Fiduciary Snapshot v3.9.2 — exact code, unmodified
+=========================================================  -->
+      <section id="rvb-shell" style="all: initial;">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+        <style>
+    #rvb-shell,
+    #rvb-shell * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    #rvb-shell {
+      width: 100%;
+      background: #0b0b12;
+      color: #fff;
+      padding: 20px;
+    }
+    #rvb-card {
+      background: #12162b;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 16px 32px rgba(0,0,0,.6);
+      color: #fff;
+      width: 100%;
+    }
+    .row-slim {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px;
+      flex-wrap:wrap;
+    }
+    .h4 {
+      font-weight:800;
+      letter-spacing:.2px;
+      color:#bdb5b5;
+      font-size:14px;
+      text-transform:uppercase;
+    }
+    .rent-ctrl {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-left:auto;
+      flex-wrap:wrap;
+    }
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#0f1326;
+      color:#fff;
+      font-size:12px;
+    }
+    .rent-label {
+      font-size:11px;
+      color:#bdb5b5;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .rent-select {
+      appearance:none;
+      background:#0f1326;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:10px;
+      padding:8px 10px;
+      min-width:140px;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .chart-holder {
+      height: clamp(240px, 36vh, 400px);
+      width: 100%;
+      border-radius:12px;
+      overflow:hidden;
+      background:#0f1220;
+      border:1px solid rgba(255,255,255,.05);
+      box-shadow:0 24px 48px rgba(0,0,0,.8) inset;
+    }
+    canvas {
+      width:100% !important;
+      height:100% !important;
+    }
+    .muted { color:#bdb5b5; font-size:12px; margin-top:8px; }
+  </style>
+        <div id="rvb-card">
+          <div class="row-slim">
+            <div class="h4">RENT vs BUY — NET COST</div>
+            <div class="rent-ctrl">
+              <span class="badge">
+                <span class="rent-label">Rent Price (mo)</span>
+                <select id="rent-select" class="rent-select"></select>
+              </span>
+              <span class="badge">
+                <div style="display:flex;flex-direction:column;line-height:1.1;">
+                  <span style="font-size:11px;color:#bdb5b5">Break-even (Years)</span>
+                  <b id="be-yrs" style="font-size:16px;">—</b>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div class="chart-holder">
+            <canvas id="rvb-line"></canvas>
+          </div>
+          <div class="muted">Outputs are educational, not financial advice.</div>
+        </div>
+        <script>
+    (()=>{
+      const $=(q)=>document.querySelector(q);
+      const cur=(n)=> (Number(n)||0).toLocaleString('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0});
+      function pmti(P,r,n){
+        if(r===0) return P/n;
+        const x=Math.pow(1+r,n);
+        return P*(r*x)/(x-1);
+      }
+      const CLOSE_PCT = 0.03;
+      const SELL_PCT  = 0.07;
+      const APP_Y     = 0.03;
+      const INVRET_Y  = 0.05;
+      const MAINT_Y   = 0.01;
+      function buildSeries(s, rentStartMonthly){
+        const Y = 10;
+        const N = Y*12;
+        const labels = Array.from({length:Y+1}, (_,i)=> `Year ${i}`);
+        const price = Math.max(150000, Number(s.price)||350000);
+        const down  = Number(s.dpAmt)||0;
+        const loan0 = Math.max(0, price - down);
+        const r_m   = (Number(s.apr)||7)/100/12;
+        const termN = (Number(s.termYears)||30)*12;
+        const piMo = loan0>0 ? pmti(loan0, r_m, termN) : 0;
+        const tihoa = Number(s.tihoa)||0;
+        const pmi   = Number(s.pmi)||0;
+        const maintMo = (price*MAINT_Y)/12;
+        const closing = price*CLOSE_PCT;
+        const upfront = down + closing;
+        const rent0 = rentStartMonthly;
+        const rent_g_m = Math.pow(1+0.03, 1/12)-1;
+        const appr_m = Math.pow(1+APP_Y, 1/12)-1;
+        const inv_m  = Math.pow(1+INVRET_Y, 1/12)-1;
+        let bal = loan0, homeVal=price;
+        let cumRent=0, cumOwner=upfront;
+        const rentSeries=[0], buySeries=[upfront];
+        const equityByYear=[down], cumRentByYear=[0];
+        let altInvest = down;
+        let beMonth=null;
+        for(let m=1; m<=N; m++){
+          const rent_m = rent0 * Math.pow(1+rent_g_m, m-1);
+          cumRent += rent_m;
+          altInvest *= (1+inv_m);
+          const interest = bal * r_m;
+          const principal = Math.max(0, piMo - interest);
+          bal = Math.max(0, bal - principal);
+          cumOwner += (piMo + tihoa + pmi + maintMo);
+          homeVal *= (1+appr_m);
+          const equity = Math.max(0, homeVal - bal);
+          const netIfSold = Math.max(homeVal - (homeVal*SELL_PCT) - bal, 0);
+          const buyNet_m  = Math.max(0, cumOwner - netIfSold);
+          const rentNet_m = Math.max(0, cumRent - (altInvest - down));
+          if (beMonth===null && buyNet_m <= rentNet_m){
+            beMonth = m;
+          }
+          if(m%12===0){
+            buySeries.push(buyNet_m);
+            rentSeries.push(rentNet_m);
+            equityByYear.push(equity);
+            cumRentByYear.push(cumRent);
+          }
+        }
+        const beYears = beMonth!==null ? (beMonth/12) : null;
+        return {labels, rentSeries, buySeries, equityByYear, cumRentByYear, beYears};
+      }
+      let lineChart=null;
+      function initChart(){
+        const ctx=document.getElementById('rvb-line').getContext('2d');
+        lineChart = new Chart(ctx,{
+          type:'line',
+          data:{ labels:[], datasets:[
+            {label:'Buy – Net Cost', data:[], tension:.35, fill:false, borderWidth:2, pointRadius:0, borderColor:'#6aa7ff'},
+            {label:'Rent – Net Cost', data:[], tension:.35, fill:false, borderWidth:2, pointRadius:0, borderColor:'#55d399'}
+          ]},
+          options:{
+            plugins:{
+              legend:{display:true, labels:{color:'#fff'}},
+              tooltip:{
+                callbacks:{
+                  label:(c)=>{
+                    const lbl = `${c.dataset.label}: ${cur(c.raw)}`;
+                    return lbl;
+                  }
+                }
+              }
+            },
+            scales:{
+              x:{ticks:{color:'#fff'}, grid:{display:false}},
+              y:{ticks:{color:'#fff'}, grid:{color:'rgba(255,255,255,.06)'}}
+            },
+            responsive:true,
+            maintainAspectRatio:false
+          }
+        });
+      }
+      const defaultData = {
+        price:350000,
+        dpAmt:20000,
+        apr:7.0,
+        tihoa:250,
+        pmi:0,
+        termYears:30
+      };
+      function paint(){
+        const s = defaultData;
+        const rentStart = Number($('#rent-select').value)||2500;
+        const rvb = buildSeries(s, rentStart);
+        lineChart.data.labels = rvb.labels;
+        lineChart.data.datasets[0].data = rvb.buySeries;
+        lineChart.data.datasets[1].data = rvb.rentSeries;
+        lineChart.update();
+        $('#be-yrs').textContent =
+          rvb.beYears==null
+            ? '—'
+            : (Math.round(rvb.beYears*10)/10).toFixed(1).replace('.0','');
+      }
+      function populateRentSelect(){
+        const base = 3500;
+        const vals=[];
+        for(let d=-6; d<=6; d++){
+          vals.push(base + d*200);
+        }
+        $('#rent-select').innerHTML = vals.map(v=> `<option value="${v}">${cur(v)}</option>`).join('');
+        $('#rent-select').value = base;
+      }
+      (function boot(){
+        populateRentSelect();
+        initChart();
+        paint();
+      })();
+      document.addEventListener('change',(e)=>{
+        if(e.target.id==='rent-select') paint();
+      });
+    })();
+  </script>
+      </section>
+    </div>
+  </section>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=68cecb820ec3dbdca3ef9099" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="../js/webflow.js" type="text/javascript"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Mon Nov 17 2025 00:32:40 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Tue Dec 09 2025 08:01:04 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="68d5fc11b55d1fc05f41ed8c" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
 <head>
   <meta charset="utf-8">
@@ -13,270 +13,15 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
-  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Droid Sans:400,700","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
   <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
-  <link href="../images/favicon.svg" rel="shortcut icon" type="image/x-icon">
-  <link href="../images/webclip.jpg" rel="apple-touch-icon">
+  <link href="../images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="../images/webclip.png" rel="apple-touch-icon">
 </head>
 <body class="body-6">
-  <header class="style-two-header">
-    <section>
-      <div class="w-embed w-script"><!--  =========================================================
-  RealtySaSS • Frosted Glass Lock (Updated to support .html)
-  - Global lock for /realtysass and /realtysass.html
-  - Keep ONE embed sitewide
-=========================================================  -->
-        <div id="rs-lock-overlay" aria-hidden="true" style="visibility:hidden; opacity:0;">
-          <div class="rs-lock-centered" role="dialog" aria-labelledby="rs-lock-title" aria-modal="true">
-            <div class="rs-lock-card" id="rs-lock-card">
-              <h1 id="rs-lock-title">Enter Your 6-Digit Access Code</h1>
-              <p class="rs-lock-sub">This page is private — please enter the unlock code we provided.</p>
-              <div class="rs-code-row">
-                <input id="rs-code-input" inputmode="numeric" maxlength="6" pattern="[0-9]*" autocomplete="one-time-code" aria-label="6-digit code">
-                <button id="rs-code-btn" type="button">Unlock</button>
-              </div>
-              <p id="rs-lock-msg" class="rs-lock-msg" aria-live="polite"></p>
-            </div>
-          </div>
-        </div>
-        <style>
-  :root{
-    --rs-overlay-bg: rgba(6,10,18,0.55);
-    --rs-accent: #8ef3c5;
-    --rs-ink: #e9ecff;
-    --rs-muted: #a8b0d6;
-    --rs-radius: 14px;
-  }
-  #rs-lock-overlay{
-    position:fixed; inset:0; width:100%; height:100%;
-    z-index:99999; display:flex; align-items:center; justify-content:center;
-    background:var(--rs-overlay-bg);
-    backdrop-filter:blur(10px) saturate(120%);
-    -webkit-backdrop-filter:blur(10px) saturate(120%);
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    transition:opacity .25s ease, visibility .25s ease;
-  }
-  #rs-lock-overlay.rs-hidden{ opacity:0; pointer-events:none; visibility:hidden; }
-  .rs-lock-centered{ width:100%; max-width:520px; padding:20px; }
-  .rs-lock-card{
-    background:rgba(255,255,255,0.03);
-    border-radius:var(--rs-radius);
-    border:1px solid rgba(255,255,255,0.06);
-    box-shadow:0 8px 30px rgba(3,6,15,0.6);
-    padding:28px 24px; color:var(--rs-ink);
-  }
-  .rs-lock-card h1{ margin:0 0 8px; font-size:20px; font-weight:700; }
-  .rs-lock-sub{ margin:0 0 18px; color:var(--rs-muted); font-size:13px; }
-  .rs-code-row{ display:flex; gap:12px; }
-  #rs-code-input{
-    flex:1; padding:12px 14px; border-radius:10px;
-    border:1px solid rgba(255,255,255,0.06);
-    background:rgba(255,255,255,0.02);
-    color:var(--rs-ink); font-size:16px; outline:none;
-  }
-  #rs-code-btn{
-    padding:11px 16px; border-radius:10px; border:none;
-    background:linear-gradient(180deg,var(--rs-accent),rgba(100,230,190,0.85));
-    color:#02110b; font-weight:700; cursor:pointer;
-  }
-  .rs-lock-msg{ margin-top:12px; color:var(--rs-muted); font-size:13px; min-height:18px; }
-</style>
-        <script>
-(function(){
-  "use strict";
-  // --- CONFIG ---
-  const VALID_CODE = "123456";
-  // Supports both /realtysass and /realtysass.html
-  const USE_ALLOW_LIST = true;
-  const ALLOW_PATHS = [
-    /\/realtysass(?:\.html)?$/i,
-  ];
-  const EXEMPT_PATHS = [];
-  const path = (location.pathname || "/").toLowerCase();
-  const isAllowed = ALLOW_PATHS.some(re => re.test(path));
-  const shouldLock = USE_ALLOW_LIST ? isAllowed : !EXEMPT_PATHS.some(re => re.test(path));
-  if (!shouldLock) {
-    document.querySelectorAll('#rs-lock-overlay').forEach(el => el.remove());
-    return;
-  }
-  const overlay = document.getElementById('rs-lock-overlay');
-  const input   = document.getElementById('rs-code-input');
-  const btn     = document.getElementById('rs-code-btn');
-  const msg     = document.getElementById('rs-lock-msg');
-  overlay.classList.remove('rs-hidden');
-  overlay.setAttribute('aria-hidden','false');
-  overlay.style.visibility = 'visible';
-  overlay.style.opacity = '1';
-  const digitsOnly = s => String(s || '').replace(/\D+/g, '');
-  const cleanCode  = s => digitsOnly(s).slice(0, 6);
-  function showMsg(text, isError){
-    msg.textContent = text || '';
-    msg.style.color = isError ? '#ffb3b3' : 'var(--rs-muted)';
-  }
-  function unlockAllOverlays(){
-    document.querySelectorAll('#rs-lock-overlay').forEach(el => {
-      el.classList.add('rs-hidden');
-      el.setAttribute('aria-hidden','true');
-      el.style.visibility = 'hidden';
-      el.style.opacity = '0';
-    });
-  }
-  function onSubmit(){
-    const entered  = cleanCode(input.value);
-    const expected = cleanCode(VALID_CODE);
-    if (entered.length !== 6){
-      showMsg('Please enter a valid 6-digit code.', true);
-      return;
-    }
-    if (entered === expected){
-      unlockAllOverlays();
-      showMsg('');
-    } else {
-      showMsg('That code is not valid. Try again.', true);
-      const card = document.getElementById('rs-lock-card');
-      if(card && card.animate){
-        card.animate(
-          [{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],
-          {duration:260}
-        );
-      }
-    }
-  }
-  if (btn) btn.addEventListener('click', onSubmit);
-  if (input){
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') onSubmit(); });
-    setTimeout(()=> input.focus(), 0);
-  }
-})();
-</script>
-      </div>
-    </section>
-    <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="navbar-logo-left-container style-three-header-container w-nav">
-      <div class="container-two">
-        <div class="navbar-wrapper-3">
-          <div class="style-three-nav-brand">
-            <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"><img width="150" height="40" alt="" src="../images/TOR.png" loading="lazy" srcset="../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, ../images/TOR.png 2851w" sizes="(max-width: 479px) 88vw, 150px"></a>
-          </div>
-          <div class="w-layout-hflex nav-link-box">
-            <div class="w-layout-hflex nav-one-button-wrap">
-              <div class="menu-button-2 w-nav-button"><img width="31" height="18" alt="Hambarger Menu" src="../images/Icon-nav-1.svg" loading="lazy"></div>
-            </div>
-          </div>
-          <a role="link" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a52" href="tel:+1800456789" class="style-three-phone-button responsive-hidden w-inline-block">
-            <div class="home-three-call-button-text">
-              <div class="style-three-phone-button-txt">Lets Talk</div>
-              <div class="style-three-phone-button-txt">(800) 456 7890</div>
-            </div>
-            <div class="home-three-button-icon"><img width="46" height="46" alt="Call Icon" src="../images/Call-Icon.svg" loading="lazy" class="image-99"></div>
-          </a>
-          <div class="navbar-wrapper-2">
-            <div class="style-three-nav-brand">
-              <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"></a>
-            </div>
-            <div class="w-layout-hflex nav-link-box">
-              <nav role="navigation" class="nav-menu-wrapper-3 w-nav-menu">
-                <ul role="list" class="nav-menu-two w-list-unstyled">
-                  <li class="list-item-5 nav-five-list">
-                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a61" class="home-three-dropdaown-2 w-dropdown">
-                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
-                        <div class="home-three-dropdown">
-                          <a href="../index.html" class="w-inline-block">
-                            <div class="home-three-dropdown-menu black-color">Home </div>
-                          </a>
-                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
-                      </div>
-                      <nav class="home-three-dropdown-list w-dropdown-list"></nav>
-                    </div>
-                  </li>
-                  <li class="list-item-5 nav-five-list">
-                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a6a" class="home-three-dropdaown-2 w-dropdown">
-                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
-                        <div class="home-three-dropdown">
-                          <a href="../about-us.html" class="w-inline-block">
-                            <div class="home-three-dropdown-menu black-color">ABOUT US</div>
-                          </a>
-                          <div class="home-three-dropdown-menu black-color">Pages</div>
-                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
-                      </div>
-                      <nav class="home-three-dropdown-list w-dropdown-list">
-                        <div class="home-three-dropdown-block">
-                          <a href="#" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Who We Are</a>
-                          <a href="#" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Our Realtors</a>
-                        </div>
-                      </nav>
-                    </div>
-                  </li>
-                  <li class="list-item-5 nav-five-list">
-                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a7a" class="home-three-dropdaown-2 w-dropdown">
-                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
-                        <div class="home-three-dropdown">
-                          <a href="../realtysass.html" class="w-inline-block">
-                            <div class="home-three-dropdown-menu black-color">Realty SaSS</div>
-                          </a>
-                          <div class="home-three-dropdown-menu black-color">Properties</div>
-                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
-                      </div>
-                      <nav class="home-three-dropdown-list w-dropdown-list">
-                        <div class="home-three-dropdown-block">
-                          <a href="../features/financial-dashboard.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">KPI Dashboard</a>
-                          <a href="../features/re-defined.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">RE-Defined</a>
-                          <a href="../features/zipped.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">ZiPPED</a>
-                          <a href="../features/psychology.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Psychology Insight</a>
-                          <a href="#" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Ask-Elena</a>
-                        </div>
-                      </nav>
-                    </div>
-                  </li>
-                  <li class="list-item-5 nav-five-list">
-                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a90" class="home-three-dropdaown-2 w-dropdown">
-                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
-                        <div class="home-three-dropdown">
-                          <a href="#" class="w-inline-block">
-                            <div class="home-three-dropdown-menu black-color">Blogs &amp; More</div>
-                          </a>
-                          <div class="home-three-dropdown-menu black-color">Blog</div>
-                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
-                        <a href="#" role="button" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a99" class="hero-button-3 nav-button w-inline-block">
-                          <div class="button-mask">
-                            <div class="link-text-wrp">
-                              <div class="text-block-24">Contact us</div>
-                              <div class="secondt-btn-text">Contact us</div>
-                            </div>
-                          </div>
-                        </a>
-                      </div>
-                      <nav class="home-three-dropdown-list w-dropdown-list">
-                        <div class="home-three-dropdown-block">
-                          <a href="../blog-page/va-loans.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">VA Loan</a>
-                          <a href="../blog-page/a-i-influence-in-realty.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Realtor Killer?</a>
-                          <a href="../blog-page/realtors.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Do I Need a Realtor?</a>
-                          <a href="../features/beat-the-realtor.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Beat the Realtor (Game)</a>
-                        </div>
-                      </nav>
-                    </div>
-                  </li>
-                </ul>
-              </nav>
-              <div class="w-layout-hflex nav-one-button-wrap">
-                <div class="menu-button-2 w-nav-button"><img width="31" height="18" alt="Hambarger Menu" src="../images/Icon-nav-1.svg" loading="lazy"></div>
-              </div>
-            </div>
-            <a role="link" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548aad" href="tel:+1800456789" class="style-three-phone-button responsive-hidden w-inline-block">
-              <div class="home-three-call-button-text">
-                <div class="style-three-phone-button-txt">Lets Talk</div>
-                <div class="style-three-phone-button-txt">(800) 456 7890</div>
-              </div>
-              <div class="home-three-button-icon"><img width="46" height="46" alt="Call Icon" src="../images/Call-Icon.svg" loading="lazy" class="image-100"></div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-  <section class="section-169">
-    <div class="code-embed-17 w-embed w-script">
-      <!DOCTYPE html>
-      <!--  =========================================================
+  <div class="code-embed-17 w-embed w-script">
+    <!DOCTYPE html>
+    <!--  =========================================================
 Fiduciary Snapshot — v3.9.2
 - Fullscreen, luxury cards, deep shadows
 - Pie shows 4 slices:
@@ -289,11 +34,11 @@ Fiduciary Snapshot — v3.9.2
 - Debug logs added to updateExpenseBars() so we can see all months
 SaSS™ = Naughty Realty, Serious Returns.
 =========================================================  -->
-      <section id="fid-fullscreen-shell" style="all: initial;">
-        <!--  //#1 Chart.js CDN (must load BEFORE our script so charts work)  -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-        <!--  //#2 CORE STYLES  -->
-        <style>
+    <section id="fid-fullscreen-shell" style="all: initial;">
+      <!--  //#1 Chart.js CDN (must load BEFORE our script so charts work)  -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+      <!--  //#2 CORE STYLES  -->
+      <style>
     /* Global reset just for this widget */
     #fid-fullscreen-shell,
     #fid-fullscreen-shell * {
@@ -663,150 +408,150 @@ SaSS™ = Naughty Realty, Serious Returns.
       body, html{ background:#fff !important; }
     }
   </style>
-        <!--  //#3 DASHBOARD BODY  -->
-        <div id="fid-snapshot" data-summarize="https://theorozcorealty.netlify.app/.netlify/functions/summarize" style="all: initial;">
-          <!--  Google Font  -->
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-          <div id="fid-snapshot-shell">
-            <div id="fid-card">
-              <!--  //#3.1 HEADER ROW  -->
-              <div class="fid-row">
-                <span class="badge" id="grade-chip">
-                  <span id="fid-dot" class="dot" style="background:#888"></span>
-                  <div class="mini-wrap">
-                    <div>
-                      <b id="fid-grade">Loading...</b>
-                      <span id="fid-disp" style="margin-left:8px;">$0</span>
+      <!--  //#3 DASHBOARD BODY  -->
+      <div id="fid-snapshot" data-summarize="https://theorozcorealty.netlify.app/.netlify/functions/summarize" style="all: initial;">
+        <!--  Google Font  -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+        <div id="fid-snapshot-shell">
+          <div id="fid-card">
+            <!--  //#3.1 HEADER ROW  -->
+            <div class="fid-row">
+              <span class="badge" id="grade-chip">
+                <span id="fid-dot" class="dot" style="background:#888"></span>
+                <div class="mini-wrap">
+                  <div>
+                    <b id="fid-grade">Loading...</b>
+                    <span id="fid-disp" style="margin-left:8px;">$0</span>
+                  </div>
+                  <div class="mini-meter" aria-label="grade-meter">
+                    <div id="fid-meter"></div>
+                  </div>
+                </div>
+              </span>
+              <button id="fid-export" class="export">Export ▾</button>
+            </div>
+            <!--  //#3.2 KPI STRIP  -->
+            <div class="kpi-strip">
+              <div class="kpi-card">
+                <div class="kpi-title">Total Monthly Income</div>
+                <div class="kpi-val">
+                  <span id="k-income">$0</span>
+                  <span class="delta" id="k-inc-delta">+0%</span>
+                </div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">Total Monthly Expense</div>
+                <div class="kpi-val">
+                  <span id="k-expense">$0</span>
+                  <span class="delta" id="k-exp-delta" style="background:rgba(255,107,107,.12); color:var(--bad);">+0%</span>
+                </div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">Mortgage Estimate</div>
+                <div class="kpi-val" id="k-mtg">$0</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">Total Savings</div>
+                <div class="kpi-val">
+                  <span id="k-save">$0</span>
+                  <span class="delta" id="k-sav-delta">+1.3%</span>
+                </div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-title">
+                  Credit Score <span id="score-band" style="margin-left:6px; font-weight:700;"></span>
+                </div>
+                <div class="kpi-val"><span id="k-score">—</span></div>
+                <div class="score-bar">
+                  <div id="score-marker" class="score-marker"></div>
+                </div>
+              </div>
+            </div>
+            <!--  //#3.3 MID GRID  -->
+            <div class="mid">
+              <!--  PIE SIDE  -->
+              <div class="card-mini">
+                <h3>
+                  <span>OVERALL BUDGET</span>
+                  <span>Expenses vs Mortgage vs Savings Target vs Leftover</span>
+                </h3>
+                <div class="chart-holder">
+                  <canvas id="fid-pie"></canvas>
+                  <div class="ring-center" id="pie-center">0</div>
+                </div>
+                <div class="legend">
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#6aa7ff;box-shadow:0 0 8px rgba(106,167,255,.6);"></span>
+                    Expenses
+                  </span>
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#55d399;box-shadow:0 0 8px rgba(85,211,153,.6);"></span>
+                    Mortgage
+                  </span>
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#8ef3c5;box-shadow:0 0 8px rgba(142,243,197,.6);"></span>
+                    Savings Target
+                  </span>
+                  <span class="l-pill">
+                    <span class="l-dot" style="background:#f9c74f;box-shadow:0 0 8px rgba(249,199,79,.6);"></span>
+                    Disposable Income
+                  </span>
+                </div>
+              </div>
+              <!--  BAR SIDE  -->
+              <div class="card-mini">
+                <h3>
+                  <span>MONTHLY EXPENSES INTELLIGENCE</span>
+                  <span>This month by category / last months by trend</span>
+                </h3>
+                <div class="controls">
+                  <button id="mode-abs" class="toggle" aria-pressed="true">$ Totals</button>
+                  <button id="mode-pct" class="toggle" aria-pressed="false">% Composition</button>
+                  <select id="exp-view" class="select">
+                    <option value="monthly" selected="">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </div>
+                <div class="chart-holder">
+                  <canvas id="fid-bars"></canvas>
+                </div>
+                <div class="muted" style="margin-top:8px">
+                  Monthly view shows categories for the active budget month.
+                  Yearly view shows each saved month on the x-axis, stacked by category.
+                  Toggle $ / % to switch measure.
+                </div>
+              </div>
+            </div>
+            <!--  //#3.4 RENT VS BUY  -->
+            <div class="bottom">
+              <div class="row-slim">
+                <div class="h4">RENT vs BUY — NET COST</div>
+                <div class="rent-ctrl">
+                  <!--  Rent select for 10-year comparison  -->
+                  <span class="badge" title="Starting monthly rent used for the 10-year comparison" style="gap:8px;">
+                    <span class="rent-label">Rent Price (mo)</span>
+                    <select id="rent-select" class="rent-select"></select>
+                  </span>
+                  <span class="badge" title="Years until Net Cost of Buying ≤ Renting" style="margin-left:6px;">
+                    <div style="display:flex; flex-direction:column; line-height:1.1;">
+                      <span style="font-size:11px; color:var(--subink)">Break-even (Years)</span>
+                      <b id="be-yrs" style="font-size:16px;">—</b>
                     </div>
-                    <div class="mini-meter" aria-label="grade-meter">
-                      <div id="fid-meter"></div>
-                    </div>
-                  </div>
-                </span>
-                <button id="fid-export" class="export">Export ▾</button>
-              </div>
-              <!--  //#3.2 KPI STRIP  -->
-              <div class="kpi-strip">
-                <div class="kpi-card">
-                  <div class="kpi-title">Total Monthly Income</div>
-                  <div class="kpi-val">
-                    <span id="k-income">$0</span>
-                    <span class="delta" id="k-inc-delta">+0%</span>
-                  </div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">Total Monthly Expense</div>
-                  <div class="kpi-val">
-                    <span id="k-expense">$0</span>
-                    <span class="delta" id="k-exp-delta" style="background:rgba(255,107,107,.12); color:var(--bad);">+0%</span>
-                  </div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">Mortgage Estimate</div>
-                  <div class="kpi-val" id="k-mtg">$0</div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">Total Savings</div>
-                  <div class="kpi-val">
-                    <span id="k-save">$0</span>
-                    <span class="delta" id="k-sav-delta">+1.3%</span>
-                  </div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">
-                    Credit Score <span id="score-band" style="margin-left:6px; font-weight:700;"></span>
-                  </div>
-                  <div class="kpi-val"><span id="k-score">—</span></div>
-                  <div class="score-bar">
-                    <div id="score-marker" class="score-marker"></div>
-                  </div>
+                  </span>
                 </div>
               </div>
-              <!--  //#3.3 MID GRID  -->
-              <div class="mid">
-                <!--  PIE SIDE  -->
-                <div class="card-mini">
-                  <h3>
-                    <span>OVERALL BUDGET</span>
-                    <span>Expenses vs Mortgage vs Savings Target vs Leftover</span>
-                  </h3>
-                  <div class="chart-holder">
-                    <canvas id="fid-pie"></canvas>
-                    <div class="ring-center" id="pie-center">0</div>
-                  </div>
-                  <div class="legend">
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#6aa7ff;box-shadow:0 0 8px rgba(106,167,255,.6);"></span>
-                      Expenses
-                    </span>
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#55d399;box-shadow:0 0 8px rgba(85,211,153,.6);"></span>
-                      Mortgage
-                    </span>
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#8ef3c5;box-shadow:0 0 8px rgba(142,243,197,.6);"></span>
-                      Savings Target
-                    </span>
-                    <span class="l-pill">
-                      <span class="l-dot" style="background:#f9c74f;box-shadow:0 0 8px rgba(249,199,79,.6);"></span>
-                      Disposable Income
-                    </span>
-                  </div>
-                </div>
-                <!--  BAR SIDE  -->
-                <div class="card-mini">
-                  <h3>
-                    <span>MONTHLY EXPENSES INTELLIGENCE</span>
-                    <span>This month by category / last months by trend</span>
-                  </h3>
-                  <div class="controls">
-                    <button id="mode-abs" class="toggle" aria-pressed="true">$ Totals</button>
-                    <button id="mode-pct" class="toggle" aria-pressed="false">% Composition</button>
-                    <select id="exp-view" class="select">
-                      <option value="monthly" selected="">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
-                  </div>
-                  <div class="chart-holder">
-                    <canvas id="fid-bars"></canvas>
-                  </div>
-                  <div class="muted" style="margin-top:8px">
-                    Monthly view shows categories for the active budget month.
-                    Yearly view shows each saved month on the x-axis, stacked by category.
-                    Toggle $ / % to switch measure.
-                  </div>
-                </div>
+              <div class="chart-holder" style="height: clamp(240px, 36vh, 400px);">
+                <canvas id="fid-line"></canvas>
               </div>
-              <!--  //#3.4 RENT VS BUY  -->
-              <div class="bottom">
-                <div class="row-slim">
-                  <div class="h4">RENT vs BUY — NET COST</div>
-                  <div class="rent-ctrl">
-                    <!--  Rent select for 10-year comparison  -->
-                    <span class="badge" title="Starting monthly rent used for the 10-year comparison" style="gap:8px;">
-                      <span class="rent-label">Rent Price (mo)</span>
-                      <select id="rent-select" class="rent-select"></select>
-                    </span>
-                    <span class="badge" title="Years until Net Cost of Buying ≤ Renting" style="margin-left:6px;">
-                      <div style="display:flex; flex-direction:column; line-height:1.1;">
-                        <span style="font-size:11px; color:var(--subink)">Break-even (Years)</span>
-                        <b id="be-yrs" style="font-size:16px;">—</b>
-                      </div>
-                    </span>
-                  </div>
-                </div>
-                <div class="chart-holder" style="height: clamp(240px, 36vh, 400px);">
-                  <canvas id="fid-line"></canvas>
-                </div>
-              </div>
-              <div class="muted" style="margin-top:10px">
-                Outputs are educational, not advice.
-              </div>
+            </div>
+            <div class="muted" style="margin-top:10px">
+              Outputs are educational, not advice.
             </div>
           </div>
         </div>
-        <!--  //#4 CORE LOGIC  -->
-        <script>
+      </div>
+      <!--  //#4 CORE LOGIC  -->
+      <script>
   (()=> {
     if (window.__FIDUCIARY_WIDGET_MOUNTED__) return;
     window.__FIDUCIARY_WIDGET_MOUNTED__ = true;
@@ -1471,9 +1216,317 @@ SaSS™ = Naughty Realty, Serious Returns.
     })();
   })();
   </script>
-      </section>
+    </section>
+  </div>
+  <header class="style-two-header">
+    <section>
+      <div class="w-embed w-script"><!--  =========================================================
+  RealtySaSS • Frosted Glass Login Lock (Email + Password)
+  - Uses /api/login (Supabase Auth check)
+  - Unlocks /realtysass + /realtysass.html
+=========================================================  -->
+        <div id="rs-lock-overlay" aria-hidden="true" style="visibility:hidden; opacity:0;">
+          <div class="rs-lock-centered" role="dialog" aria-labelledby="rs-lock-title" aria-modal="true">
+            <div class="rs-lock-card" id="rs-lock-card">
+              <h1 id="rs-lock-title">Sign In to Continue</h1>
+              <p class="rs-lock-sub">This page is private — please enter your credentials.</p>
+              <div class="rs-field">
+                <input id="rs-email-input" type="email" placeholder="Email Address" autocomplete="email">
+              </div>
+              <div class="rs-field">
+                <input id="rs-pass-input" type="password" placeholder="Password" minlength="8" autocomplete="current-password">
+              </div>
+              <div class="rs-login-row">
+                <button id="rs-login-btn" type="button">Log In</button>
+              </div>
+              <p id="rs-lock-msg" class="rs-lock-msg" aria-live="polite"></p>
+            </div>
+          </div>
+        </div>
+        <style>
+  :root{
+    --rs-overlay-bg: rgba(6,10,18,0.55);
+    --rs-accent: #8ef3c5;
+    --rs-ink: #e9ecff;
+    --rs-muted: #a8b0d6;
+    --rs-radius: 14px;
+  }
+  #rs-lock-overlay{
+    position:fixed; inset:0; width:100%; height:100%;
+    z-index:99999; display:flex; align-items:center; justify-content:center;
+    background:var(--rs-overlay-bg);
+    backdrop-filter:blur(10px) saturate(120%);
+    -webkit-backdrop-filter:blur(10px) saturate(120%);
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    transition:opacity .25s ease, visibility .25s ease;
+  }
+  #rs-lock-overlay.rs-hidden{
+    opacity:0; pointer-events:none; visibility:hidden;
+  }
+  .rs-lock-centered{
+    width:100%; max-width:520px; padding:20px;
+  }
+  .rs-lock-card{
+    background:rgba(255,255,255,0.03);
+    border-radius:var(--rs-radius);
+    border:1px solid rgba(255,255,255,0.06);
+    box-shadow:0 8px 30px rgba(3,6,15,0.6);
+    padding:28px 24px; color:var(--rs-ink);
+  }
+  .rs-lock-card h1{
+    margin:0 0 8px; font-size:20px; font-weight:700;
+  }
+  .rs-lock-sub{
+    margin:0 0 18px; color:var(--rs-muted); font-size:13px;
+  }
+  .rs-field{
+    margin-bottom:14px;
+  }
+  #rs-email-input,
+  #rs-pass-input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.06);
+    background:rgba(255,255,255,0.02);
+    color:var(--rs-ink); 
+    font-size:16px;
+    outline:none;
+  }
+  #rs-email-input::placeholder,
+  #rs-pass-input::placeholder{
+    color:var(--rs-muted);
+  }
+  #rs-login-btn{
+    width:100%;
+    padding:12px 16px;
+    border-radius:10px;
+    border:none;
+    background:linear-gradient(180deg,var(--rs-accent),rgba(100,230,190,0.85));
+    color:#02110b; font-weight:700; cursor:pointer; font-size:15px;
+  }
+  .rs-lock-msg{
+    margin-top:12px; 
+    color:var(--rs-muted); 
+    font-size:13px; 
+    min-height:18px;
+  }
+</style>
+        <script>
+(function(){
+  "use strict";
+  const API_BASE = "https://theorozcorealty.netlify.app/api";
+  // Which pages should be locked
+  const ALLOW_PATHS = [
+    /\/realtysass(?:\.html)?$/i,
+  ];
+  const path = (location.pathname || "/").toLowerCase();
+  const shouldLock = ALLOW_PATHS.some(re => re.test(path));
+  if (!shouldLock){
+    document.querySelectorAll('#rs-lock-overlay').forEach(el => el.remove());
+    return;
+  }
+  const overlay  = document.getElementById('rs-lock-overlay');
+  const msg      = document.getElementById('rs-lock-msg');
+  const emailInp = document.getElementById('rs-email-input');
+  const passInp  = document.getElementById('rs-pass-input');
+  const loginBtn = document.getElementById('rs-login-btn');
+  const card     = document.getElementById('rs-lock-card');
+  // Show overlay
+  overlay.classList.remove('rs-hidden');
+  overlay.style.visibility = 'visible';
+  overlay.style.opacity = '1';
+  // ARIA fix
+  overlay.removeAttribute("aria-hidden");
+  function showMsg(text, isError){
+    msg.textContent = text || '';
+    msg.style.color = isError ? '#ffb3b3' : 'var(--rs-muted)';
+  }
+  function unlock(){
+    document.querySelectorAll('#rs-lock-overlay').forEach(el=>{
+      el.classList.add('rs-hidden');
+      el.style.visibility = 'hidden';
+      el.style.opacity = '0';
+      el.setAttribute("aria-hidden","true");
+    });
+  }
+  async function loginWithServer(email, password){
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false){
+      throw new Error(data.error || "Incorrect email or password.");
+    }
+    return data;
+  }
+  async function onLogin(){
+    const em = emailInp.value.trim().toLowerCase();
+    const pw = passInp.value.trim();
+    if (!em){
+      showMsg("Please enter your email.", true);
+      return;
+    }
+    if (pw.length < 8){
+      showMsg("Password must be at least 8 characters.", true);
+      return;
+    }
+    loginBtn.disabled = true;
+    showMsg("Checking credentials...");
+    try {
+      await loginWithServer(em, pw);
+      showMsg("");
+      unlock();
+    } catch (err){
+      showMsg(err.message || "Incorrect email or password.", true);
+      if(card && card.animate){
+        card.animate(
+          [
+            { transform:'translateX(-5px)' },
+            { transform:'translateX(5px)' },
+            { transform:'translateX(0)' }
+          ],
+          { duration:260 }
+        );
+      }
+    } finally {
+      loginBtn.disabled = false;
+    }
+  }
+  loginBtn.addEventListener("click", onLogin);
+  passInp.addEventListener("keydown", e=>{
+    if (e.key === "Enter") onLogin();
+  });
+  setTimeout(()=> emailInp.focus(), 0);
+})();
+</script>
+      </div>
+    </section>
+    <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="navbar-logo-left-container style-three-header-container w-nav">
+      <div class="container-two">
+        <div class="navbar-wrapper-3">
+          <div class="style-three-nav-brand">
+            <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"><img width="150" height="40" alt="" src="../images/TOR.png" loading="lazy" srcset="../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, ../images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, ../images/TOR.png 2851w" sizes="150px"></a>
+          </div>
+          <div class="w-layout-hflex nav-link-box">
+            <div class="w-layout-hflex nav-one-button-wrap">
+              <div class="menu-button-2 w-nav-button"><img width="31" height="18" alt="Hambarger Menu" src="../images/Icon-nav-1.svg" loading="lazy"></div>
+            </div>
+          </div>
+          <a role="link" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a52" href="tel:+1800456789" class="style-three-phone-button responsive-hidden w-inline-block">
+            <div class="home-three-call-button-text">
+              <div class="style-three-phone-button-txt">Lets Talk</div>
+              <div class="style-three-phone-button-txt">(800) 456 7890</div>
+            </div>
+            <div class="home-three-button-icon"><img width="46" height="46" alt="Call Icon" src="../images/Call-Icon.svg" loading="lazy" class="image-99"></div>
+          </a>
+          <div class="navbar-wrapper-2">
+            <div class="style-three-nav-brand">
+              <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"></a>
+            </div>
+            <div class="w-layout-hflex nav-link-box">
+              <nav role="navigation" class="nav-menu-wrapper-3 w-nav-menu">
+                <ul role="list" class="nav-menu-two w-list-unstyled">
+                  <li class="list-item-5 nav-five-list">
+                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a61" class="home-three-dropdaown-2 w-dropdown">
+                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
+                        <div class="home-three-dropdown">
+                          <a href="../index.html" class="w-inline-block">
+                            <div class="home-three-dropdown-menu black-color">Home </div>
+                          </a>
+                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
+                      </div>
+                      <nav class="home-three-dropdown-list w-dropdown-list"></nav>
+                    </div>
+                  </li>
+                  <li class="list-item-5 nav-five-list">
+                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a6a" class="home-three-dropdaown-2 w-dropdown">
+                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
+                        <div class="home-three-dropdown">
+                          <a href="../about-us.html" class="w-inline-block">
+                            <div class="home-three-dropdown-menu black-color">ABOUT US</div>
+                          </a>
+                          <div class="home-three-dropdown-menu black-color">Pages</div>
+                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
+                      </div>
+                      <nav class="home-three-dropdown-list w-dropdown-list">
+                        <div class="home-three-dropdown-block">
+                          <a href="#" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Who We Are</a>
+                          <a href="#" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Our Realtors</a>
+                        </div>
+                      </nav>
+                    </div>
+                  </li>
+                  <li class="list-item-5 nav-five-list">
+                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a7a" class="home-three-dropdaown-2 w-dropdown">
+                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
+                        <div class="home-three-dropdown">
+                          <a href="../realtysass.html" class="w-inline-block">
+                            <div class="home-three-dropdown-menu black-color">Realty SaSS</div>
+                          </a>
+                          <div class="home-three-dropdown-menu black-color">Properties</div>
+                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
+                      </div>
+                      <nav class="home-three-dropdown-list w-dropdown-list">
+                        <div class="home-three-dropdown-block">
+                          <a href="../features/financial-dashboard.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">KPI Dashboard</a>
+                          <a href="../features/re-defined.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">RE-Defined</a>
+                          <a href="../features/zipped.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">ZiPPED</a>
+                          <a href="../features/psychology.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Psychology Insight</a>
+                          <a href="#" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Ask-Elena</a>
+                        </div>
+                      </nav>
+                    </div>
+                  </li>
+                  <li class="list-item-5 nav-five-list">
+                    <div data-delay="0" data-hover="true" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a90" class="home-three-dropdaown-2 w-dropdown">
+                      <div class="style-three-menu-dropdown-toggle-4 w-dropdown-toggle">
+                        <div class="home-three-dropdown">
+                          <a href="#" class="w-inline-block">
+                            <div class="home-three-dropdown-menu black-color">Blogs &amp; More</div>
+                          </a>
+                          <div class="home-three-dropdown-menu black-color">Blog</div>
+                        </div><img width="9" height="9" alt="Plus" src="../images/Plus.svg" loading="lazy" class="home-three-dropdown-icon">
+                        <a href="#" role="button" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548a99" class="hero-button-3 nav-button w-inline-block">
+                          <div class="button-mask">
+                            <div class="link-text-wrp">
+                              <div class="text-block-24">Contact us</div>
+                              <div class="secondt-btn-text">Contact us</div>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <nav class="home-three-dropdown-list w-dropdown-list">
+                        <div class="home-three-dropdown-block">
+                          <a href="../blog-page/va-loans.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">VA Loan</a>
+                          <a href="../blog-page/a-i-influence-in-realty.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Realtor Killer?</a>
+                          <a href="../blog-page/realtors.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Do I Need a Realtor?</a>
+                          <a href="../features/beat-the-realtor.html" role="link" class="home-three-dropdown-link-2 w-dropdown-link">Beat the Realtor (Game)</a>
+                        </div>
+                      </nav>
+                    </div>
+                  </li>
+                </ul>
+              </nav>
+              <div class="w-layout-hflex nav-one-button-wrap">
+                <div class="menu-button-2 w-nav-button"><img width="31" height="18" alt="Hambarger Menu" src="../images/Icon-nav-1.svg" loading="lazy"></div>
+              </div>
+            </div>
+            <a role="link" data-w-id="7d017fb5-9d8c-b442-a414-467bbc548aad" href="tel:+1800456789" class="style-three-phone-button responsive-hidden w-inline-block">
+              <div class="home-three-call-button-text">
+                <div class="style-three-phone-button-txt">Lets Talk</div>
+                <div class="style-three-phone-button-txt">(800) 456 7890</div>
+              </div>
+              <div class="home-three-button-icon"><img width="46" height="46" alt="Call Icon" src="../images/Call-Icon.svg" loading="lazy" class="image-100"></div>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
+  </header>
+  <section class="section-169"></section>
   <section>
     <div class="w-embed w-script"><!--  Fiduciary Memo — v1.4 (Rank + Last Name guaranteed)  -->
       <div id="fid-memo" data-summarize="https://theorozcorealty.netlify.app/.netlify/functions/summarize" style="all: initial;">

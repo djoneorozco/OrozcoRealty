@@ -1,0 +1,460 @@
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Tue Dec 09 2025 08:01:04 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="6924ff152bca88765a825dcd" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PCS Snapshot</title>
+  <meta content="PCS Snapshot" property="og:title">
+  <meta content="PCS Snapshot" property="twitter:title">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="Webflow" name="generator">
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/new-real-estate-purchase.webflow.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Droid Serif:400,400italic,700,700italic","PT Serif:400,400italic,700,700italic","Bitter:400,700,400italic","Vollkorn:400,400italic,700,700italic","Inconsolata:400,700","Varela:400","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Great Vibes:400","Droid Sans:400,700","Merriweather:300,300italic,400,400italic,700,700italic,900,900italic","Exo:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","DM Sans:300,regular,500,600,700","Gilda Display:regular","Barlow Condensed:regular","Barlow:300italic,regular,italic,500","Material Icons Outlined:regular","Material Icons:regular"]  }});</script>
+  <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+  <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="images/webclip.png" rel="apple-touch-icon">
+</head>
+<body class="body-11">
+  <section>
+    <div class="w-embed"></div>
+    <section></section>
+  </section>
+  <div class="w-embed w-script"><!--  =========================================================
+  PCS SNAPSHOT v3.2 • House of SaSS
+  * Update: Replaces 12-Month Trend with Redfin-Style 1YR/3YR ApexCharts Line Chart
+  * EVERYTHING ELSE UNCHANGED
+=========================================================  -->
+    <div id="pcs-snapshot-shell" style="all: initial;">
+      <!--  FONTS + CHART LIBRARIES  -->
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <style>
+    #pcs-snapshot-shell,
+    #pcs-snapshot-shell * {
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    #pcs-snapshot-wrap {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 32px;
+      background: #0b0e1a;
+      border-radius: 22px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.65);
+      color: #e9ecff;
+    }
+    h2, h3, h4 { margin: 0; padding: 0; }
+    .pcs-panel {
+      background: radial-gradient(circle at top left, #101426, #0f1324);
+      border-radius: 18px;
+      padding: 16px 18px 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.75);
+    }
+    .pcs-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 22px;
+    }
+    .pcs-small { font-size: 12px; color: #a8b0d6; margin-top: 6px; }
+    .pcs-highlight-teal { color: #8ef3c5; font-weight: 600; }
+    .pcs-highlight-blue { color: #6aa7ff; font-weight: 600; }
+    /* ===== TREND TOGGLE BUTTONS ===== */
+    .trend-toggle {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    .trend-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: #0f1324;
+      color: #e9ecff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .trend-btn.active {
+      background: #6aa7ff;
+      color: #0b0e1a;
+      border-color: #6aa7ff;
+      font-weight: 600;
+    }
+    #pcs-trend-chart-apex {
+      width: 100%;
+      height: 260px;
+      margin-top: 6px;
+    }
+    @media (max-width: 900px) {
+      .pcs-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+      <div id="pcs-snapshot-wrap">
+        <!--  HEADER  -->
+        <div class="pcs-header-center">
+          <h2>Permanent Change of Duty Station (PCS) Snapshot</h2>
+          <div class="pcs-tagline" id="pcs-city-line">Loading city data…</div>
+        </div>
+        <div id="pcs-income-main" class="pcs-income-main">$0 / month</div>
+        <div id="pcs-income-breakdown" class="pcs-income-breakdown">
+          Base Pay: — • BAH: — • BAS: —
+        </div>
+        <!--  =================== TOP GRID ===================  -->
+        <div class="pcs-grid-2">
+          <!--  LEFT: Income  -->
+          <div class="pcs-panel">
+            <h4>Your Income vs City Average</h4>
+            <div class="pcs-small">Annual comparison (Low / Avg / High / You)</div>
+            <canvas id="pcs-income-chart" height="220"></canvas>
+            <div id="pcs-income-summary" class="pcs-small pcs-highlight-teal"></div>
+          </div>
+          <!--  RIGHT: Mortgage  -->
+          <div class="pcs-panel">
+            <h4>Your BAH vs Average Mortgage</h4>
+            <div class="pcs-small">Monthly comparison (Low / Avg / High / Your BAH)</div>
+            <canvas id="pcs-bah-chart" height="220"></canvas>
+            <div id="pcs-bah-summary" class="pcs-small pcs-highlight-blue"></div>
+            <div class="pcs-small" style="margin-top:4px;color:#7a86a8;">
+              Mortgage estimate based on 6.75% interest rate.
+            </div>
+          </div>
+        </div>
+        <!--  =================== BOTTOM GRID ===================  -->
+        <div class="pcs-grid-2" style="margin-top:22px;">
+          <!--  LEFT: NEW APEXCHART TREND + PRICE BREAKDOWN  -->
+          <div class="pcs-panel">
+            <h4>12-Month Housing Trend</h4>
+            <div class="pcs-small">Median home price (interactive trend)</div>
+            <!--  ==== 1YR / 3YR Toggle ====  -->
+            <div class="trend-toggle">
+              <button class="trend-btn active" id="btn-1yr">1 Year</button>
+              <button class="trend-btn" id="btn-3yr">3 Years</button>
+            </div>
+            <!--  ==== APEXCHART CONTAINER ====  -->
+            <div id="pcs-trend-chart-apex"></div>
+            <div id="pcs-trend-summary" class="pcs-small pcs-highlight-teal"></div>
+            <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:14px 0;">
+            <h4>Market Price Breakdown</h4>
+            <div class="pcs-small">Median Sale • Avg Sale • Median Listing</div>
+            <canvas id="pcs-pricebreak-chart" height="200"></canvas>
+          </div>
+          <!--  RIGHT: Affordability  -->
+          <div class="pcs-panel">
+            <h4>Affordability Index</h4>
+            <div class="pcs-small">Higher score = better fit for your income</div>
+            <canvas id="pcs-afford-chart" height="220"></canvas>
+            <div id="pcs-afford-summary" class="pcs-small"></div>
+          </div>
+        </div>
+        <!--  QUICKFACTS  -->
+        <h3 style="margin-top:26px;margin-bottom:6px;">City QuickFacts</h3>
+        <div id="pcs-quickfacts" class="pcs-quickfacts"></div>
+      </div>
+      <!--  =========================================================
+       JAVASCRIPT
+  =========================================================  -->
+      <script>
+(function () {
+  const CITY_JSON_URL =
+    "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/cities/SanAntonio.json";
+  const MILPAY_JSON_URL =
+    "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/data/militaryPayTables.json";
+  function getQuery() {
+    const u = new URL(window.location.href);
+    return {
+      type: u.searchParams.get("type") || "ad",
+      rank: u.searchParams.get("rank") || "E4",
+      yos: parseInt(u.searchParams.get("yos") || "2"),
+      family: parseInt(u.searchParams.get("family") || "1"),
+      base: u.searchParams.get("base") || "San Antonio",
+      va: parseInt(u.searchParams.get("va") || "0")
+    };
+  }
+  function normRank(r) {
+    const up = r.toUpperCase();
+    return up[0] + "-" + up.slice(1);
+  }
+  function isE(r) { return r.startsWith("E-"); }
+  function pickYOS(y, table) {
+    const ks = Object.keys(table).map(k => parseInt(k)).sort((a,b)=>a-b);
+    let best = ks[0], diff = Math.abs(y-best);
+    ks.forEach(k => {
+      if (Math.abs(y-k)<diff){ diff=Math.abs(y-k); best=k; }
+    });
+    return String(best);
+  }
+  function money(n){ return "$" + Math.round(n).toLocaleString(); }
+  function safe(obj, path, fb) {
+    try { return path.split(".").reduce((a,k)=>a && a[k], obj) ?? fb; }
+    catch { return fb; }
+  }
+  async function load(url){
+    const r = await fetch(url);
+    if(!r.ok) throw "load fail "+url;
+    return await r.json();
+  }
+  /* ======================================================
+       APEXCHARTS TREND RENDERER
+  ====================================================== */
+  function renderTrendApex(fullData) {
+    const chartEl = document.querySelector("#pcs-trend-chart-apex");
+    if (window.pcsTrendChart) {
+      window.pcsTrendChart.destroy();
+    }
+    const options = {
+      chart: {
+        type: 'line',
+        height: 260,
+        foreColor: '#e9ecff',
+        toolbar: { show: false }
+      },
+      stroke: {
+        width: 3,
+        curve: 'smooth',
+        colors: ['#8ef3c5']
+      },
+      series: [{
+        name: "Median Sale Price",
+        data: fullData.map(d => ({
+          x: new Date(d.month),
+          y: d.median_sale_price
+        }))
+      }],
+      xaxis: {
+        type: 'datetime',
+        labels: { style: { colors: '#e9ecff' } }
+      },
+      yaxis: {
+        labels: {
+          style: { colors: '#e9ecff' },
+          formatter: val => "$" + Math.round(val).toLocaleString()
+        }
+      },
+      tooltip: {
+        theme: 'dark',
+        x: { format: "MMM yyyy" },
+        y: { formatter: v => "$" + Math.round(v).toLocaleString() }
+      },
+      grid: {
+        borderColor: "rgba(255,255,255,0.08)"
+      }
+    };
+    window.pcsTrendChart = new ApexCharts(chartEl, options);
+    window.pcsTrendChart.render();
+  }
+  /* ======================================================
+       MAIN INIT
+  ====================================================== */
+  async function init(){
+    const p = getQuery();
+    const rankKey = normRank(p.rank);
+    const isAD = p.type==="ad";
+    const [city, pay] = await Promise.all([
+      load(CITY_JSON_URL),
+      load(MILPAY_JSON_URL)
+    ]);
+    /* ------------------------------------
+       PAY CALCULATION — unchanged
+    ------------------------------------ */
+    let base=0, bah=0, bas=0;
+    if(isAD){
+      const table = pay.BASEPAY[rankKey]||{};
+      const yKey = pickYOS(p.yos, table);
+      base = table[yKey] || 0;
+      bas = isE(rankKey)
+        ? safe(pay,"BAS.enlisted",0)
+        : safe(pay,"BAS.officer",0);
+      const bahTX = pay.BAH_TX || {};
+      const lack = bahTX["78236"] || {};
+      const grp = p.family>1 ? lack.with : lack.without;
+      if (grp && grp[rankKey]) bah = grp[rankKey];
+    } else {
+      const full = pay.DISABILITY_FULL||{};
+      const keys = Object.keys(full).map(k=>parseInt(k)).sort((a,b)=>a-b);
+      let best = keys[0], diff=Math.abs(p.va-best);
+      keys.forEach(k=>{
+        if(Math.abs(p.va-k)<diff){ diff=Math.abs(p.va-k); best=k; }
+      });
+      const row = full[String(best)];
+      base = row ? row.veteran : 0;
+      bah = 0; bas = 0;
+    }
+    const total = base + bah + bas;
+    document.getElementById("pcs-city-line").textContent =
+      (city.place||"Selected City")+" • Quick PCS Snapshot";
+    document.getElementById("pcs-income-main").textContent =
+      money(total)+" / month";
+    document.getElementById("pcs-income-breakdown").textContent =
+      "Base Pay: "+money(base)+" • BAH: "+money(bah)+" • BAS: "+money(bas);
+    /* ------------------------------------
+       INCOME VS CITY
+    ------------------------------------ */
+    const medInc = safe(city,"income.median_household_income",60000);
+    const low = medInc*0.6;
+    const avg = medInc;
+    const high = medInc*1.35;
+    const userA = total*12;
+    new Chart(document.getElementById("pcs-income-chart"),{
+      type:"bar",
+      data:{
+        labels:["Low","Avg","High","You"],
+        datasets:[{
+          data:[low,avg,high,userA],
+          backgroundColor:["#283555","#3e60a5","#527bdd","#8ef3c5"]
+        }]
+      },
+      options:{
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{ticks:{color:"#e9ecff", callback:v=>"$"+(v/1000)+"k"},
+             grid:{color:"rgba(255,255,255,.06)"}},
+          x:{ticks:{color:"#e9ecff"}, grid:{display:false}}
+        }
+      }
+    });
+    document.getElementById("pcs-income-summary").textContent =
+      ((userA-avg)>=0? "+" : "") +
+      (((userA-avg)/avg)*100).toFixed(1) +
+      "% vs median household income";
+    /* ------------------------------------
+       MORTGAGE USING 6.75% — unchanged
+    ------------------------------------ */
+    const P = safe(city,"housing.market.median_listing_price_realtor",295000);
+    const rate = 0.0675/12;
+    const N = 360;
+    const M = P * (rate*Math.pow(1+rate,N)) / (Math.pow(1+rate,N)-1);
+    const bahLow = M*0.85;
+    const bahAvg = M;
+    const bahHigh = M*1.15;
+    new Chart(document.getElementById("pcs-bah-chart"),{
+      type:"bar",
+      data:{
+        labels:["Low","Avg","High","Your BAH"],
+        datasets:[{
+          data:[bahLow,bahAvg,bahHigh,bah],
+          backgroundColor:["#283555","#3e60a5","#527bdd","#6aa7ff"]
+        }]
+      },
+      options:{
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{ticks:{color:"#e9ecff",callback:v=>"$"+Math.round(v)},
+             grid:{color:"rgba(255,255,255,.06)"}},
+          x:{ticks:{color:"#e9ecff"},grid:{display:false}}
+        }
+      }
+    });
+    document.getElementById("pcs-bah-summary").textContent =
+      "Your BAH covers ~"+((bah/bahAvg)*100).toFixed(1)+"% of estimated mortgage.";
+    /* ======================================================
+         REDFIN-STYLE TREND (NEW)
+    ====================================================== */
+    const allMonths = safe(city,"housing.market.sale_history_36_months",[]);
+    const last12 = allMonths.slice(-12);
+    const last36 = allMonths.slice(-36);
+    // default: 1 year
+    renderTrendApex(last12);
+    document.getElementById("btn-1yr").onclick = () => {
+      document.getElementById("btn-1yr").classList.add("active");
+      document.getElementById("btn-3yr").classList.remove("active");
+      renderTrendApex(last12);
+    };
+    document.getElementById("btn-3yr").onclick = () => {
+      document.getElementById("btn-3yr").classList.add("active");
+      document.getElementById("btn-1yr").classList.remove("active");
+      renderTrendApex(last36);
+    };
+    const yoy = safe(city,"housing.market.zillow_one_year_change_percent",0);
+    document.getElementById("pcs-trend-summary").textContent =
+      "12-month change: "+yoy+"% • "+
+      safe(city,"housing.market.market_type_summary","");
+    /* ------------------------------------
+       PRICE BREAKDOWN — unchanged
+    ------------------------------------ */
+    const medSale = safe(city,"housing.market.q1.median_sale_price",0);
+    const avgSale = safe(city,"housing.market.q1.average_sale_price",0);
+    const medList = safe(city,"housing.market.q1.median_list_price",0);
+    new Chart(document.getElementById("pcs-pricebreak-chart"),{
+      type:"bar",
+      data:{
+        labels:["Median Sale","Avg Sale","Median List"],
+        datasets:[{
+          data:[medSale,avgSale,medList],
+          backgroundColor:["#8ef3c5","#6aa7ff","#527bdd"]
+        }]
+      },
+      options:{
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{ticks:{color:"#e9ecff",callback:v=>"$"+(v/1000)+"k"},
+             grid:{color:"rgba(255,255,255,.06)"}},
+          x:{ticks:{color:"#e9ecff"},grid:{display:false}}
+        }
+      }
+    });
+    /* ------------------------------------
+       AFFORDABILITY — unchanged
+    ------------------------------------ */
+    const annual = total*12;
+    let score = 100 - (P/Math.max(annual,1))*35;
+    score = Math.max(0,Math.min(100,score));
+    new Chart(document.getElementById("pcs-afford-chart"),{
+      type:"doughnut",
+      data:{
+        labels:["Score","Remaining"],
+        datasets:[{
+          data:[score,100-score],
+          backgroundColor:["#6aa7ff","#1a2239"],
+          borderWidth:0,
+          cutout:"70%"
+        }]
+      },
+      options:{plugins:{legend:{display:false},tooltip:{enabled:false}}}
+    });
+    document.getElementById("pcs-afford-summary").textContent =
+      "Affordability Score: "+score.toFixed(0)+"/100.";
+    /* ------------------------------------
+       QUICKFACTS — unchanged
+    ------------------------------------ */
+    const facts=[
+      {label:"Population",value:safe(city,"population.estimate",0).toLocaleString()},
+      {label:"Median Age",value:safe(city,"population.median_age",0)},
+      {label:"Median Household Income",value:money(medInc)},
+      {label:"Poverty Rate",value:safe(city,"income.poverty_rate_percent",0)+"%"},
+      {label:"Median Home Value",value:money(safe(city,"housing.median_value_owner_occupied",P))},
+      {label:"Avg Days on Market",
+        value:safe(city,"housing.market.average_days_on_market_range.low",0)+
+              "–"+
+              safe(city,"housing.market.average_days_on_market_range.high",0)}
+    ];
+    let html="";
+    facts.forEach(f=>{
+      html+=`
+        <div class="pcs-fact">
+          <div class="pcs-fact-label">${f.label}</div>
+          <div class="pcs-fact-value">${f.value}</div>
+        </div>`;
+    });
+    document.getElementById("pcs-quickfacts").innerHTML=html;
+  } // end init
+  init().catch(err=>{
+    console.error("PCS Snapshot error:",err);
+    document.getElementById("pcs-snapshot-wrap").innerHTML =
+      "<div style='color:#e9ecff;font-size:14px;'>PCS Snapshot is temporarily unavailable. Try again later.</div>";
+  });
+})();  
+</script>
+    </div>
+  </div>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=68cecb820ec3dbdca3ef9099" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="js/webflow.js" type="text/javascript"></script>
+</body>
+</html>
