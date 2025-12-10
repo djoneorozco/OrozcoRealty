@@ -37,9 +37,10 @@ export const handler = async (event) => {
     if (!base) return fail("Base location missing.");
 
     // ===========================
-    // 2. LOAD MILITARY PAY TABLES
+    // 2. LOAD YOUR ACTUAL PAY TABLE FILE
+    //    (Was wrong before — corrected now)
     // ===========================
-    const payFile = path.resolve("netlify/functions/data/militaryPayTables.json");
+    const payFile = path.resolve("netlify/functions/data/PayTables.json");
     const rawPay = fs.readFileSync(payFile, "utf8");
     const payJson = JSON.parse(rawPay);
 
@@ -57,10 +58,10 @@ export const handler = async (event) => {
 
     if (!payTable) return fail(`No pay table found for ${rank}`);
 
-    // Find the closest matching YOS slot (1,2,3...or "20+")
+    // Find exact or closest YOS
     let yosKey = Object.keys(payTable).find(k => Number(k) === yos);
 
-    // If exact YOS isn't listed, use highest available bracket
+    // If exact isn't listed, use highest available bracket
     if (!yosKey) {
       const sorted = Object.keys(payTable).map(Number).sort((a,b)=>a-b);
       yosKey = String(sorted[sorted.length - 1]);
@@ -80,7 +81,7 @@ export const handler = async (event) => {
     const bah = Number(family ? bahRank.with_dep : bahRank.single);
 
     // ===========================
-    // 6. DERIVE RANK TITLE
+    // 6. RANK TITLE
     // ===========================
     const RANK_TITLES = {
       "E-1": "Airman Basic",
