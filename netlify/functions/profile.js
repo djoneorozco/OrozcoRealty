@@ -5,7 +5,7 @@
 // BODY:
 //   { email }
 
-const { createClient } = require("@supabase/supabase-js");
+import { createClient } from "@supabase/supabase-js";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -22,7 +22,22 @@ function respond(statusCode, payload) {
   };
 }
 
-exports.handler = async function (event) {
+// Initialise Supabase client once (re-used across invocations)
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+let supabase = null;
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error(
+    "[profile] Missing Supabase env (SUPABASE_URL or SUPABASE_SERVICE_KEY)"
+  );
+} else {
+  supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
+export async function handler(event) {
   // --- 0. CORS preflight ---
   if (event.httpMethod === "OPTIONS") {
     return respond(200, {});
@@ -46,17 +61,10 @@ exports.handler = async function (event) {
     return respond(400, { error: "Email is required" });
   }
 
-  // --- 3. Init Supabase (service key) ---
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  // --- 3. Ensure Supabase configured ---
+  if (!supabase) {
     return respond(500, { error: "Supabase env not configured." });
   }
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
 
   // --- 4. Fetch profile by email ---
   const { data, error } = await supabase
@@ -66,7 +74,7 @@ exports.handler = async function (event) {
     .maybeSingle();
 
   if (error) {
-    console.error("PROFILE SELECT ERROR:", error);
+    console.error("[profile] SELECT ERROR:", error);
     return respond(500, { error: "Failed to load profile." });
   }
 
@@ -79,4 +87,4 @@ exports.handler = async function (event) {
     ok: true,
     profile: data,
   });
-};
+}
