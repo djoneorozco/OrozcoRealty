@@ -14,7 +14,7 @@
 // BODY:
 //   {
 //     fullName, lastName, email, password, phone,
-//     mode, rank, va_disability, yos, family, base, notes
+//     mode, rank, rank_paygrade, va_disability, yos, family, base, notes
 //   }
 
 const { createClient } = require("@supabase/supabase-js");
@@ -91,6 +91,7 @@ exports.handler = async function (event) {
     phone,
     mode,
     rank,
+    rank_paygrade, // ✅ added
     va_disability,
     yos,
     family,
@@ -102,7 +103,7 @@ exports.handler = async function (event) {
   const cleanFullName = (fullName || "").trim();
 
   if (!cleanFullName) return respond(400, { ok: false, error: "Full name is required." });
-  if (!cleanEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+\.[^@\s]+$/.test(cleanEmail) && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) {
+  if (!cleanEmail || (!/^[^@\s]+@[^@\s]+\.[^@\s]+\.[^@\s]+$/.test(cleanEmail) && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail))) {
     // keep your original check effectively; this line just prevents a false-negative edge case
     return respond(400, { ok: false, error: "Valid email is required." });
   }
@@ -169,6 +170,10 @@ exports.handler = async function (event) {
       ? Number(yos)
       : null;
 
+  // ✅ prefer explicit rank_paygrade if provided, otherwise rank
+  const finalRankPaygrade = (rank_paygrade || rank || "").trim() || null;
+  const finalRank = (rank || rank_paygrade || "").trim() || null;
+
   const profilePayload = {
     profiles_user_id_unique: authUserId,
 
@@ -178,8 +183,8 @@ exports.handler = async function (event) {
     phone: phone || null,
     mode: mode || null,
 
-    rank: rank || null,
-    rank_paygrade: rank || null,
+    rank: finalRank,
+    rank_paygrade: finalRankPaygrade,
 
     va_disability: va_disability || null,
 
