@@ -38,12 +38,33 @@ function getProjectRefFromUrl(urlStr) {
   try {
     const u = new URL(urlStr);
     const host = String(u.hostname || "");
-    // typical: <project-ref>.supabase.co
-    const ref = host.split(".")[0] || "";
+    const ref = host.split(".")[0] || ""; // <ref>.supabase.co
     return { host, ref };
   } catch (_) {
     return { host: String(urlStr || ""), ref: "" };
   }
+}
+
+async function findAuthUserIdByEmail(supabase, emailLower) {
+  // Uses Auth Admin API (works even when "auth" schema is not exposed)
+  // Paginates safely; most projects won’t need many pages.
+  const perPage = 200;
+  let page = 1;
+
+  for (let i = 0; i < 20; i++) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+    if (error) return { id: null, error: error.message || String(error) };
+
+    const users = (data && data.users) ? data.users : [];
+    const hit = users.find(u => String(u.email || "").toLowerCase() === emailLower);
+    if (hit && hit.id) return { id: hit.id, error: null };
+
+    // stop if this page returned fewer than perPage (no more data)
+    if (users.length < perPage) break;
+    page += 1;
+  }
+
+  return { id: null, error: null };
 }
 
 exports.handler = async function (event) {
@@ -91,7 +112,7 @@ exports.handler = async function (event) {
     return respond(400, { ok: false, error: "Password must be at least 8 characters." });
   }
 
-  // Prefer UI-provided lastName if present; otherwise derive (minimal)
+  // Prefer UI-provided lastName if present; otherwise derive
   const cleanLastNameInput = (lastName || "").trim();
   const derivedLastName = cleanFullName.includes(" ")
     ? cleanFullName.split(" ").slice(-1)[0]
@@ -112,83 +133,29 @@ exports.handler = async function (event) {
     auth: { persistSession: false, autoRefreshToken: false }
   });
 
-  // --- 3B) Pre-check: does email already exist in Auth? (this is what 409 means)
-  try {
-    const { data: existingAuthUser, error: existingErr } = await supabase
-      .schema("auth")
-      .from("users")
-      .select("id,email")
-      .eq("email", cleanEmail)
-      .maybeSingle();
-
-    if (existingErr) {
-      return respond(500, {
-        ok: false,
-        error: "Auth lookup failed.",
-        details: existingErr.message || String(existingErr),
-        supabase_project_ref,
-        supabase_host
-      });
-    }
-
-    if (existingAuthUser && existingAuthUser.id) {
-      return respond(409, {
-        ok: false,
-        error: "A user with this email address has already been registered",
-        existing_user_id: existingAuthUser.id,
-        email: existingAuthUser.email,
-        supabase_project_ref,
-        supabase_host
-      });
-    }
-  } catch (e) {
-    return respond(500, {
-      ok: false,
-      error: "Auth lookup exception.",
-      details: e && e.message ? e.message : String(e),
-      supabase_project_ref,
-      supabase_host
-    });
-  }
-
   // --- 4) Create Auth user ---
   const { data: userData, error: authError } =
     await supabase.auth.admin.createUser({
       email: cleanEmail,
       password,
-      // You are using your own verification-code flow.
-      // Keep this behavior unchanged.
+      // Keep your existing behavior unchanged
       email_confirm: true
     });
 
   if (authError || !userData || !userData.user || !userData.user.id) {
     const msg = (authError && authError.message) || "Auth registration failed.";
-    const status = /already|exists|registered/i.test(msg) ? 409 : 400;
-
-    // If duplicate happened here (race/old state), try to return the existing id too.
-    if (status === 409) {
-      try {
-        const { data: existingAuthUser2 } = await supabase
-          .schema("auth")
-          .from("users")
-          .select("id,email")
-          .eq("email", cleanEmail)
-          .maybeSingle();
-
-        if (existingAuthUser2 && existingAuthUser2.id) {
-          return respond(409, {
-            ok: false,
-            error: "A user with this email address has already been registered",
-            existing_user_id: existingAuthUser2.id,
-            email: existingAuthUser2.email,
-            supabase_project_ref,
-            supabase_host
-          });
-        }
-      } catch (_) {}
+    const isDup = /already|exists|registered/i.test(msg);
+    if (isDup) {
+      const found = await findAuthUserIdByEmail(supabase, cleanEmail);
+      return respond(409, {
+        ok: false,
+        error: "A user with this email address has already been registered",
+        existing_user_id: found.id || null,
+        supabase_project_ref,
+        supabase_host
+      });
     }
-
-    return respond(status, { ok: false, error: msg, supabase_project_ref, supabase_host });
+    return respond(400, { ok: false, error: msg, supabase_project_ref, supabase_host });
   }
 
   const authUserId = userData.user.id; // uuid
@@ -201,7 +168,6 @@ exports.handler = async function (event) {
 
   const profilePayload = {
     profiles_user_id_unique: authUserId,
-
     email: cleanEmail,
     full_name: cleanFullName,
     last_name: finalLastName,
@@ -225,7 +191,7 @@ exports.handler = async function (event) {
     .insert(profilePayload);
 
   if (profileError) {
-    // --- 5B) Roll back Auth user to prevent orphan accounts ---
+    // --- rollback Auth user ---
     try {
       await supabase.auth.admin.deleteUser(authUserId);
     } catch (_) {}
