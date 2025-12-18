@@ -3,6 +3,15 @@
   "source": "DoD Military Pay Tables (DFAS), BAH (DFAS), VA Disability (VA.gov) (2025)",
   "updated": "2025-04-01",
 
+  "RETIREMENT": {
+    "method": "HIGH_3",
+    "high3_months": 36,
+    "multiplier_per_year_high3": 0.025,
+    "multiplier_per_year_brs": 0.02,
+    "max_multiplier_cap": 0.75,
+    "notes": "Monthly retired pay = HIGH3_avg_monthly_basic_pay * (multiplier_per_year * years_of_service), capped at 75%. High-3 uses 2.5% per year; BRS uses 2.0% per year."
+  },
+
   "BASEPAY": {
     "E-5": { "0": 3220.50, "2": 3466.50, "4": 3637.50, "6": 3802.20, "8": 3959.40, "10": 4142.40, "12": 4234.50, "14": 4259.70, "16": 4259.70, "18": 4259.70, "20": 4259.70, "22": 4259.70, "24": 4259.70, "26": 4259.70, "28": 4259.70, "30": 4259.70 },
     "E-6": { "0": 3276.60, "2": 3606.00, "4": 3765.00, "6": 3919.80, "8": 4080.60, "10": 4443.90, "12": 4585.20, "14": 4858.80, "16": 4942.50, "18": 5003.40, "20": 5074.80, "22": 5074.80, "24": 5074.80, "26": 5074.80, "28": 5074.80, "30": 5074.80 },
@@ -38,170 +47,64 @@
   },
 
   "DISABILITY_FULL": {
-    "10": {
-      "veteran": 175.51,
-      "veteran_spouse": 175.51,
-      "veteran_one_child": 175.51,
-      "veteran_spouse_one_child": 175.51,
-      "additional_child_under_18": 0,
-      "additional_child_over_18_in_school": 0
-    },
-    "20": {
-      "veteran": 346.95,
-      "veteran_spouse": 346.95,
-      "veteran_one_child": 346.95,
-      "veteran_spouse_one_child": 346.95,
-      "additional_child_under_18": 0,
-      "additional_child_over_18_in_school": 0
-    },
-    "30": {
-      "veteran": 537.42,
-      "veteran_spouse": 601.42,
-      "veteran_one_child": 579.42,
-      "veteran_spouse_one_child": 648.42,
-      "additional_child_under_18": 31,
-      "additional_child_over_18_in_school": 102
-    },
-    "40": {
-      "veteran": 774.16,
-      "veteran_spouse": 859.16,
-      "veteran_one_child": 831.16,
-      "veteran_spouse_one_child": 922.16,
-      "additional_child_under_18": 34,
-      "additional_child_over_18_in_school": 113
-    },
-    "50": {
-      "veteran": 1102.04,
-      "veteran_spouse": 1208.04,
-      "veteran_one_child": 1173.04,
-      "veteran_spouse_one_child": 1287.04,
-      "additional_child_under_18": 43,
-      "additional_child_over_18_in_school": 142
-    },
-    "60": {
-      "veteran": 1395.93,
-      "veteran_spouse": 1523.93,
-      "veteran_one_child": 1480.93,
-      "veteran_spouse_one_child": 1617.93,
-      "additional_child_under_18": 52,
-      "additional_child_over_18_in_school": 170
-    },
-    "70": {
-      "veteran": 1759.19,
-      "veteran_spouse": 1908.19,
-      "veteran_one_child": 1858.19,
-      "veteran_spouse_one_child": 2018.19,
-      "additional_child_under_18": 60,
-      "additional_child_over_18_in_school": 197
-    },
-    "80": {
-      "veteran": 2044.89,
-      "veteran_spouse": 2221.89,
-      "veteran_one_child": 2158.89,
-      "veteran_spouse_one_child": 2340.89,
-      "additional_child_under_18": 69,
-      "additional_child_over_18_in_school": 226
-    },
-    "90": {
-      "veteran": 2297.96,
-      "veteran_spouse": 2490.96,
-      "veteran_one_child": 2425.96,
-      "veteran_spouse_one_child": 2630.96,
-      "additional_child_under_18": 78,
-      "additional_child_over_18_in_school": 255
-    },
-    "100": {
-      "veteran": 3831.30,
-      "veteran_spouse": 4044.91,
-      "veteran_one_child": 3974.15,
-      "veteran_spouse_one_child": 4201.35,
-      "additional_child_under_18": 102,
-      "additional_child_over_18_in_school": 332
-    }
+    "10": { "veteran": 175.51, "veteran_spouse": 175.51, "veteran_one_child": 175.51, "veteran_spouse_one_child": 175.51, "additional_child_under_18": 0, "additional_child_over_18_in_school": 0 },
+    "20": { "veteran": 346.95, "veteran_spouse": 346.95, "veteran_one_child": 346.95, "veteran_spouse_one_child": 346.95, "additional_child_under_18": 0, "additional_child_over_18_in_school": 0 },
+    "30": { "veteran": 537.42, "veteran_spouse": 601.42, "veteran_one_child": 579.42, "veteran_spouse_one_child": 648.42, "additional_child_under_18": 31, "additional_child_over_18_in_school": 102 },
+    "40": { "veteran": 774.16, "veteran_spouse": 859.16, "veteran_one_child": 831.16, "veteran_spouse_one_child": 922.16, "additional_child_under_18": 34, "additional_child_over_18_in_school": 113 },
+    "50": { "veteran": 1102.04, "veteran_spouse": 1208.04, "veteran_one_child": 1173.04, "veteran_spouse_one_child": 1287.04, "additional_child_under_18": 43, "additional_child_over_18_in_school": 142 },
+    "60": { "veteran": 1395.93, "veteran_spouse": 1523.93, "veteran_one_child": 1480.93, "veteran_spouse_one_child": 1617.93, "additional_child_under_18": 52, "additional_child_over_18_in_school": 170 },
+    "70": { "veteran": 1759.19, "veteran_spouse": 1908.19, "veteran_one_child": 1858.19, "veteran_spouse_one_child": 2018.19, "additional_child_under_18": 60, "additional_child_over_18_in_school": 197 },
+    "80": { "veteran": 2044.89, "veteran_spouse": 2221.89, "veteran_one_child": 2158.89, "veteran_spouse_one_child": 2340.89, "additional_child_under_18": 69, "additional_child_over_18_in_school": 226 },
+    "90": { "veteran": 2297.96, "veteran_spouse": 2490.96, "veteran_one_child": 2425.96, "veteran_spouse_one_child": 2630.96, "additional_child_under_18": 78, "additional_child_over_18_in_school": 255 },
+    "100": { "veteran": 3831.30, "veteran_spouse": 4044.91, "veteran_one_child": 3974.15, "veteran_spouse_one_child": 4201.35, "additional_child_under_18": 102, "additional_child_over_18_in_school": 332 }
   },
 
   "BAH_TX": {
     "79607": {
       "base": "Dyess Air Force Base",
       "location": "Abilene",
-      "with": {
-        "E-5": 1560, "E-6": 1665, "E-7": 1826, "E-8": 1990, "E-9": 2160,
-        "O-1": 1665, "O-2": 1826, "O-3": 1990, "O-4": 2370, "O-5": 2540, "O-6": 2656, "O-7": 2656
-      },
-      "without": {
-        "E-5": 1245, "E-6": 1341, "E-7": 1438, "E-8": 1540, "E-9": 1648,
-        "O-1": 1341, "O-2": 1438, "O-3": 1540, "O-4": 1735, "O-5": 1862, "O-6": 1965, "O-7": 1965
-      },
+      "with": { "E-5": 1560, "E-6": 1665, "E-7": 1826, "E-8": 1990, "E-9": 2160, "O-1": 1665, "O-2": 1826, "O-3": 1990, "O-4": 2370, "O-5": 2540, "O-6": 2656, "O-7": 2656 },
+      "without": { "E-5": 1245, "E-6": 1341, "E-7": 1438, "E-8": 1540, "E-9": 1648, "O-1": 1341, "O-2": 1438, "O-3": 1540, "O-4": 1735, "O-5": 1862, "O-6": 1965, "O-7": 1965 },
       "verified": true
     },
 
     "76908": {
       "base": "Goodfellow Air Force Base",
       "location": "San Angelo",
-      "with": {
-        "E-5": 1530, "E-6": 1530, "E-7": 1610, "E-8": 1774, "E-9": 1888,
-        "O-1": 1610, "O-2": 1689, "O-3": 1774, "O-4": 2073, "O-5": 2199, "O-6": 2364, "O-7": 2364
-      },
-      "without": {
-        "E-5": 1145, "E-6": 1219, "E-7": 1296, "E-8": 1395, "E-9": 1481,
-        "O-1": 1219, "O-2": 1296, "O-3": 1395, "O-4": 1562, "O-5": 1701, "O-6": 1804, "O-7": 1804
-      },
+      "with": { "E-5": 1530, "E-6": 1530, "E-7": 1610, "E-8": 1774, "E-9": 1888, "O-1": 1610, "O-2": 1689, "O-3": 1774, "O-4": 2073, "O-5": 2199, "O-6": 2364, "O-7": 2364 },
+      "without": { "E-5": 1145, "E-6": 1219, "E-7": 1296, "E-8": 1395, "E-9": 1481, "O-1": 1219, "O-2": 1296, "O-3": 1395, "O-4": 1562, "O-5": 1701, "O-6": 1804, "O-7": 1804 },
       "verified": false
     },
 
     "78236": {
       "base": "JBSA-Lackland",
       "location": "San Antonio",
-      "with": {
-        "E-5": 2181, "E-6": 2181, "E-7": 2256, "E-8": 2419, "E-9": 2516,
-        "O-1": 2263, "O-2": 2331, "O-3": 2516, "O-4": 2649, "O-5": 2866, "O-6": 2970, "O-7": 2970
-      },
-      "without": {
-        "E-5": 1698, "E-6": 1698, "E-7": 1777, "E-8": 1913, "E-9": 2006,
-        "O-1": 1777, "O-2": 1913, "O-3": 2006, "O-4": 2125, "O-5": 2267, "O-6": 2368, "O-7": 2368
-      },
+      "with": { "E-5": 2181, "E-6": 2181, "E-7": 2256, "E-8": 2419, "E-9": 2516, "O-1": 2263, "O-2": 2331, "O-3": 2516, "O-4": 2649, "O-5": 2866, "O-6": 2970, "O-7": 2970 },
+      "without": { "E-5": 1698, "E-6": 1698, "E-7": 1777, "E-8": 1913, "E-9": 2006, "O-1": 1777, "O-2": 1913, "O-3": 2006, "O-4": 2125, "O-5": 2267, "O-6": 2368, "O-7": 2368 },
       "verified": true
     },
 
     "78150": {
       "base": "JBSA-Randolph",
       "location": "Universal City",
-      "with": {
-        "E-5": 2181, "E-6": 2181, "E-7": 2256, "E-8": 2419, "E-9": 2516,
-        "O-1": 2263, "O-2": 2331, "O-3": 2516, "O-4": 2649, "O-5": 2866, "O-6": 2970, "O-7": 2970
-      },
-      "without": {
-        "E-5": 1698, "E-6": 1698, "E-7": 1777, "E-8": 1913, "E-9": 2006,
-        "O-1": 1777, "O-2": 1913, "O-3": 2006, "O-4": 2125, "O-5": 2267, "O-6": 2368, "O-7": 2368
-      },
+      "with": { "E-5": 2181, "E-6": 2181, "E-7": 2256, "E-8": 2419, "E-9": 2516, "O-1": 2263, "O-2": 2331, "O-3": 2516, "O-4": 2649, "O-5": 2866, "O-6": 2970, "O-7": 2970 },
+      "without": { "E-5": 1698, "E-6": 1698, "E-7": 1777, "E-8": 1913, "E-9": 2006, "O-1": 1777, "O-2": 1913, "O-3": 2006, "O-4": 2125, "O-5": 2267, "O-6": 2368, "O-7": 2368 },
       "verified": true
     },
 
     "78234": {
       "base": "JBSA-Fort Sam Houston",
       "location": "San Antonio",
-      "with": {
-        "E-5": 2181, "E-6": 2181, "E-7": 2256, "E-8": 2419, "E-9": 2516,
-        "O-1": 2263, "O-2": 2331, "O-3": 2516, "O-4": 2649, "O-5": 2866, "O-6": 2970, "O-7": 2970
-      },
-      "without": {
-        "E-5": 1698, "E-6": 1698, "E-7": 1777, "E-8": 1913, "E-9": 2006,
-        "O-1": 1777, "O-2": 1913, "O-3": 2006, "O-4": 2125, "O-5": 2267, "O-6": 2368, "O-7": 2368
-      },
+      "with": { "E-5": 2181, "E-6": 2181, "E-7": 2256, "E-8": 2419, "E-9": 2516, "O-1": 2263, "O-2": 2331, "O-3": 2516, "O-4": 2649, "O-5": 2866, "O-6": 2970, "O-7": 2970 },
+      "without": { "E-5": 1698, "E-6": 1698, "E-7": 1777, "E-8": 1913, "E-9": 2006, "O-1": 1777, "O-2": 1913, "O-3": 2006, "O-4": 2125, "O-5": 2267, "O-6": 2368, "O-7": 2368 },
       "verified": true
     },
 
     "78843": {
       "base": "Laughlin Air Force Base",
       "location": "Del Rio",
-      "with": {
-        "E-5": 1557, "E-6": 1557, "E-7": 1627, "E-8": 1785, "E-9": 1943,
-        "O-1": 1627, "O-2": 1717, "O-3": 1785, "O-4": 2085, "O-5": 2212, "O-6": 2377, "O-7": 2377
-      },
-      "without": {
-        "E-5": 1178, "E-6": 1253, "E-7": 1332, "E-8": 1435, "E-9": 1528,
-        "O-1": 1253, "O-2": 1332, "O-3": 1435, "O-4": 1612, "O-5": 1756, "O-6": 1860, "O-7": 1860
-      },
+      "with": { "E-5": 1557, "E-6": 1557, "E-7": 1627, "E-8": 1785, "E-9": 1943, "O-1": 1627, "O-2": 1717, "O-3": 1785, "O-4": 2085, "O-5": 2212, "O-6": 2377, "O-7": 2377 },
+      "without": { "E-5": 1178, "E-6": 1253, "E-7": 1332, "E-8": 1435, "E-9": 1528, "O-1": 1253, "O-2": 1332, "O-3": 1435, "O-4": 1612, "O-5": 1756, "O-6": 1860, "O-7": 1860 },
       "verified": true
     }
   }
