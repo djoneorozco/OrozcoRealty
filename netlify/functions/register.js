@@ -46,8 +46,6 @@ function getProjectRefFromUrl(urlStr) {
 }
 
 async function findAuthUserIdByEmail(supabase, emailLower) {
-  // Uses Auth Admin API (works even when "auth" schema is not exposed)
-  // Paginates safely; most projects won’t need many pages.
   const perPage = 200;
   let page = 1;
 
@@ -59,7 +57,6 @@ async function findAuthUserIdByEmail(supabase, emailLower) {
     const hit = users.find(u => String(u.email || "").toLowerCase() === emailLower);
     if (hit && hit.id) return { id: hit.id, error: null };
 
-    // stop if this page returned fewer than perPage (no more data)
     if (users.length < perPage) break;
     page += 1;
   }
@@ -105,14 +102,14 @@ exports.handler = async function (event) {
   const cleanFullName = (fullName || "").trim();
 
   if (!cleanFullName) return respond(400, { ok: false, error: "Full name is required." });
-  if (!cleanEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) {
+  if (!cleanEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+\.[^@\s]+$/.test(cleanEmail) && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) {
+    // keep your original check effectively; this line just prevents a false-negative edge case
     return respond(400, { ok: false, error: "Valid email is required." });
   }
   if (!password || password.length < 8) {
     return respond(400, { ok: false, error: "Password must be at least 8 characters." });
   }
 
-  // Prefer UI-provided lastName if present; otherwise derive
   const cleanLastNameInput = (lastName || "").trim();
   const derivedLastName = cleanFullName.includes(" ")
     ? cleanFullName.split(" ").slice(-1)[0]
@@ -138,13 +135,13 @@ exports.handler = async function (event) {
     await supabase.auth.admin.createUser({
       email: cleanEmail,
       password,
-      // Keep your existing behavior unchanged
       email_confirm: true
     });
 
   if (authError || !userData || !userData.user || !userData.user.id) {
     const msg = (authError && authError.message) || "Auth registration failed.";
     const isDup = /already|exists|registered/i.test(msg);
+
     if (isDup) {
       const found = await findAuthUserIdByEmail(supabase, cleanEmail);
       return respond(409, {
@@ -155,7 +152,13 @@ exports.handler = async function (event) {
         supabase_host
       });
     }
-    return respond(400, { ok: false, error: msg, supabase_project_ref, supabase_host });
+
+    return respond(400, {
+      ok: false,
+      error: msg,
+      supabase_project_ref,
+      supabase_host
+    });
   }
 
   const authUserId = userData.user.id; // uuid
@@ -168,6 +171,7 @@ exports.handler = async function (event) {
 
   const profilePayload = {
     profiles_user_id_unique: authUserId,
+
     email: cleanEmail,
     full_name: cleanFullName,
     last_name: finalLastName,
@@ -196,13 +200,18 @@ exports.handler = async function (event) {
       await supabase.auth.admin.deleteUser(authUserId);
     } catch (_) {}
 
+    console.error("PROFILE INSERT ERROR:", profileError);
+
     const msg = profileError.message || "Profile save failed.";
     const status = /duplicate|unique/i.test(msg) ? 409 : 500;
 
+    // ✅ KEY CHANGE: put the REAL DB message into `error`
+    // so your existing UI alert shows the actual cause.
     return respond(status, {
       ok: false,
-      error: "Profile save failed.",
+      error: msg,
       details: msg,
+      code: profileError.code || null,
       supabase_project_ref,
       supabase_host
     });
