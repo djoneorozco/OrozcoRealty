@@ -1,21 +1,27 @@
 // netlify/functions/ask-elena.js
-// Elena — Profile-Aware Concierge v2.0
-// - Keeps your Intent Router
-// - Adds Supabase profile lookup (public.profiles) when email is provided
-// - Adds deterministic pay awareness (Base Pay + BAS always; BAH if ZIP table available)
-// - Prevents "income" keyword from immediately routing users away if we can answer now
-// CommonJS + Node 18 native fetch
+// v2.0 — Profile-Aware Concierge + Deterministic Pay Snapshot
+// CommonJS • Node 18 native fetch
+//
+// What’s new:
+// - Reads identity from payload.context.email (or payload.email)
+// - Fetches user profile from Supabase public.profiles
+// - Computes Base Pay / BAH / Total via /api/pay-tables when possible
+// - Uses intent router first, but now can answer “rank” / “total pay” directly
+//
+// ENV REQUIRED:
+// - SUPABASE_URL
+// - SUPABASE_SERVICE_KEY   (service role key; read access to public.profiles)
+//
+// ENV OPTIONAL:
+// - PAY_TABLES_ORIGIN  (default: https://theorozcorealty.com)
+//   Should be the domain that serves /api/pay-tables (your Netlify redirect)
 
 const { createClient } = require("@supabase/supabase-js");
-const fs = require("fs");
-const path = require("path");
 
-/* ============================================================
-   //#0 — CORS
-============================================================ */
 const ALLOW_ORIGINS = [
   "https://theorozcorealty.com",
   "https://new-real-estate-purchase.webflow.io",
+  "https://www.new-real-estate-purchase.webflow.io",
   "https://theorozcorealty.netlify.app",
   "http://localhost:8888",
 ];
@@ -33,455 +39,282 @@ function corsHeaders(origin) {
 }
 
 /* ============================================================
-   //#1 — SUPABASE (Service Role)
-   ENV REQUIRED:
-   - SUPABASE_URL
-   - SUPABASE_SERVICE_KEY
+   //#1 — SUPABASE
 ============================================================ */
-function getSupabaseAdmin() {
+function getSupabase() {
   const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_KEY; // service role (server only)
+  const key = process.env.SUPABASE_SERVICE_KEY;
   if (!url || !key) return null;
-  return createClient(url, key, {
-    auth: { persistSession: false },
-    global: { headers: { "X-Client-Info": "ask-elena-v2.0" } },
-  });
-}
-
-function normEmail(v) {
-  return String(v || "").trim().toLowerCase();
-}
-
-async function fetchProfileByEmail(email) {
-  const e = normEmail(email);
-  if (!e) return null;
-
-  const supabase = getSupabaseAdmin();
-  if (!supabase) return null;
-
-  // Pull only what we need (don’t over-fetch)
-  const { data, error } = await supabase
-    .from("profiles")
-    .select(
-      [
-        "email",
-        "full_name",
-        "rank",
-        "rank_paygrade",
-        "years_of_service",
-        "yos",
-        "base",
-        "zip",
-        "family",
-        "va_disability",
-        "mode",
-      ].join(",")
-    )
-    .eq("email", e)
-    .maybeSingle();
-
-  if (error) return null;
-  return data || null;
+  return createClient(url, key, { auth: { persistSession: false } });
 }
 
 /* ============================================================
-   //#2 — PAY TABLES (Deterministic)
-   Uses local JSON if present:
-   netlify/functions/data/militaryPayTables.json
-   (You already have this file per your system memory.)
+   //#2 — HELPERS (safe parsing + profile normalization)
 ============================================================ */
-let __PAY_TABLES_CACHE__ = null;
-
-function loadPayTablesSafe() {
+function safeJsonParse(s) {
   try {
-    if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
-    const fp = path.join(__dirname, "data", "militaryPayTables.json");
-    if (!fs.existsSync(fp)) return null;
-    const raw = fs.readFileSync(fp, "utf8");
-    const json = JSON.parse(raw);
-    __PAY_TABLES_CACHE__ = json;
-    return json;
+    return JSON.parse(s || "{}");
   } catch (_) {
-    return null;
+    return {};
   }
 }
 
-function toNum(v) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
+function normStr(v) {
+  return String(v || "").trim();
 }
 
-function pickClosestLE(keys, target) {
-  // keys are strings (e.g., "0","1","2","3","4","5","6","8","10","12","14","16","18","20","22","24","26","28","30")
-  // pick closest <= target, else smallest
-  const nums = keys
-    .map((k) => ({ k, n: Number(k) }))
-    .filter((x) => Number.isFinite(x.n))
-    .sort((a, b) => a.n - b.n);
-
-  if (!nums.length) return null;
-
-  let best = nums[0].k;
-  for (const item of nums) {
-    if (item.n <= target) best = item.k;
-    else break;
+function pickFirst(obj, keys) {
+  for (const k of keys) {
+    const v = obj?.[k];
+    if (v !== undefined && v !== null && String(v).trim() !== "") return v;
   }
-  return best;
+  return null;
 }
 
-function inferPaygrade(profile) {
-  // Prefer rank_paygrade like "E-7"
-  const rp = String(profile?.rank_paygrade || "").trim();
-  if (rp) return rp;
-
-  // Fallback: if profile.rank is "MSgt", you can’t deterministically map without a dictionary.
-  // We’ll return empty and still answer with what we can.
-  return "";
+function toBool(v) {
+  if (typeof v === "boolean") return v;
+  const s = String(v || "").toLowerCase().trim();
+  if (["true", "yes", "y", "1"].includes(s)) return true;
+  if (["false", "no", "n", "0"].includes(s)) return false;
+  return null;
 }
 
-function inferIsOfficer(paygrade) {
-  const pg = String(paygrade || "").toUpperCase();
-  return pg.startsWith("O-") || pg.startsWith("O");
-}
-
-function hasDependentsFromProfile(profile) {
-  // Your profile "family" is often a number (e.g., 7).
-  // If family > 1 → has dependents.
-  const fam = toNum(profile?.family);
-  if (fam === null) return null;
-  return fam > 1;
-}
-
-function dollars(n) {
-  if (!Number.isFinite(n)) return null;
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
-}
-
-function computeMonthlyPayFromTables(profile) {
-  const tables = loadPayTablesSafe();
-  if (!tables) return null;
-
-  const paygrade = inferPaygrade(profile);
-  const yosRaw = toNum(profile?.years_of_service ?? profile?.yos);
-  const yos = yosRaw === null ? null : Math.max(0, Math.floor(yosRaw));
-
-  const isOfficer = inferIsOfficer(paygrade);
-
-  // BASEPAY
-  let basePay = null;
-  if (paygrade && yos !== null && tables?.BASEPAY?.[paygrade]) {
-    const yosKeys = Object.keys(tables.BASEPAY[paygrade] || {});
-    const k = pickClosestLE(yosKeys, yos);
-    if (k && tables.BASEPAY[paygrade][k] != null) basePay = Number(tables.BASEPAY[paygrade][k]);
-  }
-
-  // BAS
-  let bas = null;
-  const basTable = tables?.BAS;
-  if (basTable) {
-    const key = isOfficer ? "officer" : "enlisted";
-    if (basTable[key] != null) bas = Number(basTable[key]);
-  }
-
-  // BAH (only if we have ZIP + table includes it)
-  let bah = null;
-  const zip = String(profile?.zip || "").trim();
-  const bahTx = tables?.BAH_TX;
-  if (zip && bahTx && bahTx[zip]) {
-    const hasDeps = hasDependentsFromProfile(profile);
-    const depBucket =
-      hasDeps === true ? "with" : hasDeps === false ? "without" : "with"; // default to "with" if unknown
-
-    // Table structure in your memory:
-    // BAH_TX[ZIP] -> { with{rank:bah}, without{rank:bah} }
-    const rankKey = paygrade || "";
-    const v = bahTx[zip]?.[depBucket]?.[rankKey];
-    if (v != null) bah = Number(v);
-  }
-
-  const total = [basePay, bas, bah].filter((x) => Number.isFinite(x)).reduce((a, b) => a + b, 0) || null;
-
+function redactProfile(p) {
+  if (!p) return null;
   return {
-    paygrade: paygrade || null,
-    yos: yos !== null ? yos : null,
-    basePay: Number.isFinite(basePay) ? basePay : null,
-    bas: Number.isFinite(bas) ? bas : null,
-    bah: Number.isFinite(bah) ? bah : null,
-    total: Number.isFinite(total) ? total : null,
-    zip: zip || null,
+    email: p.email || null,
+    full_name: p.full_name || p.name || null,
+    rank: p.rank || p.rank_paygrade || null,
+    yos: p.yos || p.years_of_service || null,
+    family: p.family ?? p.dependents ?? null,
+    base: p.base || null,
+    zip:
+      p.zip ||
+      p.bah_zip ||
+      p.postal_code ||
+      p.duty_zip ||
+      null,
+    va_disability: p.va_disability ?? null,
   };
 }
 
 /* ============================================================
-   //#3 — INTENT ROUTER (Upgraded: profile-aware)
+   //#3 — PROFILE FETCH
 ============================================================ */
-function isCompensationQuestion(text) {
-  const t = String(text || "").toLowerCase();
-  return (
-    t.includes("how much") ||
-    t.includes("make") ||
-    t.includes("salary") ||
-    t.includes("income") ||
-    t.includes("base pay") ||
-    t.includes("bah") ||
-    t.includes("bas") ||
-    t.includes("total pay") ||
-    t.includes("compensation")
-  );
-}
+async function fetchProfileByEmail(email) {
+  const supabase = getSupabase();
+  if (!supabase) return { ok: false, error: "Supabase not configured" };
 
-function detectIntent(text, ctx) {
-  const t = String(text || "").toLowerCase();
-  const hasProfile = !!ctx?.profile;
+  const e = normStr(email).toLowerCase();
+  if (!e) return { ok: false, error: "Missing email" };
 
-  // ------------------------------------------------------------
-  // 1) PAY / INCOME — If we can answer with profile, do it first
-  // ------------------------------------------------------------
-  if (isCompensationQuestion(t) && hasProfile) {
-    const pay = ctx?.pay || null;
+  // Try both possible column names (some builds use email, some user_email)
+  // We’ll attempt "email" first.
+  let { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("email", e)
+    .maybeSingle();
 
-    // Build a precise, honest answer from what we actually know
-    const name = String(ctx.profile?.full_name || "").trim() || "you";
-    const rank = String(ctx.profile?.rank || ctx.profile?.rank_paygrade || "").trim();
-    const yos = ctx.profile?.years_of_service ?? ctx.profile?.yos;
+  if (error) return { ok: false, error: String(error.message || error) };
+  if (!data) {
+    // Fallback: user_email (if your schema differs)
+    const alt = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("user_email", e)
+      .maybeSingle();
 
-    // Always: Base Pay + BAS if available
-    const basePayStr = pay?.basePay != null ? dollars(pay.basePay) : null;
-    const basStr = pay?.bas != null ? dollars(pay.bas) : null;
-    const bahStr = pay?.bah != null ? dollars(pay.bah) : null;
-    const totalStr = pay?.total != null ? dollars(pay.total) : null;
-
-    let reply = "";
-
-    // If we have strong numbers:
-    if (basePayStr || basStr || bahStr) {
-      reply += `Here’s what I can calculate right now for ${name}${rank ? ` (${rank}` : ""}${yos != null ? `, ${yos} YOS` : ""}:\n\n`;
-
-      if (basePayStr) reply += `• Base Pay (monthly): **${basePayStr}**\n`;
-      if (basStr) reply += `• BAS (monthly): **${basStr}**\n`;
-
-      if (bahStr) {
-        reply += `• BAH (monthly): **${bahStr}**${pay?.zip ? ` (ZIP ${pay.zip})` : ""}\n`;
-      } else {
-        reply += `• BAH: I can calculate this once I have your **ZIP** (BAH is ZIP-specific).\n`;
-      }
-
-      if (totalStr) reply += `\n**Estimated monthly total:** **${totalStr}**\n`;
-
-      reply += `\nIf you want, tell me your ZIP and whether you have dependents, and I’ll pin your BAH exactly.`;
-    } else {
-      // We have profile but not enough to compute
-      reply =
-        `I can see your profile, but I’m missing the fields needed to compute your pay precisely (paygrade/YOS/ZIP).\n\n` +
-        `If you give me your **paygrade (ex: E-7)**, **years of service**, and **ZIP**, I’ll calculate Base Pay + BAS + BAH.`;
-    }
-
-    return { type: "compensation", reply };
+    if (alt?.error) return { ok: false, error: String(alt.error.message || alt.error) };
+    data = alt?.data || null;
   }
 
-  // ------------------------------------------------------------
-  // 2) Financial Dashboard / Budget / Affordability
-  // (Do NOT auto-route purely on “income” if no profile OR if user asked “how much do I make”)
-  // ------------------------------------------------------------
+  if (!data) return { ok: false, error: "Profile not found" };
+  return { ok: true, profile: data };
+}
+
+/* ============================================================
+   //#4 — PAY COMPUTE (server-side call to /api/pay-tables)
+============================================================ */
+async function computePaySnapshotFromProfile(profile) {
+  const origin = normStr(process.env.PAY_TABLES_ORIGIN) || "https://theorozcorealty.com";
+
+  const rank = normStr(pickFirst(profile, ["rank_paygrade", "rank"]));
+  const yosRaw = pickFirst(profile, ["yos", "years_of_service"]);
+  const zip = normStr(pickFirst(profile, ["bah_zip", "zip", "postal_code", "duty_zip"]));
+  const fam = pickFirst(profile, ["family", "dependents"]);
+
+  const yos = Number(yosRaw);
+  const family = toBool(fam);
+
+  // We can still be useful without ZIP (Base Pay only),
+  // but the /api/pay-tables needs ZIP for BAH.
+  const payload = {
+    rank: rank || null,
+    yos: Number.isFinite(yos) ? yos : null,
+    zip: zip || null,
+    family: family === null ? false : family,
+  };
+
+  // If we don't have the minimum, bail gracefully
+  if (!payload.rank || !payload.yos) {
+    return {
+      ok: false,
+      error: "Missing rank or years of service",
+      used: payload,
+    };
+  }
+
+  // Call your existing deterministic endpoint
+  // NOTE: uses your Netlify redirect convention: /api/*
+  try {
+    const res = await fetch(`${origin}/api/pay-tables`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data?.ok) {
+      return {
+        ok: false,
+        error: data?.error || `pay-tables failed (${res.status})`,
+        used: payload,
+      };
+    }
+
+    return {
+      ok: true,
+      used: payload,
+      pay: {
+        rank: data.rank || payload.rank,
+        rankTitle: data.rankTitle || null,
+        yos: data.yos ?? payload.yos,
+        zip: data.zip ?? payload.zip,
+        basePay: Number(data.basePay || 0),
+        bah: Number(data.bah || 0),
+        total: Number(data.total || 0),
+      },
+    };
+  } catch (err) {
+    return { ok: false, error: String(err?.message || err), used: payload };
+  }
+}
+
+/* ============================================================
+   //#5 — INTENT ROUTER (now profile-aware)
+============================================================ */
+function detectIntent(text) {
+  const t = String(text || "").toLowerCase();
+
+  // Rank / pay / compensation
+  if (
+    t.includes("my rank") ||
+    t.includes("what is my rank") ||
+    t.includes("rank am i")
+  ) {
+    return { type: "rank_lookup" };
+  }
+
+  if (
+    t.includes("total pay") ||
+    t.includes("monthly total") ||
+    t.includes("monthly pay") ||
+    t.includes("how much do i make") ||
+    t.includes("my pay") ||
+    t.includes("compensation") ||
+    t.includes("base pay") ||
+    t.includes("bah") ||
+    t.includes("bas")
+  ) {
+    return { type: "pay_lookup" };
+  }
+
+  // Financial Dashboard / Budget / Affordability
   if (
     t.includes("budget") ||
     t.includes("afford") ||
     t.includes("expenses") ||
     t.includes("mortgage") ||
-    t.includes("financial") ||
-    (t.includes("income") && !isCompensationQuestion(t)) ||
-    t.includes("debt") ||
-    t.includes("obligation")
+    t.includes("financial")
   ) {
-    const prefix = hasProfile
-      ? `I can see your profile basics already. Now let’s build your *true* monthly picture (debt + expenses + savings).\n\n`
-      : `To get started, let’s build your true financial profile.\n\n`;
-
-    return {
-      type: "financial_dashboard",
-      reply:
-        prefix +
-        `Open your Financial Dashboard here:\n\n` +
-        `**https://theorozcorealty.com/dashboard**\n\n` +
-        `Once that’s filled out, I’ll give you a clean affordability verdict (safe / tight / high risk) and next steps.`,
-    };
+    return { type: "financial_dashboard" };
   }
 
-  // ------------------------------------------------------------
-  // 3) Analysis / Memo
-  // ------------------------------------------------------------
+  // Analysis / Memo
   if (t.includes("analysis") || t.includes("memo") || t.includes("fiduciary") || t.includes("results")) {
-    return {
-      type: "analysis",
-      reply:
-        `Your Fiduciary Snapshot explains real affordability, monthly cushion, and risk level.\n\n` +
-        `If you’ve completed the dashboard, open your Analysis page here:\n\n` +
-        `**https://theorozcorealty.com/analysis**\n\n` +
-        `Ask me what looks “off” and I’ll break it down clearly.`,
-    };
+    return { type: "analysis" };
   }
 
-  // ------------------------------------------------------------
-  // 4) AIOU Test
-  // ------------------------------------------------------------
+  // AIOU Test
   if (t.includes("aiou") || t.includes("psych") || t.includes("personality") || t.includes("code") || t.includes("unlock")) {
-    return {
-      type: "aiou",
-      reply:
-        `Next step is your A.I.O.U Personality Test — it reveals your buying psychology and generates your unlock code.\n\n` +
-        `Begin here:\n\n` +
-        `**https://theorozcorealty.com/aiou**\n\n` +
-        `It’s quick, insightful, and it makes the rest of the system feel “made for you.”`,
-    };
+    return { type: "aiou" };
   }
 
-  // ------------------------------------------------------------
-  // 5) RealtySaSS Unlock
-  // ------------------------------------------------------------
+  // RealtySaSS Unlock
   if (t.includes("realtysass") || t.includes("sass") || t.includes("unlock") || t.includes("tools")) {
-    return {
-      type: "sass_unlock",
-      reply:
-        `RealtySaSS is our private suite of intelligent tools.\n\n` +
-        `Enter your unlock code here:\n\n` +
-        `**https://theorozcorealty.com/realtysass**\n\n` +
-        `If you don’t have a code yet, take AIOU and I’ll line it up for you.`,
-    };
+    return { type: "sass_unlock" };
   }
 
-  // ------------------------------------------------------------
-  // 6) Blog intents
-  // ------------------------------------------------------------
-  if (t.includes("va loan") || (t.includes("va") && t.includes("certificate"))) {
-    return {
-      type: "blog_va",
-      reply:
-        `Here’s the clean walkthrough of the VA Loan Process:\n\n` +
-        `https://new-real-estate-purchase.webflow.io/blog-page/va-loan-process\n\n` +
-        `If you tell me your timeline + credit range, I’ll tailor the steps.`,
-    };
+  // Blog intents (keep your originals)
+  if (t.includes("va loan") || (t.includes("va") && t.includes("loan")) || t.includes("certificate")) {
+    return { type: "blog_va" };
   }
-
   if (t.includes("steps") || t.includes("first time") || t.includes("buying") || t.includes("process")) {
-    return {
-      type: "blog_steps",
-      reply:
-        `Here’s your guide to Home Buying Steps:\n\n` +
-        `https://new-real-estate-purchase.webflow.io/blog-page/home-buying-steps\n\n` +
-        `Want me to map these steps to your situation?`,
-    };
+    return { type: "blog_steps" };
   }
-
   if (t.includes("realtor") || t.includes("agent")) {
-    return {
-      type: "blog_realtor",
-      reply:
-        `Here’s the article on whether you actually need a realtor:\n\n` +
-        `https://new-real-estate-purchase.webflow.io/blog-page/do-i-need-a-realtor\n\n` +
-        `If you tell me your market + timeline, I’ll give you the pros/cons.`,
-    };
+    return { type: "blog_realtor" };
   }
-
   if (t.includes("risk") || t.includes("danger") || t.includes("mistake")) {
-    return {
-      type: "blog_risks",
-      reply:
-        `Here’s a clean breakdown of risks and benefits of buying:\n\n` +
-        `https://new-real-estate-purchase.webflow.io/blog-page/home-buying-steps\n\n` +
-        `If you share your price target and debts, I’ll call the risk level bluntly.`,
-    };
+    return { type: "blog_risks" };
   }
 
   return null;
 }
 
-/* ============================================================
-   //#4 — OPENAI FALLBACK
-============================================================ */
-async function callOpenAI({ userText, profile, pay }) {
-  const key = process.env.OPENAI_API_KEY;
-  if (!key) {
-    return `Elena (dev echo): “${userText}” — Add OPENAI_API_KEY to enable real answers.`;
+function fmtUSD(n) {
+  return (Number(n) || 0).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+}
+
+function buildRankPayReply(profileSafe, paySnap) {
+  const name = normStr(profileSafe?.full_name) || "Service Member";
+  const rank = normStr(profileSafe?.rank) || "—";
+  const yos = profileSafe?.yos ?? "—";
+  const base = normStr(profileSafe?.base) || "—";
+  const zip = normStr(profileSafe?.zip) || "";
+
+  if (!paySnap?.ok) {
+    // Still return something useful
+    return (
+      `Got you, ${name}. Here’s what I can see on file:\n\n` +
+      `• Rank: **${rank}**\n` +
+      `• YOS: **${yos}**\n` +
+      `• Base: **${base}**\n\n` +
+      `I can calculate your **Base Pay + BAH + Total** as soon as your profile includes a valid **ZIP** for BAH (or you tell me the ZIP).`
+    );
   }
 
-  // Keep it short + directive, but now WITH profile context
-  const systemParts = [
-    "You are Elena, a warm, emotionally-intelligent A.I. Concierge for OrozcoRealty.",
-    "Voice: high-trust, calm, strategic, slightly playful, never explicit.",
-    "Keep answers under 8 sentences. End with a next step.",
-    "Use deterministic numbers provided in context; do NOT invent pay, BAH, BAS, debts, or rates.",
-  ];
-
-  const profileBrief = profile
-    ? {
-        full_name: profile.full_name || null,
-        rank: profile.rank || null,
-        rank_paygrade: profile.rank_paygrade || null,
-        years_of_service: profile.years_of_service ?? profile.yos ?? null,
-        base: profile.base || null,
-        family: profile.family || null,
-        va_disability: profile.va_disability || null,
-        zip: profile.zip || null,
-        mode: profile.mode || null,
-      }
-    : null;
-
-  const payBrief = pay
-    ? {
-        basePay_monthly: pay.basePay ?? null,
-        bas_monthly: pay.bas ?? null,
-        bah_monthly: pay.bah ?? null,
-        total_monthly_estimate: pay.total ?? null,
-        zip_used_for_bah: pay.zip ?? null,
-      }
-    : null;
-
-  const contextBlock = {
-    profile: profileBrief,
-    pay: payBrief,
-    rules: {
-      if_missing_bah_zip: "If BAH is null, ask for ZIP and dependents.",
-      if_user_asks_income: "Explain what you can compute now (base pay + BAS) and what you need for BAH.",
-    },
-  };
-
-  const messages = [
-    { role: "system", content: systemParts.join(" ") },
-    {
-      role: "system",
-      content:
-        "Context JSON (truth source, do not fabricate beyond this):\n" + JSON.stringify(contextBlock),
-    },
-    { role: "user", content: userText },
-  ];
-
-  const resp = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      temperature: 0.4,
-      max_tokens: 500,
-      messages,
-    }),
-  });
-
-  const data = await resp.json().catch(() => ({}));
-  const reply = (data?.choices?.[0]?.message?.content || "").trim();
-  return reply || "I’m right here. What would you like to do next?";
+  const p = paySnap.pay || {};
+  const basNote = "BAS is not included in the pay-tables total unless you add it separately in your dashboard logic.";
+  return (
+    `Yes, ${name} — I’ve got you.\n\n` +
+    `• Rank: **${p.rankTitle || p.rank}**, YOS **${p.yos}**\n` +
+    `• Base Pay: **${fmtUSD(p.basePay)} / mo**\n` +
+    `• BAH: **${fmtUSD(p.bah)} / mo** ${zip ? `(ZIP ${zip})` : ""}\n` +
+    `• Total (Base + BAH): **${fmtUSD(p.total)} / mo**\n\n` +
+    `${basNote}`
+  );
 }
 
 /* ============================================================
-   //#5 — HANDLER
+   //#6 — HANDLER
 ============================================================ */
 module.exports.handler = async (event) => {
   const origin = event.headers?.origin || "";
   const headers = corsHeaders(origin);
 
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers, body: "" };
-  }
-
+  if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers, body: "" };
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, headers, body: JSON.stringify({ error: "Method Not Allowed" }) };
   }
@@ -489,73 +322,259 @@ module.exports.handler = async (event) => {
   // Parse body
   let payload = {};
   try {
-    payload = JSON.parse(event.body || "{}");
+    payload = safeJsonParse(event.body);
   } catch (_) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON body" }) };
   }
 
-  const userText = String(payload.message || "").trim();
-  if (!userText) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: "Missing message" }) };
-  }
+  const userText = normStr(payload.message);
+  if (!userText) return { statusCode: 400, headers, body: JSON.stringify({ error: "Missing message" }) };
 
-  /* ============================================================
-     //#5.1 — PROFILE CONTEXT (email passed from UI)
-     Supported places to send email:
-     - payload.email
-     - payload.context.email
-     - payload.context.identity.email
-  ============================================================ */
-  const email =
-    normEmail(payload?.email) ||
-    normEmail(payload?.context?.email) ||
-    normEmail(payload?.context?.identity?.email);
+  // ============================================================
+  // //#6.1 — OPTIONAL: attach user identity
+  // We expect: payload.context.email (preferred) OR payload.email
+  // ============================================================
+  const ctx = payload.context && typeof payload.context === "object" ? payload.context : {};
+  const email = normStr(ctx.email || payload.email || "");
 
   let profile = null;
+  let profileSafe = null;
+  let paySnap = null;
+
   if (email) {
-    profile = await fetchProfileByEmail(email);
+    const profRes = await fetchProfileByEmail(email);
+    if (profRes.ok) {
+      profile = profRes.profile;
+      profileSafe = redactProfile(profile);
+      paySnap = await computePaySnapshotFromProfile(profile);
+    }
   }
 
-  // Deterministic pay summary if we can
-  const pay = profile ? computeMonthlyPayFromTables(profile) : null;
+  // ============================================================
+  // //#6.2 — INTENT ROUTING FIRST (profile-aware)
+  // ============================================================
+  const intent = detectIntent(userText);
 
-  /* ============================================================
-     //#6 — INTENT ROUTING FIRST (NOW PROFILE-AWARE)
-  ============================================================ */
-  const intent = detectIntent(userText, { profile, pay });
-  if (intent) {
+  if (intent?.type === "rank_lookup") {
+    if (!profileSafe) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          intent: "rank_lookup",
+          reply:
+            "I can answer that instantly once I can see your profile. Quick fix: make sure the chat request sends your email (from your saved profile) so I can pull your rank + YOS from Supabase.",
+        }),
+      };
+    }
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        reply: intent.reply,
-        intent: intent.type,
-        profile_found: !!profile,
-        pay_known: !!pay,
+        intent: "rank_lookup",
+        reply: `On file: **${profileSafe.rank || "—"}** (YOS **${profileSafe.yos ?? "—"}**).`,
+        profile: profileSafe,
       }),
     };
   }
 
-  /* ============================================================
-     //#7 — OPENAI FALLBACK (WITH CONTEXT)
-  ============================================================ */
+  if (intent?.type === "pay_lookup") {
+    if (!profileSafe) {
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          intent: "pay_lookup",
+          reply:
+            "I can calculate your monthly total pay the moment I can see your profile. Right now I’m missing identity context. Send your email with the chat request and I’ll pull Rank/YOS/ZIP from Supabase automatically.",
+        }),
+      };
+    }
+
+    const reply = buildRankPayReply(profileSafe, paySnap);
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "pay_lookup",
+        reply,
+        profile: profileSafe,
+        pay: paySnap?.ok ? paySnap.pay : null,
+      }),
+    };
+  }
+
+  // Your original “guided funnel” replies — now upgraded with identity if available
+  if (intent?.type === "financial_dashboard") {
+    const who = profileSafe?.rank && profileSafe?.full_name
+      ? `${profileSafe.rank} ${profileSafe.full_name}`
+      : "you";
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "financial_dashboard",
+        reply:
+          `Copy that — let’s build your true financial profile first, so we don’t guess.\n\n` +
+          `For ${who}, the fastest path is the Full Financial Analysis tool. Once your obligations are itemized, I’ll give you a clean affordability verdict.\n\n` +
+          `Open it here:\n**https://theorozcorealty.com/dashboard**`,
+        profile: profileSafe || undefined,
+      }),
+    };
+  }
+
+  if (intent?.type === "analysis") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "analysis",
+        reply:
+          "Your Fiduciary Snapshot explains affordability, monthly cushion, and risk level.\n\nIf you’ve already completed the dashboard, open your Analysis page here:\n\n**https://theorozcorealty.com/analysis**\n\nAsk me anything about your numbers — I’ll break them down cleanly.",
+      }),
+    };
+  }
+
+  if (intent?.type === "aiou") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "aiou",
+        reply:
+          "Next step is your A.I.O.U Personality Test — it reveals your buying psychology and generates your **6-digit unlock code** for RealtySaSS.\n\nBegin here:\n\n**https://theorozcorealty.com/aiou**",
+      }),
+    };
+  }
+
+  if (intent?.type === "sass_unlock") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "sass_unlock",
+        reply:
+          "RealtySaSS is our private suite of tools.\n\nEnter your unlock code here:\n\n**https://theorozcorealty.com/realtysass**\n\nIf you don’t have a code yet, take AIOU and I’ll prepare it for you.",
+      }),
+    };
+  }
+
+  if (intent?.type === "blog_va") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "blog_va",
+        reply:
+          "Here’s the clean walkthrough of the **VA Loan Process**:\n\nhttps://new-real-estate-purchase.webflow.io/blog-page/va-loan-process\n\nWant me to tailor this to your timeline + base?",
+      }),
+    };
+  }
+
+  if (intent?.type === "blog_steps") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "blog_steps",
+        reply:
+          "Here’s your guide to the **Home Buying Steps**:\n\nhttps://new-real-estate-purchase.webflow.io/blog-page/home-buying-steps\n\nWant me to match these steps to your situation?",
+      }),
+    };
+  }
+
+  if (intent?.type === "blog_realtor") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "blog_realtor",
+        reply:
+          "Here’s the article on whether you actually **need a realtor**:\n\nhttps://new-real-estate-purchase.webflow.io/blog-page/do-i-need-a-realtor\n\nWant the pros/cons for military buyers?",
+      }),
+    };
+  }
+
+  if (intent?.type === "blog_risks") {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        intent: "blog_risks",
+        reply:
+          "Here’s a clean breakdown of the **benefits & risks** of buying:\n\nhttps://new-real-estate-purchase.webflow.io/blog-page/home-buying-steps\n\nIf you tell me your target price, I’ll flag the risk points precisely.",
+      }),
+    };
+  }
+
+  // ============================================================
+  // //#6.3 — FALLBACK: OpenAI (with profile context if available)
+  // ============================================================
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        reply: `Elena (dev echo): “${userText}” — Add OPENAI_API_KEY to enable real answers.`,
+        profile: profileSafe || null,
+        pay: paySnap?.ok ? paySnap.pay : null,
+      }),
+    };
+  }
+
+  const system = [
+    "You are Elena, a warm, emotionally-intelligent A.I. Concierge for OrozcoRealty.",
+    "Voice: luxury-smooth, high-trust, professional, never explicit.",
+    "You prioritize deterministic facts provided in context (profile + pay) and never invent numbers.",
+    "Keep answers under 8 sentences and give a crisp next step.",
+  ].join(" ");
+
+  const contextFacts = {
+    hasProfile: Boolean(profileSafe),
+    profile: profileSafe || null,
+    pay: paySnap?.ok ? paySnap.pay : null,
+  };
+
+  const messages = [
+    { role: "system", content: system },
+    {
+      role: "user",
+      content:
+        `Context (use if present; do NOT invent):\n${JSON.stringify(contextFacts)}\n\nUser:\n${userText}`,
+    },
+  ];
+
   try {
-    const reply = await callOpenAI({ userText, profile, pay });
+    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.35,
+        max_tokens: 450,
+        messages,
+      }),
+    });
+
+    const data = await resp.json().catch(() => ({}));
+    const reply = normStr(data?.choices?.[0]?.message?.content) || "I’m right here. What are we solving today?";
+
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
         reply,
-        intent: "openai_fallback",
-        profile_found: !!profile,
-        pay_known: !!pay,
+        profile: profileSafe || null,
+        pay: paySnap?.ok ? paySnap.pay : null,
       }),
     };
   } catch (err) {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: "Server exception", detail: String(err) }),
+      body: JSON.stringify({ error: "Server exception", detail: String(err?.message || err) }),
     };
   }
 };
