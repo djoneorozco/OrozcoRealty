@@ -1,465 +1,396 @@
 // netlify/functions/brain.js
-// =========================================================
-// OrozcoRealty • CENTRAL BRAIN (v1.1 TEST)
-// ONE call → Supabase profile → militaryPayTables.json → city.json
+// ============================================================
+// CENTRAL BRAIN — v1.0.2 (CORS + NO CRASH + PAY + CITY)
+// What it does:
+// 1) Reads email (from POST body OR querystring) to find user profile in Supabase.
+// 2) Computes Base Pay + BAS + BAH using militaryPayTables.json
+// 3) Loads city.json (e.g., cities/SanAntonio.json) to return market averages/targets.
+// 4) Returns one clean JSON payload for ALL UIs to reuse.
 //
-// Returns (what you requested):
-//  - Base Pay (monthly)
-//  - BAS (monthly)
-//  - BAH (monthly) (by ZIP; can fallback to city default ZIP if present)
-//  - Total Pay = Base + BAS + BAH
-//  - City housing market averages (best-effort from city.json)
-//  - PCS Snapshot-friendly payload
-//
-// ENV REQUIRED:
-//   SUPABASE_URL
-//   SUPABASE_SERVICE_KEY
-//
-// FILES REQUIRED:
-//   netlify/functions/data/militaryPayTables.json
-//   netlify/functions/cities/<CityKey>.json   (ex: SanAntonio.json)
-//
-// Notes:
-// - This is intentionally defensive. If city.json keys differ, it returns 0 + notes.
-// - Once we confirm your city.json structure, we’ll tighten extraction to be exact.
-// =========================================================
+// Fixes included:
+// - ✅ Handles OPTIONS preflight correctly (CORS)
+// - ✅ Never crashes on __filename redeclare (single ESM-safe definition)
+// - ✅ Always returns CORS headers (even on errors)
+// ============================================================
 
 import { createClient } from "@supabase/supabase-js";
-import fs from "fs/promises";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// ============================================================
+// //#1 — CORS (always applied)
+// ============================================================
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
   "Content-Type": "application/json"
 };
 
-function json(body, statusCode = 200) {
-  return { statusCode, headers: CORS_HEADERS, body: JSON.stringify(body) };
+function respond(statusCode, payload) {
+  return {
+    statusCode,
+    headers: CORS_HEADERS,
+    body: JSON.stringify(payload ?? {})
+  };
 }
 
-function safeParseJSON(str) {
-  try { return JSON.parse(str || "{}"); } catch { return null; }
-}
-
-function num(n, d = 0) {
-  const x = Number(n);
-  return Number.isFinite(x) ? x : d;
-}
-
-function toZip5(z) {
-  const s = String(z || "").trim();
-  const m = s.match(/^(\d{5})/);
-  return m ? m[1] : "";
-}
-
-function normalizePaygrade(v) {
-  // accepts "E-6", "E6", "e6", "O3", etc → "E-6"
-  const s = String(v || "").trim().toUpperCase();
-  const m = s.match(/^([EO])\s*[-]?\s*(\d{1,2})$/);
-  if (!m) return "";
-  return `${m[1]}-${Number(m[2])}`;
-}
-
-function isOfficer(paygrade) {
-  return /^O-\d+$/i.test(paygrade);
-}
-
+// ============================================================
+// //#2 — Paths (ESM-safe __dirname)
+// ============================================================
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function readJSON(relPath) {
-  const abs = path.join(__dirname, relPath);
-  const raw = await fs.readFile(abs, "utf8");
-  return JSON.parse(raw);
+// ============================================================
+// //#3 — Load Pay Tables (local file)
+//     File: netlify/functions/data/militaryPayTables.json
+// ============================================================
+function safeReadJson(absPath) {
+  try {
+    const raw = fs.readFileSync(absPath, "utf8");
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
 }
 
-// =========================================================
-// //#3 — Supabase profile lookup (by email)
-// =========================================================
-async function loadProfileByEmail(email) {
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const PAY_TABLES_PATH = path.resolve(__dirname, "data", "militaryPayTables.json");
+const PAY = safeReadJson(PAY_TABLES_PATH);
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    return { ok: false, error: "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY" };
+// ============================================================
+// //#4 — Helpers
+// ============================================================
+function toNum(v, d = 0) {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : d;
+}
+
+function normalizeRank(r) {
+  // Accept: "E6" "E-6" "O3" "O-3" "W2" "W-2"
+  const s = String(r || "").trim().toUpperCase();
+  if (!s) return "";
+  const m = s.match(/^([EOW])\s*-\s*(\d+)$/) || s.match(/^([EOW])\s*(\d+)$/);
+  if (!m) return s;
+  return `${m[1]}-${m[2]}`;
+}
+
+function isOfficer(rank) {
+  const r = normalizeRank(rank);
+  return r.startsWith("O-") || r.startsWith("W-");
+}
+
+function pickClosestYos(paygradeMap, yos) {
+  // paygradeMap: { "0": 1234, "2": 1400, ... }
+  // choose largest key <= yos, else smallest key
+  const keys = Object.keys(paygradeMap || {})
+    .map(k => Number(k))
+    .filter(n => Number.isFinite(n))
+    .sort((a, b) => a - b);
+
+  if (!keys.length) return null;
+
+  const y = Number(yos);
+  if (!Number.isFinite(y)) return String(keys[0]);
+
+  let best = keys[0];
+  for (const k of keys) {
+    if (k <= y) best = k;
+  }
+  return String(best);
+}
+
+function computeBasePay(rank, yos) {
+  if (!PAY?.BASEPAY) return { ok: false, value: 0, usedYos: null, note: "PAY.BASEPAY missing" };
+
+  const r = normalizeRank(rank);
+  const gradeMap = PAY.BASEPAY[r];
+  if (!gradeMap) return { ok: false, value: 0, usedYos: null, note: `No BASEPAY table for ${r}` };
+
+  const usedYos = pickClosestYos(gradeMap, yos);
+  const val = usedYos != null ? toNum(gradeMap[usedYos], 0) : 0;
+
+  return { ok: val > 0, value: val, usedYos, note: val > 0 ? null : "Base pay resolved to 0" };
+}
+
+function computeBAS(rank) {
+  if (!PAY?.BAS) return { ok: false, value: 0, note: "PAY.BAS missing" };
+  const bas = isOfficer(rank) ? PAY.BAS.officer : PAY.BAS.enlisted;
+  const v = toNum(bas, 0);
+  return { ok: v > 0, value: v, note: v > 0 ? null : "BAS resolved to 0" };
+}
+
+function computeBAH(rank, zip, family) {
+  if (!PAY?.BAH_TX) return { ok: false, value: 0, note: "PAY.BAH_TX missing" };
+
+  const r = normalizeRank(rank);
+  const z = String(zip || "").trim();
+  if (!z) return { ok: false, value: 0, note: "Missing zip for BAH lookup" };
+
+  const rec = PAY.BAH_TX[z];
+  if (!rec) return { ok: false, value: 0, note: `No BAH record for ZIP ${z}` };
+
+  const depKey = family ? "with" : "without";
+  const table = rec?.[depKey] || {};
+  let v = table?.[r];
+
+  // If rank key doesn’t exist exactly, try to match loose (rare but safe)
+  if (v == null) {
+    const keys = Object.keys(table);
+    const alt = keys.find(k => normalizeRank(k) === r);
+    if (alt) v = table[alt];
   }
 
-  const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-    auth: { persistSession: false }
-  });
+  const num = toNum(v, 0);
+  return {
+    ok: num > 0,
+    value: num,
+    meta: { location: rec.location || rec.base || null, verified: !!rec.verified, dependents: depKey },
+    note: num > 0 ? null : `BAH not found for ${r} at ZIP ${z} (${depKey})`
+  };
+}
 
-  const { data, error } = await sb
+function cityFileFromName(name) {
+  // "San Antonio" -> "SanAntonio"
+  const s = String(name || "").trim();
+  if (!s) return "";
+  return s.replace(/[^a-zA-Z0-9]/g, "");
+}
+
+function loadCityJson(cityName) {
+  const fileBase = cityFileFromName(cityName);
+  if (!fileBase) return { ok: false, cityFile: null, data: null, note: "No city provided" };
+
+  const abs = path.resolve(__dirname, "cities", `${fileBase}.json`);
+  const data = safeReadJson(abs);
+
+  if (!data) {
+    return { ok: false, cityFile: `${fileBase}.json`, data: null, note: `City file not found at cities/${fileBase}.json` };
+  }
+  return { ok: true, cityFile: `${fileBase}.json`, data, note: null };
+}
+
+// ============================================================
+// //#5 — Supabase
+// ============================================================
+function supabaseClient() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY;
+
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false } });
+}
+
+async function fetchProfileByEmail(email) {
+  const supa = supabaseClient();
+  if (!supa) return { ok: false, profile: null, note: "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY" };
+
+  const em = String(email || "").trim().toLowerCase();
+  if (!em) return { ok: false, profile: null, note: "Missing email" };
+
+  // Adjust select fields if needed; using * for now to be resilient
+  const { data, error } = await supa
     .from("profiles")
     .select("*")
-    .eq("email", email)
-    .limit(1);
+    .eq("email", em)
+    .maybeSingle();
 
-  if (error) return { ok: false, error: error.message };
-  if (!data || !data.length) return { ok: false, error: "No profile found for email" };
+  if (error) return { ok: false, profile: null, note: error.message || "Supabase error" };
+  if (!data) return { ok: false, profile: null, note: `No profile found for ${em}` };
 
-  return { ok: true, profile: data[0] };
+  return { ok: true, profile: data, note: null };
 }
 
-// =========================================================
-// //#4 — City JSON helpers (best-effort market extraction)
-// =========================================================
-function getByPath(obj, pathStr) {
-  try {
-    return pathStr.split(".").reduce((acc, k) => (acc && acc[k] != null ? acc[k] : null), obj);
-  } catch { return null; }
-}
-
-function firstNumberFromPaths(obj, paths) {
-  for (const p of paths) {
-    const v = getByPath(obj, p);
-    const n = Number(v);
-    if (Number.isFinite(n) && n > 0) return n;
-  }
-  return 0;
-}
-
-function firstStringFromPaths(obj, paths) {
-  for (const p of paths) {
-    const v = getByPath(obj, p);
-    if (typeof v === "string" && v.trim()) return v.trim();
-  }
-  return "";
-}
-
-function inferCityDefaultZip(cityJson) {
-  // tries common patterns: city.defaultZip, city.zip, city.zips[0], city.meta.zip, etc.
-  const candidate =
-    firstStringFromPaths(cityJson, [
-      "defaultZip",
-      "zip",
-      "zipcode",
-      "bahZip",
-      "meta.zip",
-      "meta.defaultZip"
-    ]) ||
-    (Array.isArray(cityJson?.zips) && cityJson.zips.length ? String(cityJson.zips[0]) : "") ||
-    (Array.isArray(cityJson?.zipCodes) && cityJson.zipCodes.length ? String(cityJson.zipCodes[0]) : "") ||
-    "";
-
-  return toZip5(candidate);
-}
-
-function extractCityMarket(cityJson) {
-  // We don’t know your exact city.json schema yet, so we search common keys.
-  // Once you confirm your schema, we’ll lock to the correct keys.
-  const notes = [];
-  if (!cityJson || typeof cityJson !== "object") {
-    return {
-      ok: false,
-      cityName: "",
-      state: "",
-      avgHomePrice: 0,
-      medianHomePrice: 0,
-      avgRent: 0,
-      medianRent: 0,
-      notes: ["city_json_missing"]
-    };
-  }
-
-  const cityName = firstStringFromPaths(cityJson, ["city", "name", "meta.city", "meta.name"]);
-  const state = firstStringFromPaths(cityJson, ["state", "meta.state"]);
-
-  const avgHomePrice = firstNumberFromPaths(cityJson, [
-    "housing.avg_home_price",
-    "housing.average_home_price",
-    "market.avg_home_price",
-    "market.average_home_price",
-    "zillow.avg_home_price",
-    "zillow.average_home_price",
-    "avg_home_price",
-    "average_home_price"
-  ]);
-
-  const medianHomePrice = firstNumberFromPaths(cityJson, [
-    "housing.median_home_price",
-    "housing.median_home_value",
-    "market.median_home_price",
-    "market.median_home_value",
-    "zillow.median_home_price",
-    "zillow.median_home_value",
-    "median_home_price",
-    "median_home_value"
-  ]);
-
-  const avgRent = firstNumberFromPaths(cityJson, [
-    "housing.avg_rent",
-    "housing.average_rent",
-    "market.avg_rent",
-    "market.average_rent",
-    "zillow.avg_rent",
-    "zillow.average_rent",
-    "avg_rent",
-    "average_rent"
-  ]);
-
-  const medianRent = firstNumberFromPaths(cityJson, [
-    "housing.median_rent",
-    "market.median_rent",
-    "zillow.median_rent",
-    "median_rent"
-  ]);
-
-  if (!avgHomePrice) notes.push("avgHomePrice_not_found");
-  if (!medianHomePrice) notes.push("medianHomePrice_not_found");
-  if (!avgRent) notes.push("avgRent_not_found");
-  if (!medianRent) notes.push("medianRent_not_found");
-
-  return {
-    ok: true,
-    cityName,
-    state,
-    avgHomePrice,
-    medianHomePrice,
-    avgRent,
-    medianRent,
-    notes
-  };
-}
-
-function extractCityTargets(cityJson, bedrooms = 4) {
-  const b = Math.max(1, Math.min(10, Number(bedrooms) || 4));
-  const res = {
-    city_ok: !!cityJson,
-    bedrooms: b,
-    targetRent: 0,
-    targetHomePrice: 0,
-    notes: []
-  };
-
-  if (!cityJson || typeof cityJson !== "object") {
-    res.notes.push("city_json_missing");
-    return res;
-  }
-
-  const rentCandidates = [
-    () => cityJson?.targets?.bedrooms?.[String(b)]?.rent,
-    () => cityJson?.targets?.[`rent_${b}br`],
-    () => cityJson?.cityTargets?.targetRent,
-    () => cityJson?.targets?.rent?.[String(b)],
-    () => cityJson?.targets?.targetRent
-  ];
-
-  const homeCandidates = [
-    () => cityJson?.targets?.bedrooms?.[String(b)]?.homePrice,
-    () => cityJson?.targets?.[`home_${b}br`],
-    () => cityJson?.cityTargets?.targetHomePrice,
-    () => cityJson?.targets?.homePrice?.[String(b)],
-    () => cityJson?.targets?.targetHomePrice
-  ];
-
-  const rent = rentCandidates.map(fn => fn()).find(v => Number(v) > 0);
-  const home = homeCandidates.map(fn => fn()).find(v => Number(v) > 0);
-
-  res.targetRent = num(rent, 0);
-  res.targetHomePrice = num(home, 0);
-
-  if (!res.targetRent) res.notes.push("targetRent_not_found");
-  if (!res.targetHomePrice) res.notes.push("targetHomePrice_not_found");
-
-  return res;
-}
-
-// =========================================================
-// //#5 — Military pay calculations
-// =========================================================
-function computePay({ payTables, paygrade, yos, zip, family }) {
-  const out = {
-    paygrade,
-    yos,
-    zip,
-    family: !!family,
-    basePay: 0,
-    bas: 0,
-    bah: 0,
-    totalPay: 0,
-    notes: []
-  };
-
-  if (!payTables || typeof payTables !== "object") {
-    out.notes.push("payTables_missing");
-    return out;
-  }
-
-  const BASEPAY = payTables.BASEPAY || {};
-  const BAS = payTables.BAS || {};
-  const BAH_TX = payTables.BAH_TX || {};
-
-  // Base Pay
-  const baseRankTable = BASEPAY[paygrade];
-  if (baseRankTable) {
-    const key = String(yos);
-    out.basePay = num(baseRankTable[key] ?? baseRankTable[yos], 0);
-  } else {
-    out.notes.push("basepay_rank_not_found");
-  }
-
-  // BAS
-  const basKey = isOfficer(paygrade) ? "officer" : "enlisted";
-  out.bas = num(BAS[basKey], 0);
-  if (!out.bas) out.notes.push("bas_not_found");
-
-  // BAH (ZIP required)
-  const z = toZip5(zip);
-  if (!z) {
-    out.notes.push("zip_missing_bah_unavailable");
-  } else if (!BAH_TX[z]) {
-    out.notes.push("zip_not_found_in_BAH_TX");
-  } else {
-    const row = BAH_TX[z] || {};
-    const bucket = family ? (row.with || {}) : (row.without || {});
-    const bahValue = bucket[paygrade];
-
-    if (bahValue == null) {
-      out.notes.push("bah_missing_for_rank_in_zip");
-      out.bah = 0;
-    } else {
-      out.bah = num(bahValue, 0);
-    }
-  }
-
-  out.totalPay = out.basePay + out.bas + out.bah;
-  return out;
-}
-
-// =========================================================
+// ============================================================
 // //#6 — Handler
-// =========================================================
+// ============================================================
 export async function handler(event) {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: CORS_HEADERS, body: "" };
-  }
-  if (event.httpMethod !== "POST") {
-    return json({ ok: false, error: "Use POST" }, 405);
-  }
-
-  const body = safeParseJSON(event.body);
-  const email = String(body?.email || "").trim().toLowerCase();
-  const cityKey = String(body?.cityKey || "SanAntonio").trim();
-  const bedrooms = num(body?.bedrooms, 4);
-
-  if (!email) return json({ ok: false, error: "Missing email" }, 400);
-
-  // Load pay tables
-  let payTables = null;
   try {
-    payTables = await readJSON("./data/militaryPayTables.json");
-  } catch (e) {
-    return json({
-      ok: false,
-      error: "Failed reading militaryPayTables.json",
-      detail: String(e?.message || e)
-    }, 500);
-  }
-
-  // Load city json (optional but recommended)
-  let cityJson = null;
-  let cityLoadNote = null;
-  try {
-    cityJson = await readJSON(`./cities/${cityKey}.json`);
-  } catch (e) {
-    cityLoadNote = `City JSON not found for ${cityKey}: ${String(e?.message || e)}`;
-  }
-
-  // Load profile
-  const profRes = await loadProfileByEmail(email);
-  const profileOk = profRes.ok;
-  const profile = profileOk ? profRes.profile : null;
-
-  // Extract profile fields (multiple possible names)
-  const paygrade = normalizePaygrade(
-    profile?.rank_paygrade ??
-    profile?.paygrade ??
-    profile?.rank ??
-    profile?.rankPaygrade ??
-    ""
-  );
-
-  const yos = num(
-    profile?.yos ??
-    profile?.years_of_service ??
-    profile?.yearsService ??
-    profile?.yearsofservice ??
-    0
-  );
-
-  const family =
-    (profile?.family ?? profile?.has_dependents ?? profile?.dependents ?? false) === true ||
-    String(profile?.family ?? profile?.has_dependents ?? "").toLowerCase() === "true";
-
-  // ZIP: prefer profile zip, else try city default zip if available
-  let zip = toZip5(
-    profile?.zip ??
-    profile?.zipcode ??
-    profile?.postal ??
-    profile?.bah_zip ??
-    ""
-  );
-
-  if (!zip && cityJson) {
-    const z2 = inferCityDefaultZip(cityJson);
-    if (z2) zip = z2;
-  }
-
-  // Compute pay
-  const pay = computePay({ payTables, paygrade, yos, zip, family });
-
-  // City targets + city market
-  const cityTargets = extractCityTargets(cityJson, bedrooms);
-  const cityMarket = extractCityMarket(cityJson);
-
-  // PCS Snapshot payload
-  const pcsSnapshot = {
-    email,
-    paygrade: pay.paygrade,
-    yos: pay.yos,
-    zip: pay.zip,
-    family: pay.family,
-    basePay: pay.basePay,
-    bah: pay.bah,
-    bas: pay.bas,
-    totalPay: pay.totalPay,
-    cityKey,
-    bedrooms: cityTargets.bedrooms,
-    targetRent: cityTargets.targetRent,
-    targetHomePrice: cityTargets.targetHomePrice,
-    cityMarket: {
-      cityName: cityMarket.cityName,
-      state: cityMarket.state,
-      avgHomePrice: cityMarket.avgHomePrice,
-      medianHomePrice: cityMarket.medianHomePrice,
-      avgRent: cityMarket.avgRent,
-      medianRent: cityMarket.medianRent
+    // ✅ Preflight
+    if (event.httpMethod === "OPTIONS") {
+      return respond(200, { ok: true, preflight: true });
     }
-  };
 
-  return json({
-    ok: true,
-    test: "brain_v1_1_pay_city_market",
-    profile_ok: profileOk,
-    profile_error: profileOk ? null : profRes.error,
-    profile: profileOk ? {
-      email: profile?.email ?? email,
-      rank_paygrade: paygrade,
-      yos,
-      zip,
-      family
-    } : null,
-    pay,
-    city: {
-      cityKey,
-      city_ok: !!cityJson,
-      load_note: cityLoadNote,
-      targets: cityTargets,
-      market: cityMarket
-    },
-    pcsSnapshot
-  });
+    // Simple GET health check
+    if (event.httpMethod === "GET") {
+      const health = String(event.queryStringParameters?.health || "");
+      if (health) {
+        return respond(200, {
+          ok: true,
+          service: "brain",
+          payTablesLoaded: !!PAY,
+          payTablesPath: "netlify/functions/data/militaryPayTables.json",
+          hint: "POST { email } for full compute"
+        });
+      }
+      return respond(405, { ok: false, error: "Use POST. (Or GET with ?health=1)" });
+    }
+
+    if (event.httpMethod !== "POST") {
+      return respond(405, { ok: false, error: "Method not allowed" });
+    }
+
+    if (!PAY) {
+      return respond(500, {
+        ok: false,
+        error: "Pay tables could not be loaded",
+        hint: "Confirm file exists at netlify/functions/data/militaryPayTables.json"
+      });
+    }
+
+    const body = (() => {
+      try { return JSON.parse(event.body || "{}"); } catch { return {}; }
+    })();
+
+    const email = body.email || event.queryStringParameters?.email || "";
+    const cityFromBody = body.city || body.market || "";
+
+    // ============================================================
+    // //#6.1 — Profile
+    // ============================================================
+    const profRes = await fetchProfileByEmail(email);
+
+    // If Supabase fails, return a useful debug payload (still CORS-safe)
+    if (!profRes.ok) {
+      return respond(200, {
+        ok: false,
+        error: profRes.note || "Profile fetch failed",
+        inputs: { email: String(email || "").toLowerCase() },
+        needs: ["profile.email must exist in public.profiles", "SUPABASE_URL + SUPABASE_SERVICE_KEY env vars"]
+      });
+    }
+
+    const p = profRes.profile || {};
+
+    // ============================================================
+    // //#6.2 — Extract inputs (profile first, then body overrides)
+    // ============================================================
+    const rank =
+      body.rank ||
+      p.rank_paygrade ||
+      p.rank ||
+      p.paygrade ||
+      "";
+
+    const yos =
+      body.yos ??
+      body.years_of_service ??
+      p.yos ??
+      p.years_of_service ??
+      p.yearsOfService ??
+      0;
+
+    const zip =
+      body.zip ||
+      p.zip ||
+      p.base_zip ||
+      p.postal_code ||
+      "";
+
+    const family =
+      (body.family != null)
+        ? !!body.family
+        : (p.family != null ? !!p.family : true);
+
+    // City name: body > profile.base/city > empty
+    const cityName =
+      cityFromBody ||
+      p.city ||
+      p.market ||
+      p.base_city ||
+      p.base ||
+      "";
+
+    // ============================================================
+    // //#6.3 — Compute Pay
+    // ============================================================
+    const basePay = computeBasePay(rank, yos);
+    const bas = computeBAS(rank);
+    const bah = computeBAH(rank, zip, family);
+
+    const totalPay = (basePay.value || 0) + (bas.value || 0) + (bah.value || 0);
+
+    // ============================================================
+    // //#6.4 — City JSON
+    // ============================================================
+    const cityRes = loadCityJson(cityName);
+
+    // Best-effort common fields (won’t break if structure differs)
+    const city = cityRes.data || {};
+    const cityAvgHome =
+      toNum(city.avg_home_price, 0) ||
+      toNum(city.avgHomePrice, 0) ||
+      toNum(city.median_home_price, 0) ||
+      toNum(city.medianHomePrice, 0) ||
+      0;
+
+    const cityTargetRent =
+      toNum(city.target_rent, 0) ||
+      toNum(city.targetRent, 0) ||
+      toNum(city.rent_target, 0) ||
+      0;
+
+    const cityTargetHome =
+      toNum(city.target_home_price, 0) ||
+      toNum(city.targetHomePrice, 0) ||
+      toNum(city.home_price_target, 0) ||
+      0;
+
+    // ============================================================
+    // //#6.5 — Response (single “central brain” payload)
+    // ============================================================
+    const warnings = [];
+    if (!normalizeRank(rank)) warnings.push("Missing rank in profile (rank_paygrade / rank).");
+    if (!toNum(yos, 0)) warnings.push("Missing YOS in profile (yos / years_of_service).");
+    if (!String(zip || "").trim()) warnings.push("Missing ZIP in profile (zip) — BAH cannot compute.");
+    if (!cityRes.ok) warnings.push(cityRes.note);
+
+    return respond(200, {
+      ok: true,
+      inputs: {
+        email: String(email || "").trim().toLowerCase(),
+        rank: normalizeRank(rank),
+        yos: toNum(yos, 0),
+        zip: String(zip || "").trim(),
+        family: !!family,
+        cityName: String(cityName || "").trim(),
+        cityFile: cityRes.cityFile || null
+      },
+      profile: {
+        // Minimal echo (safe + useful)
+        full_name: p.full_name || p.name || null,
+        base: p.base || null,
+        rank_paygrade: p.rank_paygrade || p.rank || null,
+        yos: p.yos ?? p.years_of_service ?? null,
+        zip: p.zip || null
+      },
+      pay: {
+        basePay: basePay.value,
+        basePay_usedYos: basePay.usedYos,
+        bas: bas.value,
+        bah: bah.value,
+        bah_meta: bah.meta || null,
+        totalPay
+      },
+      city: {
+        avgHomePrice: cityAvgHome,
+        targetRent: cityTargetRent,
+        targetHomePrice: cityTargetHome,
+        raw: cityRes.ok ? city : null
+      },
+      warnings,
+      debug: {
+        basePay_note: basePay.note || null,
+        bas_note: bas.note || null,
+        bah_note: bah.note || null
+      }
+    });
+  } catch (err) {
+    // ✅ Always CORS-safe even on unexpected errors
+    return respond(500, {
+      ok: false,
+      error: err?.message || "Unknown error",
+      hint: "Open Netlify function logs for stack trace"
+    });
+  }
 }
