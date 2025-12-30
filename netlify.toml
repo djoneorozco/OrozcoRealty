@@ -2,6 +2,13 @@
   publish = "."
   functions = "netlify/functions"
 
+# ✅ IMPORTANT: include local JSON files inside serverless bundles
+[functions]
+  included_files = [
+    "netlify/functions/data/**",
+    "netlify/functions/cities/**"
+  ]
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
