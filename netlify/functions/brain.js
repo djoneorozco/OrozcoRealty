@@ -1,338 +1,275 @@
 // netlify/functions/brain.js
+// ============================================================
+// CENTRAL BRAIN (v1.1)
+// - Fetch Supabase profile by email
+// - Compute Base Pay + BAS + BAH + Total Pay (deterministic)
+// - Load city JSON (targets + market averages)
+// - CORS-safe for Webflow preview + live
 //
-// CENTRAL BRAIN — v1.0 (Webflow + Netlify)
-// What it does (single call):
-// 1) Receives { email, cityKey, bedrooms } from the UI
-// 2) Pulls the user's profile from Supabase (by email)
-// 3) Loads military pay tables (local JSON)
-// 4) Loads city JSON (local JSON)
-// 5) Computes: Base Pay, BAH, BAS, Total Pay + returns city market/targets
+// POST BODY:
+//   { email, cityKey, bedrooms }
 //
-// IMPORTANT:
-// - CommonJS only (NO fileURLToPath / import.meta.url)
-// - Robust file loading using __dirname (avoids your prior path crash)
-// - CORS handled for Webflow preview domains
-//
-const { createClient } = require("@supabase/supabase-js");
-const fs = require("fs");
-const path = require("path");
+// RETURNS:
+//   {
+//     ok: true/false,
+//     input: { email, cityKey, bedrooms },
+//     profile: {...},
+//     pay: { basePay, bah, bas, totalPay },
+//     city: { key, market, targets, raw },
+//     missing: [...]
+//   }
+// ============================================================
 
-// ==============================
-// //#1 CORS (match your site usage)
-// ==============================
+import { createClient } from "@supabase/supabase-js";
+import fs from "node:fs";
+
+// -----------------------------
+// //#1 CORS
+// -----------------------------
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
   "Content-Type": "application/json",
 };
 
-function respond(statusCode, payload) {
+// -----------------------------
+// //#2 Small helpers
+// -----------------------------
+function respond(statusCode, obj) {
   return {
     statusCode,
     headers: CORS_HEADERS,
-    body: JSON.stringify(payload),
+    body: JSON.stringify(obj),
   };
 }
 
-function safeJsonParse(str) {
-  try {
-    return JSON.parse(str);
-  } catch {
-    return null;
-  }
+function safeKey(s) {
+  return String(s || "")
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
-// ==============================
-// //#2 Helpers: Safe file loading
-// Uses __dirname so it works in Netlify runtime bundling
-// ==============================
-function readJsonFile(absPath) {
-  if (!absPath || typeof absPath !== "string") {
-    throw new Error(`Invalid path passed to readJsonFile(): ${String(absPath)}`);
-  }
-  if (!fs.existsSync(absPath)) {
-    throw new Error(`File not found: ${absPath}`);
-  }
-  const raw = fs.readFileSync(absPath, "utf8");
-  const j = safeJsonParse(raw);
-  if (!j) throw new Error(`Invalid JSON: ${absPath}`);
-  return j;
+function toInt(x) {
+  const n = Number.parseInt(String(x ?? "").trim(), 10);
+  return Number.isFinite(n) ? n : null;
 }
 
-function loadPayTables() {
-  // Your repo shows: netlify/functions/data/militaryPayTables.json
-  // In Netlify runtime, this function file's __dirname is the deployed function folder.
-  // So "data/..." must be alongside brain.js at deploy time.
-  const abs = path.join(__dirname, "data", "militaryPayTables.json");
-  return readJsonFile(abs);
+function normalizeRank(rank) {
+  const r = String(rank || "").trim().toUpperCase();
+  // Accept "E6" -> "E-6"
+  const m = r.match(/^([EO]|W)\s*-?\s*(\d{1,2})$/);
+  if (m) return `${m[1]}-${m[2]}`;
+  return r;
 }
 
-function normalizeCityKey(cityKey) {
-  const k = String(cityKey || "").trim();
-  // block path traversal + weird chars
-  if (!/^[A-Za-z0-9\-]+$/.test(k)) return "";
-  return k;
-}
-
-function loadCity(cityKey) {
-  const key = normalizeCityKey(cityKey);
-  if (!key) throw new Error("Invalid cityKey.");
-  const abs = path.join(__dirname, "cities", `${key}.json`);
-  return readJsonFile(abs);
-}
-
-// ==============================
-// //#3 Helpers: Pay computation
-// ==============================
-function rankGroup(rankPaygrade) {
-  const r = String(rankPaygrade || "").toUpperCase();
-  if (r.startsWith("O")) return "officer";
-  if (r.startsWith("W")) return "officer"; // treat warrants as officer for BAS
-  if (r.startsWith("E")) return "enlisted";
-  return "enlisted";
-}
-
-function normalizeZip(zip) {
-  const z = String(zip || "").trim();
-  if (!z) return "";
-  const digits = z.replace(/\D/g, "");
-  if (!digits) return "";
-  return digits.padStart(5, "0").slice(0, 5);
-}
-
-function normalizeYos(yos) {
-  const n = Number(yos);
-  if (!Number.isFinite(n) || n < 0) return null;
-  return Math.floor(n);
-}
-
-function lookupBasePay(BASEPAY, rank, yos) {
-  if (!BASEPAY || !rank || yos == null) return null;
-  const table = BASEPAY[rank];
-  if (!table) return null;
-
-  // Most tables store YOS as keys like "0","1","2",...
-  const keyExact = String(yos);
-  if (table[keyExact] != null) return Number(table[keyExact]);
-
-  // Fallback: choose the highest key <= yos
-  const keys = Object.keys(table)
+function pickNearestYos(tableForRank, yos) {
+  // table keys are usually "0".."40"
+  const keys = Object.keys(tableForRank || {})
     .map(k => Number(k))
     .filter(n => Number.isFinite(n))
-    .sort((a, b) => a - b);
+    .sort((a,b)=>a-b);
 
   if (!keys.length) return null;
 
-  let pick = keys[0];
+  // choose max key <= yos, else smallest key
+  let chosen = keys[0];
   for (const k of keys) {
-    if (k <= yos) pick = k;
+    if (k <= yos) chosen = k;
   }
-  return Number(table[String(pick)]);
+  return tableForRank[String(chosen)] ?? null;
 }
 
-function lookupBah(BAH_TX, zip, rank, family) {
-  if (!BAH_TX || !zip || !rank) return null;
-  const row = BAH_TX[zip] || BAH_TX[String(zip)] || null;
-  if (!row) return null;
+// -----------------------------
+// //#3 Cached file loads (fast + stable)
+// -----------------------------
+let __PAY_TABLES_CACHE__ = null;
 
-  // Your stored schema (from memory): { with: {RANK: bah}, without: {RANK: bah} }
-  const bucket = family ? row.with : row.without;
-  if (!bucket) return null;
-  const v = bucket[rank];
-  if (v == null) return null;
-  return Number(v);
-}
+function loadPayTables() {
+  if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
 
-function lookupBas(BAS, rank) {
-  if (!BAS || !rank) return null;
-  const grp = rankGroup(rank);
-  const v = BAS[grp];
-  if (v == null) return null;
-  return Number(v);
-}
+  // NOTE: Using URL keeps this stable in Netlify’s runtime
+  const url = new URL("./data/militaryPayTables.json", import.meta.url);
 
-function pickCityMarket(cityJson) {
-  // Make this resilient to your city.json shape
-  const c = cityJson || {};
-  return (
-    c.market ||
-    (c.housing && c.housing.market) ||
-    (c.housingMarket) ||
-    (c.data && c.data.market) ||
-    {}
-  );
-}
-
-function pickCityTargets(cityJson) {
-  const c = cityJson || {};
-  return (
-    c.targets ||
-    (c.housing && c.housing.targets) ||
-    (c.data && c.data.targets) ||
-    {}
-  );
-}
-
-// ==============================
-// //#4 Supabase: fetch profile
-// ==============================
-function getSupabase() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_KEY; // service role key
-  if (!url || !key) {
-    throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars.");
+  try {
+    const raw = fs.readFileSync(url, "utf8");
+    __PAY_TABLES_CACHE__ = JSON.parse(raw);
+    return __PAY_TABLES_CACHE__;
+  } catch (e) {
+    throw new Error(`File not found: ${url.pathname}`);
   }
-  return createClient(url, key, { auth: { persistSession: false } });
 }
 
-function normalizeProfile(p) {
-  const prof = p || {};
+function loadCity(cityKey) {
+  const key = safeKey(cityKey || "SanAntonio");
+  const url = new URL(`./cities/${key}.json`, import.meta.url);
 
-  const rank =
-    prof.rank_paygrade ||
-    prof.rank ||
-    prof.paygrade ||
-    prof.rankPaygrade ||
-    "";
+  try {
+    const raw = fs.readFileSync(url, "utf8");
+    const data = JSON.parse(raw);
 
-  const yos =
-    prof.yos ??
-    prof.years_of_service ??
-    prof.yearsOfService ??
-    null;
+    // Normalize a "market" object for the UI
+    const market =
+      data.market ||
+      data?.housing?.market ||
+      data?.realEstate?.market ||
+      {};
 
-  const zip =
-    prof.zip ||
-    prof.base_zip ||
-    prof.baseZip ||
-    "";
+    const targets =
+      data.targets ||
+      data?.housing?.targets ||
+      data?.realEstate?.targets ||
+      {};
 
-  // family can be boolean or a string
-  const famRaw =
-    prof.family ??
-    prof.has_dependents ??
-    prof.dependents ??
-    prof.with_dependents ??
-    false;
+    return {
+      key,
+      market,
+      targets,
+      raw: data,
+    };
+  } catch (e) {
+    throw new Error(`City file not found: ${url.pathname}`);
+  }
+}
 
-  const family =
-    famRaw === true ||
-    String(famRaw).toLowerCase() === "true" ||
-    String(famRaw).toLowerCase() === "yes" ||
-    String(famRaw).toLowerCase() === "with";
+// -----------------------------
+// //#4 Deterministic pay math
+// -----------------------------
+function computePay(profile, payTables) {
+  const missing = [];
+
+  const rank = normalizeRank(profile?.rank_paygrade || profile?.rank || "");
+  const yos = toInt(profile?.yos ?? profile?.years_of_service ?? profile?.yearsOfService);
+  const zip = String(profile?.zip || profile?.postal_code || "").trim();
+  const family = Boolean(profile?.family ?? profile?.dependents ?? profile?.has_dependents);
+
+  if (!rank) missing.push("rank_paygrade");
+  if (yos === null) missing.push("yos");
+  if (!zip) missing.push("zip");
+
+  // Base pay
+  let basePay = 0;
+  if (rank && yos !== null) {
+    const baseTable = payTables?.BASEPAY?.[rank];
+    if (!baseTable) {
+      missing.push("basepay_table_for_rank");
+    } else {
+      const picked = pickNearestYos(baseTable, yos);
+      if (picked == null) missing.push("basepay_value");
+      else basePay = Number(picked) || 0;
+    }
+  }
+
+  // BAS
+  let bas = 0;
+  const isOfficer = /^O-/.test(rank);
+  const basObj = payTables?.BAS || {};
+  if (typeof basObj === "object") {
+    bas = Number(isOfficer ? basObj.officer : basObj.enlisted) || 0;
+  }
+
+  // BAH (this dataset key is BAH_TX in your repo memory)
+  let bah = 0;
+  if (zip && rank) {
+    const bahZip = payTables?.BAH_TX?.[zip] || payTables?.BAH?.[zip];
+    if (!bahZip) {
+      missing.push("bah_zip_not_found");
+    } else {
+      const bucket = family ? bahZip.with : bahZip.without;
+      if (!bucket) {
+        missing.push("bah_bucket_missing");
+      } else {
+        const val = bucket?.[rank];
+        if (val == null) missing.push("bah_rank_not_found");
+        else bah = Number(val) || 0;
+      }
+    }
+  }
+
+  const totalPay = basePay + bas + bah;
 
   return {
-    email: prof.email || "",
-    rank_paygrade: String(rank || "").toUpperCase(),
-    yos: normalizeYos(yos),
-    zip: normalizeZip(zip),
-    family,
-    // keep originals for debugging if needed
-    _raw: prof,
+    ok: missing.length === 0 && totalPay > 0,
+    missing,
+    pay: { basePay, bah, bas, totalPay },
   };
 }
 
-// ==============================
-// //#5 Main handler
-// ==============================
-exports.handler = async (event) => {
+// -----------------------------
+// //#5 Supabase profile lookup
+// -----------------------------
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY; // service role key
+  if (!url || !key) throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars.");
+  return createClient(url, key, { auth: { persistSession: false } });
+}
+
+async function fetchProfileByEmail(email) {
+  const sb = getSupabase();
+
+  // Adjust select list to match your table columns (safe: select '*')
+  const { data, error } = await sb
+    .from("profiles")
+    .select("*")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message || "Supabase profile fetch failed.");
+  if (!data) throw new Error("Profile not found for this email.");
+
+  return data;
+}
+
+// -----------------------------
+// //#6 Netlify handler
+// -----------------------------
+export async function handler(event) {
   try {
+    // Preflight
     if (event.httpMethod === "OPTIONS") {
-      return respond(200, { ok: true });
+      return { statusCode: 200, headers: CORS_HEADERS, body: "" };
     }
 
-    if (event.httpMethod !== "POST") {
-      // So opening /api/brain in a browser doesn't crash
+    // Simple GET sanity check
+    if (event.httpMethod === "GET") {
       return respond(200, {
         ok: true,
         note: "POST JSON to this endpoint: { email, cityKey, bedrooms }",
       });
     }
 
-    const body = safeJsonParse(event.body || "") || {};
+    if (event.httpMethod !== "POST") {
+      return respond(405, { ok: false, error: "Method not allowed." });
+    }
+
+    const body = JSON.parse(event.body || "{}");
     const email = String(body.email || "").trim().toLowerCase();
-    const cityKey = String(body.cityKey || "SanAntonio").trim();
-    const bedrooms = Number(body.bedrooms || 4);
+    const cityKey = safeKey(body.cityKey || "SanAntonio");
+    const bedrooms = toInt(body.bedrooms) ?? 4;
 
     if (!email) return respond(400, { ok: false, error: "Missing email." });
 
-    // 1) Supabase profile lookup
-    const supabase = getSupabase();
-    const { data: profileRow, error: profileErr } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (profileErr) {
-      return respond(500, { ok: false, error: "Supabase error.", detail: profileErr.message });
-    }
-    if (!profileRow) {
-      return respond(404, { ok: false, error: "Profile not found for this email." });
-    }
-
-    const profile = normalizeProfile(profileRow);
-
-    // 2) Load pay tables + city JSON
+    // Load data files
     const payTables = loadPayTables();
-    const cityJson = loadCity(cityKey);
+    const city = loadCity(cityKey);
 
-    // 3) Compute pay
-    const missing = [];
-    if (!profile.rank_paygrade) missing.push("rank_paygrade");
-    if (profile.yos == null) missing.push("yos");
-    if (!profile.zip) missing.push("zip");
+    // Profile
+    const profile = await fetchProfileByEmail(email);
 
-    const BASEPAY = payTables.BASEPAY || null;
-    const BAS = payTables.BAS || null;
-    const BAH_TX = payTables.BAH_TX || null;
-
-    const basePay = lookupBasePay(BASEPAY, profile.rank_paygrade, profile.yos);
-    const bas = lookupBas(BAS, profile.rank_paygrade);
-
-    // BAH is ZIP-based — if ZIP missing or not in table, will return null
-    const bah = lookupBah(BAH_TX, profile.zip, profile.rank_paygrade, profile.family);
-
-    const pay = {
-      basePay: Number.isFinite(basePay) ? basePay : null,
-      bah: Number.isFinite(bah) ? bah : null,
-      bas: Number.isFinite(bas) ? bas : null,
-      totalPay:
-        (Number.isFinite(basePay) ? basePay : 0) +
-        (Number.isFinite(bah) ? bah : 0) +
-        (Number.isFinite(bas) ? bas : 0),
-    };
-
-    // 4) City outputs
-    const market = pickCityMarket(cityJson);
-    const targets = pickCityTargets(cityJson);
+    // Deterministic pay
+    const computed = computePay(profile, payTables);
 
     return respond(200, {
-      ok: true,
-      email,
-      profile: {
-        email: profile.email,
-        rank_paygrade: profile.rank_paygrade,
-        yos: profile.yos,
-        zip: profile.zip,
-        family: profile.family,
-      },
-      pay,
-      city: {
-        key: cityKey,
-        bedrooms: Number.isFinite(bedrooms) ? bedrooms : 4,
-        market,
-        targets,
-        // keep raw if you want to inspect quickly
-        _raw: cityJson,
-      },
-      missing,
+      ok: computed.ok,
+      input: { email, cityKey, bedrooms },
+      profile,
+      pay: computed.pay,
+      city,
+      missing: computed.missing,
     });
+
   } catch (e) {
-    return respond(500, {
-      ok: false,
-      error: String(e && e.message ? e.message : e),
-    });
+    return respond(500, { ok: false, error: String(e?.message || e) });
   }
-};
+}
