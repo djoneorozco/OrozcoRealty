@@ -1,499 +1,465 @@
 // netlify/functions/brain.js
-// ============================================================
-// OrozcoRealty • CENTRAL BRAIN (v1.0)
-// One call → pulls profile (Supabase) + computes pay (militaryPayTables.json)
-// + loads city targets (cities/<CityKey>.json) + returns a single “truth payload”
-// for Snapshot / FRS / BLUF / Ask Elena to consume.
+// =========================================================
+// OrozcoRealty • CENTRAL BRAIN (v1.1 TEST)
+// ONE call → Supabase profile → militaryPayTables.json → city.json
 //
-// Endpoint:
-//   POST /api/brain   (via your netlify.toml redirect)
+// Returns (what you requested):
+//  - Base Pay (monthly)
+//  - BAS (monthly)
+//  - BAH (monthly) (by ZIP; can fallback to city default ZIP if present)
+//  - Total Pay = Base + BAS + BAH
+//  - City housing market averages (best-effort from city.json)
+//  - PCS Snapshot-friendly payload
 //
-// Body (example):
-// {
-//   "email": "user@email.com",
-//   "cityKey": "SanAntonio",
-//   "overrides": {
-//     "zip": "78245",
-//     "family": true,
-//     "creditScore": 699,
-//     "expenses": 3841,
-//     "housing": 2350,
-//     "savings": 591,
-//     "addIncome": 0,
-//     "bedrooms": 4
-//   },
-//   "itemizedRows": [ { "name":"Groceries", "monthly": 650, "cat":"Food", "monthKey":"2025-12" } ]
-// }
-// ============================================================
+// ENV REQUIRED:
+//   SUPABASE_URL
+//   SUPABASE_SERVICE_KEY
+//
+// FILES REQUIRED:
+//   netlify/functions/data/militaryPayTables.json
+//   netlify/functions/cities/<CityKey>.json   (ex: SanAntonio.json)
+//
+// Notes:
+// - This is intentionally defensive. If city.json keys differ, it returns 0 + notes.
+// - Once we confirm your city.json structure, we’ll tighten extraction to be exact.
+// =========================================================
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ============================================================
-// //#0 – CORS + helpers
-// ============================================================
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Content-Type": "application/json",
+  "Content-Type": "application/json"
 };
 
-function json(statusCode, obj) {
-  return {
-    statusCode,
-    headers: CORS_HEADERS,
-    body: JSON.stringify(obj ?? {}),
-  };
+function json(body, statusCode = 200) {
+  return { statusCode, headers: CORS_HEADERS, body: JSON.stringify(body) };
 }
 
-function safeParseJSON(str, fallback = null) {
-  try {
-    return JSON.parse(str);
-  } catch {
-    return fallback;
-  }
+function safeParseJSON(str) {
+  try { return JSON.parse(str || "{}"); } catch { return null; }
 }
 
-function isObj(x) {
-  return x && typeof x === "object" && !Array.isArray(x);
+function num(n, d = 0) {
+  const x = Number(n);
+  return Number.isFinite(x) ? x : d;
 }
 
-function toNum(v, d = 0) {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : d;
-}
-
-function clamp(n, a, b) {
-  n = toNum(n, a);
-  return Math.max(a, Math.min(b, n));
-}
-
-function normalizeZip(z) {
-  const s = String(z ?? "").trim();
+function toZip5(z) {
+  const s = String(z || "").trim();
   const m = s.match(/^(\d{5})/);
   return m ? m[1] : "";
 }
 
-function normalizeRank(r) {
-  // Accept "E-6", "E6", "O3", "O-3" -> normalize to "E-6", "O-3"
-  const s = String(r ?? "").toUpperCase().replace(/\s+/g, "");
-  const m = s.match(/^([EOW])\-?(\d{1,2})$/);
+function normalizePaygrade(v) {
+  // accepts "E-6", "E6", "e6", "O3", etc → "E-6"
+  const s = String(v || "").trim().toUpperCase();
+  const m = s.match(/^([EO])\s*[-]?\s*(\d{1,2})$/);
   if (!m) return "";
   return `${m[1]}-${Number(m[2])}`;
 }
 
-function pickClosestYOS(mapObj, yos) {
-  // pay tables often keyed by "0","1","2"... choose exact or closest lower
-  if (!isObj(mapObj)) return null;
-  const keys = Object.keys(mapObj)
-    .map((k) => Number(k))
-    .filter((n) => Number.isFinite(n))
-    .sort((a, b) => a - b);
-
-  if (!keys.length) return null;
-
-  const y = Math.max(0, Math.floor(toNum(yos, 0)));
-  let chosen = keys[0];
-  for (const k of keys) {
-    if (k <= y) chosen = k;
-    if (k > y) break;
-  }
-  return mapObj[String(chosen)] ?? null;
+function isOfficer(paygrade) {
+  return /^O-\d+$/i.test(paygrade);
 }
 
-// ============================================================
-// //#1 – Load pay tables once (module cache)
-// ============================================================
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let PAY_TABLES = null;
-let PAY_TABLES_ERR = null;
+async function readJSON(relPath) {
+  const abs = path.join(__dirname, relPath);
+  const raw = await fs.readFile(abs, "utf8");
+  return JSON.parse(raw);
+}
 
-async function loadPayTablesOnce() {
-  if (PAY_TABLES || PAY_TABLES_ERR) return;
-  try {
-    const p = path.join(__dirname, "data", "militaryPayTables.json");
-    const raw = await fs.readFile(p, "utf8");
-    PAY_TABLES = JSON.parse(raw);
-  } catch (e) {
-    PAY_TABLES_ERR = e;
+// =========================================================
+// //#3 — Supabase profile lookup (by email)
+// =========================================================
+async function loadProfileByEmail(email) {
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+    return { ok: false, error: "Missing SUPABASE_URL or SUPABASE_SERVICE_KEY" };
   }
+
+  const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+    auth: { persistSession: false }
+  });
+
+  const { data, error } = await sb
+    .from("profiles")
+    .select("*")
+    .eq("email", email)
+    .limit(1);
+
+  if (error) return { ok: false, error: error.message };
+  if (!data || !data.length) return { ok: false, error: "No profile found for email" };
+
+  return { ok: true, profile: data[0] };
 }
 
-// ============================================================
-// //#2 – Load city JSON with simple cache
-// ============================================================
-const CITY_CACHE = new Map();
-
-function safeCityKey(cityKey) {
-  const s = String(cityKey ?? "").trim();
-  if (!s) return "";
-  if (!/^[A-Za-z0-9_-]+$/.test(s)) return "";
-  return s;
-}
-
-async function loadCity(cityKey) {
-  const key = safeCityKey(cityKey);
-  if (!key) return null;
-
-  if (CITY_CACHE.has(key)) return CITY_CACHE.get(key);
-
+// =========================================================
+// //#4 — City JSON helpers (best-effort market extraction)
+// =========================================================
+function getByPath(obj, pathStr) {
   try {
-    const p = path.join(__dirname, "cities", `${key}.json`);
-    const raw = await fs.readFile(p, "utf8");
-    const obj = JSON.parse(raw);
-    CITY_CACHE.set(key, obj);
-    return obj;
-  } catch {
-    CITY_CACHE.set(key, null);
-    return null;
-  }
+    return pathStr.split(".").reduce((acc, k) => (acc && acc[k] != null ? acc[k] : null), obj);
+  } catch { return null; }
 }
 
-function extractCityTargets(cityObj, bedroomsDefault = 4) {
-  // Tries multiple shapes safely:
-  //  A) city.targets.rentByBedrooms["4"], city.targets.homePriceByBedrooms["4"]
-  //  B) city.cityTargets.targetRent / targetHomePrice
-  //  C) city.benchmarks.rent / homePrice
-  // Returns { bedrooms, targetRent, targetHomePrice } (numbers or 0)
-  const bedrooms = Math.max(1, Math.round(toNum(bedroomsDefault, 4)));
+function firstNumberFromPaths(obj, paths) {
+  for (const p of paths) {
+    const v = getByPath(obj, p);
+    const n = Number(v);
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return 0;
+}
 
-  const getPath = (o, paths) => {
-    for (const p of paths) {
-      let cur = o;
-      let ok = true;
-      for (const k of p) {
-        if (!isObj(cur) && typeof cur !== "object") {
-          ok = false;
-          break;
-        }
-        cur = cur?.[k];
-      }
-      if (ok && cur != null) return cur;
-    }
-    return null;
-  };
+function firstStringFromPaths(obj, paths) {
+  for (const p of paths) {
+    const v = getByPath(obj, p);
+    if (typeof v === "string" && v.trim()) return v.trim();
+  }
+  return "";
+}
 
-  const rentCandidate =
-    getPath(cityObj, [
-      ["targets", "rentByBedrooms", String(bedrooms)],
-      ["targets", "rent", String(bedrooms)],
-      ["cityTargets", "targetRent"],
-      ["benchmarks", "targetRent"],
-      ["benchmarks", "rent"],
-    ]) ?? 0;
+function inferCityDefaultZip(cityJson) {
+  // tries common patterns: city.defaultZip, city.zip, city.zips[0], city.meta.zip, etc.
+  const candidate =
+    firstStringFromPaths(cityJson, [
+      "defaultZip",
+      "zip",
+      "zipcode",
+      "bahZip",
+      "meta.zip",
+      "meta.defaultZip"
+    ]) ||
+    (Array.isArray(cityJson?.zips) && cityJson.zips.length ? String(cityJson.zips[0]) : "") ||
+    (Array.isArray(cityJson?.zipCodes) && cityJson.zipCodes.length ? String(cityJson.zipCodes[0]) : "") ||
+    "";
 
-  const homeCandidate =
-    getPath(cityObj, [
-      ["targets", "homePriceByBedrooms", String(bedrooms)],
-      ["targets", "homePrice", String(bedrooms)],
-      ["cityTargets", "targetHomePrice"],
-      ["benchmarks", "targetHomePrice"],
-      ["benchmarks", "homePrice"],
-    ]) ?? 0;
+  return toZip5(candidate);
+}
+
+function extractCityMarket(cityJson) {
+  // We don’t know your exact city.json schema yet, so we search common keys.
+  // Once you confirm your schema, we’ll lock to the correct keys.
+  const notes = [];
+  if (!cityJson || typeof cityJson !== "object") {
+    return {
+      ok: false,
+      cityName: "",
+      state: "",
+      avgHomePrice: 0,
+      medianHomePrice: 0,
+      avgRent: 0,
+      medianRent: 0,
+      notes: ["city_json_missing"]
+    };
+  }
+
+  const cityName = firstStringFromPaths(cityJson, ["city", "name", "meta.city", "meta.name"]);
+  const state = firstStringFromPaths(cityJson, ["state", "meta.state"]);
+
+  const avgHomePrice = firstNumberFromPaths(cityJson, [
+    "housing.avg_home_price",
+    "housing.average_home_price",
+    "market.avg_home_price",
+    "market.average_home_price",
+    "zillow.avg_home_price",
+    "zillow.average_home_price",
+    "avg_home_price",
+    "average_home_price"
+  ]);
+
+  const medianHomePrice = firstNumberFromPaths(cityJson, [
+    "housing.median_home_price",
+    "housing.median_home_value",
+    "market.median_home_price",
+    "market.median_home_value",
+    "zillow.median_home_price",
+    "zillow.median_home_value",
+    "median_home_price",
+    "median_home_value"
+  ]);
+
+  const avgRent = firstNumberFromPaths(cityJson, [
+    "housing.avg_rent",
+    "housing.average_rent",
+    "market.avg_rent",
+    "market.average_rent",
+    "zillow.avg_rent",
+    "zillow.average_rent",
+    "avg_rent",
+    "average_rent"
+  ]);
+
+  const medianRent = firstNumberFromPaths(cityJson, [
+    "housing.median_rent",
+    "market.median_rent",
+    "zillow.median_rent",
+    "median_rent"
+  ]);
+
+  if (!avgHomePrice) notes.push("avgHomePrice_not_found");
+  if (!medianHomePrice) notes.push("medianHomePrice_not_found");
+  if (!avgRent) notes.push("avgRent_not_found");
+  if (!medianRent) notes.push("medianRent_not_found");
 
   return {
-    bedrooms,
-    targetRent: Math.max(0, toNum(rentCandidate, 0)),
-    targetHomePrice: Math.max(0, toNum(homeCandidate, 0)),
+    ok: true,
+    cityName,
+    state,
+    avgHomePrice,
+    medianHomePrice,
+    avgRent,
+    medianRent,
+    notes
   };
 }
 
-// ============================================================
-// //#3 – Pay math (deterministic)
-// PAY_TABLES structure you told me you have:
-//   BASEPAY[rank][yos] = monthly
-//   BAS.enlisted / BAS.officer
-//   BAH_TX[zip].with[rank] or without[rank]
-//   DISABILITY, DISABILITY_FULL (optional for later)
-// ============================================================
-function computePay({ rank, yos, zip, family }) {
+function extractCityTargets(cityJson, bedrooms = 4) {
+  const b = Math.max(1, Math.min(10, Number(bedrooms) || 4));
+  const res = {
+    city_ok: !!cityJson,
+    bedrooms: b,
+    targetRent: 0,
+    targetHomePrice: 0,
+    notes: []
+  };
+
+  if (!cityJson || typeof cityJson !== "object") {
+    res.notes.push("city_json_missing");
+    return res;
+  }
+
+  const rentCandidates = [
+    () => cityJson?.targets?.bedrooms?.[String(b)]?.rent,
+    () => cityJson?.targets?.[`rent_${b}br`],
+    () => cityJson?.cityTargets?.targetRent,
+    () => cityJson?.targets?.rent?.[String(b)],
+    () => cityJson?.targets?.targetRent
+  ];
+
+  const homeCandidates = [
+    () => cityJson?.targets?.bedrooms?.[String(b)]?.homePrice,
+    () => cityJson?.targets?.[`home_${b}br`],
+    () => cityJson?.cityTargets?.targetHomePrice,
+    () => cityJson?.targets?.homePrice?.[String(b)],
+    () => cityJson?.targets?.targetHomePrice
+  ];
+
+  const rent = rentCandidates.map(fn => fn()).find(v => Number(v) > 0);
+  const home = homeCandidates.map(fn => fn()).find(v => Number(v) > 0);
+
+  res.targetRent = num(rent, 0);
+  res.targetHomePrice = num(home, 0);
+
+  if (!res.targetRent) res.notes.push("targetRent_not_found");
+  if (!res.targetHomePrice) res.notes.push("targetHomePrice_not_found");
+
+  return res;
+}
+
+// =========================================================
+// //#5 — Military pay calculations
+// =========================================================
+function computePay({ payTables, paygrade, yos, zip, family }) {
   const out = {
-    rank,
-    yos: Math.max(0, Math.floor(toNum(yos, 0))),
-    zip: normalizeZip(zip),
+    paygrade,
+    yos,
+    zip,
     family: !!family,
     basePay: 0,
     bas: 0,
     bah: 0,
     totalPay: 0,
-    notes: [],
+    notes: []
   };
 
-  if (!PAY_TABLES) {
-    out.notes.push("pay_tables_missing");
+  if (!payTables || typeof payTables !== "object") {
+    out.notes.push("payTables_missing");
     return out;
   }
 
-  const r = normalizeRank(rank);
-  out.rank = r;
+  const BASEPAY = payTables.BASEPAY || {};
+  const BAS = payTables.BAS || {};
+  const BAH_TX = payTables.BAH_TX || {};
 
   // Base Pay
-  const baseRankMap = PAY_TABLES?.BASEPAY?.[r];
-  if (isObj(baseRankMap)) {
-    const picked = pickClosestYOS(baseRankMap, out.yos);
-    out.basePay = Math.max(0, toNum(picked, 0));
+  const baseRankTable = BASEPAY[paygrade];
+  if (baseRankTable) {
+    const key = String(yos);
+    out.basePay = num(baseRankTable[key] ?? baseRankTable[yos], 0);
   } else {
     out.notes.push("basepay_rank_not_found");
   }
 
   // BAS
-  const isOfficer = /^O-/.test(r);
-  const isWarrant = /^W-/.test(r);
-  const basKey = isOfficer || isWarrant ? "officer" : "enlisted";
-  out.bas = Math.max(0, toNum(PAY_TABLES?.BAS?.[basKey], 0));
+  const basKey = isOfficer(paygrade) ? "officer" : "enlisted";
+  out.bas = num(BAS[basKey], 0);
+  if (!out.bas) out.notes.push("bas_not_found");
 
-  // BAH
-  if (out.zip) {
-    const bahZip = PAY_TABLES?.BAH_TX?.[out.zip];
-    if (isObj(bahZip)) {
-      const depKey = out.family ? "with" : "without";
-      const table = bahZip?.[depKey];
-      if (isObj(table)) {
-        out.bah = Math.max(0, toNum(table?.[r], 0));
-      } else {
-        out.notes.push("bah_table_missing_for_family_flag");
-      }
-    } else {
-      out.notes.push("bah_zip_not_found");
-    }
+  // BAH (ZIP required)
+  const z = toZip5(zip);
+  if (!z) {
+    out.notes.push("zip_missing_bah_unavailable");
+  } else if (!BAH_TX[z]) {
+    out.notes.push("zip_not_found_in_BAH_TX");
   } else {
-    out.notes.push("bah_zip_missing");
+    const row = BAH_TX[z] || {};
+    const bucket = family ? (row.with || {}) : (row.without || {});
+    const bahValue = bucket[paygrade];
+
+    if (bahValue == null) {
+      out.notes.push("bah_missing_for_rank_in_zip");
+      out.bah = 0;
+    } else {
+      out.bah = num(bahValue, 0);
+    }
   }
 
   out.totalPay = out.basePay + out.bas + out.bah;
   return out;
 }
 
-// ============================================================
-// //#4 – Snapshot defaults + grade inputs (pure numbers)
-// ============================================================
-function scoreAPR(score) {
-  const s = clamp(score, 300, 850);
-  if (s >= 780) return 6.5;
-  if (s >= 760) return 6.75;
-  if (s >= 720) return 7.0;
-  if (s >= 700) return 7.2;
-  if (s >= 680) return 7.35;
-  if (s >= 660) return 7.85;
-  if (s >= 640) return 8.25;
-  if (s >= 620) return 9.25;
-  return 9.95;
-}
-
-function pmt(P, r, n) {
-  if (!P || !n) return 0;
-  if (r === 0) return P / n;
-  const x = Math.pow(1 + r, n);
-  return P * ((r * x) / (x - 1));
-}
-
-function buildSnapshot({ pay, profile, overrides, cityTargets }) {
-  const o = isObj(overrides) ? overrides : {};
-
-  // Income strategy:
-  // - For budgeting + charts: use TOTAL COMP by default
-  // - Also provide basePay separately for UI display if you want
-  const addIncome = Math.max(0, toNum(o.addIncome, 0));
-  const income = Math.max(0, (pay?.totalPay ?? 0) + addIncome);
-
-  // Core user-entered knobs (can be overridden later)
-  const creditScore = clamp(o.creditScore ?? profile?.credit_score ?? 720, 300, 850);
-  const apr = toNum(o.apr, 0) || scoreAPR(creditScore);
-
-  // Basic defaults (if not provided yet, keep them 0 and let UI collect)
-  const expenses = Math.max(0, toNum(o.expenses ?? profile?.monthly_expenses ?? 0, 0));
-  const savings = Math.max(0, toNum(o.savings ?? profile?.total_savings ?? 0, 0));
-
-  // Savings target (your earlier model uses % of income)
-  const savingsRatePct = clamp(o.savingsRatePct ?? profile?.savings_rate_pct ?? 5, 0, 40);
-  const savingsTargetAmount = income * (savingsRatePct / 100);
-
-  // Housing model: only compute if we have price + dp inputs; otherwise use override or 0.
-  const price = Math.max(0, toNum(o.price ?? 0, 0));
-  const dpPct = clamp(o.dpPct ?? 0, 0, 100);
-  const dpAmt = Math.max(0, toNum(o.dpAmt ?? (price * (dpPct / 100)), 0));
-  const termYears = Math.max(1, Math.floor(toNum(o.termYears ?? 30, 30)));
-  const tihoa = Math.max(0, toNum(o.tihoa ?? 0, 0));
-  const pmi = Math.max(0, toNum(o.pmi ?? 0, 0));
-
-  let pAndI = 0;
-  let housing = Math.max(0, toNum(o.housing ?? 0, 0)); // user can override all-in housing
-
-  if (!housing && price > 0) {
-    const loan = Math.max(0, price - dpAmt);
-    const mRate = (apr / 100) / 12;
-    const n = termYears * 12;
-    pAndI = loan > 0 ? pmt(loan, mRate, n) : 0;
-    housing = pAndI + tihoa + pmi;
+// =========================================================
+// //#6 — Handler
+// =========================================================
+export async function handler(event) {
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers: CORS_HEADERS, body: "" };
   }
-
-  const freePost = income - expenses - housing - savingsTargetAmount;
-
-  return {
-    // “Bridge” keys your UI already uses
-    income,
-    expenses,
-    savings,
-    housing,
-    creditScore,
-    apr,
-    termYears,
-    tihoa,
-    pmi,
-    pAndI,
-    price,
-    dpPct,
-    dpAmt,
-    savingsRatePct,
-    savingsTargetAmount,
-    freePost,
-
-    // For clean UI display + debugging
-    __basePay: toNum(pay?.basePay, 0),
-    __bah: toNum(pay?.bah, 0),
-    __bas: toNum(pay?.bas, 0),
-    __totalPay: toNum(pay?.totalPay, 0),
-    __addIncome: addIncome,
-
-    // City Targets
-    bedrooms: cityTargets?.bedrooms ?? 4,
-    targetRent: toNum(cityTargets?.targetRent, 0),
-    targetHomePrice: toNum(cityTargets?.targetHomePrice, 0),
-  };
-}
-
-// ============================================================
-// //#5 – Supabase profile lookup (by email)
-// ============================================================
-async function fetchProfileByEmail(email) {
-  const SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    return { ok: false, error: "missing_supabase_env" };
-  }
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-    auth: { persistSession: false },
-  });
-
-  // Keep this selection conservative; expand anytime.
-  const { data, error } = await supabase
-    .from("profiles")
-    .select(
-      [
-        "email",
-        "full_name",
-        "rank_paygrade",
-        "rank",
-        "yos",
-        "base",
-        "zip",
-        "family",
-        "credit_score",
-        "monthly_expenses",
-        "total_savings",
-        "savings_rate_pct",
-      ].join(",")
-    )
-    .eq("email", email)
-    .maybeSingle();
-
-  if (error) return { ok: false, error: error.message || "profile_lookup_failed" };
-  if (!data) return { ok: false, error: "profile_not_found" };
-
-  return { ok: true, profile: data };
-}
-
-// ============================================================
-// //#6 – Main handler
-// ============================================================
-export const handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") return json(200, { ok: true });
-
   if (event.httpMethod !== "POST") {
-    return json(405, { ok: false, error: "method_not_allowed" });
+    return json({ ok: false, error: "Use POST" }, 405);
   }
 
-  await loadPayTablesOnce();
-  if (PAY_TABLES_ERR) {
-    return json(500, {
-      ok: false,
-      error: "failed_to_load_pay_tables",
-      detail: String(PAY_TABLES_ERR?.message || PAY_TABLES_ERR),
-    });
-  }
-
-  const body = safeParseJSON(event.body || "{}", {});
+  const body = safeParseJSON(event.body);
   const email = String(body?.email || "").trim().toLowerCase();
+  const cityKey = String(body?.cityKey || "SanAntonio").trim();
+  const bedrooms = num(body?.bedrooms, 4);
 
-  if (!email) return json(400, { ok: false, error: "email_required" });
+  if (!email) return json({ ok: false, error: "Missing email" }, 400);
 
-  // 1) Profile
-  const profRes = await fetchProfileByEmail(email);
-  const profile = profRes.ok ? profRes.profile : null;
+  // Load pay tables
+  let payTables = null;
+  try {
+    payTables = await readJSON("./data/militaryPayTables.json");
+  } catch (e) {
+    return json({
+      ok: false,
+      error: "Failed reading militaryPayTables.json",
+      detail: String(e?.message || e)
+    }, 500);
+  }
 
-  // 2) Resolve inputs (profile + overrides)
-  const overrides = isObj(body?.overrides) ? body.overrides : {};
-  const rank = normalizeRank(overrides?.rank ?? profile?.rank_paygrade ?? profile?.rank ?? "");
-  const yos = Math.max(0, Math.floor(toNum(overrides?.yos ?? profile?.yos ?? 0, 0)));
-  const zip = normalizeZip(overrides?.zip ?? profile?.zip ?? "");
-  const family = !!(overrides?.family ?? profile?.family ?? true);
+  // Load city json (optional but recommended)
+  let cityJson = null;
+  let cityLoadNote = null;
+  try {
+    cityJson = await readJSON(`./cities/${cityKey}.json`);
+  } catch (e) {
+    cityLoadNote = `City JSON not found for ${cityKey}: ${String(e?.message || e)}`;
+  }
 
-  // 3) Pay compute
-  const pay = computePay({ rank, yos, zip, family });
+  // Load profile
+  const profRes = await loadProfileByEmail(email);
+  const profileOk = profRes.ok;
+  const profile = profileOk ? profRes.profile : null;
 
-  // 4) City load + targets
-  // Prefer explicit cityKey; otherwise try profile.base as a key; else none
-  const cityKey = safeCityKey(body?.cityKey) || safeCityKey(profile?.base) || "";
-  const cityObj = cityKey ? await loadCity(cityKey) : null;
+  // Extract profile fields (multiple possible names)
+  const paygrade = normalizePaygrade(
+    profile?.rank_paygrade ??
+    profile?.paygrade ??
+    profile?.rank ??
+    profile?.rankPaygrade ??
+    ""
+  );
 
-  const bedrooms = Math.max(1, Math.round(toNum(overrides?.bedrooms ?? 4, 4)));
-  const cityTargets = cityObj ? extractCityTargets(cityObj, bedrooms) : { bedrooms, targetRent: 0, targetHomePrice: 0 };
+  const yos = num(
+    profile?.yos ??
+    profile?.years_of_service ??
+    profile?.yearsService ??
+    profile?.yearsofservice ??
+    0
+  );
 
-  // 5) Snapshot (the “bridge” payload your UI expects)
-  const snapshot = buildSnapshot({ pay, profile, overrides, cityTargets });
+  const family =
+    (profile?.family ?? profile?.has_dependents ?? profile?.dependents ?? false) === true ||
+    String(profile?.family ?? profile?.has_dependents ?? "").toLowerCase() === "true";
 
-  // 6) Optional itemizedRows passthrough (so bars can stack monthly)
-  const itemizedRows = Array.isArray(body?.itemizedRows) ? body.itemizedRows : [];
+  // ZIP: prefer profile zip, else try city default zip if available
+  let zip = toZip5(
+    profile?.zip ??
+    profile?.zipcode ??
+    profile?.postal ??
+    profile?.bah_zip ??
+    ""
+  );
 
-  // 7) Response (single source of truth)
-  return json(200, {
+  if (!zip && cityJson) {
+    const z2 = inferCityDefaultZip(cityJson);
+    if (z2) zip = z2;
+  }
+
+  // Compute pay
+  const pay = computePay({ payTables, paygrade, yos, zip, family });
+
+  // City targets + city market
+  const cityTargets = extractCityTargets(cityJson, bedrooms);
+  const cityMarket = extractCityMarket(cityJson);
+
+  // PCS Snapshot payload
+  const pcsSnapshot = {
+    email,
+    paygrade: pay.paygrade,
+    yos: pay.yos,
+    zip: pay.zip,
+    family: pay.family,
+    basePay: pay.basePay,
+    bah: pay.bah,
+    bas: pay.bas,
+    totalPay: pay.totalPay,
+    cityKey,
+    bedrooms: cityTargets.bedrooms,
+    targetRent: cityTargets.targetRent,
+    targetHomePrice: cityTargets.targetHomePrice,
+    cityMarket: {
+      cityName: cityMarket.cityName,
+      state: cityMarket.state,
+      avgHomePrice: cityMarket.avgHomePrice,
+      medianHomePrice: cityMarket.medianHomePrice,
+      avgRent: cityMarket.avgRent,
+      medianRent: cityMarket.medianRent
+    }
+  };
+
+  return json({
     ok: true,
-
-    // profile status (don’t block the UI if missing)
-    profile_ok: !!profile,
-    profile_error: profRes.ok ? null : profRes.error,
-
-    // resolved identity inputs (what the brain actually used)
-    used: {
-      email,
-      rank: pay.rank,
-      yos: pay.yos,
-      zip: pay.zip,
-      family: pay.family,
-      cityKey: cityKey || null,
-      bedrooms: snapshot.bedrooms,
-    },
-
+    test: "brain_v1_1_pay_city_market",
+    profile_ok: profileOk,
+    profile_error: profileOk ? null : profRes.error,
+    profile: profileOk ? {
+      email: profile?.email ?? email,
+      rank_paygrade: paygrade,
+      yos,
+      zip,
+      family
+    } : null,
     pay,
-    cityTargets,
-    snapshot,
-
-    // This is the exact shape your existing Snapshot UI already understands:
-    // (you can store this into localStorage as `realtysass.bridge`)
-    bridge: {
-      ...snapshot,
-      itemizedRows,
-      // keep compatibility with earlier field names you used:
-      targetRent: snapshot.targetRent,
-      targetHomePrice: snapshot.targetHomePrice,
-      bedrooms: snapshot.bedrooms,
+    city: {
+      cityKey,
+      city_ok: !!cityJson,
+      load_note: cityLoadNote,
+      targets: cityTargets,
+      market: cityMarket
     },
+    pcsSnapshot
   });
-};
+}
