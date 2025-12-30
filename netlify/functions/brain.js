@@ -1,55 +1,64 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.2) — Netlify-safe JSON loading
+// CENTRAL BRAIN (v1.2) — Crash-proof file loading + CORS-safe
 // - Fetch Supabase profile by email
 // - Compute Base Pay + BAS + BAH + Total Pay (deterministic)
 // - Load city JSON (targets + market averages)
-// - Designed for Webflow preview calling Netlify domain
+// - Designed to be safe in Netlify's bundling/runtime
 //
-// POST BODY: { email, cityKey, bedrooms }
+// POST BODY:
+//   { email, cityKey, bedrooms }
 //
 // RETURNS:
-// {
-//   ok: true/false,
-//   input: { email, cityKey, bedrooms },
-//   profile,
-//   pay: { basePay, bah, bas, totalPay },
-//   city: { key, market, targets, raw },
-//   missing: [...]
-// }
+//   {
+//     ok: true/false,
+//     input: { email, cityKey, bedrooms },
+//     profile: {...},
+//     pay: { basePay, bah, bas, totalPay },
+//     city: { key, market, targets, raw },
+//     missing: [...]
+//   }
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 // -----------------------------
-// //#1 CORS
+// //#1 CORS (robust)
 // -----------------------------
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
-  "Content-Type": "application/json",
-};
+function buildCorsHeaders(event){
+  const origin =
+    event?.headers?.origin ||
+    event?.headers?.Origin ||
+    "*";
 
-// -----------------------------
-// //#2 Response helper
-// -----------------------------
-function respond(statusCode, obj) {
+  const reqHeaders =
+    event?.headers?.["access-control-request-headers"] ||
+    event?.headers?.["Access-Control-Request-Headers"] ||
+    "Content-Type, Authorization";
+
+  return {
+    "Access-Control-Allow-Origin": origin === "null" ? "*" : origin,
+    "Access-Control-Allow-Headers": reqHeaders,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Max-Age": "86400",
+    "Vary": "Origin",
+    "Content-Type": "application/json",
+  };
+}
+
+function respond(event, statusCode, obj) {
   return {
     statusCode,
-    headers: CORS_HEADERS,
+    headers: buildCorsHeaders(event),
     body: JSON.stringify(obj),
   };
 }
 
 // -----------------------------
-// //#3 Path base (Netlify runtime-safe)
+// //#2 Small helpers
 // -----------------------------
-const __FNS_DIR__ = path.dirname(fileURLToPath(import.meta.url)); // .../netlify/functions
-
 function safeKey(s) {
   return String(s || "")
     .trim()
@@ -63,6 +72,7 @@ function toInt(x) {
 
 function normalizeRank(rank) {
   const r = String(rank || "").trim().toUpperCase();
+  // Accept "E6" -> "E-6"
   const m = r.match(/^([EO]|W)\s*-?\s*(\d{1,2})$/);
   if (m) return `${m[1]}-${m[2]}`;
   return r;
@@ -70,9 +80,9 @@ function normalizeRank(rank) {
 
 function pickNearestYos(tableForRank, yos) {
   const keys = Object.keys(tableForRank || {})
-    .map((k) => Number(k))
-    .filter((n) => Number.isFinite(n))
-    .sort((a, b) => a - b);
+    .map(k => Number(k))
+    .filter(n => Number.isFinite(n))
+    .sort((a,b)=>a-b);
 
   if (!keys.length) return null;
 
@@ -83,68 +93,42 @@ function pickNearestYos(tableForRank, yos) {
   return tableForRank[String(chosen)] ?? null;
 }
 
-function readJsonFile(absPath) {
-  if (!absPath || typeof absPath !== "string") {
-    throw new Error("Internal error: invalid JSON path.");
-  }
-  if (!fs.existsSync(absPath)) {
-    throw new Error(
-      `File not found: ${absPath}. ` +
-      `This usually means Netlify did not bundle your JSON. ` +
-      `Fix: add [functions].included_files for netlify/functions/data/** and netlify/functions/cities/** in netlify.toml.`
-    );
-  }
-  const raw = fs.readFileSync(absPath, "utf8");
-  return JSON.parse(raw);
-}
+// -----------------------------
+// //#3 File loading (Netlify-safe)
+// -----------------------------
+// In Netlify Functions, process.cwd() is typically /var/task
+// Your repo paths are: netlify/functions/data/* and netlify/functions/cities/*
+const ROOT = process.cwd(); // /var/task
+const PAY_TABLES_PATH = path.join(ROOT, "netlify", "functions", "data", "militaryPayTables.json");
+const CITIES_DIR      = path.join(ROOT, "netlify", "functions", "cities");
 
-// -----------------------------
-// //#4 Cached loads
-// -----------------------------
 let __PAY_TABLES_CACHE__ = null;
+const __CITY_CACHE__ = new Map();
 
 function loadPayTables() {
   if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
 
-  const p = path.join(__FNS_DIR__, "data", "militaryPayTables.json");
-  __PAY_TABLES_CACHE__ = readJsonFile(p);
+  if (!fs.existsSync(PAY_TABLES_PATH)) {
+    throw new Error(`militaryPayTables.json not found at ${PAY_TABLES_PATH}`);
+  }
+
+  const raw = fs.readFileSync(PAY_TABLES_PATH, "utf8");
+  __PAY_TABLES_CACHE__ = JSON.parse(raw);
   return __PAY_TABLES_CACHE__;
-}
-
-function normalizeMarket(raw) {
-  // try to standardize a few keys the UI will want
-  const m = raw || {};
-  const avgHomePrice =
-    Number(m.avgHomePrice) ||
-    Number(m.averageHomePrice) ||
-    Number(m.avg_home_price) ||
-    Number(m.homePriceAvg) ||
-    0;
-
-  const medianHomePrice =
-    Number(m.medianHomePrice) ||
-    Number(m.median_home_price) ||
-    Number(m.homePriceMedian) ||
-    0;
-
-  const avgRent =
-    Number(m.avgRent) ||
-    Number(m.averageRent) ||
-    Number(m.avg_rent) ||
-    0;
-
-  return {
-    ...m,
-    avgHomePrice: avgHomePrice || undefined,
-    medianHomePrice: medianHomePrice || undefined,
-    avgRent: avgRent || undefined,
-  };
 }
 
 function loadCity(cityKey) {
   const key = safeKey(cityKey || "SanAntonio");
-  const p = path.join(__FNS_DIR__, "cities", `${key}.json`);
-  const data = readJsonFile(p);
+
+  if (__CITY_CACHE__.has(key)) return __CITY_CACHE__.get(key);
+
+  const filePath = path.join(CITIES_DIR, `${key}.json`);
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`City JSON not found at ${filePath}`);
+  }
+
+  const raw = fs.readFileSync(filePath, "utf8");
+  const data = JSON.parse(raw);
 
   const market =
     data.market ||
@@ -158,16 +142,13 @@ function loadCity(cityKey) {
     data?.realEstate?.targets ||
     {};
 
-  return {
-    key,
-    market: normalizeMarket(market),
-    targets,
-    raw: data,
-  };
+  const out = { key, market, targets, raw: data };
+  __CITY_CACHE__.set(key, out);
+  return out;
 }
 
 // -----------------------------
-// //#5 Deterministic pay math
+// //#4 Deterministic pay math
 // -----------------------------
 function computePay(profile, payTables) {
   const missing = [];
@@ -175,13 +156,15 @@ function computePay(profile, payTables) {
   const rank = normalizeRank(profile?.rank_paygrade || profile?.rank || "");
   const yos = toInt(profile?.yos ?? profile?.years_of_service ?? profile?.yearsOfService);
   const zip = String(profile?.zip || profile?.postal_code || "").trim();
-  const family = Boolean(profile?.family ?? profile?.dependents ?? profile?.has_dependents);
+
+  const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
+  const family = famRaw === true || String(famRaw).toLowerCase() === "true";
 
   if (!rank) missing.push("rank_paygrade");
   if (yos === null) missing.push("yos");
   if (!zip) missing.push("zip");
 
-  // Base Pay
+  // Base pay
   let basePay = 0;
   if (rank && yos !== null) {
     const baseTable = payTables?.BASEPAY?.[rank];
@@ -200,7 +183,7 @@ function computePay(profile, payTables) {
   const basObj = payTables?.BAS || {};
   bas = Number(isOfficer ? basObj.officer : basObj.enlisted) || 0;
 
-  // BAH (your dataset uses BAH_TX)
+  // BAH (your dataset key is BAH_TX)
   let bah = 0;
   if (zip && rank) {
     const bahZip = payTables?.BAH_TX?.[zip] || payTables?.BAH?.[zip];
@@ -228,7 +211,7 @@ function computePay(profile, payTables) {
 }
 
 // -----------------------------
-// //#6 Supabase profile lookup
+// //#5 Supabase profile lookup
 // -----------------------------
 function getSupabase() {
   const url = process.env.SUPABASE_URL;
@@ -248,28 +231,29 @@ async function fetchProfileByEmail(email) {
 
   if (error) throw new Error(error.message || "Supabase profile fetch failed.");
   if (!data) throw new Error("Profile not found for this email.");
-
   return data;
 }
 
 // -----------------------------
-// //#7 Netlify handler
+// //#6 Netlify handler
 // -----------------------------
 export async function handler(event) {
   try {
+    // Preflight
     if (event.httpMethod === "OPTIONS") {
-      return { statusCode: 200, headers: CORS_HEADERS, body: "" };
+      return { statusCode: 200, headers: buildCorsHeaders(event), body: "" };
     }
 
+    // GET sanity check
     if (event.httpMethod === "GET") {
-      return respond(200, {
+      return respond(event, 200, {
         ok: true,
         note: "POST JSON to this endpoint: { email, cityKey, bedrooms }",
       });
     }
 
     if (event.httpMethod !== "POST") {
-      return respond(405, { ok: false, error: "Method not allowed." });
+      return respond(event, 405, { ok: false, error: "Method not allowed." });
     }
 
     const body = JSON.parse(event.body || "{}");
@@ -277,19 +261,14 @@ export async function handler(event) {
     const cityKey = safeKey(body.cityKey || "SanAntonio");
     const bedrooms = toInt(body.bedrooms) ?? 4;
 
-    if (!email) return respond(400, { ok: false, error: "Missing email." });
+    if (!email) return respond(event, 400, { ok: false, error: "Missing email." });
 
-    // Load JSON assets
     const payTables = loadPayTables();
     const city = loadCity(cityKey);
-
-    // Profile
     const profile = await fetchProfileByEmail(email);
-
-    // Pay compute
     const computed = computePay(profile, payTables);
 
-    return respond(200, {
+    return respond(event, 200, {
       ok: computed.ok,
       input: { email, cityKey, bedrooms },
       profile,
@@ -297,7 +276,8 @@ export async function handler(event) {
       city,
       missing: computed.missing,
     });
+
   } catch (e) {
-    return respond(500, { ok: false, error: String(e?.message || e) });
+    return respond(event, 500, { ok: false, error: String(e?.message || e) });
   }
 }
