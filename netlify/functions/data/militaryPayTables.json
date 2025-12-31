@@ -60,23 +60,93 @@
   },
 
   "BAH": {
-    "note": "Preferred structure: Brain can resolve BAH from base -> preferred_zip, then use by_zip[zip].with/without[rank].",
-    "by_base": {
-      "Dyess": { "name": "Dyess Air Force Base", "preferred_zip": "79607", "zip_candidates": ["79607"], "state": "TX" },
-      "Laughlin": { "name": "Laughlin Air Force Base", "preferred_zip": "78843", "zip_candidates": ["78843"], "state": "TX" },
-
-      "SanAntonio": { "name": "JBSA-Lackland", "preferred_zip": "78236", "zip_candidates": ["78236", "78234", "78150"], "state": "TX" },
-      "Randolph": { "name": "JBSA-Randolph", "preferred_zip": "78150", "zip_candidates": ["78150", "78236", "78234"], "state": "TX" },
-      "Fort-Sam-Houston": { "name": "JBSA-Fort Sam Houston", "preferred_zip": "78234", "zip_candidates": ["78234", "78236", "78150"], "state": "TX" },
-
-      "Davis-Monthan": { "name": "Davis-Monthan AFB", "preferred_zip": null, "zip_candidates": [], "state": "AZ", "todo": "Add BAH zip + rates for AZ" },
-      "Luke": { "name": "Luke AFB", "preferred_zip": null, "zip_candidates": [], "state": "AZ", "todo": "Add BAH zip + rates for AZ" },
-
-      "Kirtland": { "name": "Kirtland AFB", "preferred_zip": null, "zip_candidates": [], "state": "NM", "todo": "Add BAH zip + rates for NM" },
-
-      "Nellis": { "name": "Nellis AFB", "preferred_zip": null, "zip_candidates": [], "state": "NV", "todo": "Add BAH zip + rates for NV" }
+    "notes": "BAH is looked up by ZIP. If profile.zip is missing, brain.js derives ZIP from profile.base using base_to_zip.",
+    "base_to_zip": {
+      "Davis-Monthan": "85707",
+      "Davis-Monthan AFB": "85707",
+      "Dyess": "79607",
+      "Dyess AFB": "79607",
+      "Fort Sam Houston": "78234",
+      "JBSA-Fort Sam Houston": "78234",
+      "Kirtland": "87117",
+      "Kirtland AFB": "87117",
+      "Laughlin": "78843",
+      "Laughlin AFB": "78843",
+      "Luke": "85309",
+      "Luke AFB": "85309",
+      "Nellis": "89191",
+      "Nellis AFB": "89191",
+      "Randolph": "78150",
+      "JBSA-Randolph": "78150",
+      "Lackland": "78236",
+      "JBSA-Lackland": "78236",
+      "San Antonio": "78236",
+      "JBSA": "78236"
     },
     "by_zip": {
+      "85707": {
+        "mha": "AZ015",
+        "base": "Davis-Monthan AFB",
+        "location": "TUCSON, AZ",
+        "with": { "E-5": 2436, "E-6": 2634, "E-7": 2769, "E-8": 2892, "E-9": 3093, "O-1": 2781, "O-2": 2994, "O-3": 3189, "O-4": 2484, "O-5": 2622, "O-6": 3066, "O-7": 3348 },
+        "without": { "E-5": 1815, "E-6": 2055, "E-7": 2265, "E-8": 2484, "E-9": 2742, "O-1": 2277, "O-2": 2553, "O-3": 2736, "O-4": 1845, "O-5": 2049, "O-6": 2568, "O-7": 3015 },
+        "verified": true
+      },
+
+      "87117": {
+        "mha": "NM206",
+        "base": "Kirtland AFB",
+        "location": "ALBUQUERQUE, NM",
+        "with": { "E-5": 1974, "E-6": 2085, "E-7": 2118, "E-8": 2148, "E-9": 2208, "O-1": 2121, "O-2": 2181, "O-3": 2271, "O-4": 1998, "O-5": 2082, "O-6": 2193, "O-7": 2364 },
+        "without": { "E-5": 1470, "E-6": 1560, "E-7": 1728, "E-8": 1935, "E-9": 2151, "O-1": 1740, "O-2": 1947, "O-3": 2085, "O-4": 1515, "O-5": 1560, "O-6": 1944, "O-7": 2328 },
+        "verified": true
+      },
+
+      "85309": {
+        "mha": "AZ013",
+        "base": "Luke AFB",
+        "location": "PHOENIX, AZ",
+        "with": { "E-5": 2544, "E-6": 2670, "E-7": 2835, "E-8": 3018, "E-9": 3285, "O-1": 2844, "O-2": 3162, "O-3": 3315, "O-4": 2589, "O-5": 2670, "O-6": 3240, "O-7": 3525 },
+        "without": { "E-5": 2043, "E-6": 2259, "E-7": 2487, "E-8": 2721, "E-9": 2991, "O-1": 2499, "O-2": 2808, "O-3": 3024, "O-4": 2070, "O-5": 2268, "O-6": 2847, "O-7": 3273 },
+        "verified": true
+      },
+
+      "89191": {
+        "mha": "NV212",
+        "base": "Nellis AFB",
+        "location": "NELLIS AFB/LAS VEGAS, NV",
+        "with": { "E-5": 2100, "E-6": 2250, "E-7": 2295, "E-8": 2346, "E-9": 2442, "O-1": 2298, "O-2": 2373, "O-3": 2481, "O-4": 2127, "O-5": 2247, "O-6": 2382, "O-7": 2604 },
+        "without": { "E-5": 1683, "E-6": 1821, "E-7": 1938, "E-8": 2085, "E-9": 2265, "O-1": 1932, "O-2": 2082, "O-3": 2283, "O-4": 1704, "O-5": 1818, "O-6": 2235, "O-7": 2673 },
+        "verified": true
+      },
+
+      "78236": {
+        "mha": "TX285",
+        "base": "JBSA-Lackland",
+        "location": "SAN ANTONIO, TX",
+        "with": { "E-5": 1935, "E-6": 2154, "E-7": 2172, "E-8": 2181, "E-9": 2208, "O-1": 2175, "O-2": 2184, "O-3": 2238, "O-4": 1968, "O-5": 2151, "O-6": 2187, "O-7": 2340 },
+        "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1776, "O-2": 1890, "O-3": 2070, "O-4": 1644, "O-5": 1890, "O-6": 2070, "O-7": 2148 },
+        "verified": true
+      },
+
+      "78150": {
+        "mha": "TX285",
+        "base": "JBSA-Randolph",
+        "location": "SAN ANTONIO, TX",
+        "with": { "E-5": 1935, "E-6": 2154, "E-7": 2172, "E-8": 2181, "E-9": 2208, "O-1": 2175, "O-2": 2184, "O-3": 2238, "O-4": 1968, "O-5": 2151, "O-6": 2187, "O-7": 2340 },
+        "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1776, "O-2": 1890, "O-3": 2070, "O-4": 1644, "O-5": 1890, "O-6": 2070, "O-7": 2148 },
+        "verified": true
+      },
+
+      "78234": {
+        "mha": "TX285",
+        "base": "JBSA-Fort Sam Houston",
+        "location": "SAN ANTONIO, TX",
+        "with": { "E-5": 1935, "E-6": 2154, "E-7": 2172, "E-8": 2181, "E-9": 2208, "O-1": 2175, "O-2": 2184, "O-3": 2238, "O-4": 1968, "O-5": 2151, "O-6": 2187, "O-7": 2340 },
+        "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1776, "O-2": 1890, "O-3": 2070, "O-4": 1644, "O-5": 1890, "O-6": 2070, "O-7": 2148 },
+        "verified": true
+      },
+
       "79607": {
         "base": "Dyess Air Force Base",
         "location": "Abilene",
@@ -84,40 +154,21 @@
         "without": { "E-5": 1245, "E-6": 1341, "E-7": 1438, "E-8": 1540, "E-9": 1648, "O-1": 1341, "O-2": 1438, "O-3": 1540, "O-4": 1735, "O-5": 1862, "O-6": 1965, "O-7": 1965 },
         "verified": true
       },
-      "76908": {
-        "base": "Goodfellow Air Force Base",
-        "location": "San Angelo",
-        "with": { "E-5": 1530, "E-6": 1530, "E-7": 1610, "E-8": 1774, "E-9": 1888, "O-1": 1610, "O-2": 1689, "O-3": 1774, "O-4": 2073, "O-5": 2199, "O-6": 2364, "O-7": 2364 },
-        "without": { "E-5": 1145, "E-6": 1219, "E-7": 1296, "E-8": 1395, "E-9": 1481, "O-1": 1219, "O-2": 1296, "O-3": 1395, "O-4": 1562, "O-5": 1701, "O-6": 1804, "O-7": 1804 },
-        "verified": false
-      },
-      "78236": {
-        "base": "JBSA-Lackland",
-        "location": "San Antonio (MHA TX285)",
-        "with": { "E-5": 1935, "E-6": 2154, "E-7": 2172, "E-8": 2181, "E-9": 2208, "O-1": 1968, "O-2": 2151, "O-3": 2187, "O-4": 2340, "O-5": 2466, "O-6": 2487, "O-7": 2505 },
-        "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1644, "O-2": 1890, "O-3": 2070, "O-4": 2148, "O-5": 2160, "O-6": 2163, "O-7": 2178 },
-        "verified": true
-      },
-      "78150": {
-        "base": "JBSA-Randolph",
-        "location": "Universal City / San Antonio (MHA TX285)",
-        "with": { "E-5": 1935, "E-6": 2154, "E-7": 2172, "E-8": 2181, "E-9": 2208, "O-1": 1968, "O-2": 2151, "O-3": 2187, "O-4": 2340, "O-5": 2466, "O-6": 2487, "O-7": 2505 },
-        "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1644, "O-2": 1890, "O-3": 2070, "O-4": 2148, "O-5": 2160, "O-6": 2163, "O-7": 2178 },
-        "verified": true
-      },
-      "78234": {
-        "base": "JBSA-Fort Sam Houston",
-        "location": "San Antonio (MHA TX285)",
-        "with": { "E-5": 1935, "E-6": 2154, "E-7": 2172, "E-8": 2181, "E-9": 2208, "O-1": 1968, "O-2": 2151, "O-3": 2187, "O-4": 2340, "O-5": 2466, "O-6": 2487, "O-7": 2505 },
-        "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1644, "O-2": 1890, "O-3": 2070, "O-4": 2148, "O-5": 2160, "O-6": 2163, "O-7": 2178 },
-        "verified": true
-      },
+
       "78843": {
         "base": "Laughlin Air Force Base",
         "location": "Del Rio",
         "with": { "E-5": 1557, "E-6": 1557, "E-7": 1627, "E-8": 1785, "E-9": 1943, "O-1": 1627, "O-2": 1717, "O-3": 1785, "O-4": 2085, "O-5": 2212, "O-6": 2377, "O-7": 2377 },
         "without": { "E-5": 1178, "E-6": 1253, "E-7": 1332, "E-8": 1435, "E-9": 1528, "O-1": 1253, "O-2": 1332, "O-3": 1435, "O-4": 1612, "O-5": 1756, "O-6": 1860, "O-7": 1860 },
         "verified": true
+      },
+
+      "76908": {
+        "base": "Goodfellow Air Force Base",
+        "location": "San Angelo",
+        "with": { "E-5": 1530, "E-6": 1530, "E-7": 1610, "E-8": 1774, "E-9": 1888, "O-1": 1610, "O-2": 1689, "O-3": 1774, "O-4": 2073, "O-5": 2199, "O-6": 2364, "O-7": 2364 },
+        "without": { "E-5": 1145, "E-6": 1219, "E-7": 1296, "E-8": 1395, "E-9": 1481, "O-1": 1219, "O-2": 1296, "O-3": 1395, "O-4": 1562, "O-5": 1701, "O-6": 1804, "O-7": 1804 },
+        "verified": false
       }
     }
   },
@@ -130,6 +181,7 @@
       "without": { "E-5": 1245, "E-6": 1341, "E-7": 1438, "E-8": 1540, "E-9": 1648, "O-1": 1341, "O-2": 1438, "O-3": 1540, "O-4": 1735, "O-5": 1862, "O-6": 1965, "O-7": 1965 },
       "verified": true
     },
+
     "76908": {
       "base": "Goodfellow Air Force Base",
       "location": "San Angelo",
@@ -137,6 +189,7 @@
       "without": { "E-5": 1145, "E-6": 1219, "E-7": 1296, "E-8": 1395, "E-9": 1481, "O-1": 1219, "O-2": 1296, "O-3": 1395, "O-4": 1562, "O-5": 1701, "O-6": 1804, "O-7": 1804 },
       "verified": false
     },
+
     "78236": {
       "base": "JBSA-Lackland",
       "location": "San Antonio (MHA TX285)",
@@ -144,6 +197,7 @@
       "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1644, "O-2": 1890, "O-3": 2070, "O-4": 2148, "O-5": 2160, "O-6": 2163, "O-7": 2178 },
       "verified": true
     },
+
     "78150": {
       "base": "JBSA-Randolph",
       "location": "Universal City / San Antonio (MHA TX285)",
@@ -151,6 +205,7 @@
       "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1644, "O-2": 1890, "O-3": 2070, "O-4": 2148, "O-5": 2160, "O-6": 2163, "O-7": 2178 },
       "verified": true
     },
+
     "78234": {
       "base": "JBSA-Fort Sam Houston",
       "location": "San Antonio (MHA TX285)",
@@ -158,6 +213,7 @@
       "without": { "E-5": 1530, "E-6": 1656, "E-7": 1794, "E-8": 1983, "E-9": 2037, "O-1": 1644, "O-2": 1890, "O-3": 2070, "O-4": 2148, "O-5": 2160, "O-6": 2163, "O-7": 2178 },
       "verified": true
     },
+
     "78843": {
       "base": "Laughlin Air Force Base",
       "location": "Del Rio",
