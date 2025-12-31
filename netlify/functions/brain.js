@@ -1,10 +1,10 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.3) — Crash-proof file loading + CORS-safe
+// CENTRAL BRAIN (v1.3) — Adds normalized City Avg Home value
 // - Fetch Supabase profile by email
 // - Compute Base Pay + BAS + BAH + Total Pay (deterministic)
 // - Load city JSON (targets + market averages)
-// - Adds robust City Avg Home extraction in multiple compatible fields
+// - Designed to be safe in Netlify's bundling/runtime
 //
 // POST BODY:
 //   { email, cityKey, bedrooms }
@@ -15,8 +15,7 @@
 //     input: { email, cityKey, bedrooms },
 //     profile: {...},
 //     pay: { basePay, bah, bas, totalPay },
-//     city: { key, market, targets, raw, avgHome, avgHomeSource },
-//     cityAvgHome: number|null,
+//     city: { key, market, targets, raw },
 //     missing: [...]
 //   }
 // ============================================================
@@ -72,7 +71,7 @@ function toInt(x) {
 }
 
 function toNum(x) {
-  const n = Number(String(x ?? "").replace(/,/g, "").trim());
+  const n = Number(String(x ?? "").trim());
   return Number.isFinite(n) ? n : null;
 }
 
@@ -99,6 +98,13 @@ function pickNearestYos(tableForRank, yos) {
   return tableForRank[String(chosen)] ?? null;
 }
 
+function normalizeBaseName(s){
+  return String(s || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
 // -----------------------------
 // //#3 File loading (Netlify-safe)
 // -----------------------------
@@ -121,32 +127,9 @@ function loadPayTables() {
   return __PAY_TABLES_CACHE__;
 }
 
-function deriveAvgHomeFromCityData(data) {
-  // We’ll accept several possible schemas/keys and pick the best available number.
-  const m =
-    data?.market ||
-    data?.housing?.market ||
-    data?.realEstate?.market ||
-    {};
-
-  const candidates = [
-    { key: "zillow_average_home_value", val: m?.zillow_average_home_value },
-    { key: "median_sale_price_current",  val: m?.median_sale_price_current },
-    { key: "median_value_owner_occupied", val: data?.housing?.median_value_owner_occupied },
-  ];
-
-  for (const c of candidates) {
-    const n = toNum(c.val);
-    if (n !== null && n > 0) {
-      return { avgHome: n, avgHomeSource: c.key };
-    }
-  }
-
-  return { avgHome: null, avgHomeSource: null };
-}
-
 function loadCity(cityKey) {
   const key = safeKey(cityKey || "SanAntonio");
+
   if (__CITY_CACHE__.has(key)) return __CITY_CACHE__.get(key);
 
   const filePath = path.join(CITIES_DIR, `${key}.json`);
@@ -169,18 +152,49 @@ function loadCity(cityKey) {
     data?.realEstate?.targets ||
     {};
 
-  const { avgHome, avgHomeSource } = deriveAvgHomeFromCityData(data);
+  // ------------------------------------------------------------
+  // //#3.1 Normalize "City Avg Home" into predictable keys
+  // Priority:
+  // 1) zillow_average_home_value
+  // 2) median_sale_price_current
+  // 3) median_listing_price_realtor
+  // 4) median_value_owner_occupied (sits under housing.*)
+  // ------------------------------------------------------------
+  const zillowAvg = toNum(marketRaw?.zillow_average_home_value);
+  const medianSale = toNum(marketRaw?.median_sale_price_current);
+  const medianList = toNum(marketRaw?.median_listing_price_realtor);
+  const ownerOccMedian = toNum(data?.housing?.median_value_owner_occupied);
 
-  // IMPORTANT: Add “compatibility” fields directly into market,
-  // so the front-end can read different paths without breaking.
+  const avgHome =
+    zillowAvg ??
+    medianSale ??
+    medianList ??
+    ownerOccMedian ??
+    null;
+
+  const avgHomeSource =
+    (zillowAvg != null && "housing.market.zillow_average_home_value") ||
+    (medianSale != null && "housing.market.median_sale_price_current") ||
+    (medianList != null && "housing.market.median_listing_price_realtor") ||
+    (ownerOccMedian != null && "housing.median_value_owner_occupied") ||
+    null;
+
+  // Create a market object that keeps your existing fields,
+  // but adds canonical aliases the UI can reliably read.
   const market = {
     ...marketRaw,
+
+    // Canonical + common aliases (so your tile will populate)
     avg_home_value: avgHome,
-    avg_home: avgHome,
-    avg_home_source: avgHomeSource,
+    average_home_value: avgHome,
+    avgHome: avgHome,
+    city_avg_home: avgHome,
+
+    // Nice debug hint (won’t break anything)
+    avg_home_value_source: avgHomeSource,
   };
 
-  const out = { key, market, targets, raw: data, avgHome, avgHomeSource };
+  const out = { key, market, targets, raw: data };
   __CITY_CACHE__.set(key, out);
   return out;
 }
@@ -194,15 +208,35 @@ function computePay(profile, payTables) {
   const rank = normalizeRank(profile?.rank_paygrade || profile?.rank || "");
   const yos = toInt(profile?.yos ?? profile?.years_of_service ?? profile?.yearsOfService);
 
-  // ZIP MAY BE DERIVED IN YOUR OTHER VERSION — keeping this file logic unchanged:
-  const zip = String(profile?.zip || profile?.postal_code || "").trim();
-
   const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
   const family = famRaw === true || String(famRaw).toLowerCase() === "true";
 
+  // Prefer explicit ZIP on profile; otherwise derive from base
+  const explicitZip = String(profile?.zip || profile?.postal_code || "").trim();
+  const baseName = String(profile?.base || profile?.duty_station || profile?.station || "").trim();
+
+  let zip = explicitZip;
+
+  if (!zip && baseName) {
+    const baseToZipRaw =
+      payTables?.BAH?.base_to_zip ||
+      payTables?.BAH?.baseToZip ||
+      payTables?.BASE_ZIP ||
+      {};
+
+    const baseToZipNorm = new Map();
+    for (const [k, v] of Object.entries(baseToZipRaw || {})) {
+      const nk = normalizeBaseName(k);
+      if (nk) baseToZipNorm.set(nk, String(v || "").trim());
+    }
+
+    const derived = baseToZipNorm.get(normalizeBaseName(baseName));
+    if (derived) zip = derived;
+    else missing.push("bah_base_zip_missing");
+  }
+
   if (!rank) missing.push("rank_paygrade");
   if (yos === null) missing.push("yos");
-  if (!zip) missing.push("zip");
 
   // Base pay
   let basePay = 0;
@@ -223,10 +257,16 @@ function computePay(profile, payTables) {
   const basObj = payTables?.BAS || {};
   bas = Number(isOfficer ? basObj.officer : basObj.enlisted) || 0;
 
-  // BAH (dataset key is BAH_TX or BAH)
+  // BAH
   let bah = 0;
   if (zip && rank) {
-    const bahZip = payTables?.BAH_TX?.[zip] || payTables?.BAH?.[zip];
+    const bahByZip = payTables?.BAH?.by_zip || payTables?.BAH?.byZip || null;
+    const bahZip =
+      (bahByZip && bahByZip?.[zip]) ||
+      payTables?.BAH_TX?.[zip] ||
+      payTables?.BAH?.[zip] ||
+      null;
+
     if (!bahZip) {
       missing.push("bah_zip_not_found");
     } else {
@@ -239,6 +279,8 @@ function computePay(profile, payTables) {
         else bah = Number(val) || 0;
       }
     }
+  } else {
+    if (!zip) missing.push("bah_zip_missing");
   }
 
   const totalPay = basePay + bas + bah;
@@ -308,20 +350,12 @@ export async function handler(event) {
     const profile = await fetchProfileByEmail(email);
     const computed = computePay(profile, payTables);
 
-    const cityAvgHome =
-      toNum(city?.avgHome) ??
-      toNum(city?.market?.avg_home_value) ??
-      toNum(city?.market?.zillow_average_home_value) ??
-      toNum(city?.raw?.housing?.market?.zillow_average_home_value) ??
-      null;
-
     return respond(event, 200, {
       ok: computed.ok,
       input: { email, cityKey, bedrooms },
       profile,
       pay: computed.pay,
       city,
-      cityAvgHome, // <-- top-level compatibility
       missing: computed.missing,
     });
 
