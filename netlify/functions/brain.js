@@ -155,14 +155,15 @@ function computePay(profile, payTables) {
 
   const rank = normalizeRank(profile?.rank_paygrade || profile?.rank || "");
   const yos = toInt(profile?.yos ?? profile?.years_of_service ?? profile?.yearsOfService);
-  const zip = String(profile?.zip || profile?.postal_code || "").trim();
+
+  // ZIP may be missing now — we can derive it from profile.base using payTables.BAH.by_base
+  const zipRaw = String(profile?.zip || profile?.postal_code || "").trim();
 
   const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
   const family = famRaw === true || String(famRaw).toLowerCase() === "true";
 
   if (!rank) missing.push("rank_paygrade");
   if (yos === null) missing.push("yos");
-  if (!zip) missing.push("zip");
 
   // Base pay
   let basePay = 0;
@@ -183,20 +184,64 @@ function computePay(profile, payTables) {
   const basObj = payTables?.BAS || {};
   bas = Number(isOfficer ? basObj.officer : basObj.enlisted) || 0;
 
-  // BAH (your dataset key is BAH_TX)
+  // -----------------------------
+  // //#4.1 BAH (derive ZIP from base when zip missing)
+  // New preferred structure (your updated militaryPayTables.json):
+  //   payTables.BAH.by_base[baseKey].preferred_zip
+  //   payTables.BAH.by_zip[zip].with/without[rank]
+  //
+  // Legacy fallback:
+  //   payTables.BAH_TX[zip]
+  // -----------------------------
   let bah = 0;
-  if (zip && rank) {
-    const bahZip = payTables?.BAH_TX?.[zip] || payTables?.BAH?.[zip];
-    if (!bahZip) {
-      missing.push("bah_zip_not_found");
+
+  const bahRoot = payTables?.BAH || null;
+
+  // derive baseKey from profile.base (or similar fields)
+  const baseKey = safeKey(
+    profile?.base ||
+    profile?.duty_station ||
+    profile?.dutyStation ||
+    profile?.installation ||
+    profile?.station ||
+    ""
+  );
+
+  // decide which ZIP to use for BAH
+  let zipForBah = zipRaw;
+
+  if (!zipForBah) {
+    const byBase = bahRoot?.by_base?.[baseKey] || null;
+    const preferredZip = String(byBase?.preferred_zip || "").trim();
+    if (preferredZip) {
+      zipForBah = preferredZip;
+    }
+  }
+
+  if (rank) {
+    if (!zipForBah) {
+      // we cannot compute BAH without either a zip or a base mapping to a zip
+      if (!baseKey) missing.push("bah_zip_or_base_missing");
+      else missing.push("bah_base_zip_missing");
     } else {
-      const bucket = family ? bahZip.with : bahZip.without;
-      if (!bucket) {
-        missing.push("bah_bucket_missing");
+      // locate the BAH zip record
+      const bahZip =
+        bahRoot?.by_zip?.[zipForBah] ||
+        payTables?.BAH_TX?.[zipForBah] ||
+        bahRoot?.[zipForBah] ||
+        null;
+
+      if (!bahZip) {
+        missing.push("bah_zip_not_found");
       } else {
-        const val = bucket?.[rank];
-        if (val == null) missing.push("bah_rank_not_found");
-        else bah = Number(val) || 0;
+        const bucket = family ? bahZip.with : bahZip.without;
+        if (!bucket) {
+          missing.push("bah_bucket_missing");
+        } else {
+          const val = bucket?.[rank];
+          if (val == null) missing.push("bah_rank_not_found");
+          else bah = Number(val) || 0;
+        }
       }
     }
   }
