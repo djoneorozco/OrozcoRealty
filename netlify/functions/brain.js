@@ -1,6 +1,6 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.2) — Crash-proof file loading + CORS-safe
+// CENTRAL BRAIN (v1.3) — Adds normalized City Avg Home value
 // - Fetch Supabase profile by email
 // - Compute Base Pay + BAS + BAH + Total Pay (deterministic)
 // - Load city JSON (targets + market averages)
@@ -70,6 +70,11 @@ function toInt(x) {
   return Number.isFinite(n) ? n : null;
 }
 
+function toNum(x) {
+  const n = Number(String(x ?? "").trim());
+  return Number.isFinite(n) ? n : null;
+}
+
 function normalizeRank(rank) {
   const r = String(rank || "").trim().toUpperCase();
   // Accept "E6" -> "E-6"
@@ -135,7 +140,7 @@ function loadCity(cityKey) {
   const raw = fs.readFileSync(filePath, "utf8");
   const data = JSON.parse(raw);
 
-  const market =
+  const marketRaw =
     data.market ||
     data?.housing?.market ||
     data?.realEstate?.market ||
@@ -146,6 +151,48 @@ function loadCity(cityKey) {
     data?.housing?.targets ||
     data?.realEstate?.targets ||
     {};
+
+  // ------------------------------------------------------------
+  // //#3.1 Normalize "City Avg Home" into predictable keys
+  // Priority:
+  // 1) zillow_average_home_value
+  // 2) median_sale_price_current
+  // 3) median_listing_price_realtor
+  // 4) median_value_owner_occupied (sits under housing.*)
+  // ------------------------------------------------------------
+  const zillowAvg = toNum(marketRaw?.zillow_average_home_value);
+  const medianSale = toNum(marketRaw?.median_sale_price_current);
+  const medianList = toNum(marketRaw?.median_listing_price_realtor);
+  const ownerOccMedian = toNum(data?.housing?.median_value_owner_occupied);
+
+  const avgHome =
+    zillowAvg ??
+    medianSale ??
+    medianList ??
+    ownerOccMedian ??
+    null;
+
+  const avgHomeSource =
+    (zillowAvg != null && "housing.market.zillow_average_home_value") ||
+    (medianSale != null && "housing.market.median_sale_price_current") ||
+    (medianList != null && "housing.market.median_listing_price_realtor") ||
+    (ownerOccMedian != null && "housing.median_value_owner_occupied") ||
+    null;
+
+  // Create a market object that keeps your existing fields,
+  // but adds canonical aliases the UI can reliably read.
+  const market = {
+    ...marketRaw,
+
+    // Canonical + common aliases (so your tile will populate)
+    avg_home_value: avgHome,
+    average_home_value: avgHome,
+    avgHome: avgHome,
+    city_avg_home: avgHome,
+
+    // Nice debug hint (won’t break anything)
+    avg_home_value_source: avgHomeSource,
+  };
 
   const out = { key, market, targets, raw: data };
   __CITY_CACHE__.set(key, out);
@@ -213,7 +260,6 @@ function computePay(profile, payTables) {
   // BAH
   let bah = 0;
   if (zip && rank) {
-    // NEW preferred structure
     const bahByZip = payTables?.BAH?.by_zip || payTables?.BAH?.byZip || null;
     const bahZip =
       (bahByZip && bahByZip?.[zip]) ||
@@ -234,7 +280,6 @@ function computePay(profile, payTables) {
       }
     }
   } else {
-    // If we still don't have a ZIP, we can’t compute BAH
     if (!zip) missing.push("bah_zip_missing");
   }
 
