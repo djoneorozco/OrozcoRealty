@@ -1,51 +1,35 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.5) — Adds Veteran Pay Branch (Retirement + VA Disability)
+// CENTRAL BRAIN (v1.7) — Minimal-input Veteran Pay (NO user-entered dollars)
 // - Fetch Supabase profile by email
-// - Active Duty path: Base Pay + BAS + BAH + Total Pay (deterministic) [UNCHANGED]
-// - Veteran/Retired path: Retirement Pay (est.) + VA Disability Pay (deterministic)
+// - Active Duty: Base Pay + BAS + BAH (deterministic)
+// - Veteran/Retired (minimal inputs):
+//     * BAH = 0, BAS = 0
+//     * VA Disability Pay: computed from DISABILITY_FULL using assumptions:
+//         - profile.family (number) => member + spouse + (family-2) children under 18
+//         - spouse assumed if family>=2
+//     * Retirement Pay (estimate): High-3 using BASEPAY steps (last 3 steps <= YOS)
+//         - uses RETIREMENT.systems.high3 multiplier by default (or profile.retirement_system if present)
 // - Load city JSON (targets + market averages)
-// - Adds schemaVersion + stable response shape
 //
 // POST BODY:
 //   { email, cityKey, bedrooms }
 //
-// RETURNS (stable contract):
-//   {
-//     ok: true/false,
-//     schemaVersion: "1.0",
-//     input: { email, cityKey, bedrooms },
-//     profile: {...},
-//     pay: {
-//       basePay, bah, bas, totalPay, total,
-//       // veteran extras (when mode/status indicates vet):
-//       retirementPay, vaDisabilityPay, totalVeteranPay,
-//       payModel: "active_duty" | "veteran"
-//     },
-//     city: { key, market, targets, raw, avg_home_value, target_rent, ... },
-//     missing: [...],
-//     errors: [...]
-//   }
+// RETURNS:
+//   { ok, schemaVersion, input, profile, pay, city, missing }
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
 
-// -----------------------------
-// //#0 Schema Version (contract)
-// -----------------------------
 const SCHEMA_VERSION = "1.0";
 
 // -----------------------------
 // //#1 CORS (robust)
 // -----------------------------
 function buildCorsHeaders(event){
-  const origin =
-    event?.headers?.origin ||
-    event?.headers?.Origin ||
-    "*";
-
+  const origin = event?.headers?.origin || event?.headers?.Origin || "*";
   const reqHeaders =
     event?.headers?.["access-control-request-headers"] ||
     event?.headers?.["Access-Control-Request-Headers"] ||
@@ -62,20 +46,14 @@ function buildCorsHeaders(event){
 }
 
 function respond(event, statusCode, obj) {
-  return {
-    statusCode,
-    headers: buildCorsHeaders(event),
-    body: JSON.stringify(obj),
-  };
+  return { statusCode, headers: buildCorsHeaders(event), body: JSON.stringify(obj) };
 }
 
 // -----------------------------
 // //#2 Small helpers
 // -----------------------------
 function safeKey(s) {
-  return String(s || "")
-    .trim()
-    .replace(/[^a-zA-Z0-9_-]/g, "");
+  return String(s || "").trim().replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
 function toInt(x) {
@@ -88,9 +66,10 @@ function toNum(x) {
   return Number.isFinite(n) ? n : null;
 }
 
+function lower(x){ return String(x ?? "").trim().toLowerCase(); }
+
 function normalizeRank(rank) {
   const r = String(rank || "").trim().toUpperCase();
-  // Accept "E6" -> "E-6"
   const m = r.match(/^([EO]|W)\s*-?\s*(\d{1,2})$/);
   if (m) return `${m[1]}-${m[2]}`;
   return r;
@@ -118,98 +97,43 @@ function normalizeBaseName(s){
     .replace(/[^A-Z0-9]/g, "");
 }
 
-function normStr(x){ return String(x ?? "").trim(); }
-function lower(x){ return String(x ?? "").trim().toLowerCase(); }
-
 // -----------------------------
-// //#2.1 Detect Pay Model (Active vs Veteran/Retired)
+// //#2.1 Pay model detection (your current data uses: mode = "ad" or "vet")
 // -----------------------------
 function detectPayModel(profile){
   const mode = lower(profile?.mode || profile?.status || profile?.user_type || profile?.type);
-  // You can expand these as your CRM grows:
+
+  // treat these as veteran/retired path
   const veteranModes = new Set(["vet","veteran","retired","retiree","separated","civilian"]);
+
+  // treat these as active duty path
+  const activeModes = new Set(["ad","active","active_duty","activeduty","active-duty"]);
+
   if (veteranModes.has(mode)) return "veteran";
+  if (activeModes.has(mode)) return "active_duty";
+
+  // default to active duty if unknown (safer for your current UI expectations)
   return "active_duty";
 }
 
 // -----------------------------
-// //#2.2 VA Disability Lookup (flexible patterns)
+// //#2.2 Family assumptions from minimal current inputs
+// - Your profiles.family is currently stored as text in Supabase.
+// - We interpret it as "family size including the member"
+//   family=7 => member + spouse + 5 kids under 18
 // -----------------------------
-function getVaDisabilityMonthly(payTables, percent, family){
-  const pctKey = String(percent ?? "").trim();
-  if (!pctKey) return { amount: 0, source: null };
+function deriveDependentsFromFamilySize(profile){
+  const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
+  const familySize = toInt(famRaw);
 
-  // Common shapes we support:
-  // A) DISABILITY[ "100" ] = 3900
-  // B) DISABILITY_FULL["100"] = 4200
-  // C) DISABILITY = { with: { "100": ... }, without: { "100": ... } }
-  // D) DISABILITY = { with_dependents: {...}, without_dependents: {...} }
-
-  const DIS = payTables?.DISABILITY ?? null;
-  const DIS_FULL = payTables?.DISABILITY_FULL ?? null;
-
-  // Prefer dependents-aware tables if present
-  if (family === true) {
-    if (DIS_FULL && typeof DIS_FULL === "object" && DIS_FULL[pctKey] != null) {
-      return { amount: Number(DIS_FULL[pctKey]) || 0, source: "DISABILITY_FULL[pct]" };
-    }
-    if (DIS && typeof DIS === "object") {
-      const w =
-        DIS.with ||
-        DIS.with_dependents ||
-        DIS.withDependents ||
-        DIS.dependents ||
-        null;
-      if (w && w[pctKey] != null) return { amount: Number(w[pctKey]) || 0, source: "DISABILITY.with[pct]" };
-    }
+  if (!familySize || familySize < 1) {
+    return { familySize: 0, hasSpouse: false, kidsUnder18: 0 };
   }
 
-  // Fall back to non-dependent or base table
-  if (DIS && typeof DIS === "object") {
-    if (DIS[pctKey] != null) return { amount: Number(DIS[pctKey]) || 0, source: "DISABILITY[pct]" };
+  const hasSpouse = familySize >= 2;
+  const kidsUnder18 = Math.max(familySize - 2, 0);
 
-    const wo =
-      DIS.without ||
-      DIS.without_dependents ||
-      DIS.withoutDependents ||
-      DIS.no_dependents ||
-      DIS.noDependents ||
-      null;
-    if (wo && wo[pctKey] != null) return { amount: Number(wo[pctKey]) || 0, source: "DISABILITY.without[pct]" };
-  }
-
-  if (DIS_FULL && typeof DIS_FULL === "object" && DIS_FULL[pctKey] != null) {
-    return { amount: Number(DIS_FULL[pctKey]) || 0, source: "DISABILITY_FULL[pct]" };
-  }
-
-  return { amount: 0, source: null };
-}
-
-// -----------------------------
-// //#2.3 Retirement Pay Estimate (deterministic, simple)
-// - Uses current base pay as a proxy for "high-3" (planning estimate).
-// - Multiplier: High-36/Final Pay ~ 2.5% per year; BRS ~ 2.0% per year.
-//   (We default to 2.5% unless profile.retirement_system says 'brs'.)
-// -----------------------------
-function estimateRetirementPayMonthly(basePayCurrent, yos, profile){
-  const sys = lower(profile?.retirement_system || profile?.retirementSystem || profile?.retire_system);
-  const isBRS = (sys === "brs" || sys === "blended");
-
-  const perYear = isBRS ? 0.02 : 0.025;
-  const years = Number(yos) || 0;
-
-  // Typical caps used in common planning charts:
-  // Legacy: 75% at 30 years; BRS: 60% at 30 years
-  const cap = isBRS ? 0.60 : 0.75;
-
-  const mult = Math.min(years * perYear, cap);
-  const est = Number(basePayCurrent) * mult;
-
-  return {
-    amount: Number.isFinite(est) ? est : 0,
-    multiplier: mult,
-    model: isBRS ? "brs" : "high36"
-  };
+  return { familySize, hasSpouse, kidsUnder18 };
 }
 
 // -----------------------------
@@ -259,7 +183,6 @@ function loadCity(cityKey) {
     data?.realEstate?.targets ||
     {};
 
-  // Normalize Avg Home Value
   const zillowAvg = toNum(marketRaw?.zillow_average_home_value);
   const medianSale = toNum(marketRaw?.median_sale_price_current);
   const medianList = toNum(marketRaw?.median_listing_price_realtor);
@@ -279,17 +202,6 @@ function loadCity(cityKey) {
     (ownerOccMedian != null && "housing.median_value_owner_occupied") ||
     null;
 
-  // Normalize Target Rent
-  const targetRent =
-    toNum(targets?.target_rent) ??
-    toNum(targets?.targetRent) ??
-    toNum(targets?.rent_target) ??
-    toNum(targets?.recommended_rent) ??
-    toNum(targets?.recommendedRent) ??
-    toNum(targets?.target_monthly_rent) ??
-    toNum(targets?.targetMonthlyRent) ??
-    null;
-
   const market = {
     ...marketRaw,
     avg_home_value: avgHome,
@@ -299,22 +211,195 @@ function loadCity(cityKey) {
     avg_home_value_source: avgHomeSource,
   };
 
-  const out = {
-    key,
-    market,
-    targets,
-    raw: data,
-    avg_home_value: avgHome ?? 0,
-    target_rent: targetRent ?? 0,
-    avg_home_value_source: avgHomeSource
-  };
-
+  const out = { key, market, targets, raw: data };
   __CITY_CACHE__.set(key, out);
   return out;
 }
 
 // -----------------------------
 // //#4 Deterministic pay math
+// -----------------------------
+function computeBasePay(rank, yos, payTables, missing){
+  let basePay = 0;
+  if (rank && yos !== null) {
+    const baseTable = payTables?.BASEPAY?.[rank];
+    if (!baseTable) {
+      missing.push("basepay_table_for_rank");
+    } else {
+      const picked = pickNearestYos(baseTable, yos);
+      if (picked == null) missing.push("basepay_value");
+      else basePay = Number(picked) || 0;
+    }
+  }
+  return basePay;
+}
+
+function computeBAS(rank, payTables){
+  const isOfficer = /^O-/.test(rank);
+  const basObj = payTables?.BAS || {};
+  return Number(isOfficer ? basObj.officer : basObj.enlisted) || 0;
+}
+
+function computeBAH(rank, familyBool, zip, payTables, missing){
+  let bah = 0;
+  if (zip && rank) {
+    const bahByZip = payTables?.BAH?.by_zip || payTables?.BAH?.byZip || null;
+    const bahZip =
+      (bahByZip && bahByZip?.[zip]) ||
+      payTables?.BAH_TX?.[zip] ||
+      payTables?.BAH?.[zip] ||
+      null;
+
+    if (!bahZip) {
+      missing.push("bah_zip_not_found");
+    } else {
+      const bucket = familyBool ? bahZip.with : bahZip.without;
+      if (!bucket) {
+        missing.push("bah_bucket_missing");
+      } else {
+        const val = bucket?.[rank];
+        if (val == null) missing.push("bah_rank_not_found");
+        else bah = Number(val) || 0;
+      }
+    }
+  } else {
+    if (!zip) missing.push("bah_zip_missing");
+  }
+  return bah;
+}
+
+// -----------------------------
+// //#4.1 Veteran VA Disability computation (minimal inputs)
+// Uses DISABILITY_FULL if present; otherwise DISABILITY.
+// Assumptions:
+//  - familySize >= 2 => spouse
+//  - kidsUnder18 = familySize - 2
+// -----------------------------
+function computeVaDisability(profile, payTables, missing){
+  const pct = toInt(profile?.va_disability ?? profile?.vaDisability ?? profile?.va_rating ?? profile?.vaRating);
+  if (pct === null) {
+    missing.push("va_disability");
+    return { amount: 0, debug: { pct: null, method: "missing" } };
+  }
+
+  const pctKey = String(pct);
+  const full = payTables?.DISABILITY_FULL?.[pctKey] || null;
+
+  const { familySize, hasSpouse, kidsUnder18 } = deriveDependentsFromFamilySize(profile);
+
+  // If we have FULL table, use it (better)
+  if (full && typeof full === "object") {
+    // baseline selection based on our assumptions
+    let baseKey = "veteran";
+    if (hasSpouse && kidsUnder18 >= 1) baseKey = "veteran_spouse_one_child";
+    else if (hasSpouse && kidsUnder18 === 0) baseKey = "veteran_spouse";
+    else if (!hasSpouse && kidsUnder18 >= 1) baseKey = "veteran_one_child";
+
+    const base = Number(full?.[baseKey]) || 0;
+    const addPerChild = Number(full?.additional_child_under_18) || 0;
+    const extraKids = Math.max(kidsUnder18 - 1, 0); // because *_one_child already includes 1 child
+
+    const amount = base + (extraKids * addPerChild);
+
+    return {
+      amount,
+      debug: {
+        pct,
+        method: "DISABILITY_FULL",
+        familySize,
+        hasSpouse,
+        kidsUnder18,
+        baseKey,
+        base,
+        addPerChild,
+        extraKids
+      }
+    };
+  }
+
+  // fallback to simple table
+  const simple = Number(payTables?.DISABILITY?.[pctKey]) || 0;
+  if (!simple) missing.push("va_disability_table_missing");
+  return { amount: simple, debug: { pct, method: "DISABILITY", familySize } };
+}
+
+// -----------------------------
+// //#4.2 Retirement pay estimate (High-3 using BASEPAY steps)
+// Minimal: rank + yos + retirement_system(optional)
+// - High-3 estimate = average of last 3 pay steps <= yos (using available step keys)
+// - retirement = high3_est * (multiplier_per_year * yos)
+// - If yos < 20 => retirement = 0 (default eligibility rule)
+// -----------------------------
+function computeRetirementPay(profile, rank, yos, payTables, missing){
+  if (yos === null) {
+    missing.push("yos");
+    return { amount: 0, debug: { method: "missing_yos" } };
+  }
+
+  // Eligibility (MVP rule)
+  if (yos < 20) {
+    return { amount: 0, debug: { method: "ineligible_yos<20", yos } };
+  }
+
+  const baseTable = payTables?.BASEPAY?.[rank] || null;
+  if (!baseTable) {
+    missing.push("basepay_table_for_rank");
+    return { amount: 0, debug: { method: "missing_basepay_table" } };
+  }
+
+  // Gather step keys <= yos
+  const keys = Object.keys(baseTable)
+    .map(k => Number(k))
+    .filter(n => Number.isFinite(n))
+    .sort((a,b)=>a-b);
+
+  const eligible = keys.filter(k => k <= yos);
+  if (!eligible.length) {
+    missing.push("high3_steps_missing");
+    return { amount: 0, debug: { method: "no_steps<=yos", yos } };
+  }
+
+  // last 3 steps (or fewer if not available)
+  const lastSteps = eligible.slice(Math.max(eligible.length - 3, 0));
+  const pays = lastSteps.map(k => Number(baseTable[String(k)]) || 0).filter(v => v > 0);
+
+  if (!pays.length) {
+    missing.push("high3_values_missing");
+    return { amount: 0, debug: { method: "no_pay_values" } };
+  }
+
+  const high3 = pays.reduce((a,b)=>a+b,0) / pays.length;
+
+  // retirement system
+  const sysRaw = lower(profile?.retirement_system || profile?.retirementSystem || "high3");
+  const sys = (sysRaw === "brs" || sysRaw === "blended") ? "brs" : "high3";
+
+  const multPerYear = toNum(payTables?.RETIREMENT?.systems?.[sys]?.multiplier_per_year) ?? (sys === "brs" ? 0.02 : 0.025);
+  const rawMultiplier = multPerYear * yos;
+
+  // soft cap
+  const cap = (sys === "brs") ? 0.60 : 0.75;
+  const multiplier = Math.min(rawMultiplier, cap);
+
+  const amount = high3 * multiplier;
+
+  return {
+    amount,
+    debug: {
+      method: "high3_estimate_from_BASEPAY",
+      sys,
+      multPerYear,
+      yos,
+      multiplier,
+      high3,
+      stepsUsed: lastSteps,
+      paysUsed: pays
+    }
+  };
+}
+
+// -----------------------------
+// //#4.3 Main pay compute
 // -----------------------------
 function computePay(profile, payTables) {
   const missing = [];
@@ -324,202 +409,97 @@ function computePay(profile, payTables) {
   const rank = normalizeRank(profile?.rank_paygrade || profile?.rank || "");
   const yos = toInt(profile?.yos ?? profile?.years_of_service ?? profile?.yearsOfService);
 
+  // Family boolean for AD BAH lookup
   const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
-  const family = famRaw === true || String(famRaw).toLowerCase() === "true";
+  const familyBool = String(famRaw).toLowerCase() === "true" || famRaw === true || (toInt(famRaw) || 0) >= 2;
 
-  // Active Duty path (UNCHANGED, except we label model)
-  if (payModel === "active_duty") {
+  // Prefer explicit ZIP; otherwise derive from base
+  const explicitZip = String(profile?.zip || profile?.postal_code || "").trim();
+  const baseName = String(profile?.base || profile?.duty_station || profile?.station || "").trim();
+  let zip = explicitZip;
 
-    // Prefer explicit ZIP on profile; otherwise derive from base
-    const explicitZip = String(profile?.zip || profile?.postal_code || "").trim();
-    const baseName = String(profile?.base || profile?.duty_station || profile?.station || "").trim();
-
-    let zip = explicitZip;
-
-    if (!zip && baseName) {
-      const baseToZipRaw =
-        payTables?.BAH?.base_to_zip ||
-        payTables?.BAH?.baseToZip ||
-        payTables?.BASE_ZIP ||
-        {};
-
-      const baseToZipNorm = new Map();
-      for (const [k, v] of Object.entries(baseToZipRaw || {})) {
-        const nk = normalizeBaseName(k);
-        if (nk) baseToZipNorm.set(nk, String(v || "").trim());
-      }
-
-      const derived = baseToZipNorm.get(normalizeBaseName(baseName));
-      if (derived) zip = derived;
-      else missing.push("bah_base_zip_missing");
-    }
-
-    if (!rank) missing.push("rank_paygrade");
-    if (yos === null) missing.push("yos");
-
-    // Base pay
-    let basePay = 0;
-    if (rank && yos !== null) {
-      const baseTable = payTables?.BASEPAY?.[rank];
-      if (!baseTable) {
-        missing.push("basepay_table_for_rank");
-      } else {
-        const picked = pickNearestYos(baseTable, yos);
-        if (picked == null) missing.push("basepay_value");
-        else basePay = Number(picked) || 0;
-      }
-    }
-
-    // BAS
-    let bas = 0;
-    const isOfficer = /^O-/.test(rank);
-    const basObj = payTables?.BAS || {};
-    bas = Number(isOfficer ? basObj.officer : basObj.enlisted) || 0;
-
-    // BAH
-    let bah = 0;
-    if (zip && rank) {
-      const bahByZip = payTables?.BAH?.by_zip || payTables?.BAH?.byZip || null;
-      const bahZip =
-        (bahByZip && bahByZip?.[zip]) ||
-        payTables?.BAH_TX?.[zip] ||
-        payTables?.BAH?.[zip] ||
-        null;
-
-      if (!bahZip) {
-        missing.push("bah_zip_not_found");
-      } else {
-        const bucket = family ? bahZip.with : bahZip.without;
-        if (!bucket) {
-          missing.push("bah_bucket_missing");
-        } else {
-          const val = bucket?.[rank];
-          if (val == null) missing.push("bah_rank_not_found");
-          else bah = Number(val) || 0;
-        }
-      }
-    } else {
-      if (!zip) missing.push("bah_zip_missing");
-    }
-
-    const totalPay = basePay + bas + bah;
-
-    return {
-      ok: missing.length === 0 && totalPay > 0,
-      missing,
-      pay: {
-        payModel,
-        basePay,
-        bah,
-        bas,
-        totalPay,
-        total: totalPay
-      }
-    };
-  }
-
-  // Veteran/Retired path (NEW)
   if (!rank) missing.push("rank_paygrade");
   if (yos === null) missing.push("yos");
 
-  // Base pay (used only as retirement estimate base)
-  let basePayCurrent = 0;
-  if (rank && yos !== null) {
-    const baseTable = payTables?.BASEPAY?.[rank];
-    if (!baseTable) {
-      missing.push("basepay_table_for_rank");
-    } else {
-      const picked = pickNearestYos(baseTable, yos);
-      if (picked == null) missing.push("basepay_value");
-      else basePayCurrent = Number(picked) || 0;
-    }
+  // Compute base pay (used for AD totals, and also shown for vets as a proxy)
+  const basePay = computeBasePay(rank, yos, payTables, missing);
+
+  // -------------------------
+  // Veteran Path
+  // -------------------------
+  if (payModel === "veteran") {
+    const bas = 0;
+    const bah = 0;
+
+    const va = computeVaDisability(profile, payTables, missing);
+    const ret = computeRetirementPay(profile, rank, yos, payTables, missing);
+
+    const retirementPay = Number(ret.amount) || 0;
+    const vaDisabilityPay = Number(va.amount) || 0;
+
+    const totalPay = retirementPay + vaDisabilityPay;
+
+    return {
+      ok: totalPay > 0,
+      missing,
+      pay: {
+        payModel,
+        payAccuracy: "deterministic_va + estimated_retirement",
+        basePay,         // proxy (current base pay step)
+        bas,             // 0 for vets
+        bah,             // 0 for vets
+        retirementPay,
+        vaDisabilityPay,
+        totalPay,
+        total: totalPay,
+        debug: { retirement: ret.debug, va: va.debug }
+      },
+    };
   }
 
-  const vaPct = toInt(profile?.va_disability ?? profile?.vaDisability ?? profile?.va_rating ?? profile?.vaRating);
-  if (vaPct === null) missing.push("va_disability");
+  // -------------------------
+  // Active Duty Path
+  // -------------------------
+  // Derive ZIP from base if missing
+  if (!zip && baseName) {
+    const baseToZipRaw =
+      payTables?.BAH?.base_to_zip ||
+      payTables?.BAH?.baseToZip ||
+      payTables?.BASE_ZIP ||
+      {};
 
-  // VA disability monthly (deterministic lookup)
-  const va = getVaDisabilityMonthly(payTables, vaPct, family);
-  if (vaPct != null && va.amount === 0) missing.push("va_disability_table_missing");
+    const baseToZipNorm = new Map();
+    for (const [k, v] of Object.entries(baseToZipRaw || {})) {
+      const nk = normalizeBaseName(k);
+      if (nk) baseToZipNorm.set(nk, String(v || "").trim());
+    }
 
-  // Retirement pay estimate monthly
-  const ret = estimateRetirementPayMonthly(basePayCurrent, yos ?? 0, profile);
-  if (basePayCurrent === 0) missing.push("retirement_basepay_missing");
+    const derived = baseToZipNorm.get(normalizeBaseName(baseName));
+    if (derived) zip = derived;
+    else missing.push("bah_base_zip_missing");
+  }
 
-  // Veterans don't receive BAS/BAH (set to 0)
-  const bas = 0;
-  const bah = 0;
-
-  const retirementPay = ret.amount;
-  const vaDisabilityPay = va.amount;
-  const totalVeteranPay = retirementPay + vaDisabilityPay;
+  const bas = computeBAS(rank, payTables);
+  const bah = computeBAH(rank, familyBool, zip, payTables, missing);
+  const totalPay = basePay + bas + bah;
 
   return {
-    ok: totalVeteranPay > 0,
+    ok: missing.length === 0 && totalPay > 0,
     missing,
     pay: {
       payModel,
-      // keep these for UI backward compatibility:
-      basePay: basePayCurrent,
+      payAccuracy: "deterministic",
+      basePay,
       bah,
       bas,
-      // Make "Total Pay" tile correct immediately:
-      totalPay: totalVeteranPay,
-      total: totalVeteranPay,
-      // new fields for deeper UI:
-      retirementPay,
-      vaDisabilityPay,
-      totalVeteranPay,
-      retirementModel: ret.model,
-      retirementMultiplier: ret.multiplier,
-      vaDisabilitySource: va.source
-    }
+      totalPay,
+      total: totalPay
+    },
   };
 }
 
 // -----------------------------
-// //#5 Output Guardrails
-// -----------------------------
-function guardBrainResponse(payload){
-  const errors = [];
-
-  const out = payload && typeof payload === "object" ? payload : {};
-  out.schemaVersion = String(out.schemaVersion || SCHEMA_VERSION);
-
-  if (!out.profile || typeof out.profile !== "object") {
-    out.profile = {};
-    errors.push("profile_missing");
-  }
-  if (!out.profile.email) errors.push("profile.email_missing");
-
-  if (!out.pay || typeof out.pay !== "object") {
-    out.pay = { basePay: 0, bas: 0, bah: 0, totalPay: 0, total: 0, payModel: "active_duty" };
-    errors.push("pay_missing");
-  }
-
-  out.pay.basePay = Number(out.pay.basePay) || 0;
-  out.pay.bas     = Number(out.pay.bas) || 0;
-  out.pay.bah     = Number(out.pay.bah) || 0;
-  out.pay.totalPay = Number(out.pay.totalPay) || (out.pay.basePay + out.pay.bas + out.pay.bah);
-  out.pay.total = Number(out.pay.total) || out.pay.totalPay;
-  out.pay.payModel = String(out.pay.payModel || "active_duty");
-
-  if (!out.city || typeof out.city !== "object") {
-    out.city = { key: null, market: {}, targets: {}, raw: {} };
-    errors.push("city_missing");
-  }
-  out.city.avg_home_value = Number(out.city.avg_home_value) || Number(out.city?.market?.avg_home_value) || 0;
-  out.city.target_rent    = Number(out.city.target_rent) || 0;
-
-  if (!Array.isArray(out.missing)) out.missing = [];
-  const existingErrors = Array.isArray(out.errors) ? out.errors : [];
-  out.errors = [...existingErrors, ...errors];
-
-  return out;
-}
-
-// -----------------------------
-// //#6 Supabase profile lookup
+// //#5 Supabase profile lookup
 // -----------------------------
 function getSupabase() {
   const url = process.env.SUPABASE_URL;
@@ -543,24 +523,26 @@ async function fetchProfileByEmail(email) {
 }
 
 // -----------------------------
-// //#7 Netlify handler
+// //#6 Netlify handler
 // -----------------------------
 export async function handler(event) {
   try {
+    // Preflight
     if (event.httpMethod === "OPTIONS") {
       return { statusCode: 200, headers: buildCorsHeaders(event), body: "" };
     }
 
+    // GET sanity check
     if (event.httpMethod === "GET") {
       return respond(event, 200, {
         ok: true,
         schemaVersion: SCHEMA_VERSION,
-        note: "POST JSON to this endpoint: { email, cityKey, bedrooms }"
+        note: "POST JSON to this endpoint: { email, cityKey, bedrooms }",
       });
     }
 
     if (event.httpMethod !== "POST") {
-      return respond(event, 405, { ok: false, error: "Method not allowed." });
+      return respond(event, 405, { ok: false, schemaVersion: SCHEMA_VERSION, error: "Method not allowed." });
     }
 
     const body = JSON.parse(event.body || "{}");
@@ -568,14 +550,14 @@ export async function handler(event) {
     const cityKey = safeKey(body.cityKey || "SanAntonio");
     const bedrooms = toInt(body.bedrooms) ?? 4;
 
-    if (!email) return respond(event, 400, { ok: false, error: "Missing email." });
+    if (!email) return respond(event, 400, { ok: false, schemaVersion: SCHEMA_VERSION, error: "Missing email." });
 
     const payTables = loadPayTables();
     const city = loadCity(cityKey);
     const profile = await fetchProfileByEmail(email);
     const computed = computePay(profile, payTables);
 
-    const payload = {
+    return respond(event, 200, {
       ok: computed.ok,
       schemaVersion: SCHEMA_VERSION,
       input: { email, cityKey, bedrooms },
@@ -583,18 +565,9 @@ export async function handler(event) {
       pay: computed.pay,
       city,
       missing: computed.missing,
-      errors: []
-    };
-
-    const hardened = guardBrainResponse(payload);
-    return respond(event, 200, hardened);
+    });
 
   } catch (e) {
-    return respond(event, 500, {
-      ok: false,
-      schemaVersion: SCHEMA_VERSION,
-      error: String(e?.message || e),
-      errors: ["server_error"]
-    });
+    return respond(event, 500, { ok: false, schemaVersion: SCHEMA_VERSION, error: String(e?.message || e) });
   }
 }
