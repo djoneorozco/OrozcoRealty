@@ -1,28 +1,38 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.3) — Adds normalized City Avg Home value
+// CENTRAL BRAIN (v1.4) — Schema Versioning + Guardrails (NO logic changes)
 // - Fetch Supabase profile by email
 // - Compute Base Pay + BAS + BAH + Total Pay (deterministic)
 // - Load city JSON (targets + market averages)
-// - Designed to be safe in Netlify's bundling/runtime
+// - Adds schemaVersion + stable response shape
+// - Adds pay.total alias (keeps pay.totalPay for backward compatibility)
+// - Optional: reads schema files if present (profile.schema.json / brain.schema.json)
 //
 // POST BODY:
 //   { email, cityKey, bedrooms }
 //
-// RETURNS:
+// RETURNS (stable contract):
 //   {
 //     ok: true/false,
+//     schemaVersion: "1.0",
 //     input: { email, cityKey, bedrooms },
 //     profile: {...},
-//     pay: { basePay, bah, bas, totalPay },
-//     city: { key, market, targets, raw },
-//     missing: [...]
+//     pay: { basePay, bah, bas, totalPay, total },
+//     city: { key, market, targets, raw, avg_home_value, target_rent, ... },
+//     missing: [...],
+//     errors: [...],
+//     schema: { profile: {...}?, brain: {...}? }   // optional (only if found)
 //   }
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
+
+// -----------------------------
+// //#0 Schema Version (contract)
+// -----------------------------
+const SCHEMA_VERSION = "1.0";
 
 // -----------------------------
 // //#1 CORS (robust)
@@ -106,6 +116,48 @@ function normalizeBaseName(s){
 }
 
 // -----------------------------
+// //#2.5 Schema file loader (optional, non-blocking)
+// - You created: profile.schema.json + brain.schema.json
+// - You said folder: netlify/function (singular)
+// - Project baseline is: netlify/functions (plural)
+// We look for both. If not found (Netlify bundle), we just skip.
+// -----------------------------
+const __SCHEMA_CACHE__ = { profile: null, brain: null, tried: false };
+
+function tryLoadSchemaFiles(){
+  if (__SCHEMA_CACHE__.tried) return __SCHEMA_CACHE__;
+  __SCHEMA_CACHE__.tried = true;
+
+  try {
+    const ROOT = process.cwd();
+    const candidates = [
+      path.join(ROOT, "netlify", "functions"),
+      path.join(ROOT, "netlify", "function")
+    ];
+
+    let schemaDir = null;
+    for (const c of candidates) {
+      if (fs.existsSync(c)) { schemaDir = c; break; }
+    }
+    if (!schemaDir) return __SCHEMA_CACHE__;
+
+    const profilePath = path.join(schemaDir, "profile.schema.json");
+    const brainPath   = path.join(schemaDir, "brain.schema.json");
+
+    if (fs.existsSync(profilePath)) {
+      __SCHEMA_CACHE__.profile = JSON.parse(fs.readFileSync(profilePath, "utf8"));
+    }
+    if (fs.existsSync(brainPath)) {
+      __SCHEMA_CACHE__.brain = JSON.parse(fs.readFileSync(brainPath, "utf8"));
+    }
+  } catch {
+    // never block runtime for schema loading
+  }
+
+  return __SCHEMA_CACHE__;
+}
+
+// -----------------------------
 // //#3 File loading (Netlify-safe)
 // -----------------------------
 const ROOT = process.cwd(); // /var/task
@@ -154,11 +206,6 @@ function loadCity(cityKey) {
 
   // ------------------------------------------------------------
   // //#3.1 Normalize "City Avg Home" into predictable keys
-  // Priority:
-  // 1) zillow_average_home_value
-  // 2) median_sale_price_current
-  // 3) median_listing_price_realtor
-  // 4) median_value_owner_occupied (sits under housing.*)
   // ------------------------------------------------------------
   const zillowAvg = toNum(marketRaw?.zillow_average_home_value);
   const medianSale = toNum(marketRaw?.median_sale_price_current);
@@ -179,6 +226,17 @@ function loadCity(cityKey) {
     (ownerOccMedian != null && "housing.median_value_owner_occupied") ||
     null;
 
+  // Normalize target rent if present (best-effort aliases)
+  const targetRent =
+    toNum(targets?.target_rent) ??
+    toNum(targets?.targetRent) ??
+    toNum(targets?.rent_target) ??
+    toNum(targets?.recommended_rent) ??
+    toNum(targets?.recommendedRent) ??
+    toNum(targets?.target_monthly_rent) ??
+    toNum(targets?.targetMonthlyRent) ??
+    null;
+
   // Create a market object that keeps your existing fields,
   // but adds canonical aliases the UI can reliably read.
   const market = {
@@ -190,11 +248,24 @@ function loadCity(cityKey) {
     avgHome: avgHome,
     city_avg_home: avgHome,
 
-    // Nice debug hint (won’t break anything)
+    // Debug hint
     avg_home_value_source: avgHomeSource,
   };
 
-  const out = { key, market, targets, raw: data };
+  // City wrapper stays the same, but we also surface
+  // canonical summary fields at the top-level for convenience.
+  const out = {
+    key,
+    market,
+    targets,
+    raw: data,
+
+    // canonical summary fields
+    avg_home_value: avgHome ?? 0,
+    target_rent: targetRent ?? 0,
+    avg_home_value_source: avgHomeSource
+  };
+
   __CITY_CACHE__.set(key, out);
   return out;
 }
@@ -288,8 +359,64 @@ function computePay(profile, payTables) {
   return {
     ok: missing.length === 0 && totalPay > 0,
     missing,
-    pay: { basePay, bah, bas, totalPay },
+    // Keep legacy field name totalPay, and we’ll add alias later
+    pay: { basePay, bah, bas, totalPay }
   };
+}
+
+// -----------------------------
+// //#4.5 Output Guardrails (schema-ish without dependencies)
+// - Ensures stable fields exist
+// - Adds pay.total alias
+// - Adds errors array
+// -----------------------------
+function guardBrainResponse(payload){
+  const errors = [];
+
+  const out = payload && typeof payload === "object" ? payload : {};
+  out.schemaVersion = String(out.schemaVersion || SCHEMA_VERSION);
+
+  // profile
+  if (!out.profile || typeof out.profile !== "object") {
+    out.profile = {};
+    errors.push("profile_missing");
+  }
+  if (!out.profile.email) {
+    errors.push("profile.email_missing");
+  }
+
+  // pay
+  if (!out.pay || typeof out.pay !== "object") {
+    out.pay = { basePay: 0, bas: 0, bah: 0, totalPay: 0 };
+    errors.push("pay_missing");
+  }
+
+  // Normalize numeric values
+  out.pay.basePay = Number(out.pay.basePay) || 0;
+  out.pay.bas     = Number(out.pay.bas) || 0;
+  out.pay.bah     = Number(out.pay.bah) || 0;
+  out.pay.totalPay = Number(out.pay.totalPay) || (out.pay.basePay + out.pay.bas + out.pay.bah);
+
+  // Add schema-friendly alias (does not break old UI)
+  out.pay.total = Number(out.pay.total) || out.pay.totalPay;
+
+  // city
+  if (!out.city || typeof out.city !== "object") {
+    out.city = { key: null, market: {}, targets: {}, raw: {} };
+    errors.push("city_missing");
+  }
+  // Make sure canonical fields exist at top-level
+  out.city.avg_home_value = Number(out.city.avg_home_value) || Number(out.city?.market?.avg_home_value) || 0;
+  out.city.target_rent    = Number(out.city.target_rent) || 0;
+
+  // missing array
+  if (!Array.isArray(out.missing)) out.missing = [];
+
+  // attach errors (merge)
+  const existingErrors = Array.isArray(out.errors) ? out.errors : [];
+  out.errors = [...existingErrors, ...errors];
+
+  return out;
 }
 
 // -----------------------------
@@ -328,9 +455,15 @@ export async function handler(event) {
 
     // GET sanity check
     if (event.httpMethod === "GET") {
+      const schemas = tryLoadSchemaFiles();
       return respond(event, 200, {
         ok: true,
+        schemaVersion: SCHEMA_VERSION,
         note: "POST JSON to this endpoint: { email, cityKey, bedrooms }",
+        schemaFilesFound: {
+          profile: !!schemas.profile,
+          brain: !!schemas.brain
+        }
       });
     }
 
@@ -350,16 +483,39 @@ export async function handler(event) {
     const profile = await fetchProfileByEmail(email);
     const computed = computePay(profile, payTables);
 
-    return respond(event, 200, {
+    // Optional schema files (non-blocking)
+    const schemas = tryLoadSchemaFiles();
+
+    // Build response (same as before, plus schemaVersion + errors)
+    const payload = {
       ok: computed.ok,
+      schemaVersion: SCHEMA_VERSION,
       input: { email, cityKey, bedrooms },
       profile,
       pay: computed.pay,
       city,
       missing: computed.missing,
-    });
+      errors: []
+    };
+
+    // Attach schema files only if found (safe, optional)
+    if (schemas.profile || schemas.brain) {
+      payload.schema = {};
+      if (schemas.profile) payload.schema.profile = schemas.profile;
+      if (schemas.brain) payload.schema.brain = schemas.brain;
+    }
+
+    // Guardrails (adds pay.total alias, canonical city fields, etc.)
+    const hardened = guardBrainResponse(payload);
+
+    return respond(event, 200, hardened);
 
   } catch (e) {
-    return respond(event, 500, { ok: false, error: String(e?.message || e) });
+    return respond(event, 500, {
+      ok: false,
+      schemaVersion: SCHEMA_VERSION,
+      error: String(e?.message || e),
+      errors: ["server_error"]
+    });
   }
 }
