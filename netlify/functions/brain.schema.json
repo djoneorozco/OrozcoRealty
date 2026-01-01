@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theorozcorealty.com/schema/brain.schema.v1.json",
+  "title": "OrozcoRealty Brain Response Schema (v1)",
+  "type": "object",
+  "required": ["ok", "schemaVersion", "profile", "pay", "city"],
+  "properties": {
+    "ok": { "type": "boolean" },
+
+    "schemaVersion": {
+      "type": "string",
+      "description": "Contract version for this payload, e.g. 1.0"
+    },
+
+    "profile": { "$ref": "./profile.schema.v1.json" },
+
+    "pay": {
+      "type": "object",
+      "required": ["basePay", "bas", "bah", "total"],
+      "properties": {
+        "basePay": { "type": "number", "minimum": 0 },
+        "bas": { "type": "number", "minimum": 0 },
+        "bah": { "type": "number", "minimum": 0 },
+        "total": { "type": "number", "minimum": 0 },
+
+        "zipUsed": { "type": ["string", "null"] },
+        "familyUsed": { "type": ["boolean", "null"] },
+        "rankUsed": { "type": ["string", "null"] },
+        "yosUsed": { "type": ["number", "null"], "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+
+    "city": {
+      "type": "object",
+      "required": ["avg_home_value", "target_rent"],
+      "properties": {
+        "avg_home_value": { "type": "number", "minimum": 0 },
+        "target_rent": { "type": "number", "minimum": 0 },
+
+        "city": { "type": ["string", "null"] },
+        "state": { "type": ["string", "null"] },
+        "source": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    }
+  },
+  "additionalProperties": true
+}
