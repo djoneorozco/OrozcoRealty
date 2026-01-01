@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theorozcorealty.com/schema/profile.schema.v1.json",
+  "title": "OrozcoRealty Profile Schema (v1)",
+  "type": "object",
+  "required": ["email"],
+  "properties": {
+    "email": {
+      "type": "string",
+      "minLength": 3
+    },
+    "name": {
+      "type": ["string", "null"]
+    },
+    "rank": {
+      "type": ["string", "null"],
+      "description": "Display rank label, e.g. E-6, O-3"
+    },
+    "rank_paygrade": {
+      "type": ["string", "null"],
+      "description": "Paygrade string if stored separately"
+    },
+    "yos": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 60
+    },
+    "family": {
+      "type": ["boolean", "null"],
+      "description": "true=with dependents BAH, false=without"
+    },
+    "base": {
+      "type": ["string", "null"]
+    },
+    "zip": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{5}(-[0-9]{4})?$"
+    },
+    "va_disability": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "notes": {
+      "type": ["string", "null"]
+    }
+  },
+  "additionalProperties": true
+}
