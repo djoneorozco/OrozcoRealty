@@ -1,8 +1,18 @@
 {
+  "city": "San Antonio, TX",
   "place": "San Antonio, TX",
+  "state": "TX",
   "geo_id": "1600000US4865000",
   "year": 2025,
   "last_updated_data_from_sources": "December 2025",
+
+  "zip": "78234",
+  "market_label": "San Antonio Metro",
+
+  "avg_home_value": 245985,
+  "average_home_value": 245985,
+  "avgHome": 245985,
+  "city_avg_home": 245985,
 
   "population": {
     "estimate": 1526656,
@@ -38,6 +48,39 @@
     "unemployment_rate_percent": 4.3
   },
 
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 1300, "high": 1400, "avg": 1350, "as_of": "2025-12" },
+      "home_price": { "low": 210000, "high": 250000, "avg": 230000, "as_of": "2026-01" },
+      "utilities": {
+        "electric_gas": { "low": 120, "high": 155, "avg": 138 },
+        "water_sewer": { "low": 40, "high": 55, "avg": 48 },
+        "total": { "low": 160, "high": 210, "avg": 185 },
+        "as_of": "2026-01"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 1700, "high": 2000, "avg": 1850, "as_of": "2025-12" },
+      "home_price": { "low": 290000, "high": 315000, "avg": 302500, "as_of": "2026-01" },
+      "utilities": {
+        "electric_gas": { "low": 150, "high": 205, "avg": 178 },
+        "water_sewer": { "low": 45, "high": 70, "avg": 58 },
+        "total": { "low": 195, "high": 275, "avg": 235 },
+        "as_of": "2026-01"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 1800, "high": 2200, "avg": 2000, "as_of": "2025-12" },
+      "home_price": { "low": 360000, "high": 430000, "avg": 395000, "as_of": "2026-01" },
+      "utilities": {
+        "electric_gas": { "low": 190, "high": 260, "avg": 225 },
+        "water_sewer": { "low": 65, "high": 90, "avg": 78 },
+        "total": { "low": 255, "high": 350, "avg": 303 },
+        "as_of": "2026-01"
+      }
+    }
+  },
+
   "housing": {
     "housing_units": 603213,
     "median_value_owner_occupied": 219700,
@@ -68,7 +111,7 @@
 
         { "month": "2024-06", "median_sale_price": 301500 },
         { "month": "2024-12", "median_sale_price": 258000 },
-        
+
         { "month": "2025-01", "median_sale_price": 281995 },
         { "month": "2025-02", "median_sale_price": 289995 },
         { "month": "2025-07", "median_sale_price": 330000 },
@@ -81,5 +124,13 @@
         { "month": "2025-12-W3", "median_sale_price": 350000 }
       ]
     }
+  },
+
+  "sources": {
+    "demographics": { "provider": "ACS / city profile", "as_of": "2025" },
+    "rent": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2025-12", "notes": "Bedroom rent ranges" },
+    "home_price": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2026-01", "notes": "Bedroom price bands" },
+    "utilities": { "provider": "Utility estimator (via Google AI)", "as_of": "2026-01", "notes": "Electric/Gas + Water/Sewer totals" },
+    "market": { "provider": "Zillow/Realtor (via Google AI)", "as_of": "2025-12", "notes": "Market summary + listings + sale history" }
   }
 }
