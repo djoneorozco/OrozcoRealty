@@ -103,24 +103,17 @@ function normalizeBaseName(s){
 function detectPayModel(profile){
   const mode = lower(profile?.mode || profile?.status || profile?.user_type || profile?.type);
 
-  // treat these as veteran/retired path
   const veteranModes = new Set(["vet","veteran","retired","retiree","separated","civilian"]);
-
-  // treat these as active duty path
   const activeModes = new Set(["ad","active","active_duty","activeduty","active-duty"]);
 
   if (veteranModes.has(mode)) return "veteran";
   if (activeModes.has(mode)) return "active_duty";
 
-  // default to active duty if unknown (safer for your current UI expectations)
   return "active_duty";
 }
 
 // -----------------------------
 // //#2.2 Family assumptions from minimal current inputs
-// - Your profiles.family is currently stored as text in Supabase.
-// - We interpret it as "family size including the member"
-//   family=7 => member + spouse + 5 kids under 18
 // -----------------------------
 function deriveDependentsFromFamilySize(profile){
   const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
@@ -158,6 +151,7 @@ function loadPayTables() {
   return __PAY_TABLES_CACHE__;
 }
 
+// ✅ ONLY THIS FUNCTION CHANGED
 function loadCity(cityKey) {
   const key = safeKey(cityKey || "SanAntonio");
 
@@ -171,6 +165,7 @@ function loadCity(cityKey) {
   const raw = fs.readFileSync(filePath, "utf8");
   const data = JSON.parse(raw);
 
+  // ---- Normalize market + targets (your existing logic)
   const marketRaw =
     data.market ||
     data?.housing?.market ||
@@ -193,6 +188,7 @@ function loadCity(cityKey) {
     medianSale ??
     medianList ??
     ownerOccMedian ??
+    toNum(data?.avg_home_value ?? data?.average_home_value ?? data?.avgHome ?? data?.city_avg_home) ??
     null;
 
   const avgHomeSource =
@@ -211,7 +207,75 @@ function loadCity(cityKey) {
     avg_home_value_source: avgHomeSource,
   };
 
-  const out = { key, market, targets, raw: data };
+  // ---- ✅ Critical: expose bedroom blocks in the shape the UI expects
+  const bedrooms =
+    (data?.bedrooms && typeof data.bedrooms === "object" ? data.bedrooms : null) ||
+    (data?.by_bedroom && typeof data.by_bedroom === "object" ? data.by_bedroom : null) ||
+    (data?.byBedroom && typeof data.byBedroom === "object" ? data.byBedroom : null) ||
+    null;
+
+  const bedroomsUsed =
+    (data?.bedrooms && "bedrooms") ||
+    (data?.by_bedroom && "by_bedroom") ||
+    (data?.byBedroom && "byBedroom") ||
+    null;
+
+  // ---- Optional but powerful: derive canonical baselines if missing
+  function avgFromBedroomPath(obj, getter){
+    if (!obj || typeof obj !== "object") return null;
+    const vals = [];
+    for (const k of Object.keys(obj)){
+      const v = getter(obj[k]);
+      const n = toNum(v);
+      if (n != null && n > 0) vals.push(n);
+    }
+    if (!vals.length) return null;
+    return Math.round(vals.reduce((a,b)=>a+b,0) / vals.length);
+  }
+
+  const derivedTargetRent = avgFromBedroomPath(bedrooms, (b)=> b?.rent_monthly?.avg ?? b?.rentMonthly?.avg ?? b?.rent?.avg);
+  const derivedUtilities  = avgFromBedroomPath(bedrooms, (b)=> b?.utilities?.total?.avg ?? b?.utilities_total?.avg ?? b?.utilities?.avg);
+
+  const targetRent =
+    toNum(data?.target_rent ?? data?.targetRent ?? targets?.target_rent ?? targets?.targetRent) ??
+    derivedTargetRent ??
+    null;
+
+  const avgUtilities =
+    toNum(data?.avg_utilities ?? data?.average_utilities ?? data?.avgUtilities) ??
+    derivedUtilities ??
+    null;
+
+  // ---- ✅ Return city in a UI-friendly shape (KEEP your old fields too)
+  const out = {
+    key,
+
+    // Preserve original city fields at top-level for the UI:
+    ...data,
+
+    // Keep your prior structure so nothing else breaks:
+    market,
+    targets,
+    raw: data,
+
+    // Add stable UI aliases:
+    bedrooms,
+    bedrooms_used: bedroomsUsed,
+
+    // Canonical baselines (so UI never blanks):
+    target_rent: targetRent,
+    targetRent: targetRent,
+
+    avg_home_value: toNum(data?.avg_home_value ?? data?.average_home_value ?? data?.avgHome ?? data?.city_avg_home) ?? avgHome ?? null,
+    average_home_value: toNum(data?.average_home_value) ?? (toNum(data?.avg_home_value) ?? avgHome ?? null),
+    avgHome: toNum(data?.avgHome) ?? (toNum(data?.avg_home_value) ?? avgHome ?? null),
+    city_avg_home: toNum(data?.city_avg_home) ?? (toNum(data?.avg_home_value) ?? avgHome ?? null),
+
+    avg_utilities: avgUtilities,
+    average_utilities: avgUtilities,
+    avgUtilities: avgUtilities,
+  };
+
   __CITY_CACHE__.set(key, out);
   return out;
 }
@@ -268,13 +332,6 @@ function computeBAH(rank, familyBool, zip, payTables, missing){
   return bah;
 }
 
-// -----------------------------
-// //#4.1 Veteran VA Disability computation (minimal inputs)
-// Uses DISABILITY_FULL if present; otherwise DISABILITY.
-// Assumptions:
-//  - familySize >= 2 => spouse
-//  - kidsUnder18 = familySize - 2
-// -----------------------------
 function computeVaDisability(profile, payTables, missing){
   const pct = toInt(profile?.va_disability ?? profile?.vaDisability ?? profile?.va_rating ?? profile?.vaRating);
   if (pct === null) {
@@ -287,9 +344,7 @@ function computeVaDisability(profile, payTables, missing){
 
   const { familySize, hasSpouse, kidsUnder18 } = deriveDependentsFromFamilySize(profile);
 
-  // If we have FULL table, use it (better)
   if (full && typeof full === "object") {
-    // baseline selection based on our assumptions
     let baseKey = "veteran";
     if (hasSpouse && kidsUnder18 >= 1) baseKey = "veteran_spouse_one_child";
     else if (hasSpouse && kidsUnder18 === 0) baseKey = "veteran_spouse";
@@ -297,7 +352,7 @@ function computeVaDisability(profile, payTables, missing){
 
     const base = Number(full?.[baseKey]) || 0;
     const addPerChild = Number(full?.additional_child_under_18) || 0;
-    const extraKids = Math.max(kidsUnder18 - 1, 0); // because *_one_child already includes 1 child
+    const extraKids = Math.max(kidsUnder18 - 1, 0);
 
     const amount = base + (extraKids * addPerChild);
 
@@ -317,26 +372,17 @@ function computeVaDisability(profile, payTables, missing){
     };
   }
 
-  // fallback to simple table
   const simple = Number(payTables?.DISABILITY?.[pctKey]) || 0;
   if (!simple) missing.push("va_disability_table_missing");
   return { amount: simple, debug: { pct, method: "DISABILITY", familySize } };
 }
 
-// -----------------------------
-// //#4.2 Retirement pay estimate (High-3 using BASEPAY steps)
-// Minimal: rank + yos + retirement_system(optional)
-// - High-3 estimate = average of last 3 pay steps <= yos (using available step keys)
-// - retirement = high3_est * (multiplier_per_year * yos)
-// - If yos < 20 => retirement = 0 (default eligibility rule)
-// -----------------------------
 function computeRetirementPay(profile, rank, yos, payTables, missing){
   if (yos === null) {
     missing.push("yos");
     return { amount: 0, debug: { method: "missing_yos" } };
   }
 
-  // Eligibility (MVP rule)
   if (yos < 20) {
     return { amount: 0, debug: { method: "ineligible_yos<20", yos } };
   }
@@ -347,7 +393,6 @@ function computeRetirementPay(profile, rank, yos, payTables, missing){
     return { amount: 0, debug: { method: "missing_basepay_table" } };
   }
 
-  // Gather step keys <= yos
   const keys = Object.keys(baseTable)
     .map(k => Number(k))
     .filter(n => Number.isFinite(n))
@@ -359,7 +404,6 @@ function computeRetirementPay(profile, rank, yos, payTables, missing){
     return { amount: 0, debug: { method: "no_steps<=yos", yos } };
   }
 
-  // last 3 steps (or fewer if not available)
   const lastSteps = eligible.slice(Math.max(eligible.length - 3, 0));
   const pays = lastSteps.map(k => Number(baseTable[String(k)]) || 0).filter(v => v > 0);
 
@@ -370,14 +414,12 @@ function computeRetirementPay(profile, rank, yos, payTables, missing){
 
   const high3 = pays.reduce((a,b)=>a+b,0) / pays.length;
 
-  // retirement system
   const sysRaw = lower(profile?.retirement_system || profile?.retirementSystem || "high3");
   const sys = (sysRaw === "brs" || sysRaw === "blended") ? "brs" : "high3";
 
   const multPerYear = toNum(payTables?.RETIREMENT?.systems?.[sys]?.multiplier_per_year) ?? (sys === "brs" ? 0.02 : 0.025);
   const rawMultiplier = multPerYear * yos;
 
-  // soft cap
   const cap = (sys === "brs") ? 0.60 : 0.75;
   const multiplier = Math.min(rawMultiplier, cap);
 
@@ -398,9 +440,6 @@ function computeRetirementPay(profile, rank, yos, payTables, missing){
   };
 }
 
-// -----------------------------
-// //#4.3 Main pay compute
-// -----------------------------
 function computePay(profile, payTables) {
   const missing = [];
 
@@ -409,11 +448,9 @@ function computePay(profile, payTables) {
   const rank = normalizeRank(profile?.rank_paygrade || profile?.rank || "");
   const yos = toInt(profile?.yos ?? profile?.years_of_service ?? profile?.yearsOfService);
 
-  // Family boolean for AD BAH lookup
   const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
   const familyBool = String(famRaw).toLowerCase() === "true" || famRaw === true || (toInt(famRaw) || 0) >= 2;
 
-  // Prefer explicit ZIP; otherwise derive from base
   const explicitZip = String(profile?.zip || profile?.postal_code || "").trim();
   const baseName = String(profile?.base || profile?.duty_station || profile?.station || "").trim();
   let zip = explicitZip;
@@ -421,12 +458,8 @@ function computePay(profile, payTables) {
   if (!rank) missing.push("rank_paygrade");
   if (yos === null) missing.push("yos");
 
-  // Compute base pay (used for AD totals, and also shown for vets as a proxy)
   const basePay = computeBasePay(rank, yos, payTables, missing);
 
-  // -------------------------
-  // Veteran Path
-  // -------------------------
   if (payModel === "veteran") {
     const bas = 0;
     const bah = 0;
@@ -445,9 +478,9 @@ function computePay(profile, payTables) {
       pay: {
         payModel,
         payAccuracy: "deterministic_va + estimated_retirement",
-        basePay,         // proxy (current base pay step)
-        bas,             // 0 for vets
-        bah,             // 0 for vets
+        basePay,
+        bas,
+        bah,
         retirementPay,
         vaDisabilityPay,
         totalPay,
@@ -457,10 +490,6 @@ function computePay(profile, payTables) {
     };
   }
 
-  // -------------------------
-  // Active Duty Path
-  // -------------------------
-  // Derive ZIP from base if missing
   if (!zip && baseName) {
     const baseToZipRaw =
       payTables?.BAH?.base_to_zip ||
@@ -527,12 +556,10 @@ async function fetchProfileByEmail(email) {
 // -----------------------------
 export async function handler(event) {
   try {
-    // Preflight
     if (event.httpMethod === "OPTIONS") {
       return { statusCode: 200, headers: buildCorsHeaders(event), body: "" };
     }
 
-    // GET sanity check
     if (event.httpMethod === "GET") {
       return respond(event, 200, {
         ok: true,
