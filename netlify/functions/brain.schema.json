@@ -40,7 +40,72 @@
 
         "city": { "type": ["string", "null"] },
         "state": { "type": ["string", "null"] },
-        "source": { "type": ["string", "null"] }
+        "source": { "type": ["string", "null"] },
+
+        "bedrooms": {
+          "type": "object",
+          "description": "Bedroom-based market baselines from the city JSON (rent, home price, utilities). Keys are bedroom counts as strings (e.g., \"1\", \"2\", \"3\", \"4\").",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "rent_monthly": {
+                "type": "object",
+                "properties": {
+                  "low": { "type": "number", "minimum": 0 },
+                  "high": { "type": "number", "minimum": 0 },
+                  "avg": { "type": "number", "minimum": 0 },
+                  "as_of": { "type": ["string", "null"] }
+                },
+                "additionalProperties": true
+              },
+              "home_price": {
+                "type": "object",
+                "properties": {
+                  "low": { "type": "number", "minimum": 0 },
+                  "high": { "type": "number", "minimum": 0 },
+                  "avg": { "type": "number", "minimum": 0 },
+                  "as_of": { "type": ["string", "null"] }
+                },
+                "additionalProperties": true
+              },
+              "utilities": {
+                "type": "object",
+                "properties": {
+                  "electric_gas": {
+                    "type": "object",
+                    "properties": {
+                      "low": { "type": "number", "minimum": 0 },
+                      "high": { "type": "number", "minimum": 0 },
+                      "avg": { "type": "number", "minimum": 0 }
+                    },
+                    "additionalProperties": true
+                  },
+                  "water_sewer": {
+                    "type": "object",
+                    "properties": {
+                      "low": { "type": "number", "minimum": 0 },
+                      "high": { "type": "number", "minimum": 0 },
+                      "avg": { "type": "number", "minimum": 0 }
+                    },
+                    "additionalProperties": true
+                  },
+                  "total": {
+                    "type": "object",
+                    "properties": {
+                      "low": { "type": "number", "minimum": 0 },
+                      "high": { "type": "number", "minimum": 0 },
+                      "avg": { "type": "number", "minimum": 0 }
+                    },
+                    "additionalProperties": true
+                  },
+                  "as_of": { "type": ["string", "null"] }
+                },
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": true
+          }
+        }
       },
       "additionalProperties": true
     },
