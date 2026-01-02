@@ -158,10 +158,28 @@ function loadPayTables() {
   return __PAY_TABLES_CACHE__;
 }
 
-function loadCity(cityKey) {
+/**
+ * IMPORTANT FIX:
+ * Your UI looks for bedroom blocks at:
+ *   brain.city.bedrooms["4"]...
+ * or brain.city.by_bedroom["4"]...
+ *
+ * Your SanAntonio.json stores: raw.by_bedroom
+ * Previous brain.js only returned { raw }, so UI couldn't find it.
+ *
+ * This function now exposes:
+ *  - out.by_bedroom  (top-level)
+ *  - out.bedrooms    (alias)
+ *  - out.avg_home_value (top-level, schema-friendly)
+ *  - out.target_rent    (top-level, schema-friendly)
+ */
+function loadCity(cityKey, bedrooms) {
   const key = safeKey(cityKey || "SanAntonio");
+  const beds = toInt(bedrooms) ?? 4;
 
-  if (__CITY_CACHE__.has(key)) return __CITY_CACHE__.get(key);
+  // Cache key must include bedrooms now because we compute target_rent from it
+  const cacheKey = `${key}__b${beds}`;
+  if (__CITY_CACHE__.has(cacheKey)) return __CITY_CACHE__.get(cacheKey);
 
   const filePath = path.join(CITIES_DIR, `${key}.json`);
   if (!fs.existsSync(filePath)) {
@@ -183,6 +201,7 @@ function loadCity(cityKey) {
     data?.realEstate?.targets ||
     {};
 
+  // --- market avg home value (your existing logic)
   const zillowAvg = toNum(marketRaw?.zillow_average_home_value);
   const medianSale = toNum(marketRaw?.median_sale_price_current);
   const medianList = toNum(marketRaw?.median_listing_price_realtor);
@@ -193,6 +212,8 @@ function loadCity(cityKey) {
     medianSale ??
     medianList ??
     ownerOccMedian ??
+    // ALSO allow your canonical top-level fields
+    toNum(data?.avg_home_value ?? data?.average_home_value ?? data?.avgHome ?? data?.city_avg_home) ??
     null;
 
   const avgHomeSource =
@@ -200,6 +221,7 @@ function loadCity(cityKey) {
     (medianSale != null && "housing.market.median_sale_price_current") ||
     (medianList != null && "housing.market.median_listing_price_realtor") ||
     (ownerOccMedian != null && "housing.median_value_owner_occupied") ||
+    ((toNum(data?.avg_home_value ?? data?.average_home_value ?? data?.avgHome ?? data?.city_avg_home) != null) && "avg_home_value(top-level)") ||
     null;
 
   const market = {
@@ -211,8 +233,59 @@ function loadCity(cityKey) {
     avg_home_value_source: avgHomeSource,
   };
 
-  const out = { key, market, targets, raw: data };
-  __CITY_CACHE__.set(key, out);
+  // --- Bedroom blocks (YOUR SanAntonio.json uses by_bedroom)
+  const byBedroom =
+    data?.by_bedroom ||
+    data?.byBedroom ||
+    data?.bedrooms ||
+    data?.housing_by_bedroom ||
+    null;
+
+  const bedKey = String(beds);
+  const bedBlock = (byBedroom && typeof byBedroom === "object")
+    ? (byBedroom?.[bedKey] || byBedroom?.[Number(bedKey)] || null)
+    : null;
+
+  // --- target rent (schema-friendly, computed from bedroom avg if available)
+  const rentFromBedroom =
+    toNum(bedBlock?.rent_monthly?.avg) ??
+    toNum(bedBlock?.rentMonthly?.avg) ??
+    toNum(bedBlock?.rent?.avg) ??
+    null;
+
+  const targetRent =
+    rentFromBedroom ??
+    toNum(data?.target_rent ?? data?.targetRent) ??
+    toNum(targets?.target_rent ?? targets?.targetRent) ??
+    null;
+
+  // Final city object
+  const out = {
+    key,
+
+    // existing structure
+    market,
+    targets,
+
+    // NEW: schema-friendly + UI-friendly top-level fields
+    avg_home_value: avgHome,
+    average_home_value: avgHome,
+    avgHome: avgHome,
+    city_avg_home: avgHome,
+
+    target_rent: targetRent,
+    targetRent: targetRent,
+
+    // NEW: expose bedroom blocks where UI expects them
+    by_bedroom: byBedroom || null,
+    bedrooms: byBedroom || null, // alias for your UI scripts
+    bedrooms_used: beds,
+
+    // keep raw for everything else (unchanged)
+    raw: data,
+  };
+
+  __CITY_CACHE__.set(cacheKey, out);
   return out;
 }
 
@@ -415,7 +488,17 @@ function computePay(profile, payTables) {
 
   // Prefer explicit ZIP; otherwise derive from base
   const explicitZip = String(profile?.zip || profile?.postal_code || "").trim();
-  const baseName = String(profile?.base || profile?.duty_station || profile?.station || "").trim();
+
+  // IMPORTANT: include next duty fields too (helps Lackland routing in your data)
+  const baseName = String(
+    profile?.base ||
+    profile?.duty_station ||
+    profile?.station ||
+    profile?.next_duty_location ||
+    profile?.nextDutyLocation ||
+    ""
+  ).trim();
+
   let zip = explicitZip;
 
   if (!rank) missing.push("rank_paygrade");
@@ -553,7 +636,10 @@ export async function handler(event) {
     if (!email) return respond(event, 400, { ok: false, schemaVersion: SCHEMA_VERSION, error: "Missing email." });
 
     const payTables = loadPayTables();
-    const city = loadCity(cityKey);
+
+    // IMPORTANT: loadCity now also receives bedrooms to compute target_rent and expose bedroom blocks
+    const city = loadCity(cityKey, bedrooms);
+
     const profile = await fetchProfileByEmail(email);
     const computed = computePay(profile, payTables);
 
