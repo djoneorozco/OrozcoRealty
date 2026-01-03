@@ -14,6 +14,14 @@
   "avgHome": 245985,
   "city_avg_home": 245985,
 
+  "mortgage_assumptions": {
+    "apr_percent": 7.0,
+    "term_years": 30,
+    "down_payment_percent": 5,
+    "includes": "principal_and_interest_only"
+  },
+  "avg_home_mortgage_monthly": { "avg": 1555, "as_of": "2026-01" },
+
   "population": {
     "estimate": 1526656,
     "median_age": 34.6,
@@ -52,6 +60,12 @@
     "2": {
       "rent_monthly": { "low": 1300, "high": 1400, "avg": 1350, "as_of": "2025-12" },
       "home_price": { "low": 210000, "high": 250000, "avg": 230000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 1327,
+        "high": 1580,
+        "avg": 1454,
+        "as_of": "2026-01"
+      },
       "utilities": {
         "electric_gas": { "low": 120, "high": 155, "avg": 138 },
         "water_sewer": { "low": 40, "high": 55, "avg": 48 },
@@ -62,6 +76,12 @@
     "3": {
       "rent_monthly": { "low": 1700, "high": 2000, "avg": 1850, "as_of": "2025-12" },
       "home_price": { "low": 290000, "high": 315000, "avg": 302500, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 1833,
+        "high": 1991,
+        "avg": 1912,
+        "as_of": "2026-01"
+      },
       "utilities": {
         "electric_gas": { "low": 150, "high": 205, "avg": 178 },
         "water_sewer": { "low": 45, "high": 70, "avg": 58 },
@@ -72,6 +92,12 @@
     "4": {
       "rent_monthly": { "low": 1800, "high": 2200, "avg": 2000, "as_of": "2025-12" },
       "home_price": { "low": 360000, "high": 430000, "avg": 395000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 2275,
+        "high": 2718,
+        "avg": 2497,
+        "as_of": "2026-01"
+      },
       "utilities": {
         "electric_gas": { "low": 190, "high": 260, "avg": 225 },
         "water_sewer": { "low": 65, "high": 90, "avg": 78 },
@@ -130,6 +156,7 @@
     "demographics": { "provider": "ACS / city profile", "as_of": "2025" },
     "rent": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2025-12", "notes": "Bedroom rent ranges" },
     "home_price": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2026-01", "notes": "Bedroom price bands" },
+    "mortgage": { "provider": "Computed (P&I)", "as_of": "2026-01", "notes": "30yr fixed @ 7.0% APR, 5% down; excludes taxes/insurance/HOA" },
     "utilities": { "provider": "Utility estimator (via Google AI)", "as_of": "2026-01", "notes": "Electric/Gas + Water/Sewer totals" },
     "market": { "provider": "Zillow/Realtor (via Google AI)", "as_of": "2025-12", "notes": "Market summary + listings + sale history" }
   }
