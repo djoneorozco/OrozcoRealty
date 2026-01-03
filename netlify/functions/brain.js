@@ -12,11 +12,15 @@
 //         - uses RETIREMENT.systems.high3 multiplier by default (or profile.retirement_system if present)
 // - Load city JSON (targets + market averages)
 //
+// ✅ PATCH ADDED:
+// - Compute Estimated Monthly Mortgage (Principal+Interest only) using city home price
+//   + deterministic APR mapping (credit score if present, else 720)
+//
 // POST BODY:
 //   { email, cityKey, bedrooms }
 //
 // RETURNS:
-//   { ok, schemaVersion, input, profile, pay, city, missing }
+//   { ok, schemaVersion, input, profile, pay, city, mortgage, missing }
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
@@ -130,6 +134,162 @@ function deriveDependentsFromFamilySize(profile){
 }
 
 // -----------------------------
+// //#2.3 Mortgage helpers (NEW)
+// -----------------------------
+function pmtiPrincipalInterest(loanAmount, aprPct, termYears){
+  const P = Number(loanAmount) || 0;
+  const apr = Number(aprPct) || 0;
+  const years = Number(termYears) || 30;
+  const n = Math.max(1, Math.round(years * 12));
+  if (P <= 0) return 0;
+  const r = (apr/100) / 12;
+  if (!r) return P / n;
+  const x = Math.pow(1+r, n);
+  return P * (r * x) / (x - 1);
+}
+
+function scoreAPR(score){
+  const s = Number(score) || 720;
+  if(s>=780) return 6.50;
+  if(s>=760) return 6.75;
+  if(s>=720) return 7.00;
+  if(s>=700) return 7.20;
+  if(s>=680) return 7.35;
+  if(s>=660) return 7.85;
+  if(s>=640) return 8.25;
+  if(s>=620) return 9.25;
+  return 9.95;
+}
+
+function getCreditScore(profile){
+  const raw =
+    profile?.credit_score ??
+    profile?.creditScore ??
+    profile?.fico ??
+    profile?.fico_score ??
+    profile?.ficoScore ??
+    null;
+
+  const n = toInt(raw);
+  if (n == null) return 720;
+  return Math.max(300, Math.min(850, n));
+}
+
+function guessDownPct(profile, payModel){
+  // Deterministic “minimal-input” assumption:
+  // - For Active Duty / Veteran: assume VA-style financing (0% down) unless explicitly overridden.
+  // - If profile specifies a down payment %, use it.
+  const explicit =
+    toNum(profile?.down_payment_pct ?? profile?.downPaymentPct ?? profile?.dpPct ?? profile?.downPct);
+  if (explicit != null) return Math.max(0, Math.min(100, explicit));
+
+  const loanType = lower(profile?.loan_type || profile?.loanType || profile?.mortgage_type || "");
+  const vaLike = loanType.includes("va") || loanType.includes("veteran");
+
+  const hasVaRating =
+    toInt(profile?.va_disability ?? profile?.vaDisability ?? profile?.va_rating ?? profile?.vaRating) != null;
+
+  if (vaLike || hasVaRating || payModel === "active_duty" || payModel === "veteran") return 0;
+
+  return 5; // deterministic conventional fallback
+}
+
+function extractHomePriceFromBedroomBlock(bedBlock){
+  if (!bedBlock || typeof bedBlock !== "object") return { avg:null, low:null, high:null, source:null };
+
+  const hp =
+    bedBlock.home_price ??
+    bedBlock.homePrice ??
+    bedBlock.price ??
+    bedBlock.home_value ??
+    null;
+
+  if (hp == null) return { avg:null, low:null, high:null, source:null };
+
+  if (typeof hp === "number" || typeof hp === "string"){
+    const a = toNum(hp);
+    return { avg: a, low:null, high:null, source:"bedrooms.home_price.scalar" };
+  }
+
+  if (typeof hp === "object"){
+    const avg = toNum(hp.avg ?? hp.value ?? hp.median ?? hp.mean ?? hp.amount ?? null);
+    const low = toNum(hp.low ?? null);
+    const high= toNum(hp.high ?? null);
+    return { avg, low, high, source:"bedrooms.home_price.object" };
+  }
+
+  return { avg:null, low:null, high:null, source:null };
+}
+
+function computeMortgageEstimate(profile, city, bedrooms, payModel){
+  const creditScore = getCreditScore(profile);
+  const apr = scoreAPR(creditScore);
+  const termYears = toInt(profile?.term_years ?? profile?.termYears) ?? 30;
+
+  // Price (prefer bedroom block home price if present, else city avg)
+  const bedKey = String(bedrooms ?? "");
+  const bedBlock =
+    (city?.bedrooms && (city.bedrooms?.[bedKey] || city.bedrooms?.[Number(bedKey)])) || null;
+
+  let { avg:priceAvg, low:priceLow, high:priceHigh, source:bedSource } = extractHomePriceFromBedroomBlock(bedBlock);
+
+  let priceSource = null;
+
+  if (priceAvg != null || (priceLow != null && priceHigh != null)){
+    priceSource = `city.bedrooms[${bedKey}].home_price`;
+    if (priceAvg == null && priceLow != null && priceHigh != null){
+      priceAvg = Math.round((priceLow + priceHigh) / 2);
+    }
+  } else {
+    const cityAvg =
+      toNum(city?.avg_home_value) ??
+      toNum(city?.average_home_value) ??
+      toNum(city?.avgHome) ??
+      toNum(city?.city_avg_home) ??
+      toNum(city?.market?.avg_home_value) ??
+      toNum(city?.market?.zillow_average_home_value) ??
+      null;
+
+    priceAvg = cityAvg;
+    priceSource = "city.avg_home_value";
+  }
+
+  const downPct = guessDownPct(profile, payModel);
+
+  function calcMonthly(price){
+    const p = Number(price) || 0;
+    if (p <= 0) return 0;
+    const loan = Math.max(0, p * (1 - (downPct/100)));
+    return pmtiPrincipalInterest(loan, apr, termYears);
+  }
+
+  const monthlyAvg = calcMonthly(priceAvg);
+  const monthlyLow = (priceLow != null && priceLow > 0) ? calcMonthly(priceLow) : null;
+  const monthlyHigh= (priceHigh!= null && priceHigh> 0) ? calcMonthly(priceHigh) : null;
+
+  return {
+    ok: monthlyAvg > 0,
+    type: "principal_interest_only",
+    monthly: monthlyAvg > 0 ? Math.round(monthlyAvg) : 0,
+    monthly_raw: monthlyAvg,
+    range: (monthlyLow != null && monthlyHigh != null)
+      ? { low: Math.round(monthlyLow), high: Math.round(monthlyHigh) }
+      : null,
+    assumptions: {
+      bedrooms: toInt(bedrooms) ?? null,
+      priceAvg: priceAvg ?? null,
+      priceLow: priceLow ?? null,
+      priceHigh: priceHigh ?? null,
+      priceSource,
+      downPct,
+      termYears,
+      apr,
+      creditScore
+    }
+  };
+}
+
+// -----------------------------
 // //#3 File loading (Netlify-safe)
 // -----------------------------
 const ROOT = process.cwd(); // /var/task
@@ -151,7 +311,7 @@ function loadPayTables() {
   return __PAY_TABLES_CACHE__;
 }
 
-// ✅ ONLY THIS FUNCTION CHANGED
+// ✅ ONLY THIS FUNCTION CHANGED (your existing)
 function loadCity(cityKey) {
   const key = safeKey(cityKey || "SanAntonio");
 
@@ -584,6 +744,10 @@ export async function handler(event) {
     const profile = await fetchProfileByEmail(email);
     const computed = computePay(profile, payTables);
 
+    // ✅ NEW: Mortgage estimate (P&I only) derived from city home price + credit band
+    const payModel = detectPayModel(profile);
+    const mortgage = computeMortgageEstimate(profile, city, bedrooms, payModel);
+
     return respond(event, 200, {
       ok: computed.ok,
       schemaVersion: SCHEMA_VERSION,
@@ -591,6 +755,7 @@ export async function handler(event) {
       profile,
       pay: computed.pay,
       city,
+      mortgage,
       missing: computed.missing,
     });
 
