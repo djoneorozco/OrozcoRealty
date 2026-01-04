@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Tue Dec 09 2025 08:01:04 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Sun Jan 04 2026 02:12:42 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="6924ff152bca88765a825dcd" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
 <head>
   <meta charset="utf-8">
@@ -21,11 +21,10 @@
 <body class="body-11">
   <section>
     <div class="w-embed"></div>
-    <section></section>
   </section>
   <div class="w-embed w-script"><!--  =========================================================
   PCS SNAPSHOT v3.2 • House of SaSS
-  * Update: Replaces 12-Month Trend with Redfin-Style 1YR/3YR ApexCharts Line Chart
+  * Update: FULL-SCREEN (100vw / 100vh) + breaks out of Webflow container
   * EVERYTHING ELSE UNCHANGED
 =========================================================  -->
     <div id="pcs-snapshot-shell" style="all: initial;">
@@ -34,6 +33,33 @@
       <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
       <style>
+    /* =========================================================
+       //#0 – FULL SCREEN OVERRIDE (NEW)
+       - Forces the entire embed to fill the viewport, even inside
+         Webflow containers / max-width wrappers.
+    ========================================================= */
+    #pcs-snapshot-shell{
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      overflow: auto !important;
+      background: #0b0e1a !important;
+      z-index: 2147483646 !important;
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    /* Optional: prevent iOS safe-area clipping */
+    #pcs-snapshot-shell{
+      padding-top: env(safe-area-inset-top);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+    }
+    /* =========================================================
+       ORIGINAL STYLES (UNCHANGED) + WRAP UPDATED TO FULL WIDTH
+    ========================================================= */
     #pcs-snapshot-shell,
     #pcs-snapshot-shell * {
       box-sizing: border-box;
@@ -41,12 +67,13 @@
     }
     #pcs-snapshot-wrap {
       width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 20px 32px;
+      max-width: none;              /* <-- CHANGED (was 1200px) */
+      margin: 0;                    /* <-- CHANGED (was 0 auto) */
+      min-height: 100vh;            /* <-- NEW */
+      padding: 28px clamp(16px, 2.2vw, 34px) 32px;
       background: #0b0e1a;
-      border-radius: 22px;
-      box-shadow: 0 24px 48px rgba(0,0,0,0.65);
+      border-radius: 0;             /* <-- CHANGED (was 22px) */
+      box-shadow: none;             /* <-- CHANGED (was heavy shadow) */
       color: #e9ecff;
     }
     h2, h3, h4 { margin: 0; padding: 0; }
@@ -450,7 +477,7 @@
     document.getElementById("pcs-snapshot-wrap").innerHTML =
       "<div style='color:#e9ecff;font-size:14px;'>PCS Snapshot is temporarily unavailable. Try again later.</div>";
   });
-})();  
+})();
 </script>
     </div>
   </div>
