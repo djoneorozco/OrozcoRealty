@@ -1,15 +1,12 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.7) — Minimal-input Veteran Pay (NO user-entered dollars)
+// CENTRAL BRAIN (v1.8) — Minimal-input Veteran Pay (NO user-entered dollars)
 // - Fetch Supabase profile by email
 // - Active Duty: Base Pay + BAS + BAH (deterministic)
 // - Veteran/Retired (minimal inputs):
 //     * BAH = 0, BAS = 0
-//     * VA Disability Pay: computed from DISABILITY_FULL using assumptions:
-//         - profile.family (number) => member + spouse + (family-2) children under 18
-//         - spouse assumed if family>=2
+//     * VA Disability Pay: computed from DISABILITY_FULL using assumptions
 //     * Retirement Pay (estimate): High-3 using BASEPAY steps (last 3 steps <= YOS)
-//         - uses RETIREMENT.systems.high3 multiplier by default (or profile.retirement_system if present)
 // - Load city JSON (targets + market averages)
 //
 // ✅ PATCH ADD (Mortgage Estimate):
@@ -20,18 +17,30 @@
 //     * Term: body.termYears OR profile.termYears OR default 30
 //     * Taxes/Insurance/HOA: optional from body/profile/city, else safe defaults
 //
+// ✅ NEW (What-If Overrides):
+// - Accepts body.overrides to simulate scenarios WITHOUT writing to Supabase.
+//   Examples:
+//     { overrides: { rank_paygrade:"E-7" } }
+//     { overrides: { base:"Nellis AFB" } }
+//     { overrides: { yos:11, family:true } }
+// - Overrides apply to a COPY of the fetched profile only.
+//
 // POST BODY:
-//   { email, cityKey, bedrooms, price?, dpPct?, termYears?, creditScore?, apr?, taxRate?, insRate?, hoa? }
+//   {
+//     email, cityKey, bedrooms,
+//     price?, dpPct?, termYears?, creditScore?, apr?, taxRate?, insRate?, hoa?, pmiRate?,
+//     overrides?: { rank_paygrade?, rank?, yos?, base?, zip?, family?, mode?, va_disability?, creditScore?, dpPct?, termYears?, apr? }
+//   }
 //
 // RETURNS:
-//   { ok, schemaVersion, input, profile, pay, city, missing, mortgage, estimatedMonthlyMortgage }
+//   { ok, schemaVersion, input, profile, profileEffective, overridesApplied, pay, city, missing, mortgage, estimatedMonthlyMortgage }
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
 
-const SCHEMA_VERSION = "1.0";
+const SCHEMA_VERSION = "1.1";
 
 // -----------------------------
 // //#1 CORS (robust)
@@ -138,31 +147,88 @@ function deriveDependentsFromFamilySize(profile){
 }
 
 // -----------------------------
+// //#2.3 ✅ NEW — Apply “what-if” overrides (never persisted)
+// -----------------------------
+function applyOverridesToProfile(profile, overridesRaw){
+  const overrides = (overridesRaw && typeof overridesRaw === "object") ? overridesRaw : null;
+  if (!profile || !overrides) return { profileEffective: profile, overridesApplied: null };
+
+  // Only allow these keys (keeps it safe and predictable)
+  const ALLOWED = new Set([
+    "rank_paygrade","rank",
+    "yos","years_of_service","yearsOfService",
+    "base","duty_station","station",
+    "zip","postal_code",
+    "family","dependents","has_dependents",
+    "mode","status","user_type","type",
+    "va_disability","vaDisability","va_rating","vaRating",
+    "creditScore","credit_score",
+    "dpPct","down_payment_pct",
+    "termYears","term_years",
+    "apr"
+  ]);
+
+  const applied = {};
+  for (const [k, v] of Object.entries(overrides)) {
+    if (!ALLOWED.has(k)) continue;
+    if (v === undefined) continue;
+    applied[k] = v;
+  }
+
+  if (!Object.keys(applied).length) {
+    return { profileEffective: profile, overridesApplied: null };
+  }
+
+  // Normalize rank fields if present
+  if (applied.rank_paygrade != null) applied.rank_paygrade = normalizeRank(applied.rank_paygrade);
+  if (applied.rank != null) applied.rank = normalizeRank(applied.rank);
+
+  // Return a copy only
+  const out = { ...profile, ...applied };
+  return { profileEffective: out, overridesApplied: applied };
+}
+
+// -----------------------------
 // //#3 File loading (Netlify-safe)
 // -----------------------------
 const ROOT = process.cwd(); // /var/task
-const PAY_TABLES_PATH = path.join(ROOT, "netlify", "functions", "data", "militaryPayTables.json");
-const CITIES_DIR      = path.join(ROOT, "netlify", "functions", "cities");
+
+// ✅ Your real location is: netlify/functions/militaryPayTables.json
+// Keep fallback to old path just in case.
+const PAY_TABLES_PATHS = [
+  path.join(ROOT, "netlify", "functions", "militaryPayTables.json"),
+  path.join(ROOT, "netlify", "functions", "data", "militaryPayTables.json"),
+];
+
+const CITIES_DIR = path.join(ROOT, "netlify", "functions", "cities");
 
 let __PAY_TABLES_CACHE__ = null;
+let __PAY_TABLES_PATH_USED__ = null;
 const __CITY_CACHE__ = new Map();
 
 function loadPayTables() {
   if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
 
-  if (!fs.existsSync(PAY_TABLES_PATH)) {
-    throw new Error(`militaryPayTables.json not found at ${PAY_TABLES_PATH}`);
+  let found = null;
+  for (const p of PAY_TABLES_PATHS) {
+    if (fs.existsSync(p)) { found = p; break; }
   }
 
-  const raw = fs.readFileSync(PAY_TABLES_PATH, "utf8");
+  if (!found) {
+    throw new Error(
+      `militaryPayTables.json not found. Tried:\n- ${PAY_TABLES_PATHS.join("\n- ")}\n` +
+      `Fix: ensure the file is present at netlify/functions/militaryPayTables.json and bundled via netlify.toml included_files if needed.`
+    );
+  }
+
+  const raw = fs.readFileSync(found, "utf8");
   __PAY_TABLES_CACHE__ = JSON.parse(raw);
+  __PAY_TABLES_PATH_USED__ = found;
   return __PAY_TABLES_CACHE__;
 }
 
-// ✅ ONLY THIS FUNCTION CHANGED (from your existing v1.7)
 function loadCity(cityKey) {
   const key = safeKey(cityKey || "SanAntonio");
-
   if (__CITY_CACHE__.has(key)) return __CITY_CACHE__.get(key);
 
   const filePath = path.join(CITIES_DIR, `${key}.json`);
@@ -228,7 +294,6 @@ function loadCity(cityKey) {
     (data?.byBedroom && "byBedroom") ||
     null;
 
-  // ---- Optional: derive canonical baselines if missing
   function avgFromBedroomPath(obj, getter){
     if (!obj || typeof obj !== "object") return null;
     const vals = [];
@@ -256,20 +321,14 @@ function loadCity(cityKey) {
 
   const out = {
     key,
-
-    // Preserve original city fields at top-level for the UI:
     ...data,
-
-    // Keep your prior structure so nothing else breaks:
     market,
     targets,
     raw: data,
 
-    // Add stable UI aliases:
     bedrooms,
     bedrooms_used: bedroomsUsed,
 
-    // Canonical baselines:
     target_rent: targetRent,
     targetRent: targetRent,
 
@@ -315,6 +374,7 @@ function computeBAH(rank, familyBool, zip, payTables, missing){
   let bah = 0;
   if (zip && rank) {
     const bahByZip = payTables?.BAH?.by_zip || payTables?.BAH?.byZip || null;
+
     const bahZip =
       (bahByZip && bahByZip?.[zip]) ||
       payTables?.BAH_TX?.[zip] ||
@@ -579,7 +639,6 @@ function pickMortgagePrice({ body, profile, city, bedrooms }){
     const b = bedsRoot[bedsKey] || bedsRoot[Number(bedsKey)] || null;
     if (b){
       const block = b?.home_price ?? b?.homePrice ?? b?.price ?? b?.home_value;
-      // allow {avg,low,high} or raw number
       const avg = (typeof block === "object") ? toNum(block?.avg ?? block?.value ?? block?.amount) : toNum(block);
       const low = (typeof block === "object") ? toNum(block?.low) : null;
       const high= (typeof block === "object") ? toNum(block?.high): null;
@@ -608,10 +667,8 @@ function pickMortgagePrice({ body, profile, city, bedrooms }){
 }
 
 function computeMortgageEstimate({ body, profile, city, bedrooms }){
-  // Price
   const { price, source: priceSource } = pickMortgagePrice({ body, profile, city, bedrooms });
 
-  // If we truly have no price, return a clean empty estimate
   if (!price || price <= 0){
     return {
       ok: false,
@@ -626,10 +683,9 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }){
     };
   }
 
-  // Inputs / defaults
   const dpPct =
     toNum(body?.dpPct ?? body?.downPaymentPct ?? profile?.dpPct ?? profile?.down_payment_pct) ??
-    5; // safe default
+    5;
 
   const termYears =
     toInt(body?.termYears ?? body?.term ?? profile?.termYears ?? profile?.term_years) ??
@@ -643,14 +699,13 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }){
     toNum(body?.apr ?? profile?.apr) ??
     (creditScore != null ? scoreAPR(creditScore) : 7.0);
 
-  // Optional city/profile tax + insurance + HOA
   const taxRate =
     toNum(body?.taxRate ?? profile?.taxRate ?? city?.tax_rate ?? city?.property_tax_rate ?? city?.raw?.property_tax_rate) ??
-    1.20; // % per year default
+    1.20;
 
   const insRate =
     toNum(body?.insRate ?? profile?.insRate ?? city?.insurance_rate ?? city?.raw?.insurance_rate) ??
-    0.50; // % per year default
+    0.50;
 
   const hoa =
     toNum(body?.hoa ?? profile?.hoa ?? profile?.hoa_monthly ?? city?.hoa_monthly ?? city?.raw?.hoa_monthly) ??
@@ -664,15 +719,12 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }){
 
   const principalInterest = loan > 0 ? pmti(loan, mRate, n) : 0;
 
-  // Taxes + insurance as simple rate * price
   const taxes = (price * (taxRate/100)) / 12;
   const insurance = (price * (insRate/100)) / 12;
 
-  // PMI heuristic: only if dpPct < 20 and dpPct > 0 (very conservative)
-  // (VA loans often have no PMI; users can override later via body/profile)
   const pmiRate =
     toNum(body?.pmiRate ?? profile?.pmiRate) ??
-    (dpPct > 0 && dpPct < 20 ? 0.50 : 0); // % per year
+    (dpPct > 0 && dpPct < 20 ? 0.50 : 0);
   const pmi = (loan * (pmiRate/100)) / 12;
 
   const totalMonthly = principalInterest + taxes + insurance + hoa + pmi;
@@ -738,7 +790,7 @@ export async function handler(event) {
       return respond(event, 200, {
         ok: true,
         schemaVersion: SCHEMA_VERSION,
-        note: "POST JSON to this endpoint: { email, cityKey, bedrooms, price?, dpPct?, termYears?, creditScore?, apr? }",
+        note: "POST JSON to this endpoint: { email, cityKey, bedrooms, price?, dpPct?, termYears?, creditScore?, apr?, overrides? }",
       });
     }
 
@@ -755,24 +807,36 @@ export async function handler(event) {
 
     const payTables = loadPayTables();
     const city = loadCity(cityKey);
-    const profile = await fetchProfileByEmail(email);
-    const computed = computePay(profile, payTables);
 
-    // ✅ PATCH: mortgage estimate (works even if user didn’t fill dashboard yet)
-    const mortgage = computeMortgageEstimate({ body, profile, city, bedrooms });
+    const profile = await fetchProfileByEmail(email);
+
+    // ✅ Apply “what-if” overrides (never persisted)
+    const { profileEffective, overridesApplied } = applyOverridesToProfile(profile, body.overrides);
+
+    const computed = computePay(profileEffective, payTables);
+
+    const mortgage = computeMortgageEstimate({ body, profile: profileEffective, city, bedrooms });
 
     return respond(event, 200, {
       ok: computed.ok,
       schemaVersion: SCHEMA_VERSION,
       input: { email, cityKey, bedrooms },
+      debug: { payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
 
+      // Original profile (as stored in Supabase)
       profile,
+
+      // Effective profile (profile + overridesApplied)
+      profileEffective,
+
+      // Echo what overrides we actually accepted
+      overridesApplied: overridesApplied || null,
+
       pay: computed.pay,
       city,
 
       missing: computed.missing,
 
-      // ✅ new fields (safe additions)
       mortgage,
       estimatedMonthlyMortgage: Number(mortgage?.totalMonthly || 0) || 0,
     });
