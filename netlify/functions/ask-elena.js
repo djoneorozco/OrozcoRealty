@@ -1,9 +1,9 @@
 // netlify/functions/ask-elena.js
-// v2.3 — Profile-aware Elena (Supabase profile lookup + deterministic pay basics)
+// v2.4 — Profile-aware Elena (Supabase profile lookup + deterministic pay basics + affordability)
 //
 // GOAL:
-// - Elena can answer questions about the user's profile + pay (Base Pay + BAS, and BAH if ZIP is provided)
-// - Uses the same Supabase profile fields as profile-by-email.js
+// - Elena can answer questions about the user's profile + pay (Base Pay + BAS, and BAH if ZIP/base is available)
+// - Adds deterministic “How much house can I afford?” quick answer
 // - Uses deterministic pay tables from:
 //     ✅ netlify/functions/militaryPayTables.json (primary)
 //     ↩︎ netlify/functions/data/militaryPayTables.json (fallback)
@@ -174,6 +174,40 @@ function normalizeBaseName(s) {
 }
 
 /* ============================================================
+   //#3B — Mortgage helpers (deterministic)
+============================================================ */
+function monthlyPaymentPI(principal, aprPercent, termYears) {
+  const P = Number(principal) || 0;
+  const apr = Number(aprPercent) || 0;
+  const years = Number(termYears) || 30;
+  const n = Math.max(1, Math.round(years * 12));
+
+  if (P <= 0) return 0;
+
+  const r = apr > 0 ? (apr / 100) / 12 : 0;
+  if (r === 0) return P / n;
+
+  const pow = Math.pow(1 + r, n);
+  return P * (r * pow) / (pow - 1);
+}
+
+function principalFromPaymentPI(payment, aprPercent, termYears) {
+  const M = Number(payment) || 0;
+  const apr = Number(aprPercent) || 0;
+  const years = Number(termYears) || 30;
+  const n = Math.max(1, Math.round(years * 12));
+
+  if (M <= 0) return 0;
+
+  const r = apr > 0 ? (apr / 100) / 12 : 0;
+  if (r === 0) return M * n;
+
+  const pow = Math.pow(1 + r, n);
+  // P = M * (( (1+r)^n - 1 ) / ( r*(1+r)^n ))
+  return M * ((pow - 1) / (r * pow));
+}
+
+/* ============================================================
    //#4 — Deterministic pay tables (militaryPayTables.json)
 ============================================================ */
 let __PAY_TABLES_CACHE__ = null;
@@ -318,6 +352,7 @@ function computePayBasics({ paygrade, yos, zip, family, base }) {
 function detectIntent(text) {
   const t = String(text || "").toLowerCase();
 
+  // Pay
   if (
     t.includes("monthly pay") ||
     t.includes("total pay") ||
@@ -326,9 +361,20 @@ function detectIntent(text) {
     (t.includes("pay") && (t.includes("monthly") || t.includes("total") || t.includes("mine") || t.includes("my")))
   ) return { type: "pay_question" };
 
+  // Profile
   if (t.includes("my rank") || (t.includes("rank") && t.includes("my")) || t.includes("profile loaded")) {
     return { type: "profile_question" };
   }
+
+  // NEW: Affordability / housing budget
+  if (
+    t.includes("afford") ||
+    t.includes("how much house") ||
+    t.includes("how much home") ||
+    t.includes("most i can spend") ||
+    (t.includes("spend") && (t.includes("house") || t.includes("home"))) ||
+    (t.includes("budget") && (t.includes("house") || t.includes("home") || t.includes("mortgage")))
+  ) return { type: "affordability_question" };
 
   return null;
 }
@@ -399,6 +445,7 @@ module.exports.handler = async (event) => {
   const family = profile?.family ?? null;
   const va = profile?.va_disability ?? null;
 
+  // ZIP supplied by caller (optional)
   const zip = safeStr(payload.zip || payload?.context?.zip || "");
 
   const profileContext = profile
@@ -417,6 +464,13 @@ module.exports.handler = async (event) => {
     : null;
 
   const intent = detectIntent(userText);
+
+  // ------------------------------------------------------------
+  // Resolve ZIP early (used for deterministic + OpenAI fallback)
+  // ------------------------------------------------------------
+  const tables = loadPayTables(); // cached
+  const derivedZip = (!zip && base && tables) ? deriveZipFromBase(tables, base) : "";
+  const resolvedZip = zip || derivedZip || "";
 
   // ============================================================
   // //#6.1 — Profile question (deterministic)
@@ -463,7 +517,7 @@ module.exports.handler = async (event) => {
     const pay = computePayBasics({
       paygrade: pg,
       yos: profileContext.yos,
-      zip,
+      zip: resolvedZip,
       family: !!profileContext.family,
       base: profileContext.base,
     });
@@ -504,14 +558,110 @@ module.exports.handler = async (event) => {
         total: pay.total,
         bahNote: pay.bahNote || "",
         resolvedZip: pay.resolvedZip || "",
-        inputs: { paygrade: pg || null, yos: profileContext.yos ?? null, zip: zip || null, base: profileContext.base || null, family: !!profileContext.family },
+        inputs: {
+          paygrade: pg || null,
+          yos: profileContext.yos ?? null,
+          zip: resolvedZip || null,
+          base: profileContext.base || null,
+          family: !!profileContext.family
+        },
       },
       debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
     });
   }
 
   // ============================================================
-  // //#6.3 — OpenAI fallback (profile-aware, optional)
+  // //#6.3 — Affordability question (deterministic quick answer)
+  // ============================================================
+  if (intent?.type === "affordability_question") {
+    if (!profileContext || !profileContext.email) {
+      return respond(200, headers, {
+        intent: "affordability_question",
+        reply:
+          "I can calculate that fast — I just need your profile synced (email) so I can pull rank + YOS + base for BAH.",
+        profile: null,
+        debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
+      });
+    }
+
+    const r = rankShort(pg) || pg || "—";
+
+    const pay = computePayBasics({
+      paygrade: pg,
+      yos: profileContext.yos,
+      zip: resolvedZip,
+      family: !!profileContext.family,
+      base: profileContext.base,
+    });
+
+    if (!pay.ok) {
+      return respond(200, headers, {
+        intent: "affordability_question",
+        reply:
+          `I can see your profile (${r}, ${String(profileContext.yos ?? "—")} YOS), but pay math can’t run yet: ${pay.reason}`,
+        profile: profileContext,
+        debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
+      });
+    }
+
+    // Deterministic housing cap (matches your system’s spirit)
+    const totalPay = Number(pay.total) || 0;
+    const allInCap = totalPay * 0.30;              // “safe” all-in housing cap
+    const piTarget = allInCap / 1.28;              // your dashboard buffer for taxes/ins/HOA
+
+    // Quick estimate assumptions (explicitly labeled)
+    const aprAssumed = 7.0;
+    const termAssumed = 30;
+
+    // Convert PI target -> max principal -> max price for 0% and 5% down
+    const maxPrincipal = principalFromPaymentPI(piTarget, aprAssumed, termAssumed);
+
+    const price0 = maxPrincipal;                   // 0% down (VA-style estimate)
+    const price5 = maxPrincipal / (1 - 0.05);      // 5% down
+
+    const lines = [];
+    lines.push(`BLUF: Your “safe” all-in housing cap is about ${money(allInCap)}/mo.`);
+    lines.push(`That’s a P&I target of ~${money(piTarget)}/mo (using your 1.28 buffer).`);
+    lines.push("");
+    lines.push(`Pay snapshot for ${r} ${ln || ""}:`.trim());
+    lines.push(`• Base Pay: ${money(pay.basePay)}`);
+    lines.push(`• BAS: ${money(pay.bas)}`);
+    if (pay.bah > 0) lines.push(`• BAH: ${money(pay.bah)}${pay.resolvedZip ? ` (ZIP ${pay.resolvedZip})` : ""}`);
+    else lines.push(`• BAH: — (${pay.bahNote || "needs base/ZIP"})`);
+    lines.push(`= Total Pay Used: ${money(totalPay)}/mo`);
+    lines.push("");
+    lines.push(`Quick max price estimate (assumes ${aprAssumed}% APR, ${termAssumed}yr fixed):`);
+    lines.push(`• ~${money(price0)} home price @ 0% down (VA-style rough cap)`);
+    lines.push(`• ~${money(price5)} home price @ 5% down`);
+    lines.push("");
+    lines.push(`If you tell me your credit score + planned down payment, I’ll tighten this to your real APR band.`);
+
+    return respond(200, headers, {
+      intent: "affordability_question",
+      reply: lines.join("\n"),
+      profile: profileContext,
+      pay: {
+        basePay: pay.basePay,
+        bas: pay.bas,
+        bah: pay.bah,
+        total: pay.total,
+        resolvedZip: pay.resolvedZip || "",
+      },
+      affordability: {
+        ratios: { housing_cap_pct: 0.30, buffer_allin_to_pi: 1.28 },
+        allInCapMonthly: allInCap,
+        piTargetMonthly: piTarget,
+        assumptions: { apr_percent: aprAssumed, term_years: termAssumed },
+        maxPrincipal,
+        maxPrice_0_down: price0,
+        maxPrice_5_down: price5,
+      },
+      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
+    });
+  }
+
+  // ============================================================
+  // //#6.4 — OpenAI fallback (profile-aware, optional)
   // ============================================================
   const key = process.env.OPENAI_API_KEY;
   if (!key) {
@@ -526,12 +676,26 @@ module.exports.handler = async (event) => {
     });
   }
 
+  // Provide pay preview to the LLM so it DOESN’T ask for ZIP if base already gives one.
+  let payPreview = null;
+  if (profileContext && pg && profileContext.yos !== null && profileContext.yos !== undefined) {
+    const p = computePayBasics({
+      paygrade: pg,
+      yos: profileContext.yos,
+      zip: resolvedZip,
+      family: !!profileContext.family,
+      base: profileContext.base,
+    });
+    if (p?.ok) payPreview = p;
+  }
+
   const system = [
     "You are Elena, a warm, high-trust A.I. Concierge for OrozcoRealty.",
     "BLUF-first. Keep answers under 8 sentences. No fluff.",
     "If a question needs math, ask for the missing inputs explicitly.",
     "If profile is available, use it (rank/yos/base/family/VA).",
-    "If they ask for pay and you have rank+yos, explain Base Pay + BAS; request ZIP for BAH if needed.",
+    "IMPORTANT: If resolvedZip is provided (either user ZIP or derived from base), DO NOT ask for ZIP.",
+    "If payPreview is provided, you can reference Base Pay + BAS + BAH + Total directly.",
   ].join(" ");
 
   try {
@@ -549,8 +713,17 @@ module.exports.handler = async (event) => {
             content: JSON.stringify({
               message: userText,
               profile: profileContext,
-              zip: zip || null,
-              note: "Use profile if present. If missing, request email once then continue with guidance.",
+              resolvedZip: resolvedZip || null,
+              payPreview: payPreview
+                ? {
+                    basePay: payPreview.basePay,
+                    bas: payPreview.bas,
+                    bah: payPreview.bah,
+                    total: payPreview.total,
+                    bahNote: payPreview.bahNote,
+                  }
+                : null,
+              note: "Use resolvedZip/payPreview if present. Only ask for missing inputs once.",
             }),
           },
         ],
@@ -564,7 +737,7 @@ module.exports.handler = async (event) => {
       intent: "openai_fallback",
       reply,
       profile: profileContext || undefined,
-      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
+      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null, resolvedZip: resolvedZip || null },
     });
   } catch (err) {
     return respond(500, headers, {
