@@ -1,10 +1,12 @@
 // netlify/functions/ask-elena.js
-// v2.2 — Profile-aware Elena (Supabase profile lookup + deterministic pay basics)
+// v2.3 — Profile-aware Elena (Supabase profile lookup + deterministic pay basics)
 //
 // GOAL:
 // - Elena can answer questions about the user's profile + pay (Base Pay + BAS, and BAH if ZIP is provided)
 // - Uses the same Supabase profile fields as profile-by-email.js
-// - Uses deterministic pay tables from: netlify/functions/data/militaryPayTables.json
+// - Uses deterministic pay tables from:
+//     ✅ netlify/functions/militaryPayTables.json (primary)
+//     ↩︎ netlify/functions/data/militaryPayTables.json (fallback)
 //
 // REQUIRED ENV:
 //   SUPABASE_URL
@@ -164,26 +166,45 @@ function money(n) {
   });
 }
 
+function normalizeBaseName(s) {
+  return String(s || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
 /* ============================================================
    //#4 — Deterministic pay tables (militaryPayTables.json)
 ============================================================ */
 let __PAY_TABLES_CACHE__ = null;
+let __PAY_TABLES_PATH_USED__ = null;
 
 function loadPayTables() {
   if (__PAY_TABLES_CACHE__ !== null) return __PAY_TABLES_CACHE__;
+
+  // ✅ Primary: your real location
+  const p1 = path.join(process.cwd(), "netlify", "functions", "militaryPayTables.json");
+  // ↩︎ Fallback: older location (keeps legacy deployments alive)
+  const p2 = path.join(process.cwd(), "netlify", "functions", "data", "militaryPayTables.json");
+
   try {
-    const fp = path.join(
-      process.cwd(),
-      "netlify",
-      "functions",
-      "data",
-      "militaryPayTables.json"
-    );
+    let fp = null;
+    if (fs.existsSync(p1)) fp = p1;
+    else if (fs.existsSync(p2)) fp = p2;
+
+    if (!fp) {
+      __PAY_TABLES_CACHE__ = null;
+      __PAY_TABLES_PATH_USED__ = null;
+      return null;
+    }
+
     const raw = fs.readFileSync(fp, "utf8");
     __PAY_TABLES_CACHE__ = JSON.parse(raw);
+    __PAY_TABLES_PATH_USED__ = fp;
     return __PAY_TABLES_CACHE__;
   } catch (_) {
     __PAY_TABLES_CACHE__ = null;
+    __PAY_TABLES_PATH_USED__ = null;
     return null;
   }
 }
@@ -213,7 +234,48 @@ function pickYosValue(tableForRank, yos) {
   return Number(tableForRank[String(best)]) || 0;
 }
 
-function computePayBasics({ paygrade, yos, zip, family }) {
+function deriveZipFromBase(tables, baseName) {
+  const baseToZip =
+    tables?.BAH?.base_to_zip ||
+    tables?.BAH?.baseToZip ||
+    {};
+
+  if (!baseName) return "";
+
+  const want = normalizeBaseName(baseName);
+  if (!want) return "";
+
+  // Build normalized lookup (handles “JBSA-Lackland”, “JBSA Lackland”, etc.)
+  const map = new Map();
+  for (const [k, v] of Object.entries(baseToZip || {})) {
+    const nk = normalizeBaseName(k);
+    if (nk) map.set(nk, safeStr(v));
+  }
+
+  return map.get(want) || "";
+}
+
+function lookupBah(tables, zip, paygrade, familyBool) {
+  const z = safeStr(zip);
+  if (!z) return { bah: 0, note: "BAH needs a ZIP code (or a base name for base→ZIP mapping)." };
+
+  // Prefer the main table first
+  const rec =
+    tables?.BAH?.by_zip?.[z] ||
+    tables?.BAH?.byZip?.[z] ||
+    tables?.BAH_TX?.[z] ||
+    null;
+
+  if (!rec) return { bah: 0, note: "BAH ZIP not found in table." };
+
+  const bucket = familyBool ? rec.with : rec.without;
+  const val = Number(bucket?.[paygrade]) || 0;
+
+  if (!val) return { bah: 0, note: "BAH for that ZIP/paygrade not found." };
+  return { bah: val, note: "" };
+}
+
+function computePayBasics({ paygrade, yos, zip, family, base }) {
   const tables = loadPayTables();
   if (!tables) return { ok: false, reason: "Pay tables JSON not available on server." };
 
@@ -230,23 +292,14 @@ function computePayBasics({ paygrade, yos, zip, family }) {
   const isOfficer = pg.startsWith("O-") || pg.startsWith("W-");
   const bas = Number(isOfficer ? tables.BAS?.officer : tables.BAS?.enlisted) || 0;
 
-  // BAH needs ZIP (table currently BAH_TX in your dataset)
-  let bah = 0;
-  let bahNote = "";
-  const z = safeStr(zip);
-  if (z) {
-    const bahRec = tables.BAH_TX?.[z];
-    if (bahRec) {
-      const fam = !!family;
-      const bucket = fam ? bahRec.with : bahRec.without;
-      bah = Number(bucket?.[pg]) || 0;
-      if (!bah) bahNote = "BAH for that ZIP/paygrade not found.";
-    } else {
-      bahNote = "BAH ZIP not found in table.";
-    }
-  } else {
-    bahNote = "BAH needs a ZIP code (or later: base→ZIP mapping).";
+  // ✅ ZIP priority: explicit zip -> derived from base -> none
+  let z = safeStr(zip);
+  if (!z) {
+    const derived = deriveZipFromBase(tables, base);
+    if (derived) z = derived;
   }
+
+  const { bah, note: bahNote } = lookupBah(tables, z, pg, !!family);
 
   return {
     ok: true,
@@ -254,7 +307,8 @@ function computePayBasics({ paygrade, yos, zip, family }) {
     bas,
     bah,
     total: basePay + bas + bah,
-    bahNote,
+    bahNote: bahNote || "",
+    resolvedZip: z || "",
   };
 }
 
@@ -276,7 +330,6 @@ function detectIntent(text) {
     return { type: "profile_question" };
   }
 
-  // If they ask about “improve grade” / “B to A” / “affordability”, we’ll handle with OpenAI fallback later.
   return null;
 }
 
@@ -375,7 +428,7 @@ module.exports.handler = async (event) => {
         reply:
           "I can answer that instantly once your profile is synced. Send your email (or load your profile in the shell) and I’ll pull your rank + YOS.",
         profile: null,
-        debug: { usedSupabase, hasContextProfile: !!contextProfile },
+        debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
       });
     }
 
@@ -389,7 +442,7 @@ module.exports.handler = async (event) => {
       reply:
         `Locked in. I see you as ${r} ${ln || ""} — ${y} YOS, Base ${base || "—"}, Family ${fam}, VA ${vaTxt}.`.trim(),
       profile: profileContext,
-      debug: { usedSupabase, hasContextProfile: !!contextProfile },
+      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
     });
   }
 
@@ -403,7 +456,7 @@ module.exports.handler = async (event) => {
         reply:
           "I can calculate that instantly once your profile is synced. Send your email (or load your profile in the shell) so I can grab rank + YOS.",
         profile: null,
-        debug: { usedSupabase, hasContextProfile: !!contextProfile },
+        debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
       });
     }
 
@@ -412,6 +465,7 @@ module.exports.handler = async (event) => {
       yos: profileContext.yos,
       zip,
       family: !!profileContext.family,
+      base: profileContext.base,
     });
 
     const r = rankShort(pg) || pg || "—";
@@ -422,7 +476,7 @@ module.exports.handler = async (event) => {
         reply:
           `I can see your profile (${r}, ${String(profileContext.yos ?? "—")} YOS), but pay math can’t run yet: ${pay.reason}`,
         profile: profileContext,
-        debug: { usedSupabase, hasContextProfile: !!contextProfile },
+        debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
       });
     }
 
@@ -430,8 +484,13 @@ module.exports.handler = async (event) => {
     lines.push(`Monthly pay snapshot for ${r} ${ln || ""}:`.trim());
     lines.push(`• Base Pay: ${money(pay.basePay)}`);
     lines.push(`• BAS: ${money(pay.bas)}`);
-    if (pay.bah > 0) lines.push(`• BAH: ${money(pay.bah)}`);
-    else lines.push(`• BAH: — (${pay.bahNote || "ZIP required"})`);
+
+    if (pay.bah > 0) {
+      lines.push(`• BAH: ${money(pay.bah)}${pay.resolvedZip ? ` (ZIP ${pay.resolvedZip})` : ""}`);
+    } else {
+      lines.push(`• BAH: — (${pay.bahNote || "ZIP required"})`);
+    }
+
     lines.push(`= Estimated Total: ${money(pay.total)} / month`);
 
     return respond(200, headers, {
@@ -444,9 +503,10 @@ module.exports.handler = async (event) => {
         bah: pay.bah,
         total: pay.total,
         bahNote: pay.bahNote || "",
-        inputs: { paygrade: pg || null, yos: profileContext.yos ?? null, zip: zip || null, family: !!profileContext.family },
+        resolvedZip: pay.resolvedZip || "",
+        inputs: { paygrade: pg || null, yos: profileContext.yos ?? null, zip: zip || null, base: profileContext.base || null, family: !!profileContext.family },
       },
-      debug: { usedSupabase, hasContextProfile: !!contextProfile },
+      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
     });
   }
 
@@ -462,7 +522,7 @@ module.exports.handler = async (event) => {
       intent: "fallback_no_openai",
       reply: `Elena (dev echo): “${userText}” — ${hint} Add OPENAI_API_KEY for natural-language answers.`,
       profile: profileContext,
-      debug: { usedSupabase, hasContextProfile: !!contextProfile },
+      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
     });
   }
 
@@ -504,13 +564,13 @@ module.exports.handler = async (event) => {
       intent: "openai_fallback",
       reply,
       profile: profileContext || undefined,
-      debug: { usedSupabase, hasContextProfile: !!contextProfile },
+      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
     });
   } catch (err) {
     return respond(500, headers, {
       error: "Server exception",
       detail: String(err),
-      debug: { usedSupabase, hasContextProfile: !!contextProfile },
+      debug: { usedSupabase, hasContextProfile: !!contextProfile, payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
     });
   }
 };
