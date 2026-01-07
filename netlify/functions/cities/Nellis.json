@@ -1,18 +1,18 @@
 {
-  "city": "San Antonio, TX",
-  "place": "San Antonio, TX",
-  "state": "TX",
-  "geo_id": "1600000US4865000",
+  "city": "Las Vegas, NV",
+  "place": "Las Vegas, NV",
+  "state": "NV",
+  "geo_id": "1600000US3240000",
   "year": 2025,
-  "last_updated_data_from_sources": "December 2025",
+  "last_updated_data_from_sources": "January 2026",
 
-  "zip": "78234",
-  "market_label": "San Antonio Metro",
+  "zip": "89101",
+  "market_label": "Las Vegas Metro",
 
-  "avg_home_value": 245985,
-  "average_home_value": 245985,
-  "avgHome": 245985,
-  "city_avg_home": 245985,
+  "avg_home_value": 422428,
+  "average_home_value": 422428,
+  "avgHome": 422428,
+  "city_avg_home": 422428,
 
   "mortgage_assumptions": {
     "apr_percent": 7.0,
@@ -22,161 +22,171 @@
     "defaults_note": "City defaults apply to taxes/insurance/HOA only. APR varies by credit score and/or user override."
   },
 
-  "property_tax_rate": 2.10,
-  "insurance_rate": 0.55,
+  "property_tax_rate": 1.15,
+  "insurance_rate": 0.45,
   "hoa_monthly": 0,
 
   "avg_home_mortgage_monthly": {
-    "avg": 1555,
+    "avg": 2668,
     "as_of": "2026-01",
     "notes": "Historical reference only; do not use for calculation. brain.js computes itemized mortgage from inputs + city rates."
   },
 
   "population": {
-    "estimate": 1526656,
-    "median_age": 34.6,
-    "persons_per_household": 2.6
+    "estimate": 678922,
+    "median_age": 38.5,
+    "persons_per_household": 2.63
   },
 
   "households": {
-    "total_households": 547883
+    "total_households": 244429
   },
 
   "income": {
-    "median_household_income": 69906,
-    "per_capita_income": 37133,
-    "poverty_rate_percent": 14.4
+    "median_household_income": 70723,
+    "per_capita_income": 45678,
+    "poverty_rate_percent": 14.2
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 84.3,
-    "bachelors_degree_or_higher_percent": 28.7
+    "high_school_grad_or_higher_percent": 86.1,
+    "bachelors_degree_or_higher_percent": 27.2
   },
 
   "veterans": {
-    "veteran_population_percent": 8.2
+    "veteran_population_percent": 7.8
   },
 
   "immigration": {
-    "foreign_born_percent": 14.3
+    "foreign_born_percent": 20.4
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 24.6,
-    "unemployment_rate_percent": 4.3
+    "mean_travel_time_to_work_minutes": 25.8,
+    "unemployment_rate_percent": 5.8
   },
 
   "by_bedroom": {
     "2": {
-      "rent_monthly": { "low": 1300, "high": 1400, "avg": 1350, "as_of": "2025-12" },
-      "home_price": { "low": 210000, "high": 250000, "avg": 230000, "as_of": "2026-01" },
+      "rent_monthly": { "low": 1650, "high": 1900, "avg": 1775, "as_of": "2026-01" },
+      "home_price": { "low": 285000, "high": 330000, "avg": 307500, "as_of": "2026-01" },
       "mortgage_monthly": {
-        "low": 1327,
-        "high": 1580,
-        "avg": 1454,
+        "low": 1801,
+        "high": 2085,
+        "avg": 1943,
         "as_of": "2026-01",
         "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
-        "electric_gas": { "low": 120, "high": 155, "avg": 138 },
-        "water_sewer": { "low": 40, "high": 55, "avg": 48 },
-        "total": { "low": 160, "high": 210, "avg": 185 },
+        "electric_gas": { "low": 160, "high": 210, "avg": 185 },
+        "water_sewer": { "low": 50, "high": 75, "avg": 62 },
+        "total": { "low": 210, "high": 285, "avg": 247 },
         "as_of": "2026-01"
       }
     },
     "3": {
-      "rent_monthly": { "low": 1700, "high": 2000, "avg": 1850, "as_of": "2025-12" },
-      "home_price": { "low": 290000, "high": 315000, "avg": 302500, "as_of": "2026-01" },
+      "rent_monthly": { "low": 2100, "high": 2500, "avg": 2300, "as_of": "2026-01" },
+      "home_price": { "low": 415000, "high": 485000, "avg": 450000, "as_of": "2026-01" },
       "mortgage_monthly": {
-        "low": 1833,
-        "high": 1991,
-        "avg": 1912,
+        "low": 2623,
+        "high": 3065,
+        "avg": 2844,
         "as_of": "2026-01",
         "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
-        "electric_gas": { "low": 150, "high": 205, "avg": 178 },
-        "water_sewer": { "low": 45, "high": 70, "avg": 58 },
-        "total": { "low": 195, "high": 275, "avg": 235 },
+        "electric_gas": { "low": 210, "high": 290, "avg": 250 },
+        "water_sewer": { "low": 60, "high": 95, "avg": 77 },
+        "total": { "low": 270, "high": 385, "avg": 327 },
         "as_of": "2026-01"
       }
     },
     "4": {
-      "rent_monthly": { "low": 1800, "high": 2200, "avg": 2000, "as_of": "2025-12" },
-      "home_price": { "low": 360000, "high": 430000, "avg": 395000, "as_of": "2026-01" },
+      "rent_monthly": { "low": 2600, "high": 3200, "avg": 2900, "as_of": "2026-01" },
+      "home_price": { "low": 525000, "high": 615000, "avg": 570000, "as_of": "2026-01" },
       "mortgage_monthly": {
-        "low": 2275,
-        "high": 2718,
-        "avg": 2497,
+        "low": 3318,
+        "high": 3887,
+        "avg": 3602,
         "as_of": "2026-01",
         "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
-        "electric_gas": { "low": 190, "high": 260, "avg": 225 },
-        "water_sewer": { "low": 65, "high": 90, "avg": 78 },
-        "total": { "low": 255, "high": 350, "avg": 303 },
+        "electric_gas": { "low": 270, "high": 380, "avg": 325 },
+        "water_sewer": { "low": 85, "high": 125, "avg": 105 },
+        "total": { "low": 355, "high": 505, "avg": 430 },
+        "as_of": "2026-01"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 3200, "high": 4200, "avg": 3700, "as_of": "2026-01" },
+      "home_price": { "low": 675000, "high": 850000, "avg": 762500, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 4266,
+        "high": 5371,
+        "avg": 4818,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 350, "high": 500, "avg": 425 },
+        "water_sewer": { "low": 110, "high": 160, "avg": 135 },
+        "total": { "low": 460, "high": 660, "avg": 560 },
         "as_of": "2026-01"
       }
     }
   },
 
   "housing": {
-    "housing_units": 603213,
-    "median_value_owner_occupied": 219700,
+    "housing_units": 268429,
+    "median_value_owner_occupied": 422428,
 
     "market": {
-      "zillow_average_home_value": 245985,
-      "zillow_one_year_change_percent": -3.2,
-      "market_type_summary": "Balanced to buyer-friendly with elevated inventory and moderate price stability",
+      "zillow_average_home_value": 422428,
+      "zillow_one_year_change_percent": -1.6,
+      "market_type_summary": "Softening/Balanced market with increased inventory and a recent drop in median prices",
 
-      "average_days_on_market": 83,
+      "average_days_on_market": 47,
 
-      "median_sale_price_current": 350000,
-      "median_listing_price_realtor": 288000,
-      "median_listing_price_per_sqft": 165,
-      "active_listings_total": 17043,
+      "median_sale_price_current": 470000,
+      "median_listing_price_realtor": 459900,
+      "median_listing_price_per_sqft": 265,
+      "active_listings_total": 8718,
 
       "q1_2025": {
-        "median_sale_price": 289995
+        "median_sale_price": 465000
       },
 
       "sale_history_36_months": [
-        { "month": "2022-01", "median_sale_price": 295000 },
-        { "month": "2022-06", "median_sale_price": 315000 },
-        { "month": "2022-12", "median_sale_price": 298000 },
+        { "month": "2023-01", "median_sale_price": 425000 },
+        { "month": "2023-06", "median_sale_price": 440000 },
+        { "month": "2023-12", "median_sale_price": 449000 },
 
-        { "month": "2023-06", "median_sale_price": 298000 },
-        { "month": "2023-12", "median_sale_price": 297000 },
+        { "month": "2024-06", "median_sale_price": 475000 },
+        { "month": "2024-10", "median_sale_price": 480000 },
+        { "month": "2024-12", "median_sale_price": 475000 },
 
-        { "month": "2024-06", "median_sale_price": 301500 },
-        { "month": "2024-12", "median_sale_price": 258000 },
-
-        { "month": "2025-01", "median_sale_price": 281995 },
-        { "month": "2025-02", "median_sale_price": 289995 },
-        { "month": "2025-07", "median_sale_price": 330000 },
-        { "month": "2025-08", "median_sale_price": 310000 },
-        { "month": "2025-09", "median_sale_price": 308995 },
-        { "month": "2025-10", "median_sale_price": 305000 },
-        { "month": "2025-11", "median_sale_price": 315000 },
-        { "month": "2025-12-W1", "median_sale_price": 332750 },
-        { "month": "2025-12-W2", "median_sale_price": 325000 },
-        { "month": "2025-12-W3", "median_sale_price": 350000 }
+        { "month": "2025-01", "median_sale_price": 472000 },
+        { "month": "2025-06", "median_sale_price": 485000 },
+        { "month": "2025-10", "median_sale_price": 488000 },
+        { "month": "2025-11", "median_sale_price": 488995 },
+        { "month": "2025-12", "median_sale_price": 470000 }
       ]
     }
   },
 
   "sources": {
-    "demographics": { "provider": "ACS / city profile", "as_of": "2025" },
-    "rent": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2025-12", "notes": "Bedroom rent ranges" },
-    "home_price": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2026-01", "notes": "Bedroom price bands" },
+    "demographics": { "provider": "ACS / City Profile (via Census Bureau)", "as_of": "2026-01" },
+    "rent": { "provider": "Zillow/Realtor.com Estimates", "as_of": "2026-01", "notes": "Vegas Valley bedroom rent ranges" },
+    "home_price": { "provider": "Las Vegas Realtors (LVR) / Zillow", "as_of": "2026-01", "notes": "Includes single-family median drop reported Jan 2026" },
     "mortgage": { "provider": "Computed (P&I)", "as_of": "2026-01", "notes": "30yr fixed @ 7.0% APR, 5% down; excludes taxes/insurance/HOA" },
-    "utilities": { "provider": "Utility estimator (via Google AI)", "as_of": "2026-01", "notes": "Electric/Gas + Water/Sewer totals" },
-    "market": { "provider": "Zillow/Realtor (via Google AI)", "as_of": "2025-12", "notes": "Market summary + listings + sale history" },
+    "utilities": { "provider": "Utility estimator (Local Averages)", "as_of": "2026-01", "notes": "Reflects desert cooling costs/NV energy rates" },
+    "market": { "provider": "LVR / Zillow / Redfin", "as_of": "2026-01", "notes": "Reported sales slump to lowest level since 2007" },
 
     "mortgage_city_defaults": {
-      "provider": "Manual placeholder defaults",
+      "provider": "Clark County Treasurer / Assessor",
       "as_of": "2026-01",
-      "notes": "property_tax_rate, insurance_rate, hoa_monthly are defaults and should be replaced with county-accurate values when available."
+      "notes": "Effective rate of ~1.15% based on 2025-2026 fiscal year tax district 200/212."
     }
   }
 }
