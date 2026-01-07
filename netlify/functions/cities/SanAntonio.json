@@ -18,9 +18,19 @@
     "apr_percent": 7.0,
     "term_years": 30,
     "down_payment_percent": 5,
-    "includes": "principal_and_interest_only"
+    "includes": "all_in",
+    "defaults_note": "City defaults apply to taxes/insurance/HOA only. APR varies by credit score and/or user override."
   },
-  "avg_home_mortgage_monthly": { "avg": 1555, "as_of": "2026-01" },
+
+  "property_tax_rate": 2.10,
+  "insurance_rate": 0.55,
+  "hoa_monthly": 0,
+
+  "avg_home_mortgage_monthly": {
+    "avg": 1555,
+    "as_of": "2026-01",
+    "notes": "Historical reference only; do not use for calculation. brain.js computes itemized mortgage from inputs + city rates."
+  },
 
   "population": {
     "estimate": 1526656,
@@ -64,7 +74,8 @@
         "low": 1327,
         "high": 1580,
         "avg": 1454,
-        "as_of": "2026-01"
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
         "electric_gas": { "low": 120, "high": 155, "avg": 138 },
@@ -80,7 +91,8 @@
         "low": 1833,
         "high": 1991,
         "avg": 1912,
-        "as_of": "2026-01"
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
         "electric_gas": { "low": 150, "high": 205, "avg": 178 },
@@ -96,7 +108,8 @@
         "low": 2275,
         "high": 2718,
         "avg": 2497,
-        "as_of": "2026-01"
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
         "electric_gas": { "low": 190, "high": 260, "avg": 225 },
@@ -158,6 +171,12 @@
     "home_price": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2026-01", "notes": "Bedroom price bands" },
     "mortgage": { "provider": "Computed (P&I)", "as_of": "2026-01", "notes": "30yr fixed @ 7.0% APR, 5% down; excludes taxes/insurance/HOA" },
     "utilities": { "provider": "Utility estimator (via Google AI)", "as_of": "2026-01", "notes": "Electric/Gas + Water/Sewer totals" },
-    "market": { "provider": "Zillow/Realtor (via Google AI)", "as_of": "2025-12", "notes": "Market summary + listings + sale history" }
+    "market": { "provider": "Zillow/Realtor (via Google AI)", "as_of": "2025-12", "notes": "Market summary + listings + sale history" },
+
+    "mortgage_city_defaults": {
+      "provider": "Manual placeholder defaults",
+      "as_of": "2026-01",
+      "notes": "property_tax_rate, insurance_rate, hoa_monthly are defaults and should be replaced with county-accurate values when available."
+    }
   }
 }
