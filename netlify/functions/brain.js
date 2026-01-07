@@ -10,6 +10,13 @@
 // - Uses city defaults when available (property_tax_rate, insurance_rate, hoa_monthly)
 // - Safe fallbacks when city fields are missing
 //
+// ✅ PATCH (Requested):
+// - Auto-resolve cityKey from Supabase profile.base when caller leaves cityKey blank
+//   OR when caller uses the default "SanAntonio" (common in your test code).
+//   Examples:
+//     "Nellis"        -> "LasVegas"
+//     "Davis-Monthan" -> "Tucson"
+//
 // POST BODY:
 // {
 //   email, cityKey, bedrooms,
@@ -112,74 +119,43 @@ function pickFirst(obj, keys){
 }
 
 // -----------------------------
-// //#2.1 Pay model detection
+// //#2.05 CityKey from Base (PATCH)
 // -----------------------------
-function detectPayModel(profile){
-  const mode = lower(profile?.mode || profile?.status || profile?.user_type || profile?.type);
+function deriveCityKeyFromBase(profile, payTables){
+  const baseRaw = pickFirst(profile, ["base","duty_station","station","dutyStation","pcs_base","pcsBase"]);
+  const norm = normalizeBaseName(baseRaw);
+  if (!norm) return { cityKey: null, source: "none", base: String(baseRaw || "").trim() };
 
-  const veteranModes = new Set(["vet","veteran","retired","retiree","separated","civilian"]);
-  const activeModes = new Set(["ad","active","active_duty","activeduty","active-duty"]);
+  // Optional: allow future config in pay tables (no requirement)
+  const tbl =
+    payTables?.CITY_BY_BASE ||
+    payTables?.CITY?.by_base ||
+    payTables?.city_by_base ||
+    null;
 
-  if (veteranModes.has(mode)) return "veteran";
-  if (activeModes.has(mode)) return "active_duty";
-
-  return "active_duty";
-}
-
-// -----------------------------
-// //#2.2 Family assumptions
-// -----------------------------
-function deriveDependentsFromFamilySize(profile){
-  const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
-  const familySize = toInt(famRaw);
-
-  if (!familySize || familySize < 1) {
-    return { familySize: 0, hasSpouse: false, kidsUnder18: 0 };
+  if (tbl && typeof tbl === "object"){
+    const mapped = tbl[norm] || tbl[String(baseRaw || "").trim()] || null;
+    if (mapped) return { cityKey: safeKey(mapped), source: "payTables.CITY_BY_BASE", base: String(baseRaw || "").trim() };
   }
 
-  const hasSpouse = familySize >= 2;
-  const kidsUnder18 = Math.max(familySize - 2, 0);
+  // Minimal deterministic map for your current PCS use-cases
+  const MAP = {
+    // ✅ Your examples
+    NELLIS: "LasVegas",
+    NELLISAFB: "LasVegas",
+    DAVISMONTHAN: "Tucson",
+    DAVISMONTHANAFB: "Tucson",
 
-  return { familySize, hasSpouse, kidsUnder18 };
-}
+    // ✅ Common expansions (safe if you have these city JSONs; otherwise fallback will kick in)
+    FORTSAMHOUSTON: "SanAntonio",
+    JBSALACKLAND: "SanAntonio",
+    LACKLAND: "SanAntonio",
+    RANDOLPH: "SanAntonio",
+    RANDOLPHAFB: "SanAntonio",
+  };
 
-// -----------------------------
-// //#2.3 Apply “what-if” overrides (never persisted)
-// -----------------------------
-function applyOverridesToProfile(profile, overridesRaw){
-  const overrides = (overridesRaw && typeof overridesRaw === "object") ? overridesRaw : null;
-  if (!profile || !overrides) return { profileEffective: profile, overridesApplied: null };
-
-  const ALLOWED = new Set([
-    "rank_paygrade","rank",
-    "yos","years_of_service","yearsOfService",
-    "base","duty_station","station",
-    "zip","postal_code",
-    "family","dependents","has_dependents",
-    "mode","status","user_type","type",
-    "va_disability","vaDisability","va_rating","vaRating",
-    "creditScore","credit_score",
-    "dpPct","down_payment_pct",
-    "termYears","term_years",
-    "apr"
-  ]);
-
-  const applied = {};
-  for (const [k, v] of Object.entries(overrides)) {
-    if (!ALLOWED.has(k)) continue;
-    if (v === undefined) continue;
-    applied[k] = v;
-  }
-
-  if (!Object.keys(applied).length) {
-    return { profileEffective: profile, overridesApplied: null };
-  }
-
-  if (applied.rank_paygrade != null) applied.rank_paygrade = normalizeRank(applied.rank_paygrade);
-  if (applied.rank != null) applied.rank = normalizeRank(applied.rank);
-
-  const out = { ...profile, ...applied };
-  return { profileEffective: out, overridesApplied: applied };
+  const hit = MAP[norm] || null;
+  return { cityKey: hit ? safeKey(hit) : null, source: hit ? "internalBaseCityMap" : "none", base: String(baseRaw || "").trim() };
 }
 
 // -----------------------------
@@ -852,18 +828,56 @@ export async function handler(event) {
 
     const body = JSON.parse(event.body || "{}");
     const email = String(body.email || "").trim().toLowerCase();
-    const cityKey = safeKey(body.cityKey || "SanAntonio");
+
+    // Caller-provided cityKey (may be blank or default)
+    const cityKeyRaw = (body.cityKey == null) ? "" : String(body.cityKey);
+    const cityKeyClean = safeKey(cityKeyRaw);
+
     const bedrooms = toInt(body.bedrooms) ?? 4;
 
     if (!email) return respond(event, 400, { ok: false, schemaVersion: SCHEMA_VERSION, error: "Missing email." });
 
     const payTables = loadPayTables();
-    const city = loadCity(cityKey);
 
     const profile = await fetchProfileByEmail(email);
 
     // Apply “what-if” overrides (never persisted)
     const { profileEffective, overridesApplied } = applyOverridesToProfile(profile, body.overrides);
+
+    // ✅ PATCH: Resolve cityKey from profile.base when caller did not truly choose one
+    // We treat blank OR default "SanAntonio" as "auto" (because your test code hard-codes it)
+    const callerDidNotChooseCity =
+      !cityKeyClean || lower(cityKeyClean) === "sanantonio";
+
+    let resolvedCityKey = cityKeyClean || "SanAntonio";
+    let cityResolve = { cityKey: null, source: "none", base: "" };
+
+    if (callerDidNotChooseCity) {
+      cityResolve = deriveCityKeyFromBase(profileEffective, payTables);
+      if (cityResolve.cityKey) {
+        resolvedCityKey = cityResolve.cityKey;
+      }
+    }
+
+    // Load city with safe fallback (prevents crashing if LasVegas.json/Tucson.json not present yet)
+    let city = null;
+    let cityLoadFallbackUsed = false;
+    let cityLoadError = null;
+
+    try {
+      city = loadCity(resolvedCityKey);
+    } catch (err) {
+      cityLoadError = String(err?.message || err);
+      // fallback to requested/default
+      const fallbackKey = cityKeyClean || "SanAntonio";
+      if (fallbackKey && fallbackKey !== resolvedCityKey) {
+        cityLoadFallbackUsed = true;
+        city = loadCity(fallbackKey);
+        resolvedCityKey = fallbackKey;
+      } else {
+        throw err;
+      }
+    }
 
     const computed = computePay(profileEffective, payTables);
 
@@ -873,8 +887,19 @@ export async function handler(event) {
     return respond(event, 200, {
       ok: computed.ok,
       schemaVersion: SCHEMA_VERSION,
-      input: { email, cityKey, bedrooms },
-      debug: { payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
+
+      // Keep the same "input" shape, but now reflects the resolved cityKey
+      input: { email, cityKey: resolvedCityKey, bedrooms },
+
+      debug: {
+        payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null,
+        cityKeyRaw: cityKeyRaw || null,
+        cityKeyResolved: resolvedCityKey,
+        cityKeySource: (callerDidNotChooseCity && cityResolve.cityKey) ? cityResolve.source : (cityKeyClean ? "body.cityKey" : "default"),
+        baseUsedForCity: (callerDidNotChooseCity && cityResolve.cityKey) ? (cityResolve.base || null) : null,
+        cityLoadFallbackUsed: cityLoadFallbackUsed || false,
+        cityLoadError: cityLoadError || null,
+      },
 
       profile,
       profileEffective,
