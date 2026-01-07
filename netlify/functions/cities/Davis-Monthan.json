@@ -1,100 +1,179 @@
 {
-  "place": "Tucson (Davis-Monthan AFB), AZ",
+  "city": "Tucson, AZ (Davis-Monthan)",
+  "place": "Davis-Monthan AFB / Tucson, AZ",
+  "state": "AZ",
   "geo_id": "1600000US0477000",
-  "year": 2024,
-  "last_updated_data_from_sources": "December 2025",
+  "year": 2026,
+  "last_updated_data_from_sources": "January 2026",
+
+  "zip": "85708",
+  "market_label": "Tucson Metro",
+
+  "avg_home_value": 321510,
+  "average_home_value": 321510,
+  "avgHome": 321510,
+  "city_avg_home": 321510,
+
+  "mortgage_assumptions": {
+    "apr_percent": 6.25,
+    "term_years": 30,
+    "down_payment_percent": 5,
+    "includes": "all_in",
+    "defaults_note": "City defaults apply to taxes/insurance/HOA only. APR varies by credit score and/or user override."
+  },
+
+  "property_tax_rate": 1.05,
+  "insurance_rate": 0.48,
+  "hoa_monthly": 0,
+
+  "avg_home_mortgage_monthly": {
+    "avg": 1980,
+    "as_of": "2026-01",
+    "notes": "Historical reference only; do not use for calculation. brain.js computes itemized mortgage from inputs + city rates."
+  },
 
   "population": {
-    "estimate": 558906,
-    "median_age": 34.6,
-    "persons_per_household": 2.4
+    "estimate": 546574,
+    "median_age": 34.1,
+    "persons_per_household": 2.37
   },
 
   "households": {
-    "total_households": 222000
+    "total_households": 222123
   },
 
   "income": {
-    "median_household_income": 60483,
-    "per_capita_income": 40124,
-    "poverty_rate_percent": 18.83
+    "median_household_income": 58940,
+    "per_capita_income": 31442,
+    "poverty_rate_percent": 18.2
   },
 
   "education": {
     "high_school_grad_or_higher_percent": 86.4,
-    "bachelors_degree_or_higher_percent": 31.2
+    "bachelors_degree_or_higher_percent": 27.9
   },
 
   "veterans": {
-    "veteran_population_percent": 9.3
+    "veteran_population_percent": 10.4
   },
 
   "immigration": {
-    "foreign_born_percent": 13.6
+    "foreign_born_percent": 14.8
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 23.4,
-    "unemployment_rate_percent": 4.8
+    "mean_travel_time_to_work_minutes": 22.4,
+    "unemployment_rate_percent": 3.8
+  },
+
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 1250, "high": 1500, "avg": 1375, "as_of": "2025-12" },
+      "home_price": { "low": 240000, "high": 270000, "avg": 255000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 1478,
+        "high": 1662,
+        "avg": 1570,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 145, "high": 190, "avg": 168 },
+        "water_sewer": { "low": 55, "high": 75, "avg": 65 },
+        "total": { "low": 200, "high": 265, "avg": 233 },
+        "as_of": "2026-01"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 1800, "high": 2200, "avg": 2000, "as_of": "2025-12" },
+      "home_price": { "low": 310000, "high": 350000, "avg": 330000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 1909,
+        "high": 2155,
+        "avg": 2032,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 180, "high": 250, "avg": 215 },
+        "water_sewer": { "low": 65, "high": 90, "avg": 78 },
+        "total": { "low": 245, "high": 340, "avg": 293 },
+        "as_of": "2026-01"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 2100, "high": 2600, "avg": 2350, "as_of": "2025-12" },
+      "home_price": { "low": 410000, "high": 485000, "avg": 447500, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 2525,
+        "high": 2987,
+        "avg": 2756,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 225, "high": 320, "avg": 272 },
+        "water_sewer": { "low": 85, "high": 120, "avg": 102 },
+        "total": { "low": 310, "high": 440, "avg": 374 },
+        "as_of": "2026-01"
+      }
+    }
   },
 
   "housing": {
-    "housing_units": 243000,
-    "median_value_owner_occupied": 266700,
+    "housing_units": 245450,
+    "median_value_owner_occupied": 285000,
 
     "market": {
-      "zillow_average_home_value": 343679,
-      "zillow_one_year_change_percent": -3.1,
-      "market_type_summary": "Cooling buyer-leaning market with moderate inventory and stabilizing prices",
+      "zillow_average_home_value": 321510,
+      "zillow_one_year_change_percent": -3.4,
+      "market_type_summary": "Balanced with healthy inventory; prices stabilizing near early 2024 levels",
 
-      "average_days_on_market": 33,
+      "average_days_on_market": 42,
 
-      "median_sale_price_current": 355000,
-      "median_listing_price_realtor": 370000,
-      "median_listing_price_per_sqft": 228,
+      "median_sale_price_current": 322000,
+      "median_listing_price_realtor": 365000,
+      "median_listing_price_per_sqft": 208,
+      "active_listings_total": 4709,
+
+      "q1_2026": {
+        "median_sale_price": 321510
+      },
 
       "sale_history_36_months": [
-        { "month": "2022-01", "median_sale_price": 325000 },
-        { "month": "2022-02", "median_sale_price": 327000 },
-        { "month": "2022-03", "median_sale_price": 330000 },
-        { "month": "2022-04", "median_sale_price": 336000 },
-        { "month": "2022-05", "median_sale_price": 340000 },
-        { "month": "2022-06", "median_sale_price": 345000 },
-        { "month": "2022-07", "median_sale_price": 340000 },
-        { "month": "2022-08", "median_sale_price": 338000 },
-        { "month": "2022-09", "median_sale_price": 336000 },
-        { "month": "2022-10", "median_sale_price": 333000 },
-        { "month": "2022-11", "median_sale_price": 331000 },
-        { "month": "2022-12", "median_sale_price": 330000 },
+        { "month": "2023-01", "median_sale_price": 325000 },
+        { "month": "2023-06", "median_sale_price": 345000 },
+        { "month": "2023-12", "median_sale_price": 348000 },
 
-        { "month": "2023-01", "median_sale_price": 328000 },
-        { "month": "2023-02", "median_sale_price": 329000 },
-        { "month": "2023-03", "median_sale_price": 331000 },
-        { "month": "2023-04", "median_sale_price": 330000 },
-        { "month": "2023-05", "median_sale_price": 329000 },
-        { "month": "2023-06", "median_sale_price": 327000 },
-        { "month": "2023-07", "median_sale_price": 326000 },
-        { "month": "2023-08", "median_sale_price": 326500 },
-        { "month": "2023-09", "median_sale_price": 327000 },
-        { "month": "2023-10", "median_sale_price": 326000 },
-        { "month": "2023-11", "median_sale_price": 327500 },
-        { "month": "2023-12", "median_sale_price": 329000 },
+        { "month": "2024-06", "median_sale_price": 372000 },
+        { "month": "2024-12", "median_sale_price": 368000 },
 
-        { "month": "2024-01", "median_sale_price": 330000 },
-        { "month": "2024-02", "median_sale_price": 331000 },
-        { "month": "2024-03", "median_sale_price": 333000 },
-        { "month": "2024-04", "median_sale_price": 334500 },
-        { "month": "2024-05", "median_sale_price": 335000 },
-        { "month": "2024-06", "median_sale_price": 336000 },
-        { "month": "2024-07", "median_sale_price": 336500 },
-        { "month": "2024-08", "median_sale_price": 337000 },
-        { "month": "2024-09", "median_sale_price": 338000 },
-        { "month": "2024-10", "median_sale_price": 338500 },
-        { "month": "2024-11", "median_sale_price": 339000 },
-        { "month": "2024-12", "median_sale_price": 340000 },
-        
-        { "month": "2025-10", "median_sale_price": 355000 }
+        { "month": "2025-01", "median_sale_price": 365000 },
+        { "month": "2025-02", "median_sale_price": 366500 },
+        { "month": "2025-07", "median_sale_price": 370000 },
+        { "month": "2025-08", "median_sale_price": 368500 },
+        { "month": "2025-09", "median_sale_price": 362000 },
+        { "month": "2025-10", "median_sale_price": 318833 },
+        { "month": "2025-11", "median_sale_price": 364515 },
+        { "month": "2025-12-W1", "median_sale_price": 330000 },
+        { "month": "2025-12-W2", "median_sale_price": 328000 },
+        { "month": "2025-12-W3", "median_sale_price": 322000 }
       ]
+    }
+  },
+
+  "sources": {
+    "demographics": { "provider": "ACS / Pima County Profile", "as_of": "2025" },
+    "rent": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2025-12", "notes": "Bedroom rent ranges" },
+    "home_price": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2026-01", "notes": "Bedroom price bands" },
+    "mortgage": { "provider": "Computed (P&I)", "as_of": "2026-01", "notes": "30yr fixed @ 6.25% APR, 5% down; excludes taxes/insurance/HOA" },
+    "utilities": { "provider": "Utility estimator (via Google AI)", "as_of": "2026-01", "notes": "Electric/Gas + Water/Sewer totals based on Tucson rates" },
+    "market": { "provider": "Zillow/Realtor (via Google AI)", "as_of": "2025-12", "notes": "Market summary + listings + sale history" },
+
+    "mortgage_city_defaults": {
+      "provider": "Manual placeholder defaults",
+      "as_of": "2026-01",
+      "notes": "property_tax_rate, insurance_rate, hoa_monthly are Pima County defaults."
     }
   }
 }
