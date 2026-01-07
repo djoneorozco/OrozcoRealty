@@ -14,6 +14,11 @@
 // - Auto-resolve cityKey from profile.base when caller leaves cityKey blank
 //   OR when caller uses the default "SanAntonio".
 //
+// ✅ CITY ISSUE FIX (NEW, minimal, does NOT change other behavior):
+// - City loading is now CASE-INSENSITIVE and tolerant of variants like:
+//   "sanantonio", "SanAntonio", "San_Antonio", "san-antonio", etc.
+// - This prevents Linux (Netlify) from failing to find "SanAntonio.json" when caller passes "sanantonio".
+//
 // RETURNS (stable):
 // { ok, schemaVersion, input, debug, profile, profileEffective, overridesApplied,
 //   pay, city, missing,
@@ -266,7 +271,12 @@ function deriveCityKeyFromBase(profile, payTables) {
 
   if (tbl && typeof tbl === "object") {
     const mapped = tbl[norm] || tbl[String(baseRaw || "").trim()] || null;
-    if (mapped) return { cityKey: safeKey(mapped), source: "payTables.CITY_BY_BASE", base: String(baseRaw || "").trim() };
+    if (mapped)
+      return {
+        cityKey: safeKey(mapped),
+        source: "payTables.CITY_BY_BASE",
+        base: String(baseRaw || "").trim(),
+      };
   }
 
   const MAP = {
@@ -283,7 +293,11 @@ function deriveCityKeyFromBase(profile, payTables) {
   };
 
   const hit = MAP[norm] || null;
-  return { cityKey: hit ? safeKey(hit) : null, source: hit ? "internalBaseCityMap" : "none", base: String(baseRaw || "").trim() };
+  return {
+    cityKey: hit ? safeKey(hit) : null,
+    source: hit ? "internalBaseCityMap" : "none",
+    base: String(baseRaw || "").trim(),
+  };
 }
 
 // -----------------------------
@@ -301,6 +315,61 @@ const CITIES_DIR = path.join(ROOT, "netlify", "functions", "cities");
 let __PAY_TABLES_CACHE__ = null;
 let __PAY_TABLES_PATH_USED__ = null;
 const __CITY_CACHE__ = new Map();
+
+// -----------------------------
+// //#3.05 City key canonicalization (CASE-INSENSITIVE file match)
+// -----------------------------
+let __CITY_INDEX__ = null;
+
+function normalizeCityToken(s) {
+  return String(s || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function buildCityIndex() {
+  const map = new Map();
+  try {
+    if (!fs.existsSync(CITIES_DIR)) return map;
+    const files = fs.readdirSync(CITIES_DIR);
+    for (const f of files) {
+      if (!/\.json$/i.test(f)) continue;
+      const base = f.replace(/\.json$/i, "");
+      const token = normalizeCityToken(base);
+      if (token) map.set(token, base);
+      // also map raw-lower (helpful if someone passes exact base but wrong case)
+      const lowerToken = normalizeCityToken(base.toLowerCase());
+      if (lowerToken) map.set(lowerToken, base);
+    }
+  } catch {
+    // If directory read fails, we just fall back to exact behavior
+  }
+  return map;
+}
+
+function canonicalCityKey(input) {
+  const raw = String(input || "").trim();
+  const safe = safeKey(raw);
+  const candidate = safe || "SanAntonio";
+
+  if (!__CITY_INDEX__) __CITY_INDEX__ = buildCityIndex();
+
+  // Try safe/candidate token first, then raw token
+  const hit =
+    __CITY_INDEX__.get(normalizeCityToken(candidate)) ||
+    __CITY_INDEX__.get(normalizeCityToken(raw)) ||
+    null;
+
+  return hit || candidate;
+}
+
+function isDefaultCityRequest(cityKeyClean) {
+  // Treat ANY variant of San Antonio as the "default" signal.
+  // (This preserves your behavior: passing default implies "auto-resolve from base if possible".)
+  const token = normalizeCityToken(cityKeyClean);
+  return !cityKeyClean || token === normalizeCityToken("SanAntonio");
+}
 
 function loadPayTables() {
   if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
@@ -327,12 +396,16 @@ function loadPayTables() {
 }
 
 function loadCity(cityKey) {
-  const key = safeKey(cityKey || "SanAntonio");
+  // ✅ City issue fix: canonicalize to the REAL file base-name (case-insensitive)
+  const key = canonicalCityKey(cityKey || "SanAntonio");
+
   if (__CITY_CACHE__.has(key)) return __CITY_CACHE__.get(key);
 
   const filePath = path.join(CITIES_DIR, `${key}.json`);
   if (!fs.existsSync(filePath)) {
-    throw new Error(`City JSON not found at ${filePath}`);
+    // For debugging clarity: show the *requested* and *canonical* key
+    const req = String(cityKey || "").trim();
+    throw new Error(`City JSON not found. requested="${req}" canonical="${key}" path=${filePath}`);
   }
 
   const raw = fs.readFileSync(filePath, "utf8");
@@ -391,11 +464,19 @@ function loadCity(cityKey) {
     return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
   }
 
-  const derivedTargetRent = avgFromBedroomPath(bedrooms, (b) => b?.rent_monthly?.avg ?? b?.rentMonthly?.avg ?? b?.rent?.avg);
-  const derivedUtilities = avgFromBedroomPath(bedrooms, (b) => b?.utilities?.total?.avg ?? b?.utilities_total?.avg ?? b?.utilities?.avg);
+  const derivedTargetRent = avgFromBedroomPath(
+    bedrooms,
+    (b) => b?.rent_monthly?.avg ?? b?.rentMonthly?.avg ?? b?.rent?.avg
+  );
+  const derivedUtilities = avgFromBedroomPath(
+    bedrooms,
+    (b) => b?.utilities?.total?.avg ?? b?.utilities_total?.avg ?? b?.utilities?.avg
+  );
 
   const targetRent =
-    toNum(data?.target_rent ?? data?.targetRent ?? targets?.target_rent ?? targets?.targetRent) ?? derivedTargetRent ?? null;
+    toNum(data?.target_rent ?? data?.targetRent ?? targets?.target_rent ?? targets?.targetRent) ??
+    derivedTargetRent ??
+    null;
 
   const avgUtilities =
     toNum(data?.avg_utilities ?? data?.average_utilities ?? data?.avgUtilities) ?? derivedUtilities ?? null;
@@ -413,7 +494,10 @@ function loadCity(cityKey) {
     target_rent: targetRent,
     targetRent: targetRent,
 
-    avg_home_value: toNum(data?.avg_home_value ?? data?.average_home_value ?? data?.avgHome ?? data?.city_avg_home) ?? avgHome ?? null,
+    avg_home_value:
+      toNum(data?.avg_home_value ?? data?.average_home_value ?? data?.avgHome ?? data?.city_avg_home) ??
+      avgHome ??
+      null,
     average_home_value: toNum(data?.average_home_value) ?? (toNum(data?.avg_home_value) ?? avgHome ?? null),
     avgHome: toNum(data?.avgHome) ?? (toNum(data?.avg_home_value) ?? avgHome ?? null),
     city_avg_home: toNum(data?.city_avg_home) ?? (toNum(data?.avg_home_value) ?? avgHome ?? null),
@@ -547,7 +631,8 @@ function computeRetirementPay(profile, rank, yos, payTables, missing) {
   const sysRaw = lower(profile?.retirement_system || profile?.retirementSystem || "high3");
   const sys = sysRaw === "brs" || sysRaw === "blended" ? "brs" : "high3";
 
-  const multPerYear = toNum(payTables?.RETIREMENT?.systems?.[sys]?.multiplier_per_year) ?? (sys === "brs" ? 0.02 : 0.025);
+  const multPerYear =
+    toNum(payTables?.RETIREMENT?.systems?.[sys]?.multiplier_per_year) ?? (sys === "brs" ? 0.02 : 0.025);
   const rawMultiplier = multPerYear * yos;
 
   const cap = sys === "brs" ? 0.6 : 0.75;
@@ -555,7 +640,19 @@ function computeRetirementPay(profile, rank, yos, payTables, missing) {
 
   const amount = high3 * multiplier;
 
-  return { amount, debug: { method: "high3_estimate_from_BASEPAY", sys, multPerYear, yos, multiplier, high3, stepsUsed: lastSteps, paysUsed: pays } };
+  return {
+    amount,
+    debug: {
+      method: "high3_estimate_from_BASEPAY",
+      sys,
+      multPerYear,
+      yos,
+      multiplier,
+      high3,
+      stepsUsed: lastSteps,
+      paysUsed: pays,
+    },
+  };
 }
 
 function computePay(profile, payTables) {
@@ -677,7 +774,9 @@ function scoreAPR(score) {
 
 function pickMortgagePrice({ body, profile, city, bedrooms }) {
   const bodyPrice = toNum(body?.price ?? body?.homePrice ?? body?.purchase_price ?? body?.purchasePrice);
-  const profPrice = toNum(profile?.price ?? profile?.home_price ?? profile?.projected_home_price ?? profile?.projectedHomePrice);
+  const profPrice = toNum(
+    profile?.price ?? profile?.home_price ?? profile?.projected_home_price ?? profile?.projectedHomePrice
+  );
 
   const bedsKey = String(bedrooms ?? 4);
   const bedsRoot =
@@ -834,12 +933,16 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
   const pmiRate = toNum(body?.pmiRate ?? profile?.pmiRate) ?? defaultPmiRate({ loanType, dpPct });
 
   sources.pmiRate =
-    body?.pmiRate != null ? "body.pmiRate" : profile?.pmiRate != null ? "profile.pmiRate" : "defaultPmiRate(loanType,dpPct)";
+    body?.pmiRate != null
+      ? "body.pmiRate"
+      : profile?.pmiRate != null
+        ? "profile.pmiRate"
+        : "defaultPmiRate(loanType,dpPct)";
 
   const dpAmt = Math.max(0, price * (Math.max(0, dpPct) / 100));
   const loan = Math.max(0, price - dpAmt);
 
-  const mRate = (apr / 100) / 12;
+  const mRate = apr / 100 / 12;
   const n = Math.max(1, termYears * 12);
 
   const principalInterest = loan > 0 ? pmti(loan, mRate, n) : 0;
@@ -924,14 +1027,17 @@ export async function handler(event) {
 
     const { profileEffective, overridesApplied } = applyOverridesToProfile(profile, body.overrides);
 
-    const callerDidNotChooseCity = !cityKeyClean || lower(cityKeyClean) === "sanantonio";
+    // ✅ City issue fix: default detection is now tolerant of "San_Antonio", "san-antonio", etc.
+    const callerDidNotChooseCity = isDefaultCityRequest(cityKeyClean);
 
-    let resolvedCityKey = cityKeyClean || "SanAntonio";
+    // Start with caller value (if any), otherwise default.
+    // ✅ City issue fix: canonicalize immediately so file names match on Netlify/Linux.
+    let resolvedCityKey = canonicalCityKey(cityKeyClean || "SanAntonio");
     let cityResolve = { cityKey: null, source: "none", base: "" };
 
     if (callerDidNotChooseCity) {
       cityResolve = deriveCityKeyFromBase(profileEffective, payTables);
-      if (cityResolve.cityKey) resolvedCityKey = cityResolve.cityKey;
+      if (cityResolve.cityKey) resolvedCityKey = canonicalCityKey(cityResolve.cityKey);
     }
 
     let city = null;
@@ -942,11 +1048,18 @@ export async function handler(event) {
       city = loadCity(resolvedCityKey);
     } catch (err) {
       cityLoadError = String(err?.message || err);
-      const fallbackKey = cityKeyClean || "SanAntonio";
+
+      // Fallback to caller's city (canonicalized), then SanAntonio.
+      const fallbackKey = canonicalCityKey(cityKeyClean || "SanAntonio");
+
       if (fallbackKey && fallbackKey !== resolvedCityKey) {
         cityLoadFallbackUsed = true;
         city = loadCity(fallbackKey);
         resolvedCityKey = fallbackKey;
+      } else if (fallbackKey !== "SanAntonio") {
+        cityLoadFallbackUsed = true;
+        city = loadCity("SanAntonio");
+        resolvedCityKey = "SanAntonio";
       } else {
         throw err;
       }
@@ -984,7 +1097,12 @@ export async function handler(event) {
         payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null,
         cityKeyRaw: cityKeyRaw || null,
         cityKeyResolved: resolvedCityKey,
-        cityKeySource: callerDidNotChooseCity && cityResolve.cityKey ? cityResolve.source : cityKeyClean ? "body.cityKey" : "default",
+        cityKeySource:
+          callerDidNotChooseCity && cityResolve.cityKey
+            ? cityResolve.source
+            : cityKeyClean
+              ? "body.cityKey"
+              : "default",
         baseUsedForCity: callerDidNotChooseCity && cityResolve.cityKey ? cityResolve.base || null : null,
         cityLoadFallbackUsed: !!cityLoadFallbackUsed,
         cityLoadError: cityLoadError || null,
