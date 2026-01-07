@@ -1,32 +1,18 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.9.2) — Pay + City + FULL Mortgage Breakdown (BACKWARD-COMPAT)
+// CENTRAL BRAIN (v1.9.3) — Pay + City + FULL Mortgage Breakdown (BACKWARD-COMPAT)
 //
-// ✅ Fixes included (so your dashboards work again):
-// 1) RESTORES missing helper functions that were referenced but not defined:
-//    - detectPayModel()  ✅ UPDATED to honor profile.mode ("vet" / "ad")
-//    - deriveDependentsFromFamilySize()
-//    - applyOverridesToProfile()
-// 2) BACKWARD-COMPAT mortgage fields added (legacy “flat” fields) alongside new breakdown.
-// 3) Top-level ok is now “request succeeded” (prevents UI dead-on-arrival due to missing pay inputs)
+// ✅ CITY FIX (Base-named JSON compatibility):
+// Your /netlify/functions/cities folder uses BASE-NAMED files:
+//   Nellis.json, Davis-Monthan.json, Fort-Sam-Houston.json, Randolph.json, etc.
+// But brain resolves canonical city keys like: LasVegas, Tucson, SanAntonio.
+// This patch keeps canonical cityKey for output/debug, BUT loads the correct FILE key.
 //
-// ✅ City FIX (THIS PATCH):
-// - Your /cities folder is base-named (Davis-Monthan.json, Nellis.json, etc.)
-// - Your logic sometimes resolves a metro key (Tucson, LasVegas, SanAntonio)
-// - We now build an index of /cities/*.json and create aliases from each JSON's
-//   city/place fields so "Tucson" can load "Davis-Monthan.json", etc.
-// - Also handles hyphen vs en-dash filenames safely.
+// Example:
+//   base = "Nellis" -> canonical cityKey = "LasVegas"
+//   loads file = "Nellis.json" (since LasVegas.json doesn't exist)
 //
-// ✅ Your requested PATCH preserved:
-// - Auto-resolve cityKey from profile.base when caller leaves cityKey blank
-//   OR when caller uses the default "SanAntonio".
-//
-// RETURNS (stable):
-// { ok, schemaVersion, input, debug, profile, profileEffective, overridesApplied,
-//   pay, city, missing,
-//   mortgage: { ok, breakdown, assumptions, sources, ...legacyFields },
-//   estimatedMonthlyMortgage
-// }
+// Everything else stays the same.
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
@@ -115,30 +101,6 @@ function pickFirst(obj, keys) {
     if (v !== undefined && v !== null && v !== "") return v;
   }
   return null;
-}
-
-// -----------------------------
-// //#2.2 City filename normalization + indexing
-// -----------------------------
-function dashNormalize(s) {
-  // normalize common unicode dashes to ASCII hyphen
-  return String(s || "").replace(/[‐-‒–—―−]/g, "-");
-}
-
-function canonKey(s) {
-  // aggressive canonical form for fuzzy matching
-  return dashNormalize(String(s || ""))
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
-}
-
-function parseLeadingCityName(s) {
-  // "Tucson, AZ (Davis-Monthan)" -> "Tucson"
-  const str = String(s || "").trim();
-  if (!str) return "";
-  const noParen = str.split("(")[0].trim();
-  const beforeComma = noParen.split(",")[0].trim();
-  return beforeComma || noParen || str;
 }
 
 // -----------------------------
@@ -288,20 +250,19 @@ function applyOverridesToProfile(profile, overrides) {
 // -----------------------------
 // //#2.05 CityKey from Base (PATCH)
 // -----------------------------
-function deriveCityKeyFromBase(profile, payTables, cityIndex) {
+function deriveCityKeyFromBase(profile, payTables) {
   const baseRaw = pickFirst(profile, ["base", "duty_station", "station", "dutyStation", "pcs_base", "pcsBase"]);
-  const baseStr = String(baseRaw || "").trim();
   const norm = normalizeBaseName(baseRaw);
-  if (!norm) return { cityKey: null, source: "none", base: baseStr };
+  if (!norm) return { cityKey: null, source: "none", base: String(baseRaw || "").trim() };
 
-  // 1) Prefer payTables mapping if present
   const tbl = payTables?.CITY_BY_BASE || payTables?.CITY?.by_base || payTables?.city_by_base || null;
+
   if (tbl && typeof tbl === "object") {
-    const mapped = tbl[norm] || tbl[baseStr] || null;
-    if (mapped) return { cityKey: safeKey(mapped), source: "payTables.CITY_BY_BASE", base: baseStr };
+    const mapped = tbl[norm] || tbl[String(baseRaw || "").trim()] || null;
+    if (mapped) return { cityKey: safeKey(mapped), source: "payTables.CITY_BY_BASE", base: String(baseRaw || "").trim() };
   }
 
-  // 2) Internal base -> metro mapping (semantic key)
+  // Canonical city keys (what we want to SHOW / return)
   const MAP = {
     NELLIS: "LasVegas",
     NELLISAFB: "LasVegas",
@@ -313,20 +274,18 @@ function deriveCityKeyFromBase(profile, payTables, cityIndex) {
     LACKLAND: "SanAntonio",
     RANDOLPH: "SanAntonio",
     RANDOLPHAFB: "SanAntonio",
+    LUKE: "Phoenix",
+    LUKEAFB: "Phoenix",
+    DYESS: "Abilene",
+    DYESSAFB: "Abilene",
+    KIRTLAND: "Albuquerque",
+    KIRTLANDAFB: "Albuquerque",
+    LAUGHLIN: "DelRio",
+    LAUGHLINAFB: "DelRio",
   };
 
   const hit = MAP[norm] || null;
-  if (hit) return { cityKey: safeKey(hit), source: "internalBaseCityMap", base: baseStr };
-
-  // 3) Fallback: if there is a file in /cities that matches the base name, use it directly
-  //    (lets you add new base files without touching code)
-  const baseSafe = lower(safeKey(dashNormalize(baseStr)));
-  if (cityIndex?.bySafe?.has(baseSafe)) {
-    // use the base-style key
-    return { cityKey: safeKey(dashNormalize(baseStr)), source: "citiesDir.baseFilename", base: baseStr };
-  }
-
-  return { cityKey: null, source: "none", base: baseStr };
+  return { cityKey: hit ? safeKey(hit) : null, source: hit ? "internalBaseCityMap" : "none", base: String(baseRaw || "").trim() };
 }
 
 // -----------------------------
@@ -343,10 +302,9 @@ const CITIES_DIR = path.join(ROOT, "netlify", "functions", "cities");
 
 let __PAY_TABLES_CACHE__ = null;
 let __PAY_TABLES_PATH_USED__ = null;
-const __CITY_CACHE__ = new Map();
 
-// City index: maps many possible keys -> actual filename base (no .json)
-let __CITY_INDEX__ = null;
+const __CITY_CACHE__ = new Map(); // cache by fileKey
+let __CITY_FILE_INDEX__ = null;   // cached directory listing
 
 function loadPayTables() {
   if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
@@ -372,116 +330,166 @@ function loadPayTables() {
   return __PAY_TABLES_CACHE__;
 }
 
-function buildCityIndex() {
-  if (__CITY_INDEX__) return __CITY_INDEX__;
+// ---- CITY FIX HELPERS (NEW) ----
+function listCityFiles() {
+  if (__CITY_FILE_INDEX__) return __CITY_FILE_INDEX__;
+  try {
+    const files = fs.readdirSync(CITIES_DIR)
+      .filter((f) => /\.json$/i.test(f))
+      .map((f) => f.replace(/\.json$/i, ""));
+    __CITY_FILE_INDEX__ = new Set(files);
+    return __CITY_FILE_INDEX__;
+  } catch (e) {
+    __CITY_FILE_INDEX__ = new Set();
+    return __CITY_FILE_INDEX__;
+  }
+}
 
-  const idx = {
-    bySafe: new Map(),   // lower(safeKey(...)) -> actualFileBase
-    byCanon: new Map(),  // canonKey(...) -> actualFileBase
-    available: [],       // list of file bases
+function cityFileExists(fileKey) {
+  const k = safeKey(fileKey);
+  if (!k) return false;
+  const idx = listCityFiles();
+  return idx.has(k);
+}
+
+function baseToCityFileKey(baseRaw) {
+  const norm = normalizeBaseName(baseRaw);
+  if (!norm) return null;
+
+  // These match your actual filenames in /netlify/functions/cities
+  const MAP = {
+    NELLIS: "Nellis",
+    NELLISAFB: "Nellis",
+
+    DAVISMONTHAN: "Davis-Monthan",
+    DAVISMONTHANAFB: "Davis-Monthan",
+
+    FORTSAMHOUSTON: "Fort-Sam-Houston",
+    JBSALACKLAND: "Lackland",
+    LACKLAND: "Lackland",
+    RANDOLPH: "Randolph",
+    RANDOLPHAFB: "Randolph",
+
+    LUKE: "Luke",
+    LUKEAFB: "Luke",
+
+    DYESS: "Dyess",
+    DYESSAFB: "Dyess",
+
+    KIRTLAND: "Kirtland",
+    KIRTLANDAFB: "Kirtland",
+
+    LAUGHLIN: "Laughlin",
+    LAUGHLINAFB: "Laughlin",
   };
 
-  function addAlias(alias, fileBase) {
-    const a = String(alias || "").trim();
-    if (!a) return;
-
-    const aSafe = lower(safeKey(dashNormalize(a)));
-    const aCanon = canonKey(a);
-
-    if (aSafe && !idx.bySafe.has(aSafe)) idx.bySafe.set(aSafe, fileBase);
-    if (aCanon && !idx.byCanon.has(aCanon)) idx.byCanon.set(aCanon, fileBase);
-
-    // also add leading-city-name alias (Tucson, Las Vegas, San Antonio, etc.)
-    const lead = parseLeadingCityName(a);
-    const leadSafe = lower(safeKey(dashNormalize(lead)));
-    const leadCanon = canonKey(lead);
-    if (leadSafe && !idx.bySafe.has(leadSafe)) idx.bySafe.set(leadSafe, fileBase);
-    if (leadCanon && !idx.byCanon.has(leadCanon)) idx.byCanon.set(leadCanon, fileBase);
-  }
-
-  try {
-    const files = fs
-      .readdirSync(CITIES_DIR)
-      .filter((f) => String(f || "").toLowerCase().endsWith(".json"))
-      .sort((a, b) => a.localeCompare(b));
-
-    for (const f of files) {
-      const fileBase = String(f).slice(0, -5);
-      idx.available.push(fileBase);
-
-      // map filename itself
-      addAlias(fileBase, fileBase);
-
-      // attempt to parse JSON for more aliases (city/place/market_label/key)
-      try {
-        const fp = path.join(CITIES_DIR, f);
-        const raw = fs.readFileSync(fp, "utf8");
-        const data = JSON.parse(raw);
-
-        addAlias(data?.key, fileBase);
-        addAlias(data?.city, fileBase);
-        addAlias(data?.place, fileBase);
-        addAlias(data?.market_label, fileBase);
-
-        // If you ever store a "cityKey" in the file, support it too
-        addAlias(data?.cityKey, fileBase);
-      } catch (_) {
-        // ignore bad json during index build; loadCity will still throw if requested
-      }
-    }
-  } catch (_) {
-    // directory might not exist or be empty in some environments
-  }
-
-  __CITY_INDEX__ = idx;
-  return __CITY_INDEX__;
+  const hit = MAP[norm] || null;
+  return hit ? safeKey(hit) : null;
 }
 
-function resolveCityFileBase(requestedKey) {
-  const idx = buildCityIndex();
+function canonicalCityToFileFallback(cityKeyCanonical) {
+  const k = safeKey(cityKeyCanonical);
+  if (!k) return null;
 
-  const reqRaw = String(requestedKey || "").trim();
-  const reqSafe = lower(safeKey(dashNormalize(reqRaw)));
-  const reqCanon = canonKey(reqRaw);
+  // Canonical -> likely base-file equivalents in your repo
+  const MAP = {
+    LasVegas: "Nellis",
+    Tucson: "Davis-Monthan",
+    SanAntonio: "Fort-Sam-Houston",
+    Phoenix: "Luke",
+    Abilene: "Dyess",
+    Albuquerque: "Kirtland",
+    DelRio: "Laughlin",
+  };
 
-  // 1) direct safe match
-  if (reqSafe && idx.bySafe.has(reqSafe)) return { fileBase: idx.bySafe.get(reqSafe), via: "index.bySafe" };
+  const hit = MAP[k] || null;
+  return hit ? safeKey(hit) : null;
+}
 
-  // 2) canon match (punctuation/spacing-insensitive)
-  if (reqCanon && idx.byCanon.has(reqCanon)) return { fileBase: idx.byCanon.get(reqCanon), via: "index.byCanon" };
+function resolveCityFileKey({ cityKeyCanonical, profile }) {
+  const canonical = safeKey(cityKeyCanonical || "SanAntonio");
+  const baseRaw = pickFirst(profile, ["base", "duty_station", "station", "dutyStation", "pcs_base", "pcsBase"]);
 
-  // 3) last resort: try exact `${safeKey}.json` path (case-sensitive)
-  if (reqSafe) {
-    // attempt to find same base in available list by safe/canon equivalence
-    for (const base of idx.available) {
-      if (lower(safeKey(dashNormalize(base))) === reqSafe) return { fileBase: base, via: "available.safeScan" };
-      if (canonKey(base) === reqCanon) return { fileBase: base, via: "available.canonScan" };
+  const candidates = [];
+  // 1) exact canonical key (if your folder ever has LasVegas.json etc)
+  candidates.push(canonical);
+
+  // 2) base-derived file key (Nellis, Davis-Monthan, Lackland...)
+  const baseFile = baseToCityFileKey(baseRaw);
+  if (baseFile) candidates.push(baseFile);
+
+  // 3) canonical->file fallback (LasVegas -> Nellis)
+  const canonicalFallback = canonicalCityToFileFallback(canonical);
+  if (canonicalFallback) candidates.push(canonicalFallback);
+
+  // 4) last resort: SanAntonio -> Fort-Sam-Houston (if nothing else)
+  candidates.push("Fort-Sam-Houston");
+
+  // de-dupe while preserving order
+  const uniq = [];
+  const seen = new Set();
+  for (const c of candidates) {
+    const cc = safeKey(c);
+    if (!cc || seen.has(cc)) continue;
+    seen.add(cc);
+    uniq.push(cc);
+  }
+
+  for (const c of uniq) {
+    if (cityFileExists(c)) {
+      return {
+        ok: true,
+        fileKey: c,
+        via: c === canonical ? "direct" : (c === baseFile ? "baseToFileKey" : (c === canonicalFallback ? "canonicalToFileFallback" : "lastResort")),
+        candidates: uniq,
+        baseUsed: String(baseRaw || "").trim(),
+      };
     }
   }
 
-  return { fileBase: null, via: "none", available: idx.available };
+  return {
+    ok: false,
+    fileKey: null,
+    via: "none",
+    candidates: uniq,
+    baseUsed: String(baseRaw || "").trim(),
+  };
 }
 
-function loadCity(cityKey) {
-  const requestedRaw = String(cityKey || "SanAntonio").trim();
+// ---- loadCity (UPDATED) ----
+function loadCity(cityKeyCanonical, profileForFilePick) {
+  const canonical = safeKey(cityKeyCanonical || "SanAntonio");
 
-  // cache by requested key (stable)
-  const cacheKey = lower(safeKey(dashNormalize(requestedRaw || "SanAntonio")));
-  if (cacheKey && __CITY_CACHE__.has(cacheKey)) return __CITY_CACHE__.get(cacheKey);
-
-  const resolved = resolveCityFileBase(requestedRaw);
-  if (!resolved.fileBase) {
-    const avail = (resolved.available || []).slice(0, 50);
+  // Resolve which FILE we should load
+  const res = resolveCityFileKey({ cityKeyCanonical: canonical, profile: profileForFilePick || {} });
+  const idx = listCityFiles();
+  if (!res.ok || !res.fileKey) {
     throw new Error(
-      `City JSON not found. requested="${requestedRaw}" canonical="${safeKey(dashNormalize(requestedRaw))}" ` +
-      `path="${path.join(CITIES_DIR, `${safeKey(dashNormalize(requestedRaw))}.json`)}" ` +
-      `availableFiles=${avail.length ? avail.join(", ") : "(none)"}`
+      `City JSON not found. requested="${canonical}" canonical="${canonical}" ` +
+      `availableFiles=${Array.from(idx).sort().join(", ")}`
     );
   }
 
-  const filePath = path.join(CITIES_DIR, `${resolved.fileBase}.json`);
+  const fileKey = res.fileKey;
+
+  // Cache by fileKey (because multiple canonicals may load same file)
+  if (__CITY_CACHE__.has(fileKey)) {
+    const cached = __CITY_CACHE__.get(fileKey);
+    // still update canonical per request (non-breaking)
+    return {
+      ...cached,
+      canonical_city_key: canonical,
+      cityFileRequested: canonical,
+      cityFileUsed: fileKey,
+      cityFileVia: res.via,
+      cityFileCandidates: res.candidates,
+      baseUsedForCityFile: res.baseUsed || null,
+    };
+  }
+
+  const filePath = path.join(CITIES_DIR, `${fileKey}.json`);
   if (!fs.existsSync(filePath)) {
-    throw new Error(`City JSON resolved but missing at ${filePath}`);
+    throw new Error(`City JSON not found at ${filePath}`);
   }
 
   const raw = fs.readFileSync(filePath, "utf8");
@@ -550,14 +558,21 @@ function loadCity(cityKey) {
   );
 
   const targetRent =
-    toNum(data?.target_rent ?? data?.targetRent ?? targets?.target_rent ?? targets?.targetRent) ?? derivedTargetRent ?? null;
+    toNum(data?.target_rent ?? data?.targetRent ?? targets?.target_rent ?? targets?.targetRent) ??
+    derivedTargetRent ??
+    null;
 
   const avgUtilities =
-    toNum(data?.avg_utilities ?? data?.average_utilities ?? data?.avgUtilities) ?? derivedUtilities ?? null;
+    toNum(data?.avg_utilities ?? data?.average_utilities ?? data?.avgUtilities) ??
+    derivedUtilities ??
+    null;
 
   const out = {
-    // keep a semantic key based on what was requested/resolved upstream
-    key: safeKey(dashNormalize(requestedRaw || "SanAntonio")),
+    // NOTE: keep "key" as FILE KEY (backward-safe for anything expecting filename identity)
+    key: fileKey,
+
+    // New canonical key so UI can show “LasVegas” even if file is “Nellis.json”
+    canonical_city_key: canonical,
 
     ...data,
     market,
@@ -579,15 +594,15 @@ function loadCity(cityKey) {
     average_utilities: avgUtilities,
     avgUtilities: avgUtilities,
 
-    // non-breaking extra debug hints (safe to ignore in UI)
-    _resolved: {
-      fileBase: resolved.fileBase,
-      filePath,
-      via: resolved.via,
-    },
+    // Debug breadcrumbs about file selection
+    cityFileRequested: canonical,
+    cityFileUsed: fileKey,
+    cityFileVia: res.via,
+    cityFileCandidates: res.candidates,
+    baseUsedForCityFile: res.baseUsed || null,
   };
 
-  if (cacheKey) __CITY_CACHE__.set(cacheKey, out);
+  __CITY_CACHE__.set(fileKey, out);
   return out;
 }
 
@@ -1088,38 +1103,32 @@ export async function handler(event) {
 
     const { profileEffective, overridesApplied } = applyOverridesToProfile(profile, body.overrides);
 
-    // Build city index once so we can safely resolve base-named files and city aliases
-    const cityIndex = buildCityIndex();
-
     const callerDidNotChooseCity = !cityKeyClean || lower(cityKeyClean) === "sanantonio";
 
     let resolvedCityKey = cityKeyClean || "SanAntonio";
     let cityResolve = { cityKey: null, source: "none", base: "" };
 
     if (callerDidNotChooseCity) {
-      cityResolve = deriveCityKeyFromBase(profileEffective, payTables, cityIndex);
+      cityResolve = deriveCityKeyFromBase(profileEffective, payTables);
       if (cityResolve.cityKey) resolvedCityKey = cityResolve.cityKey;
     }
 
     let city = null;
     let cityLoadFallbackUsed = false;
     let cityLoadError = null;
-    let cityFileUsed = null;
-    let cityFileVia = null;
 
     try {
-      city = loadCity(resolvedCityKey);
-      cityFileUsed = city?._resolved?.fileBase || null;
-      cityFileVia = city?._resolved?.via || null;
+      // ✅ UPDATED: loadCity now picks correct FILE key from base/canonical
+      city = loadCity(resolvedCityKey, profileEffective);
     } catch (err) {
       cityLoadError = String(err?.message || err);
+
+      // fallback: try explicit cityKeyClean if it differs
       const fallbackKey = cityKeyClean || "SanAntonio";
       if (fallbackKey && fallbackKey !== resolvedCityKey) {
         cityLoadFallbackUsed = true;
-        city = loadCity(fallbackKey);
+        city = loadCity(fallbackKey, profileEffective);
         resolvedCityKey = fallbackKey;
-        cityFileUsed = city?._resolved?.fileBase || null;
-        cityFileVia = city?._resolved?.via || null;
       } else {
         throw err;
       }
@@ -1157,16 +1166,17 @@ export async function handler(event) {
         payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null,
         cityKeyRaw: cityKeyRaw || null,
         cityKeyResolved: resolvedCityKey,
-        cityKeySource: callerDidNotChooseCity && cityResolve.cityKey
-          ? cityResolve.source
-          : cityKeyClean
-            ? "body.cityKey"
-            : "default",
+        cityKeySource: callerDidNotChooseCity && cityResolve.cityKey ? cityResolve.source : cityKeyClean ? "body.cityKey" : "default",
         baseUsedForCity: callerDidNotChooseCity && cityResolve.cityKey ? cityResolve.base || null : null,
+
+        // ✅ NEW city-file debug
+        cityFileRequested: city?.cityFileRequested || null,
+        cityFileUsed: city?.cityFileUsed || null,
+        cityFileVia: city?.cityFileVia || null,
+        baseUsedForCityFile: city?.baseUsedForCityFile || null,
+
         cityLoadFallbackUsed: !!cityLoadFallbackUsed,
         cityLoadError: cityLoadError || null,
-        cityFileUsed: cityFileUsed || null,
-        cityFileVia: cityFileVia || null,
       },
 
       profile,
