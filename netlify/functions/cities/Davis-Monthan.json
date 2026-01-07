@@ -1,9 +1,9 @@
 {
-  "city": "Tucson, AZ (Davis-Monthan)",
-  "place": "Davis-Monthan AFB / Tucson, AZ",
+  "city": "Davis-Monthan AFB (Tucson), AZ",
+  "place": "Davis-Monthan AFB",
   "state": "AZ",
   "geo_id": "1600000US0477000",
-  "year": 2026,
+  "year": 2025,
   "last_updated_data_from_sources": "January 2026",
 
   "zip": "85708",
@@ -15,42 +15,42 @@
   "city_avg_home": 321510,
 
   "mortgage_assumptions": {
-    "apr_percent": 6.25,
+    "apr_percent": 7.0,
     "term_years": 30,
     "down_payment_percent": 5,
     "includes": "all_in",
     "defaults_note": "City defaults apply to taxes/insurance/HOA only. APR varies by credit score and/or user override."
   },
 
-  "property_tax_rate": 1.05,
-  "insurance_rate": 0.48,
+  "property_tax_rate": 1.12,
+  "insurance_rate": 0.42,
   "hoa_monthly": 0,
 
   "avg_home_mortgage_monthly": {
-    "avg": 1980,
+    "avg": 2030,
     "as_of": "2026-01",
     "notes": "Historical reference only; do not use for calculation. brain.js computes itemized mortgage from inputs + city rates."
   },
 
   "population": {
     "estimate": 546574,
-    "median_age": 34.1,
-    "persons_per_household": 2.37
+    "median_age": 34.2,
+    "persons_per_household": 2.45
   },
 
   "households": {
-    "total_households": 222123
+    "total_households": 218540
   },
 
   "income": {
-    "median_household_income": 58940,
-    "per_capita_income": 31442,
+    "median_household_income": 59215,
+    "per_capita_income": 32450,
     "poverty_rate_percent": 18.2
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 86.4,
-    "bachelors_degree_or_higher_percent": 27.9
+    "high_school_grad_or_higher_percent": 86.8,
+    "bachelors_degree_or_higher_percent": 29.5
   },
 
   "veterans": {
@@ -62,118 +62,130 @@
   },
 
   "labor": {
-    "mean_travel_time_to_work_minutes": 22.4,
-    "unemployment_rate_percent": 3.8
+    "mean_travel_time_to_work_minutes": 23.4,
+    "unemployment_rate_percent": 4.1
   },
 
   "by_bedroom": {
     "2": {
-      "rent_monthly": { "low": 1250, "high": 1500, "avg": 1375, "as_of": "2025-12" },
-      "home_price": { "low": 240000, "high": 270000, "avg": 255000, "as_of": "2026-01" },
+      "rent_monthly": { "low": 1150, "high": 1450, "avg": 1300, "as_of": "2026-01" },
+      "home_price": { "low": 240000, "high": 275000, "avg": 257500, "as_of": "2026-01" },
       "mortgage_monthly": {
-        "low": 1478,
-        "high": 1662,
-        "avg": 1570,
+        "low": 1516,
+        "high": 1737,
+        "avg": 1627,
         "as_of": "2026-01",
         "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
-        "electric_gas": { "low": 145, "high": 190, "avg": 168 },
-        "water_sewer": { "low": 55, "high": 75, "avg": 65 },
-        "total": { "low": 200, "high": 265, "avg": 233 },
+        "electric_gas": { "low": 135, "high": 175, "avg": 155 },
+        "water_sewer": { "low": 45, "high": 60, "avg": 52 },
+        "total": { "low": 180, "high": 235, "avg": 207 },
         "as_of": "2026-01"
       }
     },
     "3": {
-      "rent_monthly": { "low": 1800, "high": 2200, "avg": 2000, "as_of": "2025-12" },
-      "home_price": { "low": 310000, "high": 350000, "avg": 330000, "as_of": "2026-01" },
+      "rent_monthly": { "low": 1750, "high": 2100, "avg": 1925, "as_of": "2026-01" },
+      "home_price": { "low": 315000, "high": 365000, "avg": 340000, "as_of": "2026-01" },
       "mortgage_monthly": {
-        "low": 1909,
-        "high": 2155,
-        "avg": 2032,
+        "low": 1990,
+        "high": 2305,
+        "avg": 2147,
         "as_of": "2026-01",
         "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
-        "electric_gas": { "low": 180, "high": 250, "avg": 215 },
-        "water_sewer": { "low": 65, "high": 90, "avg": 78 },
-        "total": { "low": 245, "high": 340, "avg": 293 },
+        "electric_gas": { "low": 170, "high": 240, "avg": 205 },
+        "water_sewer": { "low": 55, "high": 80, "avg": 68 },
+        "total": { "low": 225, "high": 320, "avg": 273 },
         "as_of": "2026-01"
       }
     },
     "4": {
-      "rent_monthly": { "low": 2100, "high": 2600, "avg": 2350, "as_of": "2025-12" },
-      "home_price": { "low": 410000, "high": 485000, "avg": 447500, "as_of": "2026-01" },
+      "rent_monthly": { "low": 2100, "high": 2600, "avg": 2350, "as_of": "2026-01" },
+      "home_price": { "low": 395000, "high": 465000, "avg": 430000, "as_of": "2026-01" },
       "mortgage_monthly": {
-        "low": 2525,
-        "high": 2987,
-        "avg": 2756,
+        "low": 2495,
+        "high": 2937,
+        "avg": 2716,
         "as_of": "2026-01",
         "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
       },
       "utilities": {
-        "electric_gas": { "low": 225, "high": 320, "avg": 272 },
-        "water_sewer": { "low": 85, "high": 120, "avg": 102 },
-        "total": { "low": 310, "high": 440, "avg": 374 },
+        "electric_gas": { "low": 220, "high": 310, "avg": 265 },
+        "water_sewer": { "low": 75, "high": 105, "avg": 90 },
+        "total": { "low": 295, "high": 415, "avg": 355 },
+        "as_of": "2026-01"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 2400, "high": 3600, "avg": 2950, "as_of": "2026-01" },
+      "home_price": { "low": 485000, "high": 615000, "avg": 550000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 3064,
+        "high": 3887,
+        "avg": 3475,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 280, "high": 410, "avg": 345 },
+        "water_sewer": { "low": 90, "high": 130, "avg": 110 },
+        "total": { "low": 370, "high": 540, "avg": 455 },
         "as_of": "2026-01"
       }
     }
   },
 
   "housing": {
-    "housing_units": 245450,
-    "median_value_owner_occupied": 285000,
+    "housing_units": 235480,
+    "median_value_owner_occupied": 321510,
 
     "market": {
       "zillow_average_home_value": 321510,
       "zillow_one_year_change_percent": -3.4,
-      "market_type_summary": "Balanced with healthy inventory; prices stabilizing near early 2024 levels",
+      "market_type_summary": "Stable market with modest inventory growth; affordability lures on-the-fence buyers",
 
-      "average_days_on_market": 42,
+      "average_days_on_market": 48,
 
       "median_sale_price_current": 322000,
-      "median_listing_price_realtor": 365000,
-      "median_listing_price_per_sqft": 208,
-      "active_listings_total": 4709,
+      "median_listing_price_realtor": 375000,
+      "median_listing_price_per_sqft": 228,
+      "active_listings_total": 4819,
 
-      "q1_2026": {
-        "median_sale_price": 321510
+      "q1_2025": {
+        "median_sale_price": 315000
       },
 
       "sale_history_36_months": [
-        { "month": "2023-01", "median_sale_price": 325000 },
-        { "month": "2023-06", "median_sale_price": 345000 },
-        { "month": "2023-12", "median_sale_price": 348000 },
+        { "month": "2023-01", "median_sale_price": 285000 },
+        { "month": "2023-06", "median_sale_price": 305000 },
+        { "month": "2023-12", "median_sale_price": 310000 },
 
-        { "month": "2024-06", "median_sale_price": 372000 },
-        { "month": "2024-12", "median_sale_price": 368000 },
+        { "month": "2024-06", "median_sale_price": 335000 },
+        { "month": "2024-12", "median_sale_price": 330650 },
 
-        { "month": "2025-01", "median_sale_price": 365000 },
-        { "month": "2025-02", "median_sale_price": 366500 },
-        { "month": "2025-07", "median_sale_price": 370000 },
-        { "month": "2025-08", "median_sale_price": 368500 },
-        { "month": "2025-09", "median_sale_price": 362000 },
-        { "month": "2025-10", "median_sale_price": 318833 },
-        { "month": "2025-11", "median_sale_price": 364515 },
-        { "month": "2025-12-W1", "median_sale_price": 330000 },
-        { "month": "2025-12-W2", "median_sale_price": 328000 },
-        { "month": "2025-12-W3", "median_sale_price": 322000 }
+        { "month": "2025-01", "median_sale_price": 328000 },
+        { "month": "2025-06", "median_sale_price": 340000 },
+        { "month": "2025-10", "median_sale_price": 330650 },
+        { "month": "2025-11", "median_sale_price": 321500 },
+        { "month": "2025-12", "median_sale_price": 322000 }
       ]
     }
   },
 
   "sources": {
-    "demographics": { "provider": "ACS / Pima County Profile", "as_of": "2025" },
-    "rent": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2025-12", "notes": "Bedroom rent ranges" },
-    "home_price": { "provider": "Zillow/Estimator (via Google AI)", "as_of": "2026-01", "notes": "Bedroom price bands" },
-    "mortgage": { "provider": "Computed (P&I)", "as_of": "2026-01", "notes": "30yr fixed @ 6.25% APR, 5% down; excludes taxes/insurance/HOA" },
-    "utilities": { "provider": "Utility estimator (via Google AI)", "as_of": "2026-01", "notes": "Electric/Gas + Water/Sewer totals based on Tucson rates" },
-    "market": { "provider": "Zillow/Realtor (via Google AI)", "as_of": "2025-12", "notes": "Market summary + listings + sale history" },
+    "demographics": { "provider": "ACS / Pima County Profile", "as_of": "2026-01" },
+    "rent": { "provider": "Zillow/Trulia/Redfin Tucson Estimates", "as_of": "2026-01", "notes": "Reflects single-family homes near base" },
+    "home_price": { "provider": "Zillow/Redfin Tucson Market Hub", "as_of": "2026-01", "notes": "Reflects 3.4% annual decline reported Jan 2026" },
+    "mortgage": { "provider": "Computed (P&I)", "as_of": "2026-01", "notes": "30yr fixed @ 7.0% APR, 5% down" },
+    "utilities": { "provider": "TEP/Southwest Gas Regional Averages", "as_of": "2026-01", "notes": "High seasonal cooling variance" },
+    "market": { "provider": "Zillow/Realtor.com Research", "as_of": "2026-01", "notes": "Stable outlook for 2026" },
 
     "mortgage_city_defaults": {
-      "provider": "Manual placeholder defaults",
+      "provider": "Pima County Treasurer FY 2026 Budget",
       "as_of": "2026-01",
-      "notes": "property_tax_rate, insurance_rate, hoa_monthly are Pima County defaults."
+      "notes": "Effective rate ~1.12% based on total recommended $5.1961 per $100 NAV."
     }
   }
 }
