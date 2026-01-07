@@ -1,46 +1,35 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.8) — Minimal-input Veteran Pay (NO user-entered dollars)
-// - Fetch Supabase profile by email
-// - Active Duty: Base Pay + BAS + BAH (deterministic)
-// - Veteran/Retired (minimal inputs):
-//     * BAH = 0, BAS = 0
-//     * VA Disability Pay: computed from DISABILITY_FULL using assumptions
-//     * Retirement Pay (estimate): High-3 using BASEPAY steps (last 3 steps <= YOS)
-// - Load city JSON (targets + market averages)
+// CENTRAL BRAIN (v1.9) — Pay + City + FULL Mortgage Breakdown
 //
-// ✅ PATCH ADD (Mortgage Estimate):
-// - Computes an estimated monthly mortgage using:
-//     * price: body.price OR profile.price/projected_home_price OR bedroom avg home OR city avg home
-//     * APR: body.apr OR body.creditScore/profile.creditScore -> APR mapping OR default 7.0%
-//     * DP: body.dpPct OR profile.dpPct OR default 5%
-//     * Term: body.termYears OR profile.termYears OR default 30
-//     * Taxes/Insurance/HOA: optional from body/profile/city, else safe defaults
-//
-// ✅ NEW (What-If Overrides):
-// - Accepts body.overrides to simulate scenarios WITHOUT writing to Supabase.
-//   Examples:
-//     { overrides: { rank_paygrade:"E-7" } }
-//     { overrides: { base:"Nellis AFB" } }
-//     { overrides: { yos:11, family:true } }
-// - Overrides apply to a COPY of the fetched profile only.
+// ✅ Key upgrades vs your v1.8:
+// - Returns a consistent mortgage object with:
+//   mortgage.breakdown = { principalInterest, propertyTax, insurance, hoa, pmi, totalMonthly }
+// - Tracks sources for each assumption (APR, taxRate, insRate, HOA, PMI, price, dpPct)
+// - Keeps deterministic APR by credit score (same bands as your dashboard)
+// - Uses city defaults when available (property_tax_rate, insurance_rate, hoa_monthly)
+// - Safe fallbacks when city fields are missing
 //
 // POST BODY:
-//   {
-//     email, cityKey, bedrooms,
-//     price?, dpPct?, termYears?, creditScore?, apr?, taxRate?, insRate?, hoa?, pmiRate?,
-//     overrides?: { rank_paygrade?, rank?, yos?, base?, zip?, family?, mode?, va_disability?, creditScore?, dpPct?, termYears?, apr? }
-//   }
+// {
+//   email, cityKey, bedrooms,
+//   price?, dpPct?, termYears?, creditScore?, apr?,
+//   taxRate?, insRate?, hoa?, pmiRate?, loanType?,
+//   overrides?: { ...safe profile overrides... }
+// }
 //
 // RETURNS:
-//   { ok, schemaVersion, input, profile, profileEffective, overridesApplied, pay, city, missing, mortgage, estimatedMonthlyMortgage }
+// { ok, schemaVersion, input, profile, profileEffective, overridesApplied, pay, city, missing,
+//   mortgage: { ok, breakdown, assumptions, sources },
+//   estimatedMonthlyMortgage
+// }
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
 
-const SCHEMA_VERSION = "1.1";
+const SCHEMA_VERSION = "1.2";
 
 // -----------------------------
 // //#1 CORS (robust)
@@ -114,8 +103,16 @@ function normalizeBaseName(s){
     .replace(/[^A-Z0-9]/g, "");
 }
 
+function pickFirst(obj, keys){
+  for (const k of keys){
+    const v = obj?.[k];
+    if (v !== undefined && v !== null && v !== "") return v;
+  }
+  return null;
+}
+
 // -----------------------------
-// //#2.1 Pay model detection (your current data uses: mode = "ad" or "vet")
+// //#2.1 Pay model detection
 // -----------------------------
 function detectPayModel(profile){
   const mode = lower(profile?.mode || profile?.status || profile?.user_type || profile?.type);
@@ -130,7 +127,7 @@ function detectPayModel(profile){
 }
 
 // -----------------------------
-// //#2.2 Family assumptions from minimal current inputs
+// //#2.2 Family assumptions
 // -----------------------------
 function deriveDependentsFromFamilySize(profile){
   const famRaw = profile?.family ?? profile?.dependents ?? profile?.has_dependents;
@@ -147,13 +144,12 @@ function deriveDependentsFromFamilySize(profile){
 }
 
 // -----------------------------
-// //#2.3 ✅ NEW — Apply “what-if” overrides (never persisted)
+// //#2.3 Apply “what-if” overrides (never persisted)
 // -----------------------------
 function applyOverridesToProfile(profile, overridesRaw){
   const overrides = (overridesRaw && typeof overridesRaw === "object") ? overridesRaw : null;
   if (!profile || !overrides) return { profileEffective: profile, overridesApplied: null };
 
-  // Only allow these keys (keeps it safe and predictable)
   const ALLOWED = new Set([
     "rank_paygrade","rank",
     "yos","years_of_service","yearsOfService",
@@ -179,11 +175,9 @@ function applyOverridesToProfile(profile, overridesRaw){
     return { profileEffective: profile, overridesApplied: null };
   }
 
-  // Normalize rank fields if present
   if (applied.rank_paygrade != null) applied.rank_paygrade = normalizeRank(applied.rank_paygrade);
   if (applied.rank != null) applied.rank = normalizeRank(applied.rank);
 
-  // Return a copy only
   const out = { ...profile, ...applied };
   return { profileEffective: out, overridesApplied: applied };
 }
@@ -193,8 +187,6 @@ function applyOverridesToProfile(profile, overridesRaw){
 // -----------------------------
 const ROOT = process.cwd(); // /var/task
 
-// ✅ Your real location is: netlify/functions/militaryPayTables.json
-// Keep fallback to old path just in case.
 const PAY_TABLES_PATHS = [
   path.join(ROOT, "netlify", "functions", "militaryPayTables.json"),
   path.join(ROOT, "netlify", "functions", "data", "militaryPayTables.json"),
@@ -217,7 +209,7 @@ function loadPayTables() {
   if (!found) {
     throw new Error(
       `militaryPayTables.json not found. Tried:\n- ${PAY_TABLES_PATHS.join("\n- ")}\n` +
-      `Fix: ensure the file is present at netlify/functions/militaryPayTables.json and bundled via netlify.toml included_files if needed.`
+      `Fix: ensure it's bundled via netlify.toml [functions].included_files.`
     );
   }
 
@@ -239,7 +231,7 @@ function loadCity(cityKey) {
   const raw = fs.readFileSync(filePath, "utf8");
   const data = JSON.parse(raw);
 
-  // ---- Normalize market + targets (your existing logic)
+  // Normalize market + targets (keeps your existing behavior)
   const marketRaw =
     data.market ||
     data?.housing?.market ||
@@ -281,7 +273,7 @@ function loadCity(cityKey) {
     avg_home_value_source: avgHomeSource,
   };
 
-  // ---- ✅ Critical: expose bedroom blocks in the shape the UI expects
+  // Bedroom blocks
   const bedrooms =
     (data?.bedrooms && typeof data.bedrooms === "object" ? data.bedrooms : null) ||
     (data?.by_bedroom && typeof data.by_bedroom === "object" ? data.by_bedroom : null) ||
@@ -595,7 +587,7 @@ function computePay(profile, payTables) {
 }
 
 // -----------------------------
-// //#4.5 ✅ PATCH — Mortgage Estimate (deterministic, safe defaults)
+// //#4.5 Mortgage math (FULL breakdown)
 // -----------------------------
 function pmti(P, r, n){
   if (!P || P <= 0 || !Number.isFinite(P)) return 0;
@@ -604,7 +596,7 @@ function pmti(P, r, n){
   return P * (r * x) / (x - 1);
 }
 
-// Mirror your dashboard APR bands (keeps behavior consistent)
+// Same APR bands your dashboard uses
 function scoreAPR(score){
   const s = Number(score) || 720;
   if (s>=780) return 6.50;
@@ -618,15 +610,10 @@ function scoreAPR(score){
   return 9.95;
 }
 
-// Pick price from (body/profile/bedroom/city)
 function pickMortgagePrice({ body, profile, city, bedrooms }){
-  const bodyPrice =
-    toNum(body?.price ?? body?.homePrice ?? body?.purchase_price ?? body?.purchasePrice);
+  const bodyPrice = toNum(body?.price ?? body?.homePrice ?? body?.purchase_price ?? body?.purchasePrice);
+  const profPrice = toNum(profile?.price ?? profile?.home_price ?? profile?.projected_home_price ?? profile?.projectedHomePrice);
 
-  const profPrice =
-    toNum(profile?.price ?? profile?.home_price ?? profile?.projected_home_price ?? profile?.projectedHomePrice);
-
-  // bedroom avg home
   const bedsKey = String(bedrooms ?? 4);
   const bedsRoot =
     city?.bedrooms || city?.raw?.bedrooms ||
@@ -653,8 +640,7 @@ function pickMortgagePrice({ body, profile, city, bedrooms }){
     toNum(city?.raw?.market?.zillow_average_home_value) ??
     null;
 
-  const price =
-    bodyPrice ?? profPrice ?? bedPrice ?? cityAvg ?? 0;
+  const price = bodyPrice ?? profPrice ?? bedPrice ?? cityAvg ?? 0;
 
   const source =
     (bodyPrice != null && "body.price") ||
@@ -666,50 +652,115 @@ function pickMortgagePrice({ body, profile, city, bedrooms }){
   return { price, source };
 }
 
+// Decide a default PMI/MIP behavior by loan type (still simple & deterministic)
+function defaultPmiRate({ loanType, dpPct }){
+  const lt = String(loanType || "").trim().toLowerCase();
+  if (lt === "va") return 0;                  // VA: no monthly PMI
+  if (lt === "fha") return 0.55;              // FHA: typical annual MIP ballpark (simplified)
+  if (dpPct >= 20) return 0;                  // no PMI at >=20% down
+  return 0.50;                                // conventional PMI ballpark
+}
+
 function computeMortgageEstimate({ body, profile, city, bedrooms }){
+  const sources = {};
+
   const { price, source: priceSource } = pickMortgagePrice({ body, profile, city, bedrooms });
+  sources.price = priceSource;
 
   if (!price || price <= 0){
     return {
       ok: false,
-      totalMonthly: 0,
-      principalInterest: 0,
-      taxes: 0,
-      insurance: 0,
-      hoa: 0,
-      pmi: 0,
+      breakdown: {
+        principalInterest: 0,
+        propertyTax: 0,
+        insurance: 0,
+        hoa: 0,
+        pmi: 0,
+        totalMonthly: 0,
+      },
       assumptions: { note: "No price available yet." },
-      debug: { priceSource }
+      sources
     };
   }
 
+  // Down payment %
   const dpPct =
     toNum(body?.dpPct ?? body?.downPaymentPct ?? profile?.dpPct ?? profile?.down_payment_pct) ??
+    toNum(city?.mortgage_assumptions?.down_payment_percent) ??
     5;
+  sources.dpPct =
+    (body?.dpPct != null || body?.downPaymentPct != null) ? "body.dpPct" :
+    (profile?.dpPct != null || profile?.down_payment_pct != null) ? "profile.dpPct" :
+    (city?.mortgage_assumptions?.down_payment_percent != null) ? "city.mortgage_assumptions.down_payment_percent" :
+    "default:5";
 
+  // Term
   const termYears =
     toInt(body?.termYears ?? body?.term ?? profile?.termYears ?? profile?.term_years) ??
+    toInt(city?.mortgage_assumptions?.term_years) ??
     30;
+  sources.termYears =
+    (body?.termYears != null || body?.term != null) ? "body.termYears" :
+    (profile?.termYears != null || profile?.term_years != null) ? "profile.termYears" :
+    (city?.mortgage_assumptions?.term_years != null) ? "city.mortgage_assumptions.term_years" :
+    "default:30";
 
+  // Credit score -> APR
   const creditScore =
     toInt(body?.creditScore ?? profile?.creditScore ?? profile?.credit_score) ??
     null;
 
   const apr =
     toNum(body?.apr ?? profile?.apr) ??
-    (creditScore != null ? scoreAPR(creditScore) : 7.0);
+    (creditScore != null ? scoreAPR(creditScore) : toNum(city?.mortgage_assumptions?.apr_percent)) ??
+    7.0;
+  sources.apr =
+    (body?.apr != null) ? "body.apr" :
+    (profile?.apr != null) ? "profile.apr" :
+    (creditScore != null) ? "scoreAPR(creditScore)" :
+    (city?.mortgage_assumptions?.apr_percent != null) ? "city.mortgage_assumptions.apr_percent" :
+    "default:7.0";
 
+  // City-driven rates (these DO vary by city/county/state)
   const taxRate =
-    toNum(body?.taxRate ?? profile?.taxRate ?? city?.tax_rate ?? city?.property_tax_rate ?? city?.raw?.property_tax_rate) ??
+    toNum(body?.taxRate ?? profile?.taxRate) ??
+    toNum(city?.tax_rate ?? city?.property_tax_rate ?? city?.raw?.property_tax_rate) ??
     1.20;
+  sources.taxRate =
+    (body?.taxRate != null) ? "body.taxRate" :
+    (profile?.taxRate != null) ? "profile.taxRate" :
+    (city?.tax_rate != null) ? "city.tax_rate" :
+    (city?.property_tax_rate != null || city?.raw?.property_tax_rate != null) ? "city.property_tax_rate" :
+    "default:1.20";
 
   const insRate =
-    toNum(body?.insRate ?? profile?.insRate ?? city?.insurance_rate ?? city?.raw?.insurance_rate) ??
+    toNum(body?.insRate ?? profile?.insRate) ??
+    toNum(city?.insurance_rate ?? city?.raw?.insurance_rate) ??
     0.50;
+  sources.insRate =
+    (body?.insRate != null) ? "body.insRate" :
+    (profile?.insRate != null) ? "profile.insRate" :
+    (city?.insurance_rate != null || city?.raw?.insurance_rate != null) ? "city.insurance_rate" :
+    "default:0.50";
 
   const hoa =
     toNum(body?.hoa ?? profile?.hoa ?? profile?.hoa_monthly ?? city?.hoa_monthly ?? city?.raw?.hoa_monthly) ??
     0;
+  sources.hoa =
+    (body?.hoa != null) ? "body.hoa" :
+    (profile?.hoa != null || profile?.hoa_monthly != null) ? "profile.hoa_monthly" :
+    (city?.hoa_monthly != null || city?.raw?.hoa_monthly != null) ? "city.hoa_monthly" :
+    "default:0";
+
+  // PMI (loan-type dependent). If caller explicitly provides pmiRate, we use it.
+  const loanType = String(body?.loanType ?? profile?.loanType ?? profile?.loan_type ?? "").trim();
+  const pmiRate =
+    toNum(body?.pmiRate ?? profile?.pmiRate) ??
+    defaultPmiRate({ loanType, dpPct });
+  sources.pmiRate =
+    (body?.pmiRate != null) ? "body.pmiRate" :
+    (profile?.pmiRate != null) ? "profile.pmiRate" :
+    "defaultPmiRate(loanType,dpPct)";
 
   const dpAmt = Math.max(0, price * (Math.max(0, dpPct) / 100));
   const loan  = Math.max(0, price - dpAmt);
@@ -719,24 +770,23 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }){
 
   const principalInterest = loan > 0 ? pmti(loan, mRate, n) : 0;
 
-  const taxes = (price * (taxRate/100)) / 12;
-  const insurance = (price * (insRate/100)) / 12;
+  const propertyTax = (price * (taxRate/100)) / 12;
+  const insurance  = (price * (insRate/100)) / 12;
 
-  const pmiRate =
-    toNum(body?.pmiRate ?? profile?.pmiRate) ??
-    (dpPct > 0 && dpPct < 20 ? 0.50 : 0);
-  const pmi = (loan * (pmiRate/100)) / 12;
+  const pmi = (loan > 0 && pmiRate > 0) ? (loan * (pmiRate/100)) / 12 : 0;
 
-  const totalMonthly = principalInterest + taxes + insurance + hoa + pmi;
+  const totalMonthly = principalInterest + propertyTax + insurance + hoa + pmi;
 
   return {
     ok: totalMonthly > 0,
-    totalMonthly,
-    principalInterest,
-    taxes,
-    insurance,
-    hoa,
-    pmi,
+    breakdown: {
+      principalInterest,
+      propertyTax,
+      insurance,
+      hoa,
+      pmi,
+      totalMonthly
+    },
     assumptions: {
       price,
       dpPct,
@@ -746,10 +796,12 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }){
       termYears,
       taxRate,
       insRate,
+      hoa,
       pmiRate,
-      creditScore: creditScore ?? undefined,
-      priceSource
-    }
+      loanType: loanType || undefined,
+      creditScore: creditScore ?? undefined
+    },
+    sources
   };
 }
 
@@ -790,7 +842,7 @@ export async function handler(event) {
       return respond(event, 200, {
         ok: true,
         schemaVersion: SCHEMA_VERSION,
-        note: "POST JSON to this endpoint: { email, cityKey, bedrooms, price?, dpPct?, termYears?, creditScore?, apr?, overrides? }",
+        note: "POST JSON: { email, cityKey, bedrooms, price?, dpPct?, termYears?, creditScore?, apr?, taxRate?, insRate?, hoa?, pmiRate?, loanType?, overrides? }",
       });
     }
 
@@ -810,11 +862,12 @@ export async function handler(event) {
 
     const profile = await fetchProfileByEmail(email);
 
-    // ✅ Apply “what-if” overrides (never persisted)
+    // Apply “what-if” overrides (never persisted)
     const { profileEffective, overridesApplied } = applyOverridesToProfile(profile, body.overrides);
 
     const computed = computePay(profileEffective, payTables);
 
+    // FULL mortgage breakdown (this is what your UI should consume)
     const mortgage = computeMortgageEstimate({ body, profile: profileEffective, city, bedrooms });
 
     return respond(event, 200, {
@@ -823,22 +876,16 @@ export async function handler(event) {
       input: { email, cityKey, bedrooms },
       debug: { payTablesPathUsed: __PAY_TABLES_PATH_USED__ || null },
 
-      // Original profile (as stored in Supabase)
       profile,
-
-      // Effective profile (profile + overridesApplied)
       profileEffective,
-
-      // Echo what overrides we actually accepted
       overridesApplied: overridesApplied || null,
 
       pay: computed.pay,
       city,
-
       missing: computed.missing,
 
       mortgage,
-      estimatedMonthlyMortgage: Number(mortgage?.totalMonthly || 0) || 0,
+      estimatedMonthlyMortgage: Number(mortgage?.breakdown?.totalMonthly || 0) || 0,
     });
 
   } catch (e) {
