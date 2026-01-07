@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "bases": {
+    "Davis-Monthan AFB": { "cityKey": "Tucson", "file": "Davis-Monthan", "zip": "85707" },
+    "Dyess AFB": { "cityKey": "Abilene", "file": "Dyess", "zip": "79607" },
+    "Fort Sam Houston": { "cityKey": "SanAntonio", "file": "Fort-Sam-Houston", "zip": "78234" },
+    "Kirtland AFB": { "cityKey": "Albuquerque", "file": "Kirtland", "zip": "87117" },
+    "JBSA-Lackland": { "cityKey": "SanAntonio", "file": "Lackland", "zip": "78236" },
+    "Laughlin AFB": { "cityKey": "DelRio", "file": "Laughlin", "zip": "78843" },
+    "Luke AFB": { "cityKey": "Phoenix", "file": "Luke", "zip": "85309" },
+    "Nellis AFB": { "cityKey": "LasVegas", "file": "Nellis", "zip": "89191" },
+    "JBSA-Randolph": { "cityKey": "SanAntonio", "file": "Randolph", "zip": "78150" }
+  },
+  "aliases": {
+    "Davis-Monthan": "Davis-Monthan AFB",
+    "DavisMonthan": "Davis-Monthan AFB",
+    "DavisMonthanAFB": "Davis-Monthan AFB",
+    "DMAFB": "Davis-Monthan AFB",
+
+    "Dyess": "Dyess AFB",
+    "DyessAFB": "Dyess AFB",
+
+    "Fort-Sam-Houston": "Fort Sam Houston",
+    "FortSamHouston": "Fort Sam Houston",
+    "SamHouston": "Fort Sam Houston",
+    "Fort Sam": "Fort Sam Houston",
+    "JBSA-Fort-Sam-Houston": "Fort Sam Houston",
+    "JBSA Fort Sam Houston": "Fort Sam Houston",
+
+    "Kirtland": "Kirtland AFB",
+    "KirtlandAFB": "Kirtland AFB",
+
+    "Lackland": "JBSA-Lackland",
+    "LacklandAFB": "JBSA-Lackland",
+    "JBSA Lackland": "JBSA-Lackland",
+    "Joint Base San Antonio Lackland": "JBSA-Lackland",
+
+    "Laughlin": "Laughlin AFB",
+    "LaughlinAFB": "Laughlin AFB",
+
+    "Luke": "Luke AFB",
+    "LukeAFB": "Luke AFB",
+
+    "Nellis": "Nellis AFB",
+    "NellisAFB": "Nellis AFB",
+
+    "Randolph": "JBSA-Randolph",
+    "RandolphAFB": "JBSA-Randolph",
+    "JBSA Randolph": "JBSA-Randolph"
+  }
+}
