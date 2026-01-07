@@ -1,17 +1,14 @@
 // netlify/functions/brain.js
 // ============================================================
-// CENTRAL BRAIN (v1.9.1) — Pay + City + FULL Mortgage Breakdown (BACKWARD-COMPAT)
+// CENTRAL BRAIN (v1.9.2) — Pay + City + FULL Mortgage Breakdown (BACKWARD-COMPAT)
 //
 // ✅ Fixes included (so your dashboards work again):
 // 1) RESTORES missing helper functions that were referenced but not defined:
-//    - detectPayModel()
+//    - detectPayModel()  ✅ UPDATED to honor profile.mode ("vet" / "ad")
 //    - deriveDependentsFromFamilySize()
 //    - applyOverridesToProfile()
-// 2) BACKWARD-COMPAT mortgage fields added (legacy “flat” fields) alongside new breakdown:
-//    - mortgage.totalMonthly (legacy) = mortgage.breakdown.totalMonthly
-//    - mortgage.principalInterestMonthly, mortgage.taxMonthly, mortgage.insuranceMonthly, mortgage.hoaMonthly, mortgage.pmiMonthly
-// 3) Top-level ok is now “request succeeded” (no more UI dead-on-arrival due to missing pay inputs)
-//    - pay.ok and mortgage.ok reflect readiness
+// 2) BACKWARD-COMPAT mortgage fields added (legacy “flat” fields) alongside new breakdown.
+// 3) Top-level ok is now “request succeeded” (prevents UI dead-on-arrival due to missing pay inputs)
 //
 // ✅ Your requested PATCH preserved:
 // - Auto-resolve cityKey from profile.base when caller leaves cityKey blank
@@ -114,12 +111,26 @@ function pickFirst(obj, keys) {
 }
 
 // -----------------------------
-// //#2.5 Missing functions (RESTORED)
+// //#2.5 Missing functions (RESTORED + UPDATED)
 // -----------------------------
 
 // Detect pay model (active duty vs veteran/retired) deterministically from profile hints.
 // - Returns "active" | "veteran"
 function detectPayModel(profile) {
+  // ✅ PRIMARY SOURCE: your Supabase column "mode"
+  // expected values: "vet" | "ad" (case-insensitive)
+  const modeRaw = lower(profile?.mode);
+
+  if (modeRaw) {
+    if (["vet", "veteran", "retired", "retiree", "sep", "separated", "civ", "civilian"].includes(modeRaw)) {
+      return "veteran";
+    }
+    if (["ad", "active", "active_duty", "activeduty"].includes(modeRaw)) {
+      return "active";
+    }
+  }
+
+  // Secondary fields (in case mode is missing for older profiles)
   const modelRaw = lower(
     pickFirst(profile, [
       "pay_model",
@@ -154,7 +165,7 @@ function detectPayModel(profile) {
   if (explicitActive) return "active";
   if (activeWords.some((w) => modelRaw.includes(w))) return "active";
 
-  // Default: active (matches your original pay tables intent)
+  // Default: active
   return "active";
 }
 
@@ -180,9 +191,8 @@ function applyOverridesToProfile(profile, overrides) {
   const o = overrides && typeof overrides === "object" ? overrides : null;
   if (!o) return { profileEffective: { ...profile }, overridesApplied: [] };
 
-  // Whitelist only (protects your profile table & prevents weird payloads)
+  // Whitelist only
   const ALLOWED = new Set([
-    // identity / station
     "rank",
     "rank_paygrade",
     "rankPaygrade",
@@ -197,8 +207,6 @@ function applyOverridesToProfile(profile, overrides) {
     "dutyStation",
     "pcs_base",
     "pcsBase",
-
-    // family + veteran fields
     "family",
     "familySize",
     "family_size",
@@ -209,7 +217,6 @@ function applyOverridesToProfile(profile, overrides) {
     "retirement_system",
     "retirementSystem",
 
-    // mortgage inputs (optional; UI may send via body anyway)
     "price",
     "home_price",
     "projected_home_price",
@@ -228,6 +235,9 @@ function applyOverridesToProfile(profile, overrides) {
     "loan_type",
     "termYears",
     "term_years",
+
+    // allow overriding mode for testing, if you ever want it
+    "mode",
   ]);
 
   const applied = [];
@@ -236,10 +246,7 @@ function applyOverridesToProfile(profile, overrides) {
   for (const [k, v] of Object.entries(o)) {
     if (!ALLOWED.has(k)) continue;
     if (v === undefined) continue;
-
-    // Normalize empty strings to null (prevents weird coercion)
-    const val = (typeof v === "string" && v.trim() === "") ? null : v;
-
+    const val = typeof v === "string" && v.trim() === "" ? null : v;
     next[k] = val;
     applied.push(k);
   }
@@ -255,7 +262,6 @@ function deriveCityKeyFromBase(profile, payTables) {
   const norm = normalizeBaseName(baseRaw);
   if (!norm) return { cityKey: null, source: "none", base: String(baseRaw || "").trim() };
 
-  // Optional config in pay tables
   const tbl = payTables?.CITY_BY_BASE || payTables?.CITY?.by_base || payTables?.city_by_base || null;
 
   if (tbl && typeof tbl === "object") {
@@ -263,7 +269,6 @@ function deriveCityKeyFromBase(profile, payTables) {
     if (mapped) return { cityKey: safeKey(mapped), source: "payTables.CITY_BY_BASE", base: String(baseRaw || "").trim() };
   }
 
-  // Minimal deterministic map for your current PCS use-cases
   const MAP = {
     NELLIS: "LasVegas",
     NELLISAFB: "LasVegas",
@@ -333,7 +338,6 @@ function loadCity(cityKey) {
   const raw = fs.readFileSync(filePath, "utf8");
   const data = JSON.parse(raw);
 
-  // Normalize market + targets
   const marketRaw = data.market || data?.housing?.market || data?.realEstate?.market || {};
   const targets = data.targets || data?.housing?.targets || data?.realEstate?.targets || {};
 
@@ -366,7 +370,6 @@ function loadCity(cityKey) {
     avg_home_value_source: avgHomeSource,
   };
 
-  // Bedroom blocks
   const bedrooms =
     (data?.bedrooms && typeof data.bedrooms === "object" ? data.bedrooms : null) ||
     (data?.by_bedroom && typeof data.by_bedroom === "object" ? data.by_bedroom : null) ||
@@ -388,15 +391,8 @@ function loadCity(cityKey) {
     return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
   }
 
-  const derivedTargetRent = avgFromBedroomPath(
-    bedrooms,
-    (b) => b?.rent_monthly?.avg ?? b?.rentMonthly?.avg ?? b?.rent?.avg
-  );
-
-  const derivedUtilities = avgFromBedroomPath(
-    bedrooms,
-    (b) => b?.utilities?.total?.avg ?? b?.utilities_total?.avg ?? b?.utilities?.avg
-  );
+  const derivedTargetRent = avgFromBedroomPath(bedrooms, (b) => b?.rent_monthly?.avg ?? b?.rentMonthly?.avg ?? b?.rent?.avg);
+  const derivedUtilities = avgFromBedroomPath(bedrooms, (b) => b?.utilities?.total?.avg ?? b?.utilities_total?.avg ?? b?.utilities?.avg);
 
   const targetRent =
     toNum(data?.target_rent ?? data?.targetRent ?? targets?.target_rent ?? targets?.targetRent) ?? derivedTargetRent ?? null;
@@ -459,7 +455,6 @@ function computeBAH(rank, familyBool, zip, payTables, missing) {
   let bah = 0;
   if (zip && rank) {
     const bahByZip = payTables?.BAH?.by_zip || payTables?.BAH?.byZip || null;
-
     const bahZip = (bahByZip && bahByZip?.[zip]) || payTables?.BAH_TX?.[zip] || payTables?.BAH?.[zip] || null;
 
     if (!bahZip) {
@@ -506,17 +501,7 @@ function computeVaDisability(profile, payTables, missing) {
 
     return {
       amount,
-      debug: {
-        pct,
-        method: "DISABILITY_FULL",
-        familySize,
-        hasSpouse,
-        kidsUnder18,
-        baseKey,
-        base,
-        addPerChild,
-        extraKids,
-      },
+      debug: { pct, method: "DISABILITY_FULL", familySize, hasSpouse, kidsUnder18, baseKey, base, addPerChild, extraKids },
     };
   }
 
@@ -541,12 +526,9 @@ function computeRetirementPay(profile, rank, yos, payTables, missing) {
     return { amount: 0, debug: { method: "missing_basepay_table" } };
   }
 
-  const keys = Object.keys(baseTable)
-    .map((k) => Number(k))
-    .filter((n) => Number.isFinite(n))
-    .sort((a, b) => a - b);
-
+  const keys = Object.keys(baseTable).map(Number).filter(Number.isFinite).sort((a, b) => a - b);
   const eligible = keys.filter((k) => k <= yos);
+
   if (!eligible.length) {
     missing.push("high3_steps_missing");
     return { amount: 0, debug: { method: "no_steps<=yos", yos } };
@@ -568,24 +550,12 @@ function computeRetirementPay(profile, rank, yos, payTables, missing) {
   const multPerYear = toNum(payTables?.RETIREMENT?.systems?.[sys]?.multiplier_per_year) ?? (sys === "brs" ? 0.02 : 0.025);
   const rawMultiplier = multPerYear * yos;
 
-  const cap = sys === "brs" ? 0.60 : 0.75;
+  const cap = sys === "brs" ? 0.6 : 0.75;
   const multiplier = Math.min(rawMultiplier, cap);
 
   const amount = high3 * multiplier;
 
-  return {
-    amount,
-    debug: {
-      method: "high3_estimate_from_BASEPAY",
-      sys,
-      multPerYear,
-      yos,
-      multiplier,
-      high3,
-      stepsUsed: lastSteps,
-      paysUsed: pays,
-    },
-  };
+  return { amount, debug: { method: "high3_estimate_from_BASEPAY", sys, multPerYear, yos, multiplier, high3, stepsUsed: lastSteps, paysUsed: pays } };
 }
 
 function computePay(profile, payTables) {
@@ -622,7 +592,7 @@ function computePay(profile, payTables) {
     const totalPay = retirementPay + vaDisabilityPay;
 
     return {
-      ok: totalPay > 0, // pay readiness
+      ok: totalPay > 0,
       missing,
       pay: {
         ok: totalPay > 0,
@@ -647,7 +617,6 @@ function computePay(profile, payTables) {
   // Active duty model: derive zip from base if missing
   if (!zip && baseName) {
     const baseToZipRaw = payTables?.BAH?.base_to_zip || payTables?.BAH?.baseToZip || payTables?.BASE_ZIP || {};
-
     const baseToZipNorm = new Map();
     for (const [k, v] of Object.entries(baseToZipRaw || {})) {
       const nk = normalizeBaseName(k);
@@ -664,7 +633,7 @@ function computePay(profile, payTables) {
   const totalPay = basePay + bas + bah;
 
   return {
-    ok: totalPay > 0, // pay readiness (NOT overall request success)
+    ok: totalPay > 0,
     missing,
     pay: {
       ok: totalPay > 0,
@@ -690,10 +659,9 @@ function pmti(P, r, n) {
   if (!P || P <= 0 || !Number.isFinite(P)) return 0;
   if (!r || r === 0) return P / Math.max(1, n);
   const x = Math.pow(1 + r, n);
-  return P * (r * x) / (x - 1);
+  return (P * (r * x)) / (x - 1);
 }
 
-// Same APR bands your dashboard uses
 function scoreAPR(score) {
   const s = Number(score) || 720;
   if (s >= 780) return 6.5;
@@ -752,18 +720,16 @@ function pickMortgagePrice({ body, profile, city, bedrooms }) {
   return { price, source };
 }
 
-// Decide default PMI/MIP behavior by loan type (simple & deterministic)
 function defaultPmiRate({ loanType, dpPct }) {
   const lt = String(loanType || "").trim().toLowerCase();
-  if (lt === "va") return 0; // VA: no monthly PMI
-  if (lt === "fha") return 0.55; // FHA: simplified annual MIP ballpark
+  if (lt === "va") return 0;
+  if (lt === "fha") return 0.55;
   if (dpPct >= 20) return 0;
   return 0.5;
 }
 
 function computeMortgageEstimate({ body, profile, city, bedrooms }) {
   const sources = {};
-
   const { price, source: priceSource } = pickMortgagePrice({ body, profile, city, bedrooms });
   sources.price = priceSource;
 
@@ -776,7 +742,6 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
     };
   }
 
-  // Down payment %
   const dpPct =
     toNum(body?.dpPct ?? body?.downPaymentPct ?? profile?.dpPct ?? profile?.down_payment_pct) ??
     toNum(city?.mortgage_assumptions?.down_payment_percent) ??
@@ -791,7 +756,6 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
           ? "city.mortgage_assumptions.down_payment_percent"
           : "default:5";
 
-  // Term
   const termYears =
     toInt(body?.termYears ?? body?.term ?? profile?.termYears ?? profile?.term_years) ??
     toInt(city?.mortgage_assumptions?.term_years) ??
@@ -806,7 +770,6 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
           ? "city.mortgage_assumptions.term_years"
           : "default:30";
 
-  // Credit score -> APR
   const creditScore = toInt(body?.creditScore ?? profile?.creditScore ?? profile?.credit_score) ?? null;
 
   const apr =
@@ -825,7 +788,6 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
             ? "city.mortgage_assumptions.apr_percent"
             : "default:7.0";
 
-  // City-driven rates
   const taxRate =
     toNum(body?.taxRate ?? profile?.taxRate) ??
     toNum(city?.tax_rate ?? city?.property_tax_rate ?? city?.raw?.property_tax_rate) ??
@@ -843,7 +805,9 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
             : "default:1.20";
 
   const insRate =
-    toNum(body?.insRate ?? profile?.insRate) ?? toNum(city?.insurance_rate ?? city?.raw?.insurance_rate) ?? 0.5;
+    toNum(body?.insRate ?? profile?.insRate) ??
+    toNum(city?.insurance_rate ?? city?.raw?.insurance_rate) ??
+    0.5;
 
   sources.insRate =
     body?.insRate != null
@@ -866,7 +830,6 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
           ? "city.hoa_monthly"
           : "default:0";
 
-  // PMI
   const loanType = String(body?.loanType ?? profile?.loanType ?? profile?.loan_type ?? "").trim();
   const pmiRate = toNum(body?.pmiRate ?? profile?.pmiRate) ?? defaultPmiRate({ loanType, dpPct });
 
@@ -919,9 +882,7 @@ function getSupabase() {
 
 async function fetchProfileByEmail(email) {
   const sb = getSupabase();
-
   const { data, error } = await sb.from("profiles").select("*").eq("email", email).maybeSingle();
-
   if (error) throw new Error(error.message || "Supabase profile fetch failed.");
   if (!data) throw new Error("Profile not found for this email.");
   return data;
@@ -951,7 +912,6 @@ export async function handler(event) {
     const body = JSON.parse(event.body || "{}");
     const email = String(body.email || "").trim().toLowerCase();
 
-    // Caller-provided cityKey (may be blank or default)
     const cityKeyRaw = body.cityKey == null ? "" : String(body.cityKey);
     const cityKeyClean = safeKey(cityKeyRaw);
 
@@ -962,11 +922,8 @@ export async function handler(event) {
     const payTables = loadPayTables();
     const profile = await fetchProfileByEmail(email);
 
-    // Apply “what-if” overrides (never persisted)
     const { profileEffective, overridesApplied } = applyOverridesToProfile(profile, body.overrides);
 
-    // ✅ PATCH: Resolve cityKey from profile.base when caller did not truly choose one
-    // We treat blank OR default "SanAntonio" as "auto" (because your test code hard-codes it)
     const callerDidNotChooseCity = !cityKeyClean || lower(cityKeyClean) === "sanantonio";
 
     let resolvedCityKey = cityKeyClean || "SanAntonio";
@@ -977,7 +934,6 @@ export async function handler(event) {
       if (cityResolve.cityKey) resolvedCityKey = cityResolve.cityKey;
     }
 
-    // Load city with safe fallback
     let city = null;
     let cityLoadFallbackUsed = false;
     let cityLoadError = null;
@@ -997,18 +953,14 @@ export async function handler(event) {
     }
 
     const computed = computePay(profileEffective, payTables);
-
-    // FULL mortgage breakdown (this is what your UI should consume)
     const mortgageCore = computeMortgageEstimate({ body, profile: profileEffective, city, bedrooms });
 
-    // ✅ Backward-compatible "legacy flat" aliases (prevents UI breakage)
     const mortgage = {
       ok: !!mortgageCore.ok,
       breakdown: mortgageCore.breakdown,
       assumptions: mortgageCore.assumptions,
       sources: mortgageCore.sources,
 
-      // Legacy fields (flat)
       totalMonthly: Number(mortgageCore?.breakdown?.totalMonthly || 0) || 0,
       principalInterestMonthly: Number(mortgageCore?.breakdown?.principalInterest || 0) || 0,
       taxMonthly: Number(mortgageCore?.breakdown?.propertyTax || 0) || 0,
@@ -1016,7 +968,6 @@ export async function handler(event) {
       hoaMonthly: Number(mortgageCore?.breakdown?.hoa || 0) || 0,
       pmiMonthly: Number(mortgageCore?.breakdown?.pmi || 0) || 0,
 
-      // Helpful compatibility fields some older pages used
       aprUsed: Number(mortgageCore?.assumptions?.apr || 0) || 0,
       termYears: Number(mortgageCore?.assumptions?.termYears || 0) || 0,
       loanAmount: Number(mortgageCore?.assumptions?.loan || 0) || 0,
@@ -1024,15 +975,9 @@ export async function handler(event) {
       source: "brain",
     };
 
-    // ✅ Top-level ok = request success (not “pay completeness”)
-    // This keeps the UI alive even when some pay inputs are missing.
-    const requestOk = true;
-
     return respond(event, 200, {
-      ok: requestOk,
+      ok: true,
       schemaVersion: SCHEMA_VERSION,
-
-      // Input shape (reflect resolved cityKey)
       input: { email, cityKey: resolvedCityKey, bedrooms },
 
       debug: {
@@ -1049,11 +994,11 @@ export async function handler(event) {
       profileEffective,
       overridesApplied: overridesApplied || null,
 
-      pay: computed.pay,          // includes pay.ok now
+      pay: computed.pay,
       city,
-      missing: computed.missing,  // keep as-is for transparency
+      missing: computed.missing,
 
-      mortgage, // now includes breakdown + legacy fields
+      mortgage,
       estimatedMonthlyMortgage: mortgage.totalMonthly,
     });
   } catch (e) {
