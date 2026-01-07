@@ -1,100 +1,190 @@
 {
-  "place": "Albuquerque (Kirtland AFB), NM",
+  "city": "Kirtland AFB (Albuquerque), NM",
+  "place": "Kirtland AFB",
+  "state": "NM",
   "geo_id": "1600000US3502000",
-  "year": 2024,
-  "last_updated_data_from_sources": "December 2025",
+  "year": 2025,
+  "last_updated_data_from_sources": "January 2026",
+
+  "zip": "87117",
+  "market_label": "Albuquerque Metro",
+
+  "avg_home_value": 336595,
+  "average_home_value": 336595,
+  "avgHome": 336595,
+  "city_avg_home": 336595,
+
+  "mortgage_assumptions": {
+    "apr_percent": 7.0,
+    "term_years": 30,
+    "down_payment_percent": 5,
+    "includes": "all_in",
+    "defaults_note": "City defaults apply to taxes/insurance/HOA only. APR varies by credit score and/or user override."
+  },
+
+  "property_tax_rate": 0.99,
+  "insurance_rate": 0.52,
+  "hoa_monthly": 0,
+
+  "avg_home_mortgage_monthly": {
+    "avg": 2125,
+    "as_of": "2026-01",
+    "notes": "Historical reference only; do not use for calculation. brain.js computes itemized mortgage from inputs + city rates."
+  },
 
   "population": {
-    "estimate": 560326,
-    "median_age": 39.16,
-    "persons_per_household": 2.4
+    "estimate": 562488,
+    "median_age": 38.7,
+    "persons_per_household": 2.37
   },
 
   "households": {
-    "total_households": 228000
+    "total_households": 240428
   },
 
   "income": {
     "median_household_income": 65604,
-    "per_capita_income": 46695,
-    "poverty_rate_percent": 15.96
+    "per_capita_income": 39117,
+    "poverty_rate_percent": 16.0
   },
 
   "education": {
-    "high_school_grad_or_higher_percent": 89.6,
-    "bachelors_degree_or_higher_percent": 35.5
+    "high_school_grad_or_higher_percent": 90.2,
+    "bachelors_degree_or_higher_percent": 36.4
   },
 
   "veterans": {
-    "veteran_population_percent": 9.6
+    "veteran_population_percent": 9.1
   },
 
   "immigration": {
-    "foreign_born_percent": 11.2
+    "foreign_born_percent": 10.2
   },
 
   "labor": {
     "mean_travel_time_to_work_minutes": 22.2,
-    "unemployment_rate_percent": 4.2
+    "unemployment_rate_percent": 4.1
+  },
+
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 1250, "high": 1500, "avg": 1375, "as_of": "2026-01" },
+      "home_price": { "low": 245000, "high": 285000, "avg": 265000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 1548,
+        "high": 1801,
+        "avg": 1674,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 130, "high": 170, "avg": 150 },
+        "water_sewer": { "low": 40, "high": 60, "avg": 50 },
+        "total": { "low": 170, "high": 230, "avg": 200 },
+        "as_of": "2026-01"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 1800, "high": 2200, "avg": 2000, "as_of": "2026-01" },
+      "home_price": { "low": 320000, "high": 380000, "avg": 350000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 2022,
+        "high": 2401,
+        "avg": 2211,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 165, "high": 230, "avg": 198 },
+        "water_sewer": { "low": 50, "high": 75, "avg": 63 },
+        "total": { "low": 215, "high": 305, "avg": 261 },
+        "as_of": "2026-01"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 2200, "high": 2800, "avg": 2500, "as_of": "2026-01" },
+      "home_price": { "low": 410000, "high": 490000, "avg": 450000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 2590,
+        "high": 3096,
+        "avg": 2843,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 210, "high": 300, "avg": 255 },
+        "water_sewer": { "low": 70, "high": 100, "avg": 85 },
+        "total": { "low": 280, "high": 400, "avg": 340 },
+        "as_of": "2026-01"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 2600, "high": 3800, "avg": 3200, "as_of": "2026-01" },
+      "home_price": { "low": 520000, "high": 680000, "avg": 600000, "as_of": "2026-01" },
+      "mortgage_monthly": {
+        "low": 3285,
+        "high": 4296,
+        "avg": 3790,
+        "as_of": "2026-01",
+        "assumptions": "P&I only; excludes taxes/insurance/HOA/PMI"
+      },
+      "utilities": {
+        "electric_gas": { "low": 270, "high": 400, "avg": 335 },
+        "water_sewer": { "low": 85, "high": 125, "avg": 105 },
+        "total": { "low": 355, "high": 525, "avg": 440 },
+        "as_of": "2026-01"
+      }
+    }
   },
 
   "housing": {
-    "housing_units": 260000,
+    "housing_units": 260428,
     "median_value_owner_occupied": 266700,
 
     "market": {
-      "zillow_average_home_value": 336758,
-      "zillow_one_year_change_percent": 1.6,
-      "market_type_summary": "Active seller's market with modest price growth and fast sales",
+      "zillow_average_home_value": 336595,
+      "zillow_one_year_change_percent": 1.5,
+      "market_type_summary": "Somewhat competitive market; inventory rising slightly with median sale prices reaching $358k",
 
       "average_days_on_market": 23,
 
-      "median_sale_price_current": 364450,
-      "median_listing_price_realtor": 380000,
-      "median_listing_price_per_sqft": 215,
+      "median_sale_price_current": 358333,
+      "median_listing_price_realtor": 377333,
+      "median_listing_price_per_sqft": 214,
+      "active_listings_total": 2279,
+
+      "q1_2025": {
+        "median_sale_price": 380300
+      },
 
       "sale_history_36_months": [
-        { "month": "2022-01", "median_sale_price": 300000 },
-        { "month": "2022-02", "median_sale_price": 301000 },
-        { "month": "2022-03", "median_sale_price": 303000 },
-        { "month": "2022-04", "median_sale_price": 306000 },
-        { "month": "2022-05", "median_sale_price": 309000 },
-        { "month": "2022-06", "median_sale_price": 310000 },
-        { "month": "2022-07", "median_sale_price": 309000 },
-        { "month": "2022-08", "median_sale_price": 308000 },
-        { "month": "2022-09", "median_sale_price": 307000 },
-        { "month": "2022-10", "median_sale_price": 306000 },
-        { "month": "2022-11", "median_sale_price": 305000 },
-        { "month": "2022-12", "median_sale_price": 304500 },
+        { "month": "2023-03", "median_sale_price": 339100 },
+        { "month": "2023-12", "median_sale_price": 345000 },
 
-        { "month": "2023-01", "median_sale_price": 305000 },
-        { "month": "2023-02", "median_sale_price": 306000 },
-        { "month": "2023-03", "median_sale_price": 307500 },
-        { "month": "2023-04", "median_sale_price": 308000 },
-        { "month": "2023-05", "median_sale_price": 309000 },
-        { "month": "2023-06", "median_sale_price": 310000 },
-        { "month": "2023-07", "median_sale_price": 311000 },
-        { "month": "2023-08", "median_sale_price": 312000 },
-        { "month": "2023-09", "median_sale_price": 313000 },
-        { "month": "2023-10", "median_sale_price": 314000 },
-        { "month": "2023-11", "median_sale_price": 315000 },
-        { "month": "2023-12", "median_sale_price": 316500 },
+        { "month": "2024-06", "median_sale_price": 355000 },
+        { "month": "2024-12", "median_sale_price": 352000 },
 
-        { "month": "2024-01", "median_sale_price": 318000 },
-        { "month": "2024-02", "median_sale_price": 319000 },
-        { "month": "2024-03", "median_sale_price": 320000 },
-        { "month": "2024-04", "median_sale_price": 321000 },
-        { "month": "2024-05", "median_sale_price": 322000 },
-        { "month": "2024-06", "median_sale_price": 323000 },
-        { "month": "2024-07", "median_sale_price": 324000 },
-        { "month": "2024-08", "median_sale_price": 324500 },
-        { "month": "2024-09", "median_sale_price": 325000 },
-        { "month": "2024-10", "median_sale_price": 326000 },
-        { "month": "2024-11", "median_sale_price": 327000 },
-        { "month": "2024-12", "median_sale_price": 328000 },
-        
-        { "month": "2025-10", "median_sale_price": 364450 }
+        { "month": "2025-03", "median_sale_price": 380300 },
+        { "month": "2025-06", "median_sale_price": 375000 },
+        { "month": "2025-10", "median_sale_price": 358333 },
+        { "month": "2025-11", "median_sale_price": 360000 },
+        { "month": "2025-12", "median_sale_price": 362000 }
       ]
+    }
+  },
+
+  "sources": {
+    "demographics": { "provider": "Census Bureau QuickFacts / Data USA", "as_of": "2026-01" },
+    "rent": { "provider": "Zillow Albuquerque Market Report", "as_of": "2025-11", "notes": "Average city rent $1,474" },
+    "home_price": { "provider": "Zillow/Redfin Albuquerque Trends", "as_of": "2026-01", "notes": "1.5% annual appreciation as of Jan 2026" },
+    "mortgage": { "provider": "Computed (P&I)", "as_of": "2026-01", "notes": "30yr fixed @ 7.0% APR, 5% down" },
+    "utilities": { "provider": "PNM / New Mexico Gas Co Estimates", "as_of": "2026-01" },
+    "market": { "provider": "Realtor.com / GAAR Research", "as_of": "2026-01" },
+
+    "mortgage_city_defaults": {
+      "provider": "Bernalillo County Assessor",
+      "as_of": "2026-01",
+      "notes": "Effective rate ~0.99% per SmartAsset/Local Mill Rates."
     }
   }
 }
