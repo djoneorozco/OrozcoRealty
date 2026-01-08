@@ -22,17 +22,57 @@
 // - Only pass aprOverride when user explicitly provides body.apr OR when creditScore is missing.
 // - This allows mortgage.js creditScore tiers to drive APR as intended.
 //
+// ✅ NEW (REQUIRED FOR NETLIFY CRASH FIX):
+// - Removed ALL top-level `import ...` statements.
+// - Uses runtime `import()` so this file cannot crash with:
+//   "Cannot use import statement outside a module"
+//
 // Everything else stays the same.
 // ============================================================
 
-import { createClient } from "@supabase/supabase-js";
-import fs from "node:fs";
-import path from "node:path";
-
-// ✅ NEW: use mortgage.js as the single source of truth
-import { handler as mortgageHandler } from "./mortgage.js";
-
 const SCHEMA_VERSION = "1.2";
+
+// -----------------------------
+// //#0 Runtime deps (CJS/ESM safe)
+// -----------------------------
+let __fs = null;
+let __path = null;
+let __createClient = null;
+let __mortgageHandler = null;
+
+let __ROOT = null;
+let __PAY_TABLES_PATHS = null;
+let __CITIES_DIR = null;
+
+async function ensureDeps() {
+  if (__fs && __path && __createClient && __mortgageHandler) return;
+
+  // Built-ins
+  const fsMod = await import("node:fs");
+  const pathMod = await import("node:path");
+  __fs = fsMod.default || fsMod;
+  __path = pathMod.default || pathMod;
+
+  // Supabase (dynamic import avoids parse-time crash)
+  const sbMod = await import("@supabase/supabase-js");
+  __createClient = sbMod.createClient;
+
+  // Mortgage function (dynamic import avoids parse-time crash)
+  const mortMod = await import("./mortgage.js");
+  __mortgageHandler = mortMod?.handler;
+
+  if (typeof __mortgageHandler !== "function") {
+    throw new Error("mortgage.js handler not found. Ensure netlify/functions/mortgage.js exports `handler`.");
+  }
+
+  // Paths (computed after path module is available)
+  __ROOT = process.cwd(); // /var/task
+  __PAY_TABLES_PATHS = [
+    __path.join(__ROOT, "netlify", "functions", "militaryPayTables.json"),
+    __path.join(__ROOT, "netlify", "functions", "data", "militaryPayTables.json"),
+  ];
+  __CITIES_DIR = __path.join(__ROOT, "netlify", "functions", "cities");
+}
 
 // -----------------------------
 // //#1 CORS (robust)
@@ -120,11 +160,7 @@ function pickFirst(obj, keys) {
 // //#2.5 Missing functions (RESTORED + UPDATED)
 // -----------------------------
 
-// Detect pay model (active duty vs veteran/retired) deterministically from profile hints.
-// - Returns "active" | "veteran"
 function detectPayModel(profile) {
-  // ✅ PRIMARY SOURCE: your Supabase column "mode"
-  // expected values: "vet" | "ad" (case-insensitive)
   const modeRaw = lower(profile?.mode);
 
   if (modeRaw) {
@@ -136,7 +172,6 @@ function detectPayModel(profile) {
     }
   }
 
-  // Secondary fields (in case mode is missing for older profiles)
   const modelRaw = lower(
     pickFirst(profile, [
       "pay_model",
@@ -161,24 +196,17 @@ function detectPayModel(profile) {
     profile?.activeDuty === true ||
     profile?.is_active_duty === true;
 
-  // Strong indicators for veteran model
   const veteranWords = ["veteran", "retired", "retiree", "separated", "civilian"];
   if (explicitVeteran) return "veteran";
   if (veteranWords.some((w) => modelRaw.includes(w))) return "veteran";
 
-  // Strong indicators for active
   const activeWords = ["active", "activeduty", "ad", "active duty"];
   if (explicitActive) return "active";
   if (activeWords.some((w) => modelRaw.includes(w))) return "active";
 
-  // Default: active
   return "active";
 }
 
-// Derive spouse + kids from family size assumption:
-// - familySize = total people in household (member + spouse + kids)
-// - spouse assumed if familySize >= 2
-// - kidsUnder18 = max(0, familySize - 2)
 function deriveDependentsFromFamilySize(profile) {
   const familySize =
     toInt(
@@ -191,13 +219,10 @@ function deriveDependentsFromFamilySize(profile) {
   return { familySize, hasSpouse, kidsUnder18 };
 }
 
-// Apply “what-if” overrides safely (never persisted).
-// Returns { profileEffective, overridesApplied }.
 function applyOverridesToProfile(profile, overrides) {
   const o = overrides && typeof overrides === "object" ? overrides : null;
   if (!o) return { profileEffective: { ...profile }, overridesApplied: [] };
 
-  // Whitelist only
   const ALLOWED = new Set([
     "rank",
     "rank_paygrade",
@@ -242,7 +267,6 @@ function applyOverridesToProfile(profile, overrides) {
     "termYears",
     "term_years",
 
-    // allow overriding mode for testing, if you ever want it
     "mode",
   ]);
 
@@ -275,7 +299,6 @@ function deriveCityKeyFromBase(profile, payTables) {
     if (mapped) return { cityKey: safeKey(mapped), source: "payTables.CITY_BY_BASE", base: String(baseRaw || "").trim() };
   }
 
-  // Canonical city keys (what we want to SHOW / return)
   const MAP = {
     NELLIS: "LasVegas",
     NELLISAFB: "LasVegas",
@@ -304,15 +327,6 @@ function deriveCityKeyFromBase(profile, payTables) {
 // -----------------------------
 // //#3 File loading (Netlify-safe)
 // -----------------------------
-const ROOT = process.cwd(); // /var/task
-
-const PAY_TABLES_PATHS = [
-  path.join(ROOT, "netlify", "functions", "militaryPayTables.json"),
-  path.join(ROOT, "netlify", "functions", "data", "militaryPayTables.json"),
-];
-
-const CITIES_DIR = path.join(ROOT, "netlify", "functions", "cities");
-
 let __PAY_TABLES_CACHE__ = null;
 let __PAY_TABLES_PATH_USED__ = null;
 
@@ -323,8 +337,8 @@ function loadPayTables() {
   if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
 
   let found = null;
-  for (const p of PAY_TABLES_PATHS) {
-    if (fs.existsSync(p)) {
+  for (const p of __PAY_TABLES_PATHS || []) {
+    if (__fs.existsSync(p)) {
       found = p;
       break;
     }
@@ -332,22 +346,21 @@ function loadPayTables() {
 
   if (!found) {
     throw new Error(
-      `militaryPayTables.json not found. Tried:\n- ${PAY_TABLES_PATHS.join("\n- ")}\n` +
+      `militaryPayTables.json not found. Tried:\n- ${( __PAY_TABLES_PATHS || []).join("\n- ")}\n` +
         `Fix: ensure it's bundled via netlify.toml [functions].included_files.`
     );
   }
 
-  const raw = fs.readFileSync(found, "utf8");
+  const raw = __fs.readFileSync(found, "utf8");
   __PAY_TABLES_CACHE__ = JSON.parse(raw);
   __PAY_TABLES_PATH_USED__ = found;
   return __PAY_TABLES_CACHE__;
 }
 
-// ---- CITY FIX HELPERS (NEW) ----
 function listCityFiles() {
   if (__CITY_FILE_INDEX__) return __CITY_FILE_INDEX__;
   try {
-    const files = fs.readdirSync(CITIES_DIR)
+    const files = __fs.readdirSync(__CITIES_DIR)
       .filter((f) => /\.json$/i.test(f))
       .map((f) => f.replace(/\.json$/i, ""));
     __CITY_FILE_INDEX__ = new Set(files);
@@ -369,7 +382,6 @@ function baseToCityFileKey(baseRaw) {
   const norm = normalizeBaseName(baseRaw);
   if (!norm) return null;
 
-  // These match your actual filenames in /netlify/functions/cities
   const MAP = {
     NELLIS: "Nellis",
     NELLISAFB: "Nellis",
@@ -404,7 +416,6 @@ function canonicalCityToFileFallback(cityKeyCanonical) {
   const k = safeKey(cityKeyCanonical);
   if (!k) return null;
 
-  // Canonical -> likely base-file equivalents in your repo
   const MAP = {
     LasVegas: "Nellis",
     Tucson: "Davis-Monthan",
@@ -424,21 +435,16 @@ function resolveCityFileKey({ cityKeyCanonical, profile }) {
   const baseRaw = pickFirst(profile, ["base", "duty_station", "station", "dutyStation", "pcs_base", "pcsBase"]);
 
   const candidates = [];
-  // 1) exact canonical key (if your folder ever has LasVegas.json etc)
   candidates.push(canonical);
 
-  // 2) base-derived file key (Nellis, Davis-Monthan, Lackland...)
   const baseFile = baseToCityFileKey(baseRaw);
   if (baseFile) candidates.push(baseFile);
 
-  // 3) canonical->file fallback (LasVegas -> Nellis)
   const canonicalFallback = canonicalCityToFileFallback(canonical);
   if (canonicalFallback) candidates.push(canonicalFallback);
 
-  // 4) last resort: SanAntonio -> Fort-Sam-Houston (if nothing else)
   candidates.push("Fort-Sam-Houston");
 
-  // de-dupe while preserving order
   const uniq = [];
   const seen = new Set();
   for (const c of candidates) {
@@ -469,11 +475,9 @@ function resolveCityFileKey({ cityKeyCanonical, profile }) {
   };
 }
 
-// ---- loadCity (UPDATED) ----
 function loadCity(cityKeyCanonical, profileForFilePick) {
   const canonical = safeKey(cityKeyCanonical || "SanAntonio");
 
-  // Resolve which FILE we should load
   const res = resolveCityFileKey({ cityKeyCanonical: canonical, profile: profileForFilePick || {} });
   const idx = listCityFiles();
   if (!res.ok || !res.fileKey) {
@@ -485,10 +489,8 @@ function loadCity(cityKeyCanonical, profileForFilePick) {
 
   const fileKey = res.fileKey;
 
-  // Cache by fileKey (because multiple canonicals may load same file)
   if (__CITY_CACHE__.has(fileKey)) {
     const cached = __CITY_CACHE__.get(fileKey);
-    // still update canonical per request (non-breaking)
     return {
       ...cached,
       canonical_city_key: canonical,
@@ -500,12 +502,12 @@ function loadCity(cityKeyCanonical, profileForFilePick) {
     };
   }
 
-  const filePath = path.join(CITIES_DIR, `${fileKey}.json`);
-  if (!fs.existsSync(filePath)) {
+  const filePath = __path.join(__CITIES_DIR, `${fileKey}.json`);
+  if (!__fs.existsSync(filePath)) {
     throw new Error(`City JSON not found at ${filePath}`);
   }
 
-  const raw = fs.readFileSync(filePath, "utf8");
+  const raw = __fs.readFileSync(filePath, "utf8");
   const data = JSON.parse(raw);
 
   const marketRaw = data.market || data?.housing?.market || data?.realEstate?.market || {};
@@ -581,10 +583,7 @@ function loadCity(cityKeyCanonical, profileForFilePick) {
     null;
 
   const out = {
-    // NOTE: keep "key" as FILE KEY (backward-safe for anything expecting filename identity)
     key: fileKey,
-
-    // New canonical key so UI can show “LasVegas” even if file is “Nellis.json”
     canonical_city_key: canonical,
 
     ...data,
@@ -607,7 +606,6 @@ function loadCity(cityKeyCanonical, profileForFilePick) {
     average_utilities: avgUtilities,
     avgUtilities: avgUtilities,
 
-    // Debug breadcrumbs about file selection
     cityFileRequested: canonical,
     cityFileUsed: fileKey,
     cityFileVia: res.via,
@@ -770,7 +768,6 @@ function computePay(profile, payTables) {
 
   const basePay = computeBasePay(rank, yos, payTables, missing);
 
-  // Veteran model
   if (payModel === "veteran") {
     const bas = 0;
     const bah = 0;
@@ -806,7 +803,6 @@ function computePay(profile, payTables) {
     };
   }
 
-  // Active duty model: derive zip from base if missing
   if (!zip && baseName) {
     const baseToZipRaw = payTables?.BAH?.base_to_zip || payTables?.BAH?.baseToZip || payTables?.BASE_ZIP || {};
     const baseToZipNorm = new Map();
@@ -901,16 +897,13 @@ function defaultPmiRate({ loanType, dpPct }) {
 }
 
 async function callMortgageEngine(payload) {
-  // Call mortgage.js handler directly (no network), Webflow-safe shape.
-  // mortgage.js expects:
-  // { price, down, creditScore, termYears, taxRate (fraction), insuranceAnnual, hoaMonthly, loanType, aprOverride, pmiRate (fraction) }
   const evt = {
     httpMethod: "POST",
     headers: {},
     body: JSON.stringify(payload || {}),
   };
 
-  const res = await mortgageHandler(evt);
+  const res = await __mortgageHandler(evt);
   let out = null;
   try {
     out = res?.body ? JSON.parse(res.body) : null;
@@ -936,7 +929,6 @@ async function computeMortgageEstimate({ body, profile, city, bedrooms }) {
     };
   }
 
-  // --- down payment percent selection stays the same (legacy) ---
   const dpPct =
     toNum(body?.dpPct ?? body?.downPaymentPct ?? profile?.dpPct ?? profile?.down_payment_pct) ??
     toNum(city?.mortgage_assumptions?.down_payment_percent) ??
@@ -967,9 +959,6 @@ async function computeMortgageEstimate({ body, profile, city, bedrooms }) {
 
   const creditScore = toInt(body?.creditScore ?? profile?.creditScore ?? profile?.credit_score) ?? null;
 
-  // ✅ FIX: Only treat APR as an override if:
-  // - user explicitly provides body.apr, OR
-  // - creditScore is missing (then we can fall back to profile/city/default)
   const bodyApr = toNum(body?.apr);
   const profileApr = toNum(profile?.apr);
 
@@ -1043,34 +1032,19 @@ async function computeMortgageEstimate({ body, profile, city, bedrooms }) {
   sources.pmiRate =
     body?.pmiRate != null ? "body.pmiRate" : profile?.pmiRate != null ? "profile.pmiRate" : "defaultPmiRate(loanType,dpPct)";
 
-  // ---- Map legacy inputs -> mortgage.js inputs ----
-  // mortgage.js expects:
-  // - down: amount OR percent OR fraction
-  // We pass dpPct (<=100) so it is treated as percent, matching prior behavior.
   const mortgagePayload = {
     price: price,
     down: dpPct,
     creditScore: creditScore ?? undefined,
     termYears: termYears,
-
-    // brain taxRate is percent; mortgage.js taxRate is fraction
     taxRate: Number.isFinite(taxRatePct) ? (taxRatePct / 100) : undefined,
-
-    // brain insurance is insRate% of price; mortgage.js takes insuranceAnnual
     insuranceAnnual: Number.isFinite(insRatePct) ? (price * (insRatePct / 100)) : undefined,
-
     hoaMonthly: Number.isFinite(hoa) ? hoa : 0,
-
     loanType: String(loanType || "conventional").toLowerCase(),
-
-    // ✅ FIX: Only override APR when user explicitly provided body.apr OR when creditScore is missing.
-    // If creditScore exists and no body.apr, let mortgage.js tiers decide.
     aprOverride:
       (bodyApr != null || creditScore == null)
         ? (Number.isFinite(aprOverrideCandidate) ? aprOverrideCandidate : undefined)
         : undefined,
-
-    // brain pmiRate is percent; mortgage.js pmiRate is fraction (annual)
     pmiRate: Number.isFinite(pmiRatePct) ? (pmiRatePct / 100) : undefined,
   };
 
@@ -1098,7 +1072,6 @@ async function computeMortgageEstimate({ body, profile, city, bedrooms }) {
     };
   }
 
-  // ---- Map mortgage.js output -> legacy brain output shape ----
   const pi = Number(engine?.breakdown?.pi || 0) || 0;
   const tax = Number(engine?.breakdown?.tax || 0) || 0;
   const ins = Number(engine?.breakdown?.insurance || 0) || 0;
@@ -1151,7 +1124,7 @@ function getSupabase() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_KEY;
   if (!url || !key) throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars.");
-  return createClient(url, key, { auth: { persistSession: false } });
+  return __createClient(url, key, { auth: { persistSession: false } });
 }
 
 async function fetchProfileByEmail(email) {
@@ -1167,8 +1140,11 @@ async function fetchProfileByEmail(email) {
 // -----------------------------
 export async function handler(event) {
   try {
+    await ensureDeps();
+
     if (event.httpMethod === "OPTIONS") {
-      return { statusCode: 200, headers: buildCorsHeaders(event), body: "" };
+      // Preflight MUST return CORS headers (204 is best practice)
+      return { statusCode: 204, headers: buildCorsHeaders(event), body: "" };
     }
 
     if (event.httpMethod === "GET") {
@@ -1213,12 +1189,10 @@ export async function handler(event) {
     let cityLoadError = null;
 
     try {
-      // ✅ UPDATED: loadCity now picks correct FILE key from base/canonical
       city = loadCity(resolvedCityKey, profileEffective);
     } catch (err) {
       cityLoadError = String(err?.message || err);
 
-      // fallback: try explicit cityKeyClean if it differs
       const fallbackKey = cityKeyClean || "SanAntonio";
       if (fallbackKey && fallbackKey !== resolvedCityKey) {
         cityLoadFallbackUsed = true;
@@ -1231,7 +1205,6 @@ export async function handler(event) {
 
     const computed = computePay(profileEffective, payTables);
 
-    // ✅ UPDATED: mortgage now comes from mortgage.js (no mortgage math in brain.js)
     const mortgageCore = await computeMortgageEstimate({ body, profile: profileEffective, city, bedrooms });
 
     const mortgage = {
@@ -1266,7 +1239,6 @@ export async function handler(event) {
         cityKeySource: callerDidNotChooseCity && cityResolve.cityKey ? cityResolve.source : cityKeyClean ? "body.cityKey" : "default",
         baseUsedForCity: callerDidNotChooseCity && cityResolve.cityKey ? cityResolve.base || null : null,
 
-        // ✅ NEW city-file debug
         cityFileRequested: city?.cityFileRequested || null,
         cityFileUsed: city?.cityFileUsed || null,
         cityFileVia: city?.cityFileVia || null,
