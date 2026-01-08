@@ -12,12 +12,20 @@
 //   base = "Nellis" -> canonical cityKey = "LasVegas"
 //   loads file = "Nellis.json" (since LasVegas.json doesn't exist)
 //
+// ✅ MORTGAGE CHANGE (Option 1):
+// - Mortgage MATH is REMOVED from brain.js
+// - brain.js now calls mortgage.js (single source of truth) and maps the result
+// - Output shape remains backward-compatible (mortgage.breakdown + legacy aliases)
+//
 // Everything else stays the same.
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
+
+// ✅ NEW: use mortgage.js as the single source of truth
+import { handler as mortgageHandler } from "./mortgage.js";
 
 const SCHEMA_VERSION = "1.2";
 
@@ -832,28 +840,8 @@ function computePay(profile, payTables) {
 }
 
 // -----------------------------
-// //#4.5 Mortgage math (FULL breakdown + legacy aliases)
+// //#4.5 Mortgage (NO MATH) — select inputs + call mortgage.js + map output
 // -----------------------------
-function pmti(P, r, n) {
-  if (!P || P <= 0 || !Number.isFinite(P)) return 0;
-  if (!r || r === 0) return P / Math.max(1, n);
-  const x = Math.pow(1 + r, n);
-  return (P * (r * x)) / (x - 1);
-}
-
-function scoreAPR(score) {
-  const s = Number(score) || 720;
-  if (s >= 780) return 6.5;
-  if (s >= 760) return 6.75;
-  if (s >= 720) return 7.0;
-  if (s >= 700) return 7.2;
-  if (s >= 680) return 7.35;
-  if (s >= 660) return 7.85;
-  if (s >= 640) return 8.25;
-  if (s >= 620) return 9.25;
-  return 9.95;
-}
-
 function pickMortgagePrice({ body, profile, city, bedrooms }) {
   const bodyPrice = toNum(body?.price ?? body?.homePrice ?? body?.purchase_price ?? body?.purchasePrice);
   const profPrice = toNum(profile?.price ?? profile?.home_price ?? profile?.projected_home_price ?? profile?.projectedHomePrice);
@@ -907,7 +895,28 @@ function defaultPmiRate({ loanType, dpPct }) {
   return 0.5;
 }
 
-function computeMortgageEstimate({ body, profile, city, bedrooms }) {
+async function callMortgageEngine(payload) {
+  // Call mortgage.js handler directly (no network), Webflow-safe shape.
+  // mortgage.js expects:
+  // { price, down, creditScore, termYears, taxRate (fraction), insuranceAnnual, hoaMonthly, loanType, aprOverride, pmiRate (fraction) }
+  const evt = {
+    httpMethod: "POST",
+    headers: {},
+    body: JSON.stringify(payload || {}),
+  };
+
+  const res = await mortgageHandler(evt);
+  let out = null;
+  try {
+    out = res?.body ? JSON.parse(res.body) : null;
+  } catch (e) {
+    out = null;
+  }
+
+  return { res, out };
+}
+
+async function computeMortgageEstimate({ body, profile, city, bedrooms }) {
   const sources = {};
   const { price, source: priceSource } = pickMortgagePrice({ body, profile, city, bedrooms });
   sources.price = priceSource;
@@ -918,9 +927,11 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
       breakdown: { principalInterest: 0, propertyTax: 0, insurance: 0, hoa: 0, pmi: 0, totalMonthly: 0 },
       assumptions: { note: "No price available yet." },
       sources,
+      meta: { error: null },
     };
   }
 
+  // --- down payment percent selection stays the same (legacy) ---
   const dpPct =
     toNum(body?.dpPct ?? body?.downPaymentPct ?? profile?.dpPct ?? profile?.down_payment_pct) ??
     toNum(city?.mortgage_assumptions?.down_payment_percent) ??
@@ -951,10 +962,12 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
 
   const creditScore = toInt(body?.creditScore ?? profile?.creditScore ?? profile?.credit_score) ?? null;
 
-  const apr =
+  // APR override selection stays the same *source logic*,
+  // but actual APR tiers are handled by mortgage.js when creditScore is present.
+  const aprOverrideCandidate =
     toNum(body?.apr ?? profile?.apr) ??
-    (creditScore != null ? scoreAPR(creditScore) : toNum(city?.mortgage_assumptions?.apr_percent)) ??
-    7.0;
+    (creditScore == null ? toNum(city?.mortgage_assumptions?.apr_percent) : null) ??
+    (creditScore == null ? 7.0 : null);
 
   sources.apr =
     body?.apr != null
@@ -962,12 +975,12 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
       : profile?.apr != null
         ? "profile.apr"
         : creditScore != null
-          ? "scoreAPR(creditScore)"
+          ? "mortgage.js.aprFromCreditScore(creditScore)"
           : city?.mortgage_assumptions?.apr_percent != null
             ? "city.mortgage_assumptions.apr_percent"
             : "default:7.0";
 
-  const taxRate =
+  const taxRatePct =
     toNum(body?.taxRate ?? profile?.taxRate) ??
     toNum(city?.tax_rate ?? city?.property_tax_rate ?? city?.raw?.property_tax_rate) ??
     1.2;
@@ -983,7 +996,7 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
             ? "city.property_tax_rate"
             : "default:1.20";
 
-  const insRate =
+  const insRatePct =
     toNum(body?.insRate ?? profile?.insRate) ??
     toNum(city?.insurance_rate ?? city?.raw?.insurance_rate) ??
     0.5;
@@ -1009,43 +1022,112 @@ function computeMortgageEstimate({ body, profile, city, bedrooms }) {
           ? "city.hoa_monthly"
           : "default:0";
 
-  const loanType = String(body?.loanType ?? profile?.loanType ?? profile?.loan_type ?? "").trim();
-  const pmiRate = toNum(body?.pmiRate ?? profile?.pmiRate) ?? defaultPmiRate({ loanType, dpPct });
+  const loanTypeRaw = String(body?.loanType ?? profile?.loanType ?? profile?.loan_type ?? "").trim();
+  const loanType = loanTypeRaw ? loanTypeRaw : "conventional";
+
+  const pmiRatePct = toNum(body?.pmiRate ?? profile?.pmiRate) ?? defaultPmiRate({ loanType, dpPct });
 
   sources.pmiRate =
     body?.pmiRate != null ? "body.pmiRate" : profile?.pmiRate != null ? "profile.pmiRate" : "defaultPmiRate(loanType,dpPct)";
 
-  const dpAmt = Math.max(0, price * (Math.max(0, dpPct) / 100));
-  const loan = Math.max(0, price - dpAmt);
+  // ---- Map legacy inputs -> mortgage.js inputs ----
+  // mortgage.js expects:
+  // - down: amount OR percent OR fraction
+  // We pass dpPct (<=100) so it is treated as percent, matching prior behavior.
+  const mortgagePayload = {
+    price: price,
+    down: dpPct,
+    creditScore: creditScore ?? undefined,
+    termYears: termYears,
 
-  const mRate = (apr / 100) / 12;
-  const n = Math.max(1, termYears * 12);
+    // brain taxRate is percent; mortgage.js taxRate is fraction
+    taxRate: Number.isFinite(taxRatePct) ? (taxRatePct / 100) : undefined,
 
-  const principalInterest = loan > 0 ? pmti(loan, mRate, n) : 0;
-  const propertyTax = (price * (taxRate / 100)) / 12;
-  const insurance = (price * (insRate / 100)) / 12;
-  const pmi = loan > 0 && pmiRate > 0 ? (loan * (pmiRate / 100)) / 12 : 0;
+    // brain insurance is insRate% of price; mortgage.js takes insuranceAnnual
+    insuranceAnnual: Number.isFinite(insRatePct) ? (price * (insRatePct / 100)) : undefined,
 
-  const totalMonthly = principalInterest + propertyTax + insurance + hoa + pmi;
+    hoaMonthly: Number.isFinite(hoa) ? hoa : 0,
+
+    loanType: String(loanType || "conventional").toLowerCase(),
+
+    // Only override APR when brain previously would NOT use credit score tiers
+    // (body/profile apr OR no creditScore -> city/default). If creditScore exists and no explicit apr, let mortgage.js decide.
+    aprOverride:
+      (toNum(body?.apr) != null || toNum(profile?.apr) != null || creditScore == null)
+        ? (Number.isFinite(aprOverrideCandidate) ? aprOverrideCandidate : undefined)
+        : undefined,
+
+    // brain pmiRate is percent; mortgage.js pmiRate is fraction (annual)
+    pmiRate: Number.isFinite(pmiRatePct) ? (pmiRatePct / 100) : undefined,
+  };
+
+  let engine = null;
+  let engineErr = null;
+
+  try {
+    const { res, out } = await callMortgageEngine(mortgagePayload);
+    engine = out;
+    if (!res || res.statusCode !== 200 || !out || out.ok !== true) {
+      engineErr = out?.error || `mortgage.js failed (status=${res?.statusCode ?? "unknown"})`;
+    }
+  } catch (e) {
+    engineErr = String(e?.message || e);
+    engine = null;
+  }
+
+  if (engineErr || !engine) {
+    return {
+      ok: false,
+      breakdown: { principalInterest: 0, propertyTax: 0, insurance: 0, hoa: 0, pmi: 0, totalMonthly: 0 },
+      assumptions: { note: "Mortgage engine error.", error: engineErr },
+      sources,
+      meta: { error: engineErr },
+    };
+  }
+
+  // ---- Map mortgage.js output -> legacy brain output shape ----
+  const pi = Number(engine?.breakdown?.pi || 0) || 0;
+  const tax = Number(engine?.breakdown?.tax || 0) || 0;
+  const ins = Number(engine?.breakdown?.insurance || 0) || 0;
+  const hoaMo = Number(engine?.breakdown?.hoa || 0) || 0;
+  const pmi = Number(engine?.breakdown?.pmi || 0) || 0;
+  const totalMonthly = Number(engine?.breakdown?.allIn || 0) || 0;
+
+  const downPayment = Number(engine?.downPayment || 0) || 0;
+  const downPercent = Number(engine?.downPercent || 0) || 0;
+  const loanAmount = Number(engine?.loanAmount || 0) || 0;
+  const aprUsed = Number(engine?.apr || 0) || 0;
+  const termUsed = Number(engine?.termYears || termYears) || termYears;
 
   return {
     ok: totalMonthly > 0,
-    breakdown: { principalInterest, propertyTax, insurance, hoa, pmi, totalMonthly },
+    breakdown: {
+      principalInterest: pi,
+      propertyTax: tax,
+      insurance: ins,
+      hoa: hoaMo,
+      pmi: pmi,
+      totalMonthly: totalMonthly,
+    },
     assumptions: {
-      price,
-      dpPct,
-      dpAmt,
-      loan,
-      apr,
-      termYears,
-      taxRate,
-      insRate,
-      hoa,
-      pmiRate,
+      price: Number(engine?.price ?? price) || price,
+      dpPct: downPercent || dpPct,
+      dpAmt: downPayment,
+      loan: loanAmount,
+      apr: aprUsed,
+      termYears: termUsed,
+      taxRate: taxRatePct,
+      insRate: insRatePct,
+      hoa: hoaMo,
+      pmiRate: pmiRatePct,
       loanType: loanType || undefined,
       creditScore: creditScore ?? undefined,
     },
     sources,
+    meta: {
+      aprSource: engine?.aprSource ?? null,
+      warnings: engine?.meta?.warnings ?? [],
+    },
   };
 }
 
@@ -1135,7 +1217,9 @@ export async function handler(event) {
     }
 
     const computed = computePay(profileEffective, payTables);
-    const mortgageCore = computeMortgageEstimate({ body, profile: profileEffective, city, bedrooms });
+
+    // ✅ UPDATED: mortgage now comes from mortgage.js (no mortgage math in brain.js)
+    const mortgageCore = await computeMortgageEstimate({ body, profile: profileEffective, city, bedrooms });
 
     const mortgage = {
       ok: !!mortgageCore.ok,
