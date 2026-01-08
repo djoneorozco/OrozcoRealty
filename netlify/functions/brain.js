@@ -17,6 +17,11 @@
 // - brain.js now calls mortgage.js (single source of truth) and maps the result
 // - Output shape remains backward-compatible (mortgage.breakdown + legacy aliases)
 //
+// ✅ FIX (Credit Score not affecting APR):
+// - Do NOT pass aprOverride from profile when creditScore is present.
+// - Only pass aprOverride when user explicitly provides body.apr OR when creditScore is missing.
+// - This allows mortgage.js creditScore tiers to drive APR as intended.
+//
 // Everything else stays the same.
 // ============================================================
 
@@ -962,20 +967,28 @@ async function computeMortgageEstimate({ body, profile, city, bedrooms }) {
 
   const creditScore = toInt(body?.creditScore ?? profile?.creditScore ?? profile?.credit_score) ?? null;
 
-  // APR override selection stays the same *source logic*,
-  // but actual APR tiers are handled by mortgage.js when creditScore is present.
+  // ✅ FIX: Only treat APR as an override if:
+  // - user explicitly provides body.apr, OR
+  // - creditScore is missing (then we can fall back to profile/city/default)
+  const bodyApr = toNum(body?.apr);
+  const profileApr = toNum(profile?.apr);
+
+  const aprFallbackNoScore =
+    profileApr ??
+    toNum(city?.mortgage_assumptions?.apr_percent) ??
+    7.0;
+
   const aprOverrideCandidate =
-    toNum(body?.apr ?? profile?.apr) ??
-    (creditScore == null ? toNum(city?.mortgage_assumptions?.apr_percent) : null) ??
-    (creditScore == null ? 7.0 : null);
+    bodyApr ??
+    (creditScore == null ? aprFallbackNoScore : null);
 
   sources.apr =
-    body?.apr != null
+    bodyApr != null
       ? "body.apr"
-      : profile?.apr != null
-        ? "profile.apr"
-        : creditScore != null
-          ? "mortgage.js.aprFromCreditScore(creditScore)"
+      : creditScore != null
+        ? "mortgage.js.aprFromCreditScore(creditScore)"
+        : profileApr != null
+          ? "profile.apr"
           : city?.mortgage_assumptions?.apr_percent != null
             ? "city.mortgage_assumptions.apr_percent"
             : "default:7.0";
@@ -1050,10 +1063,10 @@ async function computeMortgageEstimate({ body, profile, city, bedrooms }) {
 
     loanType: String(loanType || "conventional").toLowerCase(),
 
-    // Only override APR when brain previously would NOT use credit score tiers
-    // (body/profile apr OR no creditScore -> city/default). If creditScore exists and no explicit apr, let mortgage.js decide.
+    // ✅ FIX: Only override APR when user explicitly provided body.apr OR when creditScore is missing.
+    // If creditScore exists and no body.apr, let mortgage.js tiers decide.
     aprOverride:
-      (toNum(body?.apr) != null || toNum(profile?.apr) != null || creditScore == null)
+      (bodyApr != null || creditScore == null)
         ? (Number.isFinite(aprOverrideCandidate) ? aprOverrideCandidate : undefined)
         : undefined,
 
