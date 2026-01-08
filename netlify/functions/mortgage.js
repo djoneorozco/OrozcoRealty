@@ -43,8 +43,6 @@
 // }
 // ============================================================
 
-import { Handler } from "@netlify/functions";
-
 // ============================================================
 // //#1 — CORS + helpers
 // ============================================================
@@ -189,7 +187,7 @@ function computePMI({
 // ============================================================
 // //#4 — Netlify handler
 // ============================================================
-export const handler: Handler = async (event) => {
+export async function handler(event) {
   try{
     if (event.httpMethod === "OPTIONS"){
       return { statusCode: 204, headers: corsHeaders, body: "" };
@@ -314,4 +312,4 @@ export const handler: Handler = async (event) => {
   } catch (e){
     return j(500, { ok:false, error:"Server error", detail: String(e?.message || e) });
   }
-};
+}
