@@ -24,7 +24,7 @@
 
   "property_tax_rate": 1.12,
   "insurance_rate": 0.42,
-  "hoa_monthly": 0,
+  "hoa_monthly": 250,
 
   "avg_home_mortgage_monthly": {
     "avg": 2030,
