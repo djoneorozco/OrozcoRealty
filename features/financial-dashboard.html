@@ -1,5 +1,5 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Sun Jan 04 2026 02:12:42 GMT+0000 (Coordinated Universal Time)  -->
-<html data-wf-page="68dcd360e3426efe81144c09" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Jan 09 2026 02:39:53 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="695bbba5cacbcc5276587a43" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
 <head>
   <meta charset="utf-8">
   <title>Financial Dashboard</title>
@@ -358,13 +358,13 @@
       </div>
     </div>
   </section>
-  <div class="w-embed w-iframe w-script"><!--  ============================================================
-  ELENA CONCIERGE CANVAS (Finance-First Intake) v1.2.1
-  ✅ Single Webflow Embed (HTML + CSS + JS)
-  ✅ Full-bleed iframe (no padding)
-  ✅ Keeps ONLY the top banner (Full Financial Analysis + 4 buttons)
-  ✅ Restores working Ask Elena (frosted glass HUD + auto-hide)
-  ✅ NO changes to your Netlify function logic
+  <div class="w-embed w-iframe"><!--  ============================================================
+  EMBED #1/3 — ELENA CONCIERGE CANVAS • SHELL ONLY (v1.3.0)
+  ✅ HTML + CSS only (NO JS)
+  ✅ Left Panel: User Profile + Edit Profile button + Ask-Elena dock slot
+  ✅ Main: Tool banner + FULL-BLEED iFrame workspace
+  ✅ Header strip: Grade/Disposable + BLUF capsule + status pill
+  ✅ House of SaSS theme tokens
 ===============================================================  -->
     <div id="elena-canvas" style="all: initial;">
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -372,7 +372,10 @@
     /* ============================================================
       //#1 RESET + TOKENS (CORE)
     ============================================================ */
-    #elena-canvas, #elena-canvas *{ box-sizing:border-box; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
+    #elena-canvas, #elena-canvas *{
+      box-sizing:border-box;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
     :root{
       --bg:#0b0e1a; --panel:#101426; --panel2:#0f1324;
       --ink:#fff; --muted:#a8b0d6;
@@ -382,9 +385,11 @@
       --shadow2:0 14px 36px rgba(0,0,0,.55);
       --r22:22px; --r18:18px; --r14:14px;
       --blufH:74px; --siteHeaderH:97px;
+      --warn:#f9c74f; --bad:#ff6b6b; --ok:#55d399;
     }
+    .is-hidden{ display:none !important; }
     /* ============================================================
-      //#2 FULLSCREEN SHELL + BLUF
+      //#2 FULLSCREEN SHELL
     ============================================================ */
     #ec-fullscreen{
       position:fixed; top:var(--siteHeaderH); left:0; right:0; bottom:0;
@@ -393,13 +398,19 @@
         radial-gradient(1200px 800px at 18% 10%, rgba(106,167,255,.16), transparent 55%),
         radial-gradient(900px 700px at 72% 18%, rgba(142,243,197,.12), transparent 55%),
         radial-gradient(circle at top, #121726 0%, var(--bg) 70%);
-      color:var(--ink); overflow:hidden; z-index:50;
-      display:flex; flex-direction:column;
+      color:var(--ink);
+      overflow:hidden;
+      z-index:50;
+      display:flex;
+      flex-direction:column;
     }
+    /* ============================================================
+      //#2.1 HEADER STRIP: GRADE + BLUF + STATUS
+    ============================================================ */
     #ec-blufHeader{
       position:sticky; top:0; z-index:10;
       height:var(--blufH);
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      display:flex; align-items:center; gap:14px;
       padding:12px 16px;
       border-bottom:1px solid var(--b1);
       background:
@@ -408,18 +419,114 @@
         rgba(0,0,0,.22);
       backdrop-filter: blur(14px);
     }
-    #ec-blufLeft{ min-width:0; display:flex; flex-direction:column; gap:4px; }
-    #ec-blufTitle{ font-size:12px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.92); }
-    #ec-blufText{
-      font-size:13px; color:rgba(255,255,255,.84);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width:min(1120px,72vw);
+    /* GRADE CHIP */
+    #ec-gradeChip{
+      flex:0 0 auto;
+      width:min(520px, 46vw);
+      min-width:300px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.18);
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
+      overflow:hidden;
     }
+    #ec-gradeDot{
+      width:12px; height:12px; border-radius:50%;
+      background:#888;
+      box-shadow:0 0 0 4px rgba(106,167,255,.10);
+      flex:0 0 auto;
+    }
+    #ec-gradeWrap{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      width:100%;
+    }
+    #ec-gradeText{
+      min-width:0;
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    #ec-grade{
+      font-weight:950;
+      font-size:13px;
+      letter-spacing:.02em;
+      color:rgba(255,255,255,.92);
+    }
+    #ec-disposable{
+      font-weight:900;
+      font-size:13px;
+      color:rgba(255,255,255,.85);
+    }
+    #ec-miniMeter{
+      width:180px; height:8px; border-radius:999px;
+      background:#0b0f23;
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    #ec-miniMeter > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent2), var(--warn), var(--bad));
+    }
+    /* BLUF CAPSULE */
+    #ec-blufCapsule{
+      flex:1;
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.14);
+      box-shadow:0 10px 22px rgba(0,0,0,.28);
+      overflow:hidden;
+    }
+    #ec-blufTag{
+      flex:0 0 auto;
+      font-size:10px;
+      font-weight:950;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      padding:6px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.86);
+    }
+    #ec-blufText{
+      min-width:0;
+      font-size:12.5px;
+      font-weight:800;
+      color:rgba(255,255,255,.88);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    /* STATUS PILL */
     #ec-pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--b1); background:rgba(0,0,0,.22);
-      font-size:11px; color:rgba(255,255,255,.86); white-space:nowrap;
+      flex:0 0 auto;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--b1);
+      background:rgba(0,0,0,.22);
+      font-size:11px;
+      color:rgba(255,255,255,.86);
+      white-space:nowrap;
     }
     #ec-dot{
       width:9px; height:9px; border-radius:99px;
@@ -439,7 +546,7 @@
     }
     @media (max-width:980px){ #ec-stage{ grid-template-columns:1fr; } }
     /* ============================================================
-      //#4 LEFT: INPUT PANEL (CLEANER)
+      //#4 LEFT PANEL: USER PROFILE + CHAT
     ============================================================ */
     #ec-left{
       border-radius:var(--r22);
@@ -448,16 +555,29 @@
       box-shadow:var(--shadow);
       padding:18px;
       overflow:hidden;
-      display:flex; flex-direction:column; gap:12px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
       min-height:0;
       position:relative;
     }
     #ec-left::before{
-      content:""; position:absolute; inset:-20%;
+      content:"";
+      position:absolute;
+      inset:-20%;
       background:radial-gradient(circle, rgba(110,167,255,.08), transparent 70%);
       pointer-events:none;
     }
-    #ec-leftHead{ position:relative; z-index:2; display:flex; gap:12px; align-items:center; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,.08); }
+    #ec-leftHead{
+      position:relative; z-index:2;
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:12px;
+      padding-bottom:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    #ec-leftHeadL{
+      display:flex; gap:12px; align-items:center; min-width:0;
+    }
     .ec-avatarMini{
       width:46px; height:46px; border-radius:50%;
       background-image:url("https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png");
@@ -467,12 +587,115 @@
       flex:0 0 auto;
     }
     #ec-leftTitle{ min-width:0; display:flex; flex-direction:column; gap:2px; }
-    #ec-leftTitle h3{ margin:0; font-size:14px; font-weight:900; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.92); }
-    #ec-leftTitle p{ margin:0; font-size:12px; color:rgba(255,255,255,.65); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    #ec-profileSummary{
+    #ec-leftTitle h3{
+      margin:0;
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.92);
+    }
+    #ec-leftTitle p{
+      margin:0;
+      font-size:12px;
+      color:rgba(255,255,255,.65);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:240px;
+    }
+    /* Edit Profile button (top-right) */
+    #ec-editProfile{
       position:relative; z-index:2;
+      flex:0 0 auto;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:rgba(255,255,255,.88);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:.18s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    #ec-editProfile:hover{ transform:translateY(-1px); filter:brightness(1.08); }
+    /* Profile Block (hidden by default; toggled by JS in Embed #3) */
+    #ec-profileBlock{
+      position:relative; z-index:2;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(12,14,25,.45);
+      border-radius:16px;
+      padding:12px;
+      overflow:hidden;
+    }
+    #ec-profileTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding-bottom:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      margin-bottom:10px;
+    }
+    #ec-profileLabel{
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.88);
+    }
+    #ec-profileBadge{
+      font-size:10px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.72);
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+      padding:6px 10px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    #ec-profileGrid{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .ec-profRow{
+      display:grid;
+      grid-template-columns: 92px 1fr;
+      gap:10px;
+      align-items:center;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      min-width:0;
+    }
+    .ec-profKey{
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.60);
+      white-space:nowrap;
+    }
+    .ec-profVal{
+      font-size:13px;
+      font-weight:900;
+      color:rgba(255,255,255,.92);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      min-width:0;
+    }
+    #ec-profileFoot{
       margin-top:10px;
-      display:flex; flex-wrap:wrap;
+      display:flex;
+      justify-content:flex-end;
       gap:8px;
     }
     .ec-pillMini{
@@ -501,151 +724,18 @@
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    #ec-inputPanel{ position:relative; z-index:2; flex:1; min-height:0; overflow:auto; padding-right:6px; }
-    .ec-sec{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(12,14,25,.45);
-      border-radius:16px;
-      padding:12px;
-      margin-bottom:10px;
-    }
-    .ec-secHead{ display:flex; align-items:center; justify-content:space-between; gap:10px; user-select:none; cursor:pointer; }
-    .ec-secTitle{ min-width:0; display:flex; flex-direction:column; gap:2px; }
-    .ec-kicker{ font-size:11px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.88); }
-    .ec-sub{ font-size:12px; color:rgba(255,255,255,.62); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:250px; }
-    .ec-lock{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.22);
-      font-size:11px; color:rgba(255,255,255,.78);
-      white-space:nowrap;
-    }
-    .ec-lock .dot{ width:9px; height:9px; border-radius:99px; background:rgba(255,255,255,.22); }
-    .ec-lock.good .dot{ background:rgba(142,243,197,.85); }
-    .ec-lock.warn .dot{ background:rgba(255,207,90,.90); }
-    .ec-secBody{ margin-top:10px; display:none; flex-direction:column; gap:10px; }
-    .ec-sec.open .ec-secBody{ display:flex; }
-    .ec-kv{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .ec-chip{ border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); border-radius:12px; padding:10px; min-width:0; }
-    .ec-chip .label{ font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.60); margin-bottom:6px; }
-    .ec-chip .val{ font-size:13px; font-weight:900; color:rgba(255,255,255,.92); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .ec-row{ display:flex; flex-direction:column; gap:6px; }
-    .ec-row label{ font-size:11px; font-weight:900; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.72); }
-    .ec-field{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.92);
-      outline:none;
-      font-size:14px;
-    }
-    .ec-help{ font-size:12px; color:rgba(255,255,255,.62); line-height:1.35; }
-    #ec-run{
-      width:100%;
-      padding:13px 14px;
-      border:none;
-      border-radius:14px;
-      cursor:pointer;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
-      color:#000;
-      box-shadow:0 18px 46px rgba(0,0,0,.55);
-      user-select:none;
-    }
-    #ec-brand{
+    /* LEFT CHAT SLOT (replaces old brand footer) */
+    #ec-leftChatSlot{
       position:relative; z-index:2;
-      text-align:center;
-      color:rgba(142,243,197,.82);
-      font-size:11px; letter-spacing:.06em; opacity:.85;
-      padding-top:10px; border-top:1px solid rgba(255,255,255,.08);
-    }
-    /* ============================================================
-      //#5 MAIN: WORKSPACE (STRUCTURE)
-    ============================================================ */
-    #ec-main{
-      border-radius:var(--r22);
-      border:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      display:flex; flex-direction:column;
-      min-width:0; min-height:0;
-    }
-    /* KEEP THIS TOP BANNER */
-    #ec-toolTop{
-      padding:12px 14px;
-      border-bottom:1px solid var(--b2);
-      background:rgba(0,0,0,.12);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      flex:0 0 auto;
-    }
-    #ec-toolMeta{ min-width:0; display:flex; flex-direction:column; gap:3px; }
-    #ec-toolName{ font-size:12px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.92); }
-    #ec-toolSub{
-      font-size:12px; color:rgba(255,255,255,.62);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      max-width:min(900px,58vw);
-    }
-    #ec-toolBtns{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .ec-btn, .ec-btnGhost{
-      padding:10px 14px;
-      border-radius:12px;
-      font-weight:900;
-      font-size:12px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      cursor:pointer;
-      user-select:none;
-      transition:.20s;
-    }
-    .ec-btn{
-      border:none;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
-      color:#000;
-    }
-    .ec-btnGhost{
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.05);
-      color:rgba(255,255,255,.88);
-    }
-    .ec-btn:hover, .ec-btnGhost:hover{ transform:translateY(-1px); filter:brightness(1.08); }
-    /* ✅ FULL-BLEED IFRAME STAGE (no padding / no frame look) */
-    #ec-toolStage{
-      position:relative;
-      flex:1;
+      margin-top:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
       min-height:0;
-      background:transparent;
     }
-    #ec-iframe{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      border:0;
-      border-radius:0;
-      background:transparent;
-      box-shadow:none;
-    }
-    /* ============================================================
-      //#6 ELENA CHAT HUD (WORKING + AUTO-HIDE)
-    ============================================================ */
-    #ec-chatDock{
-      position:absolute;
-      left:16px;
-      right:16px;
-      bottom:16px;
-      z-index:40;
-      pointer-events:none;
-    }
+    /* Replies panel */
     #ec-replies{
-      width:min(980px, 100%);
-      margin:0 auto 10px auto;
+      width:100%;
       border-radius:16px;
       border:1px solid rgba(255,255,255,.12);
       background:rgba(16,20,38,.55);
@@ -656,6 +746,7 @@
       transform: translateY(10px);
       transition: opacity .18s ease, transform .18s ease;
       pointer-events:none;
+      max-height:260px;
     }
     #ec-replies.open{
       opacity:1;
@@ -714,7 +805,7 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      max-height:220px;
+      max-height:210px;
       overflow:auto;
     }
     .ec-msg{
@@ -733,9 +824,9 @@
       border-color: rgba(142,243,197,.22);
     }
     .ec-msg.bot{ align-self:flex-start; }
+    /* Input row */
     #ec-inputRow{
-      width:min(980px,100%);
-      margin:0 auto;
+      width:100%;
       display:grid;
       grid-template-columns:1fr auto;
       gap:10px;
@@ -772,140 +863,176 @@
       transition:.20s;
     }
     #ec-send:hover{ filter:brightness(1.12); transform: translateY(-1px); }
+    /* ============================================================
+      //#5 MAIN WORKSPACE (STRUCTURE)
+    ============================================================ */
+    #ec-main{
+      border-radius:var(--r22);
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-width:0; min-height:0;
+    }
+    #ec-toolTop{
+      padding:12px 14px;
+      border-bottom:1px solid var(--b2);
+      background:rgba(0,0,0,.12);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex:0 0 auto;
+    }
+    #ec-toolMeta{ min-width:0; display:flex; flex-direction:column; gap:3px; }
+    #ec-toolName{
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.92);
+    }
+    #ec-toolSub{
+      font-size:12px;
+      color:rgba(255,255,255,.62);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:min(900px,58vw);
+    }
+    #ec-toolBtns{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .ec-btn, .ec-btnGhost{
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      user-select:none;
+      transition:.20s;
+    }
+    .ec-btn{
+      border:none;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      color:#000;
+    }
+    .ec-btnGhost{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      color:rgba(255,255,255,.88);
+    }
+    .ec-btn:hover, .ec-btnGhost:hover{ transform:translateY(-1px); filter:brightness(1.08); }
+    /* FULL-BLEED IFRAME */
+    #ec-toolStage{ position:relative; flex:1; min-height:0; background:transparent; }
+    #ec-iframe{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      border:0;
+      border-radius:0;
+      background:transparent;
+      box-shadow:none;
+    }
   </style>
       <div id="ec-fullscreen" aria-label="Elena Concierge Canvas">
-        <!--  BLUF HEADER  -->
-        <header id="ec-blufHeader" aria-label="BLUF Header">
-          <div id="ec-blufLeft">
-            <div id="ec-blufTitle">BLUF</div>
-            <div id="ec-blufText">Add constraints on the left to generate a clean buy / rent / on-base verdict.</div>
+        <!--  HEADER STRIP  -->
+        <header id="ec-blufHeader" aria-label="Grade Header">
+          <div id="ec-gradeChip" title="Grade + Disposable (deterministic fallback when iframe is cross-origin).">
+            <span id="ec-gradeDot"></span>
+            <div id="ec-gradeWrap">
+              <div id="ec-gradeText">
+                <b id="ec-grade">Loading…</b>
+                <span id="ec-disposable">$0</span>
+              </div>
+              <div id="ec-miniMeter" aria-label="grade-meter">
+                <div id="ec-meterFill"></div>
+              </div>
+            </div>
+          </div>
+          <div id="ec-blufCapsule" title="BLUF: authority sentence from math + logic (Embed #3).">
+            <span id="ec-blufTag">BLUF</span>
+            <span id="ec-blufText">Loading verdict…</span>
           </div>
           <div id="ec-pill"><span id="ec-dot"></span><span id="ec-pillText">Shell Ready</span></div>
         </header>
         <div id="ec-stage">
-          <!--  LEFT: INPUT ENGINE  -->
-          <aside id="ec-left" aria-label="Inputs Panel">
+          <!--  LEFT: PROFILE + CHAT  -->
+          <aside id="ec-left" aria-label="Left Panel">
             <div id="ec-leftHead">
-              <div class="ec-avatarMini"></div>
-              <div id="ec-leftTitle">
-                <h3>Decision Inputs</h3>
-                <p id="ec-leftSub">Profile locked. Add constraints to refine the verdict.</p>
-                <div id="ec-profileSummary" aria-label="Profile Summary">
-                  <div class="ec-pillMini"><span class="k">Rank</span><span class="v" id="pf-rank">--</span></div>
-                  <div class="ec-pillMini"><span class="k">YOS</span><span class="v" id="pf-yos">--</span></div>
-                  <div class="ec-pillMini"><span class="k">ZIP</span><span class="v" id="pf-zip">--</span></div>
+              <div id="ec-leftHeadL">
+                <div class="ec-avatarMini"></div>
+                <div id="ec-leftTitle">
+                  <h3>User Profile</h3>
+                  <p id="ec-leftSub">Locked facts • rendered from profile storage</p>
                 </div>
               </div>
+              <button id="ec-editProfile" type="button">Edit Profile</button>
             </div>
-            <div id="ec-inputPanel">
-              <section class="ec-sec" id="sec-profile">
-                <div class="ec-secHead" data-sec="profile">
-                  <div class="ec-secTitle">
-                    <div class="ec-kicker">Phase 1 • Profile</div>
-                    <div class="ec-sub">Stored facts • used for pay + location context</div>
-                  </div>
-                  <div class="ec-lock good"><span class="dot"></span><span>Locked</span></div>
+            <!--  PROFILE BLOCK (hidden by default; toggled by Embed #3)  -->
+            <div id="ec-profileBlock" class="is-hidden" aria-label="User Profile Block">
+              <div id="ec-profileTop">
+                <div id="ec-profileLabel">Profile Loaded</div>
+                <div id="ec-profileBadge">Supabase • public.profiles</div>
+              </div>
+              <div id="ec-profileGrid">
+                <div class="ec-profRow">
+                  <div class="ec-profKey">Email</div>
+                  <div class="ec-profVal" id="pf-email">—</div>
                 </div>
-                <div class="ec-secBody">
-                  <div class="ec-kv">
-                    <div class="ec-chip">
-                      <div class="label">Rank</div>
-                      <div class="val" id="pf-rank-detail">--</div>
-                    </div>
-                    <div class="ec-chip">
-                      <div class="label">YOS</div>
-                      <div class="val" id="pf-yos-detail">--</div>
-                    </div>
-                    <div class="ec-chip">
-                      <div class="label">ZIP / Base</div>
-                      <div class="val" id="pf-zip-detail">--</div>
-                    </div>
-                    <div class="ec-chip">
-                      <div class="label">Family Size</div>
-                      <div class="val" id="pf-fam">--</div>
-                    </div>
-                    <div class="ec-chip">
-                      <div class="label">Dependents</div>
-                      <div class="val" id="pf-dep">--</div>
-                    </div>
-                    <div class="ec-chip">
-                      <div class="label">Email</div>
-                      <div class="val" id="pf-email">--</div>
-                    </div>
-                  </div>
-                  <div class="ec-help" id="pf-help">If these are wrong, update your profile — we won’t re-ask here.</div>
+                <div class="ec-profRow">
+                  <div class="ec-profKey">Name</div>
+                  <div class="ec-profVal" id="pf-name">—</div>
                 </div>
-              </section>
-              <section class="ec-sec open" id="sec-constraints">
-                <div class="ec-secHead" data-sec="constraints">
-                  <div class="ec-secTitle">
-                    <div class="ec-kicker">Phase 2 • Constraints</div>
-                    <div class="ec-sub">Debt + credit band + horizon (drives risk)</div>
-                  </div>
-                  <div class="ec-lock warn"><span class="dot"></span><span>Required</span></div>
+                <div class="ec-profRow">
+                  <div class="ec-profKey">Mode</div>
+                  <div class="ec-profVal" id="pf-mode">—</div>
                 </div>
-                <div class="ec-secBody">
-                  <div class="ec-row">
-                    <label for="in-debt">Monthly Debt (one number)</label>
-                    <input id="in-debt" class="ec-field" type="number" inputmode="numeric" min="0" step="50" value="850">
-                    <div class="ec-help" id="in-debtHelp">Car, credit cards, student loans, etc. Combined.</div>
-                  </div>
-                  <div class="ec-row">
-                    <label for="in-credit">Credit Band</label>
-                    <select id="in-credit" class="ec-field">
-                      <option value="excellent">Excellent (760+)</option>
-                      <option value="good" selected="">Good (700–759)</option>
-                      <option value="fair">Fair (660–699)</option>
-                      <option value="risk">Risk (&lt;660)</option>
-                    </select>
-                  </div>
-                  <div class="ec-row">
-                    <label for="in-station">Time at Station</label>
-                    <select id="in-station" class="ec-field">
-                      <option value="lt24">&lt; 24 months</option>
-                      <option value="24_36">24–36 months</option>
-                      <option value="gt36" selected="">36+ months</option>
-                      <option value="unsure">Unsure</option>
-                    </select>
-                  </div>
+                <div class="ec-profRow">
+                  <div class="ec-profKey">Rank</div>
+                  <div class="ec-profVal" id="pf-rank">—</div>
                 </div>
-              </section>
-              <section class="ec-sec" id="sec-options">
-                <div class="ec-secHead" data-sec="options">
-                  <div class="ec-secTitle">
-                    <div class="ec-kicker">Phase 3 • Options</div>
-                    <div class="ec-sub">Savings + mode + target (precision boost)</div>
-                  </div>
-                  <div class="ec-lock"><span class="dot"></span><span>Optional</span></div>
+                <div class="ec-profRow">
+                  <div class="ec-profKey">YOS</div>
+                  <div class="ec-profVal" id="pf-yos">—</div>
                 </div>
-                <div class="ec-secBody">
-                  <div class="ec-row">
-                    <label for="in-savings">Savings Band</label>
-                    <select id="in-savings" class="ec-field">
-                      <option value="unknown" selected="">Unknown / Prefer not to say</option>
-                      <option value="lt5">&lt; $5k</option>
-                      <option value="5_15">$5k–$15k</option>
-                      <option value="15_40">$15k–$40k</option>
-                      <option value="40p">$40k+</option>
-                    </select>
-                  </div>
-                  <div class="ec-row">
-                    <label for="in-mode">Housing Mode</label>
-                    <select id="in-mode" class="ec-field">
-                      <option value="buy" selected="">Buy (Off-Base)</option>
-                      <option value="rent">Rent (Off-Base)</option>
-                      <option value="onbase">On-Base Housing</option>
-                    </select>
-                  </div>
-                  <div class="ec-row">
-                    <label for="in-targetVal">Target Home Price</label>
-                    <input id="in-targetVal" class="ec-field" type="number" inputmode="numeric" min="0" step="1000" value="300000">
-                  </div>
+                <div class="ec-profRow">
+                  <div class="ec-profKey">Base</div>
+                  <div class="ec-profVal" id="pf-base">—</div>
                 </div>
-              </section>
-              <button id="ec-run" type="button">Run Financial Verdict</button>
+                <div class="ec-profRow">
+                  <div class="ec-profKey">Family</div>
+                  <div class="ec-profVal" id="pf-family">—</div>
+                </div>
+                <div class="ec-profRow">
+                  <div class="ec-profKey">VA %</div>
+                  <div class="ec-profVal" id="pf-va">—</div>
+                </div>
+              </div>
+              <div id="ec-profileFoot">
+                <div class="ec-pillMini"><span class="k">Status</span><span class="v" id="pf-status">Waiting for Profile</span></div>
+              </div>
             </div>
-            <div id="ec-brand">House of SaSS™ · OrozcoRealty — We are the Future of Real Estate.</div>
+            <!--  ASK-ELENA SLOT (replaces House of SaSS footer line)  -->
+            <div id="ec-leftChatSlot" aria-label="Ask Elena">
+              <div id="ec-replies" aria-hidden="true">
+                <div id="ec-repliesHead">
+                  <div id="ec-repliesTitle">
+                    <div id="ec-miniAvatar"></div>
+                    <div id="ec-repliesLabel">Elena Replies</div>
+                  </div>
+                  <button id="ec-repliesClose" type="button">Hide</button>
+                </div>
+                <div id="ec-repliesBody"></div>
+              </div>
+              <div id="ec-inputRow">
+                <input id="ec-input" type="text" placeholder="Ask Elena anything…">
+                <button id="ec-send" type="button">Send</button>
+              </div>
+            </div>
           </aside>
           <!--  MAIN: WORKSPACE  -->
           <main id="ec-main" aria-label="Workspace">
@@ -923,964 +1050,1051 @@
             </div>
             <section id="ec-toolStage">
               <iframe id="ec-iframe" title="RealtySaSS Tool" loading="lazy"></iframe>
-              <!--  ✅ WORKING CHAT HUD  -->
-              <div id="ec-chatDock" aria-label="Elena HUD">
-                <div id="ec-replies" aria-hidden="true">
-                  <div id="ec-repliesHead">
-                    <div id="ec-repliesTitle">
-                      <div id="ec-miniAvatar"></div>
-                      <div id="ec-repliesLabel">Elena Replies</div>
-                    </div>
-                    <button id="ec-repliesClose" type="button">Hide</button>
-                  </div>
-                  <div id="ec-repliesBody"></div>
-                </div>
-                <div id="ec-inputRow">
-                  <input id="ec-input" type="text" placeholder="Ask Elena anything…">
-                  <button id="ec-send" type="button">Send</button>
-                </div>
-              </div>
             </section>
           </main>
         </div>
       </div>
-      <script>
-  (function(){
-    "use strict";
-    /* ============================================================
-      //#7 SAFE MOUNT
-    ============================================================ */
-    if (window.__ELENA_CANVAS_V121__) return;
-    window.__ELENA_CANVAS_V121__ = true;
-    /* ============================================================
-      //#8 CONFIG
-      - Update these URLs if you changed routes
-    ============================================================ */
-    const TOOL_URLS = {
-      pcs:      "https://new-real-estate-purchase.webflow.io/pcs-snapshot",
-      mortgage: "https://new-real-estate-purchase.webflow.io/mortgage-estimator-input",
-      frs:      "https://new-real-estate-purchase.webflow.io/features/analyze"
-    };
-    // Your working endpoint (unchanged)
-    const ELENA_ENDPOINT = "https://theorozcorealty.netlify.app/.netlify/functions/ask-elena";
-    /* ============================================================
-      //#9 DOM
-    ============================================================ */
-    const $ = (id)=>document.getElementById(id);
-    const iframe = $("ec-iframe");
-    const toolName = $("ec-toolName");
-    const toolSub  = $("ec-toolSub");
-    const btnPCS = $("ec-openPCS");
-    const btnMortgage = $("ec-openMortgage");
-    const btnFRS = $("ec-openFRS");
-    const btnOpenTab = $("ec-openTab");
-    const blufTitle = $("ec-blufTitle");
-    const blufText  = $("ec-blufText");
-    const pillText  = $("ec-pillText");
-    const replies = $("ec-replies");
-    const repliesBody = $("ec-repliesBody");
-    const repliesClose = $("ec-repliesClose");
-    const input = $("ec-input");
-    const send = $("ec-send");
-    const secHeads = document.querySelectorAll("#elena-canvas .ec-secHead");
-    /* ============================================================
-      //#10 STATE
-    ============================================================ */
-    let activeTool = "frs";
-    let lastToolUrl = TOOL_URLS.frs;
-    let hideTimer = null;
-    /* ============================================================
-      //#11 LEFT SECTION TOGGLES (kept light + safe)
-    ============================================================ */
-    secHeads.forEach(head=>{
-      head.addEventListener("click", ()=>{
-        const sec = head.closest(".ec-sec");
-        if(!sec) return;
-        sec.classList.toggle("open");
-      });
-    });
-    /* ============================================================
-      //#12 TOOL SWITCHER (top buttons)
-    ============================================================ */
-    function setBtnsActive(which){
-      // Reset
-      btnPCS.className = "ec-btnGhost";
-      btnMortgage.className = "ec-btnGhost";
-      btnFRS.className = "ec-btnGhost";
-      // Activate
-      if (which === "pcs") btnPCS.className = "ec-btn";
-      if (which === "mortgage") btnMortgage.className = "ec-btn";
-      if (which === "frs") btnFRS.className = "ec-btn";
-    }
-    function setToolMeta(which){
-      const map = {
-        pcs:      { name:"PCS", sub:"Quick PCS view • runs in this workspace" },
-        mortgage: { name:"Mortgage", sub:"Estimator workspace • sanity-check payment range" },
-        frs:      { name:"Full Financial Analysis", sub:"Runs in this workspace • charts + dashboards live here" }
-      };
-      const m = map[which] || map.frs;
-      toolName.textContent = m.name;
-      toolSub.textContent = m.sub;
-    }
-    function setBLUF(which){
-      if (which === "pcs"){
-        blufTitle.textContent = "BLUF";
-        blufText.textContent  = "PCS Snapshot: fast pay + housing context. Use this when you need a quick read.";
-      } else if (which === "mortgage"){
-        blufTitle.textContent = "BLUF";
-        blufText.textContent  = "Mortgage Estimator: dial in a payment range before you commit to a price target.";
-      } else {
-        blufTitle.textContent = "BLUF";
-        blufText.textContent  = "Add constraints on the left to generate a clean buy / rent / on-base verdict.";
-      }
-    }
-    function openTool(which){
-      const url = TOOL_URLS[which];
-      if (!url) return;
-      activeTool = which;
-      lastToolUrl = url;
-      setBtnsActive(which);
-      setToolMeta(which);
-      setBLUF(which);
-      // load
-      iframe.src = url;
-    }
-    btnPCS.addEventListener("click", ()=>openTool("pcs"));
-    btnMortgage.addEventListener("click", ()=>openTool("mortgage"));
-    btnFRS.addEventListener("click", ()=>openTool("frs"));
-    btnOpenTab.addEventListener("click", ()=>{
-      if (lastToolUrl) window.open(lastToolUrl, "_blank", "noopener,noreferrer");
-    });
-    /* ============================================================
-      //#13 CHAT HUD (overlay replies that auto-hide)
-    ============================================================ */
-    function showReplies(){
-      clearTimeout(hideTimer);
-      replies.classList.add("open");
-      replies.setAttribute("aria-hidden","false");
-    }
-    function hideReplies(){
-      clearTimeout(hideTimer);
-      replies.classList.remove("open");
-      replies.setAttribute("aria-hidden","true");
-    }
-    function scheduleAutoHide(ms){
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(()=>{
-        if (document.activeElement === input) return;
-        hideReplies();
-      }, Math.max(250, Number(ms || 1800)));
-    }
-    // If HUD is open and user is not interacting, tuck it away
-    document.addEventListener("mousemove", (e)=>{
-      if (!replies.classList.contains("open")) return;
-      const insideReplies = replies.contains(e.target);
-      const insideInputRow = $("ec-inputRow").contains(e.target);
-      if (insideReplies || insideInputRow || document.activeElement === input) return;
-      scheduleAutoHide(280);
-    });
-    repliesClose.addEventListener("click", hideReplies);
-    input.addEventListener("focus", ()=>{ showReplies(); });
-    input.addEventListener("blur", ()=>{ scheduleAutoHide(900); });
-    function appendMsg(role, text){
-      const div = document.createElement("div");
-      div.className = "ec-msg " + (role === "user" ? "user" : "bot");
-      div.textContent = String(text || "");
-      repliesBody.appendChild(div);
-      repliesBody.scrollTop = repliesBody.scrollHeight;
-      showReplies();
-      scheduleAutoHide(2200);
-    }
-    async function callElena(userText){
-      try{
-        const res = await fetch(ELENA_ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: userText,
-            context: {
-              source: "webflow",
-              widget: "elena-canvas",
-              version: "v1.2.1",
-              tool: activeTool
-            }
-          })
-        });
-        const data = await res.json().catch(()=>({}));
-        const reply =
-          (data && typeof data.reply === "string" && data.reply.trim())
-            ? data.reply
-            : "I’m here. What do you want to solve first?";
-        appendMsg("assistant", reply);
-      } catch (e){
-        appendMsg("assistant", "Hmm—connection snag. Try again in a second.");
-      }
-    }
-    function trySend(){
-      const t = String(input.value || "").trim();
-      if(!t) return;
-      input.value = "";
-      appendMsg("user", t);
-      callElena(t);
-    }
-    send.addEventListener("click", trySend);
-    input.addEventListener("keydown", (e)=>{ if(e.key === "Enter") trySend(); });
-    /* ============================================================
-      //#14 BOOT
-    ============================================================ */
-    pillText.textContent = "Shell Ready";
-    openTool("frs");
-    appendMsg("assistant", "Hey — I’m Elena. Tell me your goal, and I’ll translate it into a clean next step.");
-    scheduleAutoHide(2600);
-  })();
-  </script>
     </div>
   </div>
-  <div class="w-embed w-iframe w-script"><!--  ============================================================
-  PART 2/2 — ELENA CONCIERGE CANVAS (Finance-First Intake) v1.2
-  ✅ JS + POLISH CSS ADD-ON
-  - Collapsible sections (left)
-  - Slider-style debt (with live label)
-  - Credit band buttons (syncs with hidden select)
-  - Loads stored profile (email + profile-by-email) and pay-tables
-  - Computes BLUF verdict + updates BLUF header + badge
-  - Tool buttons load iframe (PCS / Mortgage / Full Analysis) + Open Tab
-  - Chat HUD replies restored (auto-hide) + ask-elena endpoint
-  NOTE:
-  - Uses your existing endpoints:
-    * /api/profile-by-email (Supabase)
-    * /api/pay-tables (militaryPayTables.json)
-    * /.netlify/functions/ask-elena
+  <div class="w-embed w-script"><!--  ============================================================
+  EMBED #2/3 — ASK ELENA (UNIFIED LEFT PANEL) v1.3
+  ✅ FIX: Can scroll up (proper flex + overflow rules)
+  ✅ FIX: Chat starts at TOP under USER PROFILE / Locked facts
+  ✅ UX: User messages are NOT in bubbles (only Elena replies are bubbled)
+  ✅ Keeps Hide/Show (chat log collapses, input stays)
+  ✅ Keeps EC_CANVAS_STORE + Feasibility + Derived math payload
 ===============================================================  -->
     <style>
   /* ============================================================
-    //#P1 — EXTRA POLISH (kept separate to keep Part 1 small)
+    //#A — UNIFY LEFT CHAT LOOK (remove “separate service” box)
+    Assumes your Shell already has:
+      #ec-left, #ec-replies, #ec-repliesHead, #ec-repliesBody, #ec-inputRow
   ============================================================ */
-  #ec-inputPanel::-webkit-scrollbar{ width:10px; }
-  #ec-inputPanel::-webkit-scrollbar-thumb{
-    background: rgba(255,255,255,.12);
-    border-radius: 999px;
-    border: 2px solid rgba(0,0,0,.20);
+  /* IMPORTANT: Make left panel a proper flex column so the log can scroll */
+  #ec-left{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:0 !important;
   }
-  /* Upgrade “debt” to slider-style */
-  .ec-sliderWrap{
-    border: 1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.05);
+  /* Kill the “panel within a panel” look */
+  #ec-replies{
+    width: 100% !important;
+    margin: 12px 0 10px 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    /* KEY: allow the chat area to take remaining height + become scrollable */
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+  }
+  /* Remove header row (“Elena Replies”) entirely */
+  #ec-repliesHead{ display:none !important; }
+  /* Make the message area feel like it lives in the sidebar + allow scroll */
+  #ec-repliesBody{
+    padding: 10px 0 12px 0 !important;
+    max-height: none !important;
+    /* KEY: this is the scroll container */
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    /* KEY: ensure chat starts at TOP (not bottom) */
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:flex-start !important;
+    align-items:stretch !important;
+    /* small breathing room so first message sits nicely under profile */
+    scroll-padding-top: 12px;
+    /* ✅ ONLY CHANGE: force chat log height */
+    height: 1200px !important;
+  }
+  /* Make input row stay pinned (doesn’t grow) */
+  #ec-inputRow{
+    flex: 0 0 auto !important;
+  }
+  /* ------------------------------------------------------------
+    BUBBLES
+     - Elena replies: bubble
+     - User messages: plain text (no bubble)
+  ------------------------------------------------------------ */
+  /* Elena bubble */
+  .ec-msg{
     border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.035);
+    box-shadow: none;
     padding: 10px 12px;
-    display:flex;
-    flex-direction: column;
-    gap: 8px;
+    margin: 10px 0 0 0;
+    max-width: 92%;
+    line-height: 1.35;
+    white-space: pre-wrap;
   }
-  .ec-sliderTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .ec-sliderVal{ font-size: 13px; font-weight: 900; color: rgba(255,255,255,.92); white-space: nowrap; }
-  input[type="range"].ec-range{ width:100%; accent-color: var(--accent); }
-  /* Credit band buttons */
-  .ec-bandGrid{ display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .ec-band{
-    border: 1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.20);
-    color: rgba(255,255,255,.88);
-    border-radius: 14px;
-    padding: 12px 10px;
-    font-size: 12px;
+  .ec-msg.bot{
+    align-self: flex-start;
+  }
+  /* User = NO BOX (just text) */
+  .ec-msg.user{
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 12px 0 2px 0 !important;
+    max-width: 92% !important;
+    align-self: flex-end !important;
+    text-align: right !important;
+    color: rgba(255,255,255,.88) !important;
+    font-weight: 800 !important;
+    letter-spacing: .01em !important;
+  }
+  /* Subtle “Hide/Show” pill in the sidebar (not a separate header) */
+  #ec-chatTogglePill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.16);
+    color: rgba(255,255,255,.84);
+    font-size: 11px;
     font-weight: 900;
     letter-spacing: .08em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: .15s ease;
     user-select:none;
+    transition: .18s ease;
   }
-  .ec-band:hover{ transform: translateY(-1px); filter: brightness(1.05); }
-  .ec-band.active{
-    border-color: transparent;
-    color: #050712;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    box-shadow: 0 14px 30px rgba(0,0,0,.55);
+  #ec-chatTogglePill:hover{ transform: translateY(-1px); filter: brightness(1.08); }
+  /* When collapsed: hide log only, keep input row */
+  .ec-chatCollapsed #ec-replies{ display:none !important; }
+  /* Optional: nicer scrollbar */
+  #ec-repliesBody::-webkit-scrollbar{ width: 10px; }
+  #ec-repliesBody::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,.10);
+    border-radius: 999px;
+    border: 2px solid rgba(0,0,0,0);
+    background-clip: padding-box;
   }
-  /* BLUF badge states */
-  #ec-badge.good #ec-badgeDot{ background: rgba(142,243,197,.90); }
-  #ec-badge.warn #ec-badgeDot{ background: rgba(255,207,90,.92); }
-  #ec-badge.bad  #ec-badgeDot{ background: rgba(255,90,120,.92); }
-  /* Replies panel */
-  #ec-replies{
-    width: min(980px, 100%);
-    margin: 0 auto 10px auto;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,.12);
-    background: rgba(16,20,38,.55);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 18px 46px rgba(0,0,0,.55);
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity .18s ease, transform .18s ease;
-    pointer-events: none;
-  }
-  #ec-replies.open{
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-  #ec-repliesHead{
-    padding: 10px 12px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    background: rgba(0,0,0,.10);
-  }
-  #ec-repliesTitle{
-    display:flex;
-    align-items:center;
-    gap: 10px;
-    min-width:0;
-  }
-  #ec-miniAvatar{
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background-image: url("https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png");
-    background-size: cover;
-    background-position: center;
-    border: 1px solid rgba(255,255,255,.20);
-    flex: 0 0 auto;
-  }
-  #ec-repliesLabel{
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: .10em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,.92);
-    white-space: nowrap;
-    overflow:hidden;
-    text-overflow: ellipsis;
-  }
-  #ec-repliesClose{
-    border: 1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.05);
-    color: rgba(255,255,255,.86);
-    border-radius: 10px;
-    padding: 6px 10px;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    cursor:pointer;
-  }
-  #ec-repliesClose:hover{ background: rgba(255,255,255,.10); }
-  #ec-repliesBody{
-    padding: 10px 12px;
-    display:flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 220px;
-    overflow: auto;
-  }
-  .ec-msg{
-    padding: 10px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.05);
-    color: #fff;
-    font-size: 13px;
-    line-height: 1.45;
-    white-space: pre-wrap;
-  }
-  .ec-msg.user{
-    align-self:flex-end;
-    background: rgba(142,243,197,.08);
-    border-color: rgba(142,243,197,.22);
-  }
-  .ec-msg.bot{ align-self:flex-start; }
 </style>
     <script>
-(function EC_CANVAS_V12(){
+(() => {
   "use strict";
-  if (window.__ELENA_CANVAS_V12__) return;
-  window.__ELENA_CANVAS_V12__ = true;
   /* ============================================================
-    //#0 — API ORIGIN FIX (Webflow preview → call live domain)
+    //#1 GUARD
   ============================================================ */
-  const RS_LIVE_API_ORIGIN = "https://theorozcorealty.com";
-  const RS_API_ORIGIN = (function(){
-    const host = String(location.hostname || "").toLowerCase();
-    if (host.endsWith(".webflow.io")) return RS_LIVE_API_ORIGIN;
-    return ""; // same-origin on live
-  })();
-  const api = (path)=> (RS_API_ORIGIN + path);
+  if (window.__EC_ASK_ELENA_UNIFIED_V13__) return;
+  window.__EC_ASK_ELENA_UNIFIED_V13__ = true;
   /* ============================================================
-    //#1 — ENDPOINTS
+    //#2 CONFIG
   ============================================================ */
-  const PROFILE_BY_EMAIL = api("/api/profile-by-email");
-  const PAY_TABLES       = api("/api/pay-tables");
-  const ELENA_ENDPOINT   = "https://theorozcorealty.netlify.app/.netlify/functions/ask-elena";
+  const ELENA_ENDPOINT = "https://theorozcorealty.netlify.app/.netlify/functions/ask-elena";
   /* ============================================================
-    //#2 — TOOL URLS (iframe)
-    ✅ AIOU removed (finance-only path)
-  ============================================================ */
-  const TOOL_URLS = {
-    pcs:      "https://new-real-estate-purchase.webflow.io/pcs-snapshot",
-    mortgage: "https://new-real-estate-purchase.webflow.io/mortgage-estimator-input",
-    frs:      "https://new-real-estate-purchase.webflow.io/features/analyze"
-  };
-  /* ============================================================
-    //#3 — DOM HELPERS
+    //#3 DOM
   ============================================================ */
   const $ = (id)=>document.getElementById(id);
-  const fmtUSD = (n)=> {
-    const v = Number(n || 0);
-    return v.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0});
-  };
-  const clamp = (v,min,max)=>Math.max(min, Math.min(max, v));
-  /* ============================================================
-    //#4 — DOM REFERENCES
-  ============================================================ */
-  const iframe = $("ec-iframe");
-  const toolName = $("ec-toolName");
-  const toolSub  = $("ec-toolSub");
-  const blufTitle = $("ec-blufTitle");
-  const blufText  = $("ec-blufText");
-  const pillText  = $("ec-pillText");
-  const badge = $("ec-badge");
-  const badgeText = $("ec-badgeText");
-  const btnPCS = $("ec-openPCS");
-  const btnMortgage = $("ec-openMortgage");
-  const btnFRS = $("ec-openFRS");
-  const btnOpenTab = $("ec-openTab");
-  const runBtn = $("ec-run");
-  // Profile fields
-  const pfRank = $("pf-rank");
-  const pfYos  = $("pf-yos");
-  const pfZip  = $("pf-zip");
-  const pfFam  = $("pf-fam");
-  const pfDep  = $("pf-dep");
-  const pfEmail= $("pf-email");
-  // Inputs
-  const inDebt = $("in-debt");
-  const inCredit = $("in-credit");
-  const inStation = $("in-station");
-  const inSavings = $("in-savings");
-  const inMode = $("in-mode");
-  const inTargetVal = $("in-targetVal");
-  // Chat
+  const leftPanel = $("ec-left");          // your left sidebar container
   const replies = $("ec-replies");
   const repliesBody = $("ec-repliesBody");
-  const repliesClose = $("ec-repliesClose");
   const input = $("ec-input");
   const send = $("ec-send");
+  const inputRow = $("ec-inputRow");
+  if (!leftPanel || !repliesBody || !input || !send || !inputRow) return;
   /* ============================================================
-    //#4.5 — STATE (FIXED: ensure PROFILE exists)
+    //#3B SCROLL HELPERS (fix “can’t scroll up”)
+    - Only autoscroll if the user is already near the bottom
   ============================================================ */
-  let PROFILE = null;
-  let PAY = null;
-  /* ============================================================
-    //#4.6 — EMAIL HELPER (FIXED: used by summary)
-  ============================================================ */
-  function getStoredEmail(){
+  function isNearBottom(el){
     try{
-      const em = String(localStorage.getItem("realtysass.loginEmail") || "").trim().toLowerCase();
-      if (em) return em;
-      const blob = readJSON("realtysass.profile_lookup");
-      const em2 = blob?.profile?.email ? String(blob.profile.email).trim().toLowerCase() : "";
-      return em2 || "orozco@me.com";
+      const gap = el.scrollHeight - el.scrollTop - el.clientHeight;
+      return gap < 28; // px threshold
     }catch(_){
-      return "orozco@me.com";
+      return true;
     }
+  }
+  function scrollToBottom(el){
+    try{ el.scrollTop = el.scrollHeight; }catch(_){}
   }
   /* ============================================================
-    //#5 — ADD UI ELEMENTS WE PROMISED (Slider + Credit Buttons)
-    - We convert the existing number input into a slider-wrap
-    - We add credit buttons above the select and keep select synced
+    //#4 HELPERS (pulled from your v1.0 personalization)
   ============================================================ */
-  function injectSliderForDebt(){
-    if (!inDebt) return;
-    // If already converted, skip
-    if (inDebt.classList.contains("ec-range")) return;
-    const wrap = document.createElement("div");
-    wrap.className = "ec-sliderWrap";
-    const top = document.createElement("div");
-    top.className = "ec-sliderTop";
-    const help = document.createElement("div");
-    help.className = "ec-help";
-    help.textContent = "One number (car/CC/student/etc.)";
-    const val = document.createElement("div");
-    val.className = "ec-sliderVal";
-    val.id = "in-debtVal";
-    val.textContent = fmtUSD(inDebt.value);
-    top.appendChild(help);
-    top.appendChild(val);
-    const range = document.createElement("input");
-    range.type = "range";
-    range.className = "ec-range";
-    range.min = "0";
-    range.max = "4000";
-    range.step = "50";
-    range.value = String(inDebt.value || 0);
-    // Replace the number field in place
-    const parentRow = inDebt.closest(".ec-row");
-    if (!parentRow) return;
-    // Remove the number input but keep the label and existing help (if any)
-    inDebt.style.display = "none"; // keep it as source of truth
-    wrap.appendChild(top);
-    wrap.appendChild(range);
-    // Insert after label
-    const labelEl = parentRow.querySelector("label");
-    if (labelEl && labelEl.nextSibling) {
-      parentRow.insertBefore(wrap, labelEl.nextSibling);
-    } else {
-      parentRow.appendChild(wrap);
-    }
-    function syncDebt(v){
-      const n = clamp(Number(v||0), 0, 4000);
-      inDebt.value = String(n);
-      range.value = String(n);
-      val.textContent = fmtUSD(n);
-    }
-    range.addEventListener("input", ()=>syncDebt(range.value));
-    syncDebt(inDebt.value);
-  }
-  function injectCreditButtons(){
-    if (!inCredit) return;
-    // If already injected, skip
-    if ($("in-creditGrid")) return;
-    const parentRow = inCredit.closest(".ec-row");
-    if (!parentRow) return;
-    const grid = document.createElement("div");
-    grid.className = "ec-bandGrid";
-    grid.id = "in-creditGrid";
-    const opts = [
-      {k:"excellent", t:"Excellent (760+)"},
-      {k:"good",      t:"Good (700–759)"},
-      {k:"fair",      t:"Fair (660–699)"},
-      {k:"risk",      t:"Risk (<660)"}
-    ];
-    opts.forEach(o=>{
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "ec-band" + (String(inCredit.value)===o.k ? " active" : "");
-      b.dataset.credit = o.k;
-      b.textContent = o.t.toUpperCase();
-      grid.appendChild(b);
-    });
-    // Insert grid above select, and visually de-emphasize select (still used)
-    inCredit.style.display = "none";
-    parentRow.appendChild(grid);
-    grid.addEventListener("click",(e)=>{
-      const btn = e.target.closest(".ec-band");
-      if(!btn) return;
-      const key = String(btn.dataset.credit || "good");
-      inCredit.value = key;
-      [...grid.querySelectorAll(".ec-band")].forEach(x=>x.classList.toggle("active", x===btn));
-    });
-  }
-  /* ============================================================
-    //#6 — LEFT SECTION TOGGLES
-  ============================================================ */
-  function wireSectionToggles(){
-    const heads = document.querySelectorAll("#ec-left .ec-secHead");
-    heads.forEach(h=>{
-      h.addEventListener("click", ()=>{
-        const sec = h.closest(".ec-sec");
-        if(!sec) return;
-        sec.classList.toggle("open");
-      });
-    });
-  }
-  /* ============================================================
-    //#7 — TOOL LOADER (iframe)
-  ============================================================ */
-  let lastToolUrl = TOOL_URLS.frs;
-  function setToolMeta(key){
-    const map = {
-      pcs:      { name:"PCS Snapshot", sub:"Quick PCS view • runs in this workspace" },
-      mortgage: { name:"Mortgage Estimator", sub:"Payment range sanity-check • runs in this workspace" },
-      frs:      { name:"Full Financial Analysis", sub:"FRS dashboard • runs in this workspace" }
-    };
-    const m = map[key] || map.frs;
-    toolName.textContent = m.name;
-    toolSub.textContent  = m.sub;
-  }
-  function openTool(key){
-    const url = TOOL_URLS[key];
-    if(!url) return;
-    lastToolUrl = url;
-    iframe.src = url;
-    setToolMeta(key);
-  }
-  btnPCS && btnPCS.addEventListener("click", ()=>openTool("pcs"));
-  btnMortgage && btnMortgage.addEventListener("click", ()=>openTool("mortgage"));
-  btnFRS && btnFRS.addEventListener("click", ()=>openTool("frs"));
-  btnOpenTab && btnOpenTab.addEventListener("click", ()=>{
-    if (lastToolUrl) window.open(lastToolUrl, "_blank", "noopener,noreferrer");
-  });
- /* ============================================================
-  //#8 — PROFILE LOAD (FIXED: NO PREFLIGHT, SNAPSHOT-PROVEN)
-============================================================ */
-function readJSON(key){
-  try { return JSON.parse(localStorage.getItem(key) || "null"); }
-  catch(_) { return null; }
-}
-function getLoginEmail(){
-  return String(localStorage.getItem("realtysass.loginEmail") || "").trim().toLowerCase();
-}
-function getProfileLookupEmail(){
-  const blob = readJSON("realtysass.profile_lookup");
-  return blob?.profile?.email
-    ? String(blob.profile.email).trim().toLowerCase()
-    : "";
-}
-function resolveEmail(){
-  return getLoginEmail() || getProfileLookupEmail() || "orozco@me.com";
-}
-/* ✅ NO-PREFLIGHT POST — EXACT SAME AS SNAPSHOT */
-async function postJSON_NoPreflight(url, body){
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=UTF-8" },
-    body: JSON.stringify(body || {})
-  });
-  const j = await r.json().catch(()=>({}));
-  if (!r.ok || j.ok === false) {
-    throw new Error(j.error || ("HTTP " + r.status));
-  }
-  return j;
-}
-async function loadProfileAndPay_FIXED(){
-  const email = resolveEmail();
-  pfEmail.textContent = email;
-  let profile = null;
-  /* === PROFILE (Supabase) === */
-  const profRes = await postJSON_NoPreflight(PROFILE_BY_EMAIL, { email });
-  profile = profRes?.profile || null;
-  if (!profile) throw new Error("Profile not found");
-  PROFILE = profile; /* ✅ FIX: required for family size logic */
-  // cache for all tools
-  localStorage.setItem(
-    "realtysass.profile_lookup",
-    JSON.stringify({ ok:true, profile })
-  );
-  /* === MAP PROFILE → PHASE 1 UI === */
-  const rank =
-    profile.rank_paygrade ||
-    profile.rank ||
-    "--";
-  const yos =
-    Number(profile.yos);
-  const zip =
-    profile.zip ||
-    profile.base_zip ||
-    profile.base ||
-    "—";
-  const famSize =
-    Number(profile.family_size ?? profile.familySize ?? 0);
-  const dependents =
-    profile.family === true || profile.dependents === true
-      ? "Yes"
-      : "No";
-  pfRank.textContent = rank;
-  pfYos.textContent  = Number.isFinite(yos) ? String(yos) : "—";
-  pfZip.textContent  = zip;
-  pfFam.textContent  = famSize ? String(famSize) : "—";
-  pfDep.textContent  = dependents;
-  /* === PAY TABLES (deterministic) === */
-  const payRes = await postJSON_NoPreflight(PAY_TABLES, {
-    rank,
-    yos,
-    zip,
-    family: dependents === "Yes"
-  });
-  PAY = payRes || null;
-}
-/* === RETRY LOOP (LOGIN SAFE) === */
-(function bootProfile(){
-  let tries = 0;
-  const tick = async ()=>{
-    tries++;
-    try{
-      await loadProfileAndPay_FIXED();
-      pillText.textContent = "Profile Ready";
-    }catch(err){
-      if (tries < 20){
-        setTimeout(tick, 500);
-      }else{
-        pillText.textContent = "Profile Error";
-        console.error("Profile load failed:", err);
-      }
-    }
+  const PAYGRADE_TITLES = {
+    "E-1":"AB","E-2":"Amn","E-3":"A1C","E-4":"SrA","E-5":"SSgt","E-6":"TSgt","E-7":"MSgt","E-8":"SMSgt","E-9":"CMSgt",
+    "W-1":"WO1","W-2":"CWO2","W-3":"CWO3","W-4":"CWO4","W-5":"CWO5",
+    "O-1":"2d Lt","O-2":"1st Lt","O-3":"Capt","O-4":"Maj","O-5":"Lt Col","O-6":"Col",
+    "O-7":"Brig Gen","O-8":"Maj Gen","O-9":"Lt Gen","O-10":"Gen"
   };
-  tick();
-})();
-  /* ============================================================
-    //#9 — VERDICT MODEL (deterministic-ish, simple + explainable)
-    We keep it stable: ratios + buffers + family size modifier.
-    Outputs:
-      - BLUF title + message
-      - Badge state + label
-      - Saves summary to localStorage for downstream tools
-  ============================================================ */
-  function creditToAprBand(credit){
-    // conservative bands
-    const map = { excellent: 0.0625, good: 0.0675, fair: 0.075, risk: 0.085 };
-    return map[String(credit||"good")] || map.good;
+  function safeJSON(key, fallback){
+    try{ return JSON.parse(localStorage.getItem(key) || "null") ?? fallback; }
+    catch(_){ return fallback; }
   }
-  function familyCostModifier(famSize){
-    // simple, transparent modifier: additional variable cost per person beyond 2
-    const fs = Number(famSize||0);
-    if (!fs) return 0;
-    const extra = Math.max(0, fs - 2);
-    return extra * 180; // $180 per additional person baseline
+  function sanitizeName(s){
+    const str = String(s ?? "").trim();
+    if(!str) return "";
+    return str.replace(/^(?:\s*(hello|hi|hey)\b[\s,.:!-]*)+/i, "").trim();
   }
-  function timeAtStationPenalty(station){
-    // shorter station = higher friction risk
-    const s = String(station||"").toLowerCase();
-    if (s === "lt24") return 0.06;    // +6% stress
-    if (s === "24_36") return 0.03;   // +3%
-    if (s === "gt36") return 0.00;
-    return 0.03;
-  }
-  function paymentEstimateFromPrice(price, apr){
-    // very rough P&I only factor for 30y:
-    // Use amortization formula with monthly rate
-    const P = Number(price||0);
-    const r = (Number(apr||0) / 12);
-    const n = 360;
-    if (!P || !r) return 0;
-    const m = (P * r) / (1 - Math.pow(1 + r, -n));
-    return m;
-  }
-  function buildVerdict(){
-    const basePay = Number(PAY && PAY.basePay || 0);
-    const bah     = Number(PAY && PAY.bah || 0);
-    const bas     = Number(PAY && PAY.bas || 0);
-    const gross = basePay + bah + bas; // simplified monthly gross comp
-    const debt  = Number(inDebt.value || 0);
-    const famSz = Number(PROFILE && (PROFILE.family_size || PROFILE.familySize || PROFILE.family) || 0);
-    const famAdj = familyCostModifier(famSz);
-    const credit = String(inCredit.value || "good");
-    const apr = creditToAprBand(credit);
-    const mode = String(inMode.value || "buy"); // buy/rent/onbase
-    const station = String(inStation.value || "gt36");
-    const riskPenalty = timeAtStationPenalty(station);
-    const targetPrice = Number(inTargetVal.value || 0);
-    const estPI = paymentEstimateFromPrice(targetPrice, apr);
-    const estAllIn = estPI * 1.28; // taxes/ins/hoa buffer placeholder (transparent)
-    const allIn = estAllIn * (1 + riskPenalty);
-    // guardrails (military-trust)
-    const housingCap = gross * 0.30; // conservative
-    const dti = gross ? (debt / gross) : 0;
-    // disposable after debt + family baseline + housing target
-    const after = gross - debt - famAdj - (mode==="buy" ? allIn : 0);
-    const afterIfRent = gross - debt - famAdj - (mode==="rent" ? housingCap : 0);
-    // Verdict logic
-    let state = "warn";
-    let title = "PRELIMINARY";
-    let msg   = "Add constraints on the left to generate a clean verdict.";
-    const hasMinimum = gross > 0 && debt >= 0;
-    if (!hasMinimum){
-      state = "warn";
-      title = "NEEDS PROFILE";
-      msg = "Load a valid rank/YOS/ZIP so pay tables can produce a deterministic verdict.";
-    } else {
-      // On-base logic: if family large and disposable thin → recommend on-base
-      if (mode === "onbase"){
-        state = "good";
-        title = "ON-BASE LANE";
-        msg = "On-base housing selected. We’ll treat housing cost as controlled and focus on debt + savings runway.";
-      } else if (dti >= 0.25){
-        state = "bad";
-        title = "DO NOT BUY YET";
-        msg = `Your debt load is too high for a safe purchase. Reduce monthly debt until DTI is under ~20% (currently ${(dti*100).toFixed(0)}%).`;
-      } else if (mode === "buy"){
-        if (allIn > housingCap){
-          state = "bad";
-          title = "PAYMENT TOO HIGH";
-          msg = `Target payment is above a conservative cap. Cap ≈ ${fmtUSD(housingCap)} / mo. Your target all-in ≈ ${fmtUSD(allIn)} / mo.`;
-        } else if (after < gross * 0.08){
-          state = "warn";
-          title = "TIGHT BUFFER";
-          msg = `You can fit the payment, but buffer is thin. Aim for 8–10% leftover after debt + baseline costs.`;
-        } else {
-          state = "good";
-          title = "GREEN LIGHT";
-          msg = `Payment fits a conservative cap and you still have breathing room. Next: compare against rent and validate cash reserves.`;
-        }
-      } else { // rent
-        if (afterIfRent < gross * 0.10){
-          state = "warn";
-          title = "RENT, STABILIZE";
-          msg = `Rent looks safer right now, but your buffer is still thin. Reduce debt or increase savings runway.`;
-        } else {
-          state = "good";
-          title = "RENT MAKES SENSE";
-          msg = `Rent keeps you in a safer band while you build reserves. Recheck buy once debt/savings improve.`;
-        }
-      }
-      // Family size reality check
-      if (Number(famSz||0) >= 6 && state !== "good"){
-        msg += " Family size is a major cost multiplier here—on-base housing may be the smarter control move.";
-      }
+  function lastNameFromFullName(full){
+    const cleaned = sanitizeName(full);
+    if(!cleaned) return "";
+    if (cleaned.includes(",")){
+      const parts = cleaned.split(",").map(x=>x.trim()).filter(Boolean);
+      return parts[0] || "";
     }
-    // Build numeric summary for storage
-    const summary = {
-      ts: Date.now(),
-      email: getStoredEmail(),
-      profile: { rank: pfRank.textContent, yos: pfYos.textContent, zip: pfZip.textContent, familySize: pfFam.textContent, dependents: pfDep.textContent },
-      pay: { basePay, bah, bas, gross },
-      inputs: { debt, credit, station, savings: String(inSavings.value||"unknown"), mode, targetPrice, apr },
-      derived: { dti, housingCap, allIn, familyAdj: famAdj },
-      verdict: { state, title, msg }
-    };
-    return summary;
+    const parts = cleaned.split(/\s+/).filter(Boolean);
+    return parts.length ? parts[parts.length-1] : "";
   }
-  function applyBLUF(summary){
-    if (!summary) return;
-    blufTitle.textContent = String(summary.verdict.title || "BLUF");
-    blufText.textContent  = String(summary.verdict.msg || "");
-    // badge state
-    badge.classList.remove("good","warn","bad");
-    badge.classList.add(summary.verdict.state || "warn");
-    badgeText.textContent =
-      summary.verdict.state === "good" ? "Green" :
-      summary.verdict.state === "bad"  ? "No-Go" : "Caution";
-    pillText.textContent = "Verdict Updated";
+  function computeHelloDisplay(profile){
+    const p = profile || {};
+    const full = sanitizeName(p.fullName || p.full_name || p.name || "");
+    const last = String(p.last_name || "").trim() || lastNameFromFullName(full);
+    const rankPaygrade = String(p.rank || p.rank_paygrade || "").trim();
+    const rankTitle = String(p.rank_title || PAYGRADE_TITLES[rankPaygrade] || rankPaygrade || "").trim();
+    const display = [rankTitle, last].filter(Boolean).join(" ").trim() || last || full || "";
+    return display || null; // IMPORTANT: no "Hello" prefix
+  }
+  function clamp(n,min,max){ n = Number(n||0); return Math.max(min, Math.min(max, n)); }
+  function scoreAPRPercent(score){
+    const s = Number(score || 720);
+    if(s >= 780) return 6.50;
+    if(s >= 760) return 6.75;
+    if(s >= 720) return 7.00;
+    if(s >= 700) return 7.20;
+    if(s >= 680) return 7.35;
+    if(s >= 660) return 7.85;
+    if(s >= 640) return 8.25;
+    if(s >= 620) return 9.25;
+    return 9.95;
+  }
+  function mortgagePI(principal, aprPercent, years){
+    const P = Number(principal || 0);
+    const r = (Number(aprPercent || 0) / 100) / 12;
+    const n = (Number(years || 30) * 12);
+    if (P <= 0 || r <= 0 || n <= 0) return 0;
+    return (P * r) / (1 - Math.pow(1 + r, -n));
+  }
+  function principalFromPayment(payment, aprPercent, years){
+    const pmt = Number(payment || 0);
+    const r = (Number(aprPercent || 0) / 100) / 12;
+    const n = (Number(years || 30) * 12);
+    if (pmt <= 0 || r <= 0 || n <= 0) return 0;
+    // P = pmt * (1 - (1+r)^-n) / r
+    return pmt * (1 - Math.pow(1 + r, -n)) / r;
   }
   /* ============================================================
-    //#10 — CHAT HUD (same behavior as v1.1)
+    //#5 CHAT TOGGLE PILL (feels native to left sidebar)
   ============================================================ */
-  let hideTimer = null;
-  function showReplies(){
-    if (!replies) return;
-    clearTimeout(hideTimer);
-    replies.classList.add("open");
-    replies.setAttribute("aria-hidden","false");
+  let collapsed = false;
+  function ensureTogglePill(){
+    if ($("ec-chatTogglePill")) return;
+    const pill = document.createElement("button");
+    pill.type = "button";
+    pill.id = "ec-chatTogglePill";
+    pill.textContent = "Hide Chat";
+    // place it right above the chat log (so it reads as one module)
+    leftPanel.insertBefore(pill, replies);
+    pill.addEventListener("click", ()=>{
+      collapsed = !collapsed;
+      leftPanel.classList.toggle("ec-chatCollapsed", collapsed);
+      pill.textContent = collapsed ? "Show Chat" : "Hide Chat";
+      // do NOT force-scroll here; let user keep their place
+    });
   }
-  function hideReplies(){
-    if (!replies) return;
-    clearTimeout(hideTimer);
-    replies.classList.remove("open");
-    replies.setAttribute("aria-hidden","true");
-  }
-  function scheduleAutoHide(ms){
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(()=>{
-      if (document.activeElement === input) return;
-      hideReplies();
-    }, Math.max(250, Number(ms || 1800)));
-  }
+  /* ============================================================
+    //#6 MESSAGES
+    - Autoscroll ONLY if user is already near bottom
+    - Chat naturally starts at top because container is flex-start
+  ============================================================ */
   function appendMsg(role, text){
-    if (!repliesBody) return;
+    const shouldStick = isNearBottom(repliesBody);
     const div = document.createElement("div");
     div.className = "ec-msg " + (role === "user" ? "user" : "bot");
     div.textContent = String(text || "");
     repliesBody.appendChild(div);
-    repliesBody.scrollTop = repliesBody.scrollHeight;
-    showReplies();
-    scheduleAutoHide(2200);
+    if (shouldStick) scrollToBottom(repliesBody);
   }
-  async function callElena(userText){
-    try{
-      const res = await fetch(ELENA_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userText,
-          context: { source:"webflow", widget:"elena-canvas", version:"v1.2", tool:"finance" }
-        })
-      });
-      const data = await res.json().catch(()=>({}));
-      const reply = (data && data.reply) ? data.reply : "I’m here. What do you want to solve first?";
-      appendMsg("assistant", reply);
-    }catch(_){
-      appendMsg("assistant", "Hmm—connection snag. Try again in a second.");
+  /* ============================================================
+    //#7 LIVE SNAPSHOT (from Embed #3 + fallbacks)
+  ============================================================ */
+  function getSnap(){
+    // Primary: global store from Embed #3
+    const s = window.EC_CANVAS_STORE && typeof window.EC_CANVAS_STORE.snapshot === "function"
+      ? window.EC_CANVAS_STORE.snapshot()
+      : null;
+    // Fallbacks: existing LS keys you already use
+    const loginEmail = String(localStorage.getItem("realtysass.loginEmail") || "").trim().toLowerCase();
+    const lookup = safeJSON("realtysass.profile_lookup", {}) || {};
+    const profile = s?.profile || lookup?.profile || safeJSON("realtysass.profile", null);
+    // KPI fallbacks (if store not ready yet)
+    const bridge = safeJSON("realtysass.bridge", {}) || {};
+    const ov = safeJSON("realtysass.kpi_overrides.v1", {}) || {};
+    const kpis = s?.kpis || null;
+    const verdict = s?.verdict || safeJSON("realtysass.ec_verdict.v1", null);
+    return {
+      ts: Date.now(),
+      activeTool: s?.activeTool || "frs",
+      lastToolUrl: s?.lastToolUrl || "",
+      profile: profile || null,
+      pay: s?.pay || null,
+      city: s?.city || null,
+      kpis: kpis,
+      verdict: verdict,
+      bridge,
+      ov,
+      email: (profile?.email || loginEmail || "").toString().trim().toLowerCase()
+    };
+  }
+  /* ============================================================
+    //#7B FEASIBILITY PACKET (numbers Elena needs)
+  ============================================================ */
+  function buildFeasibility(snap){
+    const k = snap?.kpis || {};
+    const bridge = snap?.bridge || {};
+    const ov = snap?.ov || {};
+    const income = Number(k.income ?? 0);
+    const expenses = Number(k.expenses ?? 0);
+    const price =
+      Number(k.price ?? ov.housing ?? bridge.housing ?? bridge.homePrice ?? bridge.purchasePrice ?? bridge.price ?? 0);
+    const downpayment =
+      Number(k.downpayment ?? ov.savings ?? bridge.dpAmt ?? bridge.downPayment ?? bridge.downPaymentAmt ?? bridge.down_payment ?? bridge.savings ?? 0);
+    const creditScore =
+      Number(k.creditScore ?? ov.creditScore ?? bridge.creditScore ?? bridge.credit_score ?? 0) || 720;
+    const termYears =
+      Number(k.termYears ?? bridge.termYears ?? bridge.term ?? bridge.term_years ?? 30) || 30;
+    const tihoa = Number(k.tihoa ?? bridge.tihoa ?? 0);
+    const pmi = Number(k.pmi ?? bridge.pmi ?? 0);
+    const aprPercent =
+      Number(k.aprPercent ?? bridge.apr ?? 0) > 0
+        ? Number(k.aprPercent ?? bridge.apr)
+        : scoreAPRPercent(creditScore);
+    // Housing monthly: if k.housingMonthly exists, trust it
+    let mortgageMonthly = Number(k.housingMonthly ?? 0);
+    // If missing, reconstruct it (P&I + tihoa + pmi)
+    if (!mortgageMonthly || mortgageMonthly <= 0){
+      if (price >= 50000){
+        const principal = Math.max(0, price - Math.max(0, downpayment));
+        const pi = mortgagePI(principal, aprPercent, termYears);
+        mortgageMonthly = Math.max(0, pi) + Math.max(0, tihoa) + Math.max(0, pmi);
+      } else {
+        mortgageMonthly = Number(price || 0);
+      }
     }
+    const residualIncome = income - expenses;
+    const disposableAfterMortgage = income - expenses - mortgageMonthly;
+    const housingCap = income * 0.30;
+    const overCapDelta = mortgageMonthly - housingCap;
+    const leftoverRatio = income > 0 ? (disposableAfterMortgage / income) : 0;
+    const status =
+      income <= 0 ? "needs_income" :
+      mortgageMonthly <= 0 ? "needs_housing" :
+      (overCapDelta > 0) ? "no_go_over_cap" :
+      (disposableAfterMortgage < income*0.08) ? "caution_thin_buffer" :
+      "green";
+    return {
+      income,
+      expenses,
+      price,
+      downpayment,
+      creditScore,
+      termYears,
+      aprPercent,
+      tihoa,
+      pmi,
+      mortgageMonthly,
+      residualIncome,
+      disposableAfterMortgage,
+      housingCap,
+      overCapDelta,
+      leftoverRatio,
+      status
+    };
+  }
+  /* ============================================================
+    //#7C DERIVED “WHAT-IF” INSIGHTS
+  ============================================================ */
+  function buildDerived(feas){
+    const housingCap = Number(feas.housingCap || 0);
+    const maxMortgageRecommended = housingCap; // 30% rule
+    // principal max under cap (back out tihoa/pmi first)
+    const payForPI = Math.max(0, maxMortgageRecommended - Math.max(0, feas.tihoa) - Math.max(0, feas.pmi));
+    const maxPrincipal = principalFromPayment(payForPI, feas.aprPercent, feas.termYears);
+    const maxPriceWithCurrentDP = Math.max(0, maxPrincipal + Math.max(0, feas.downpayment));
+    // For current price: what DP would make it fit the cap?
+    const principalMaxForCap = maxPrincipal;
+    const dpNeededToFitCap = Math.max(0, Math.max(0, feas.price) - Math.max(0, principalMaxForCap));
+    const dpGap = dpNeededToFitCap - Math.max(0, feas.downpayment);
+    return {
+      maxMortgageRecommended,
+      maxPrincipalAtCap: maxPrincipal,
+      maxPriceWithCurrentDownpayment: maxPriceWithCurrentDP,
+      downpaymentNeededToFitCap: dpNeededToFitCap,
+      downpaymentGapToFitCap: dpGap
+    };
+  }
+  /* ============================================================
+    //#8 ELENA CALL (send full context)
+  ============================================================ */
+  async function callElena(userText){
+    const snap = getSnap();
+    const hello = computeHelloDisplay(snap.profile);
+    const feasibility = buildFeasibility(snap);
+    const derived = buildDerived(feasibility);
+    const payload = {
+      message: userText,
+      email: snap.email || null,
+      context: {
+        source: "webflow",
+        widget: "elena-left-unified",
+        version: "v1.3",
+        tool: snap.activeTool,
+        hello: hello || null,
+        // raw truth
+        profile: snap.profile || null,
+        pay: snap.pay || null,
+        city: snap.city || null,
+        kpis: snap.kpis || null,
+        verdict: snap.verdict || null,
+        // Feasibility Snapshot packet + derived what-if math
+        feasibility,
+        derived
+      }
+    };
+    const res = await fetch(ELENA_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(()=>({}));
+    const reply =
+      (data && typeof data.reply === "string" && data.reply.trim())
+        ? data.reply
+        : (hello ? `Got you, ${hello}. Want me to optimize price, downpayment, or expenses to improve your buffer?` : "Got you. Want me to optimize price, downpayment, or expenses to improve your buffer?");
+    appendMsg("assistant", reply);
   }
   function trySend(){
     const t = String(input.value || "").trim();
     if(!t) return;
     input.value = "";
     appendMsg("user", t);
-    callElena(t);
+    callElena(t).catch(()=>{
+      appendMsg("assistant", "Connection snag. Try again in a second.");
+    });
   }
   /* ============================================================
-    //#11 — WIRE EVENTS
+    //#9 WIRE EVENTS
   ============================================================ */
-  function wireChat(){
-    if (!send || !input) return;
-    // inject replies panel ABOVE input row if missing (Part 1 kept it minimal)
-    if (!replies){
-      const dock = $("ec-chatDock");
-      if (dock){
-        const rep = document.createElement("div");
-        rep.id = "ec-replies";
-        rep.setAttribute("aria-hidden","true");
-        rep.innerHTML = `
-          <div id="ec-repliesHead">
-            <div id="ec-repliesTitle">
-              <div id="ec-miniAvatar"></div>
-              <div id="ec-repliesLabel">Elena Replies</div>
-            </div>
-            <button id="ec-repliesClose" type="button">Hide</button>
-          </div>
-          <div id="ec-repliesBody"></div>
-        `;
-        dock.insertBefore(rep, $("ec-inputRow"));
+  send.addEventListener("click", trySend);
+  input.addEventListener("keydown", (e)=>{ if (e.key === "Enter") trySend(); });
+  /* ============================================================
+    //#10 BOOT (personal greeting)
+  ============================================================ */
+  ensureTogglePill();
+  const snap = getSnap();
+  const hello = computeHelloDisplay(snap.profile);
+  const feas = buildFeasibility(snap);
+  // Greeting renders at TOP; no forced scroll-to-bottom behavior here
+  appendMsg("assistant",
+    hello
+      ? `I’m Elena. Numbers first, always — ${hello}. Right now you’re sitting around ${Math.round(feas.disposableAfterMortgage)} dollars of breathing room. What are we tuning?`
+      : "I’m Elena. Numbers first, always. What are we tuning — price, downpayment, or expenses?"
+  );
+})();
+</script>
+  </div>
+  <div class="w-embed w-script"><!--  ============================================================
+  EMBED #3/3 — CORE OWNER (BRAIN-POWERED) v1.0.1
+  ✅ Uses ONLY Netlify API_BASE (Webflow-safe)
+  ✅ Waits for unlock + loginEmail (matches your Brain Test)
+  ✅ Calls /api/brain once -> gets profile + pay + city
+  ✅ Populates Profile Loaded fields
+  ✅ Publishes EC_CANVAS_STORE snapshot for Ask-Elena (Embed #2)
+  ✅ Computes Grade/Disposable + BLUF from live KPI storage
+  ✅ UPDATE: BLUF now comes from /api/bluf (deterministic server model)
+===============================================================  -->
+    <script>
+(() => {
+  "use strict";
+  /* ============================================================
+    //#1 GUARD
+  ============================================================ */
+  if (window.__EC_CORE_OWNER_BRAIN_V101__) return;
+  window.__EC_CORE_OWNER_BRAIN_V101__ = true;
+  /* ============================================================
+    //#2 API BASE (Webflow-safe)
+  ============================================================ */
+  const API_BASE = "https://theorozcorealty.netlify.app/api";
+  /* ============================================================
+    //#2B BLUF ENDPOINT
+  ============================================================ */
+  const BLUF_ENDPOINT = `${API_BASE}/bluf`;
+  /* ============================================================
+    //#3 DOM HELPERS
+  ============================================================ */
+  const $ = (id)=>document.getElementById(id);
+  const els = {
+    // header
+    grade: $("ec-grade"),
+    disp: $("ec-disposable"),
+    fill: $("ec-meterFill"),
+    dot:  $("ec-gradeDot"),
+    bluf: $("ec-blufText"),
+    pill: $("ec-pillText"),
+    // tools
+    iframe: $("ec-iframe"),
+    toolName: $("ec-toolName"),
+    toolSub: $("ec-toolSub"),
+    btnPCS: $("ec-openPCS"),
+    btnMortgage: $("ec-openMortgage"),
+    btnFRS: $("ec-openFRS"),
+    btnOpenTab: $("ec-openTab"),
+    // profile toggle
+    editBtn: $("ec-editProfile"),
+    profileBlock: $("ec-profileBlock"),
+    // profile fields
+    pfEmail: $("pf-email"),
+    pfName: $("pf-name"),
+    pfMode: $("pf-mode"),
+    pfRank: $("pf-rank"),
+    pfYos: $("pf-yos"),
+    pfBase: $("pf-base"),
+    pfFamily: $("pf-family"),
+    pfVa: $("pf-va"),
+    pfStatus: $("pf-status"),
+  };
+  if (!els.iframe || !els.btnFRS || !els.pill) return;
+  function setText(el, v){
+    if(!el) return;
+    const val = (v === undefined || v === null || String(v).trim() === "") ? "—" : String(v);
+    el.textContent = val;
+  }
+  function fmtUSD(n){
+    const num = Number(n || 0);
+    try{
+      return new Intl.NumberFormat(undefined, { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(num);
+    }catch(_){
+      return "$" + Math.round(num).toLocaleString();
+    }
+  }
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+  function dotKind(kind){
+    if (!els.dot) return;
+    if (kind === "good") els.dot.style.background = "rgba(142,243,197,.95)";
+    else if (kind === "warn") els.dot.style.background = "rgba(249,199,79,.95)";
+    else if (kind === "bad") els.dot.style.background = "rgba(255,107,107,.95)";
+    else els.dot.style.background = "#888";
+  }
+  /* ============================================================
+    //#4 SHARED STORE (used by Embed #2)
+  ============================================================ */
+  const STORE = (function(){
+    const listeners = new Set();
+    const state = {
+      activeTool: "frs",
+      lastToolUrl: "",
+      profile: null,
+      pay: null,
+      city: null,
+      kpis: null,
+      verdict: null
+    };
+    function snapshot(){
+      return {
+        ts: Date.now(),
+        activeTool: state.activeTool,
+        lastToolUrl: state.lastToolUrl,
+        profile: state.profile,
+        pay: state.pay,
+        city: state.city,
+        kpis: state.kpis,
+        verdict: state.verdict
+      };
+    }
+    function emit(){
+      const snap = snapshot();
+      listeners.forEach(fn => { try{ fn(snap); }catch(_){ } });
+    }
+    function set(key, val){
+      state[key] = val;
+      emit();
+    }
+    function on(fn){
+      listeners.add(fn);
+      return ()=>listeners.delete(fn);
+    }
+    return { set, on, snapshot, _state: state };
+  })();
+  window.EC_CANVAS_STORE = STORE;
+  /* ============================================================
+    //#5 TOOL SWITCHER (iframe owner)
+  ============================================================ */
+  const TOOL_URLS = {
+    pcs:      "https://new-real-estate-purchase.webflow.io/pcs-snapshot",
+    mortgage: "https://new-real-estate-purchase.webflow.io/mortgage-estimator-input",
+    frs:      "https://new-real-estate-purchase.webflow.io/features/analyze"
+  };
+  function setBtnsActive(which){
+    els.btnPCS.className = "ec-btnGhost";
+    els.btnMortgage.className = "ec-btnGhost";
+    els.btnFRS.className = "ec-btnGhost";
+    if (which === "pcs") els.btnPCS.className = "ec-btn";
+    if (which === "mortgage") els.btnMortgage.className = "ec-btn";
+    if (which === "frs") els.btnFRS.className = "ec-btn";
+  }
+  function setToolMeta(which){
+    const map = {
+      pcs:      { name:"PCS", sub:"Quick PCS view • runs in this workspace" },
+      mortgage: { name:"Mortgage", sub:"Estimator workspace • sanity-check payment range" },
+      frs:      { name:"Full Financial Analysis", sub:"Runs in this workspace • charts + dashboards live here" }
+    };
+    const m = map[which] || map.frs;
+    if (els.toolName) els.toolName.textContent = m.name;
+    if (els.toolSub)  els.toolSub.textContent  = m.sub;
+  }
+  function openTool(which){
+    const url = TOOL_URLS[which];
+    if (!url) return;
+    setBtnsActive(which);
+    setToolMeta(which);
+    STORE.set("activeTool", which);
+    STORE.set("lastToolUrl", url);
+    els.iframe.src = url;
+  }
+  els.btnPCS.addEventListener("click", ()=>openTool("pcs"));
+  els.btnMortgage.addEventListener("click", ()=>openTool("mortgage"));
+  els.btnFRS.addEventListener("click", ()=>openTool("frs"));
+  els.btnOpenTab.addEventListener("click", ()=>{
+    const u = STORE._state.lastToolUrl || TOOL_URLS.frs;
+    if (u) window.open(u, "_blank", "noopener,noreferrer");
+  });
+  /* ============================================================
+    //#6 EDIT PROFILE TOGGLE (show/hide Profile Loaded)
+  ============================================================ */
+  function setProfileOpen(open){
+    if (!els.profileBlock || !els.editBtn) return;
+    els.profileBlock.classList.toggle("is-hidden", !open);
+    els.editBtn.textContent = open ? "Close" : "Edit Profile";
+  }
+  if (els.editBtn && els.profileBlock){
+    setProfileOpen(false); // default hidden
+    els.editBtn.addEventListener("click", ()=>{
+      const isHidden = els.profileBlock.classList.contains("is-hidden");
+      setProfileOpen(isHidden);
+    });
+  }
+  /* ============================================================
+    //#7 LOGIN / LOCK DETECTION (matches your Brain Test pattern)
+  ============================================================ */
+  function readLoginEmail(){
+    try{
+      const v = localStorage.getItem("realtysass.loginEmail");
+      return (v||"").trim().toLowerCase();
+    }catch(_){
+      return "";
+    }
+  }
+  function isLocked(){
+    const overlay = document.getElementById("rs-lock-overlay");
+    if (!overlay) return false;
+    if (overlay.classList && overlay.classList.contains("rs-hidden")) return false;
+    if (overlay.getAttribute("aria-hidden") === "true") return false;
+    const vis = String(overlay.style && overlay.style.visibility || "").toLowerCase();
+    const op  = String(overlay.style && overlay.style.opacity || "");
+    if (vis === "hidden") return false;
+    if (String(op).trim() === "0") return false;
+    return true;
+  }
+  async function runBrain(email){
+    const res = await fetch(`${API_BASE}/brain`, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        email,
+        cityKey: "SanAntonio",
+        bedrooms: 4
+      })
+    });
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(data?.error || "Brain call failed.");
+    return data;
+  }
+  /* ============================================================
+    //#8 PAINT PROFILE + PAY (from brain response)
+  ============================================================ */
+  function paintFromBrain(data, email){
+    const p = data?.profile || {};
+    const pay = data?.pay || {};
+    const city = data?.city || null;
+    // Profile UI
+    setText(els.pfEmail, email || p.email || "—");
+    setText(els.pfName, p.full_name || p.name || "—");
+    setText(els.pfMode, p.mode || "—");
+    setText(els.pfRank, p.rank_paygrade || p.rank || "—");
+    setText(els.pfYos, (p.yos ?? p.years_of_service ?? "—"));
+    setText(els.pfBase, p.base || "—");
+    setText(els.pfFamily, (p.family_size ?? p.familySize ?? p.family ?? "—"));
+    const vaRaw = (p.va_disability ?? p.va_percent ?? p.va_pct ?? "");
+    const va = (vaRaw === "" || vaRaw === null || vaRaw === undefined)
+      ? "—"
+      : (String(vaRaw).includes("%") ? String(vaRaw) : String(vaRaw) + "%");
+    setText(els.pfVa, va);
+    setText(els.pfStatus, data?.ok ? "Profile Synced" : "Profile Error");
+    // Store (single truth)
+    const profilePacked = {
+      email: (email || p.email || "").toString().trim().toLowerCase(),
+      fullName: (p.full_name || p.name || "").toString().trim(),
+      mode: (p.mode || "").toString().trim(),
+      rank: (p.rank_paygrade || p.rank || "").toString().trim(),
+      yos: Number.isFinite(Number(p.yos)) ? Number(p.yos) : null,
+      base: (p.base || "").toString().trim(),
+      family: (p.family_size ?? p.familySize ?? p.family ?? null),
+      va: va,
+      zip: (p.zip || p.base_zip || null)
+    };
+    const payPacked = {
+      basePay: Number(pay.basePay || 0),
+      bah: Number(pay.bah || 0),
+      bas: Number(pay.bas || 0),
+      total: Number(pay.totalPay || pay.total || (Number(pay.basePay||0)+Number(pay.bah||0)+Number(pay.bas||0)))
+    };
+    STORE.set("profile", profilePacked);
+    STORE.set("pay", payPacked);
+    STORE.set("city", city);
+    // Cache for other modules (keep your ecosystem keys alive)
+    try{
+      localStorage.setItem("realtysass.profile_lookup", JSON.stringify({ ok:true, profile: profilePacked }));
+    }catch(_){}
+    els.pill.textContent = data?.ok ? "Profile Synced" : "Profile Error";
+  }
+  /* ============================================================
+    //#9 GRADE + BLUF (math first, live loop)
+    ✅ UPDATE: Calls /api/bluf to generate BLUF + grade deterministically
+    ✅ Still uses the SAME KPI extraction + mortgage math you already had
+  ============================================================ */
+  function safeJSON(key, fallback){
+    try{ return JSON.parse(localStorage.getItem(key) || "null") ?? fallback; }
+    catch(_){ return fallback; }
+  }
+  function scoreAPRPercent(score){
+    const s = Number(score || 720);
+    if(s >= 780) return 6.50;
+    if(s >= 760) return 6.75;
+    if(s >= 720) return 7.00;
+    if(s >= 700) return 7.20;
+    if(s >= 680) return 7.35;
+    if(s >= 660) return 7.85;
+    if(s >= 640) return 8.25;
+    if(s >= 620) return 9.25;
+    return 9.95;
+  }
+  function mortgagePI(principal, aprPercent, years){
+    const P = Number(principal || 0);
+    const r = (Number(aprPercent || 0) / 100) / 12;
+    const n = (Number(years || 30) * 12);
+    if (P <= 0 || r <= 0 || n <= 0) return 0;
+    return (P * r) / (1 - Math.pow(1 + r, -n));
+  }
+  function computeKpisFromStorage(){
+    const bridge = safeJSON("realtysass.bridge", {}) || {};
+    const ov = safeJSON("realtysass.kpi_overrides.v1", {}) || {};
+    // Income: brain total preferred, then bridge income
+    const payTotal = Number(STORE._state.pay?.total || 0);
+    const bridgeIncome = Number(bridge.totalPay ?? bridge.total_pay ?? bridge.income ?? bridge.totalMonthlyIncome ?? 0);
+    const addIncome = Number(ov.addIncome ?? ov.additionalIncome ?? 0);
+    const income = (payTotal || bridgeIncome) + addIncome;
+    // Expenses: override wins
+    const expenses = Number(ov.expenses ?? bridge.expenses ?? 0);
+    // KPI #3 is HOME PRICE (Housing Cost)
+    const price = Number(
+      ov.housing ??
+      bridge.housing ??
+      bridge.homePrice ??
+      bridge.purchasePrice ??
+      bridge.price ??
+      0
+    );
+    // KPI #4 is DOWNPAYMENT AMOUNT (one-time)
+    const downpayment = Number(
+      ov.savings ??
+      bridge.dpAmt ??
+      bridge.downPayment ??
+      bridge.downPaymentAmt ??
+      bridge.down_payment ??
+      bridge.savings ??
+      0
+    );
+    // Credit score: override wins
+    const creditScore = Number(ov.creditScore ?? bridge.creditScore ?? bridge.credit_score ?? 0);
+    // Term/APR extras
+    const termYears = Number(bridge.termYears ?? bridge.term ?? bridge.term_years ?? 30) || 30;
+    const aprOverride = Number(bridge.apr ?? 0); // expects APR percent if present (e.g., 7.00)
+    const tihoa = Number(bridge.tihoa ?? 0);
+    const pmi = Number(bridge.pmi ?? 0);
+    const aprPercent = (aprOverride > 0 ? aprOverride : scoreAPRPercent(creditScore || 720));
+    // Monthly housing: match 2A (P&I + tihoa + pmi) — NO 1.28 buffer
+    let housingMonthly = 0;
+    let housingMode = "monthly";
+    if (price >= 50000){
+      housingMode = "purchase";
+      const principal = Math.max(0, price - Math.max(0, downpayment));
+      const pi = mortgagePI(principal, aprPercent, termYears);
+      housingMonthly = Math.max(0, pi) + Math.max(0, tihoa) + Math.max(0, pmi);
+    } else {
+      housingMonthly = Number(price || 0);
+    }
+    // IMPORTANT: do NOT treat ov.savings (downpayment) as a monthly savings target
+    const savingsMonthly = 0;
+    // Debt (optional) — we pass to BLUF if present
+    const debt = Number(ov.debt ?? bridge.debt ?? 0);
+    // Optional reserves/cash (NOT downpayment). If you don’t track it yet, it will be 0 and BLUF will ignore reserves.
+    const reserves = Number(
+      ov.reserves ??
+      ov.cashReserves ??
+      bridge.reserves ??
+      bridge.cashReserves ??
+      bridge.cash_reserves ??
+      0
+    );
+    return {
+      income, addIncome,
+      expenses,
+      price,
+      downpayment,
+      creditScore,
+      termYears,
+      aprPercent,
+      tihoa,
+      pmi,
+      housingMonthly, housingMode,
+      savingsMonthly,
+      debt,
+      reserves
+    };
+  }
+  function applyHeaderFromBluf(out){
+    const verdict = String(out?.verdict || "").toUpperCase();
+    const grade = String(out?.grade || "—").trim() || "—";
+    const bluf = String(out?.bluf || "Loading verdict…").trim() || "Loading verdict…";
+    const disposable = Number(out?.metrics?.bufferAfterHousing ?? out?.metrics?.buffer_after_housing ?? 0);
+    const bufferPct = Number(out?.metrics?.bufferPct ?? out?.metrics?.buffer_pct ?? 0);
+    let kind = "neutral";
+    if (verdict === "GREEN") kind = "good";
+    else if (verdict === "CAUTION") kind = "warn";
+    else if (verdict === "NO_GO") kind = "bad";
+    // Meter fill uses the SAME normalization style you had (just based on buffer%)
+    const norm = clamp((bufferPct + 0.10) / 0.45, 0, 1);
+    const fill = Math.round(norm * 100);
+    if (els.grade) els.grade.textContent = grade + " / Disposable";
+    if (els.disp)  els.disp.textContent  = fmtUSD(disposable);
+    if (els.fill)  els.fill.style.width  = String(fill || 0) + "%";
+    if (els.bluf)  els.bluf.textContent  = bluf;
+    dotKind(kind);
+    return { kind, fill, grade, disposable, bluf, verdict };
+  }
+  // Fallback (keeps the UI alive if /api/bluf is unreachable)
+  function computeGradeAndBlufFallback(k){
+    const income = Number(k.income || 0);
+    const expenses = Number(k.expenses || 0);
+    const housing = Number(k.housingMonthly || 0);
+    const disposable = income - expenses - housing;
+    const housingCap = income * 0.30;
+    const leftoverRatio = income > 0 ? (disposable / income) : 0;
+    let grade = "—", kind = "neutral", fill = 0;
+    if (income > 0){
+      if (leftoverRatio >= 0.25){ grade = "A"; kind="good"; }
+      else if (leftoverRatio >= 0.15){ grade = "B"; kind="good"; }
+      else if (leftoverRatio >= 0.07){ grade = "C"; kind="warn"; }
+      else if (leftoverRatio >= 0){ grade = "D"; kind="warn"; }
+      else { grade = "F"; kind="bad"; }
+      const norm = clamp((leftoverRatio + 0.10) / 0.45, 0, 1);
+      fill = Math.round(norm * 100);
+    }
+    let bluf = "Loading verdict…";
+    if (income <= 0){
+      bluf = "NEEDS PROFILE: unlock and load your email so pay tables can produce a deterministic verdict.";
+    } else if (housing <= 0){
+      bluf = "SET HOUSING: enter a target home price or monthly payment so the model can judge feasibility.";
+    } else {
+      const deltaCap = housing - housingCap;
+      if (deltaCap > 0){
+        bluf = `NO-GO: Housing is ${fmtUSD(housing)}/mo vs a safe cap of ${fmtUSD(housingCap)}/mo. Reduce by ~${fmtUSD(deltaCap)}.`;
+      } else if (disposable < income * 0.08){
+        bluf = `CAUTION: Payment fits the cap, but buffer is thin — about ${fmtUSD(disposable)}/mo leftover.`;
+      } else {
+        bluf = `GREEN: Payment fits the cap and you keep breathing room — about ${fmtUSD(disposable)}/mo disposable.`;
       }
     }
-    // rebind after potential inject
-    const _replies = $("ec-replies");
-    const _close = $("ec-repliesClose");
-    const _row = $("ec-inputRow");
-    const _body = $("ec-repliesBody");
-    if (_close) _close.addEventListener("click", hideReplies);
-    input.addEventListener("focus", ()=>{ showReplies(); });
-    input.addEventListener("blur",  ()=>{ scheduleAutoHide(900); });
-    send.addEventListener("click", trySend);
-    input.addEventListener("keydown", (e)=>{ if(e.key === "Enter") trySend(); });
-    document.addEventListener("mousemove", (e)=>{
-      const rep = $("ec-replies");
-      if (!rep || !rep.classList.contains("open")) return;
-      const insideReplies = rep.contains(e.target);
-      const insideInputRow = _row && _row.contains(e.target);
-      if (insideReplies || insideInputRow || document.activeElement === input) return;
-      scheduleAutoHide(280);
-    });
-    // greet
-    appendMsg("assistant", "I’m Elena. Feed me the numbers on the left and I’ll give you a clean BLUF verdict.");
-    scheduleAutoHide(2600);
+    return { grade, kind, fill, disposable, bluf, housingCap };
   }
-  function wireRunVerdict(){
-    if (!runBtn) return;
-    runBtn.addEventListener("click", ()=>{
-      const summary = buildVerdict();
-      applyBLUF(summary);
-      try{
-        localStorage.setItem("realtysass.finance_verdict", JSON.stringify(summary));
-      }catch(_){}
-      appendMsg("assistant", `BLUF updated: ${summary.verdict.title} • ${summary.verdict.state.toUpperCase()}`);
+  // Throttled BLUF calling (prevents hammering your Netlify function every 650ms)
+  let __BLUF_LAST_SIG__ = "";
+  let __BLUF_LAST_TS__ = 0;
+  let __BLUF_LAST_OUT__ = null;
+  function sigForKpis(k){
+    // round to reduce chatter
+    const r = (x)=>Math.round(Number(x||0));
+    return [
+      r(k.income), r(k.expenses), r(k.housingMonthly),
+      r(STORE._state.pay?.bah || 0),
+      r(k.debt), r(k.reserves),
+      r(k.price), r(k.downpayment),
+      r(k.aprPercent*100)/100, r(k.termYears)
+    ].join("|");
+  }
+  async function callBluf(k){
+    const income = Number(k.income || 0);
+    const expenses = Number(k.expenses || 0);
+    const housingMonthly = Number(k.housingMonthly || 0);
+    const bah = Number(STORE._state.pay?.bah || 0);
+    const debt = Number(k.debt || 0);
+    // IMPORTANT:
+    // - reserves is NOT downpayment (downpayment is one-time). If you don’t track reserves, it will be 0 and BLUF ignores it.
+    const savings = Number(k.reserves || 0);
+    const rank_paygrade = (STORE._state.profile?.rank || "").toString().trim();
+    const creditScore = Number(k.creditScore || 0);
+    const body = {
+      income,
+      expenses,
+      housingMonthly,
+      bah: bah > 0 ? bah : undefined,
+      debt: debt > 0 ? debt : undefined,
+      savings: savings > 0 ? savings : undefined,
+      rank_paygrade: rank_paygrade || undefined,
+      creditScore: creditScore || undefined,
+      // optional transparency (doesn't change verdict)
+      price: Number(k.price || 0) || undefined,
+      downpayment: Number(k.downpayment || 0) || undefined,
+      aprPercent: Number(k.aprPercent || 0) || undefined,
+      termYears: Number(k.termYears || 0) || undefined
+    };
+    const res = await fetch(BLUF_ENDPOINT, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(body)
     });
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok || !data || data.ok === false) {
+      throw new Error(data?.error || "BLUF call failed.");
+    }
+    return data;
+  }
+  let loopTimer = null;
+  function startLoop(){
+    clearInterval(loopTimer);
+    loopTimer = setInterval(async ()=>{
+      const k = computeKpisFromStorage();
+      STORE.set("kpis", k);
+      // Decide whether to refresh BLUF from server
+      const sig = sigForKpis(k);
+      const now = Date.now();
+      const tooSoon = (now - __BLUF_LAST_TS__) < 1800; // throttle
+      const unchanged = (sig === __BLUF_LAST_SIG__);
+      // Try to use cached output first
+      if (__BLUF_LAST_OUT__) {
+        const headerPack = applyHeaderFromBluf(__BLUF_LAST_OUT__);
+        const verdictObj = {
+          ts: now,
+          grade: headerPack.grade,
+          disposable: headerPack.disposable,
+          bluf: headerPack.bluf,
+          kind: headerPack.kind,
+          fill: headerPack.fill,
+          verdict: headerPack.verdict,
+          source: "bluf.js.cached"
+        };
+        STORE.set("verdict", verdictObj);
+        try{ localStorage.setItem("realtysass.ec_verdict.v1", JSON.stringify(verdictObj)); }catch(_){}
+      }
+      // Only call server if inputs changed AND we’re not throttled
+      if (unchanged || tooSoon) return;
+      try{
+        const out = await callBluf(k);
+        __BLUF_LAST_OUT__ = out;
+        __BLUF_LAST_SIG__ = sig;
+        __BLUF_LAST_TS__ = now;
+        const headerPack = applyHeaderFromBluf(out);
+        const verdictObj = {
+          ts: now,
+          grade: headerPack.grade,
+          disposable: headerPack.disposable,
+          bluf: headerPack.bluf,
+          kind: headerPack.kind,
+          fill: headerPack.fill,
+          verdict: headerPack.verdict,
+          source: "bluf.js.live"
+        };
+        STORE.set("verdict", verdictObj);
+        try{ localStorage.setItem("realtysass.ec_verdict.v1", JSON.stringify(verdictObj)); }catch(_){}
+      } catch(err){
+        // Fallback if BLUF service is unavailable
+        const pack = computeGradeAndBlufFallback(k);
+        if (els.grade) els.grade.textContent = pack.grade + " / Disposable";
+        if (els.disp)  els.disp.textContent  = fmtUSD(pack.disposable);
+        if (els.fill)  els.fill.style.width  = String(pack.fill || 0) + "%";
+        if (els.bluf)  els.bluf.textContent  = pack.bluf;
+        dotKind(pack.kind);
+        const verdict = {
+          ts: now,
+          grade: pack.grade,
+          disposable: pack.disposable,
+          housingCap: pack.housingCap,
+          bluf: pack.bluf,
+          kind: pack.kind,
+          fill: pack.fill,
+          source: "owner.v101.fallback_local"
+        };
+        STORE.set("verdict", verdict);
+        try{ localStorage.setItem("realtysass.ec_verdict.v1", JSON.stringify(verdict)); }catch(_){}
+      }
+    }, 650);
   }
   /* ============================================================
-    //#12 — BOOT
+    //#10 BOOT: open FRS + start loop + wait for unlock/email then brain()
   ============================================================ */
-  pillText.textContent = "Loading Profile…";
-  wireSectionToggles();
-  injectSliderForDebt();
-  injectCreditButtons();
-  wireRunVerdict();
-  wireChat();
-  // default tool
-  openTool("frs");
-  /* ✅ FIX: call the correct loader */
-  loadProfileAndPay_FIXED().then(()=>{
-    pillText.textContent = "Profile Ready";
-    // auto-run once (preliminary) so BLUF isn't empty
-    const summary = buildVerdict();
-    applyBLUF(summary);
-    try{ localStorage.setItem("realtysass.finance_verdict", JSON.stringify(summary)); }catch(_){}
-  }).catch(()=>{
-    pillText.textContent = "Profile Error";
-  });
+  function boot(){
+    els.pill.textContent = "Booting…";
+    openTool("frs");
+    startLoop();
+    const maxMs = 30000, tickMs = 250;
+    let waited = 0;
+    const timer = setInterval(async ()=>{
+      waited += tickMs;
+      if (isLocked()){
+        if (waited >= maxMs){
+          clearInterval(timer);
+          els.pill.textContent = "Timed out (locked)";
+          setText(els.pfStatus, "Timed out waiting for unlock");
+        }
+        return;
+      }
+      const email = readLoginEmail();
+      if (!email){
+        if (waited >= maxMs){
+          clearInterval(timer);
+          els.pill.textContent = "No Email Found";
+          setText(els.pfStatus, "Unlocked but no loginEmail found");
+        } else {
+          els.pill.textContent = "Unlocked — waiting for email…";
+        }
+        return;
+      }
+      clearInterval(timer);
+      try{
+        els.pill.textContent = "Calling Brain…";
+        const data = await runBrain(email);
+        paintFromBrain(data, email);
+      } catch(e){
+        els.pill.textContent = "Profile Error";
+        setText(els.pfStatus, "Profile Error");
+        console.error("Brain error:", e);
+      }
+    }, tickMs);
+  }
+  boot();
 })();
 </script>
   </div>

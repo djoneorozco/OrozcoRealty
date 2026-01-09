@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Sun Jan 04 2026 02:12:42 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Jan 09 2026 02:39:53 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="6924ff152bca88765a825dcd" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
 <head>
   <meta charset="utf-8">
@@ -24,8 +24,8 @@
   </section>
   <div class="w-embed w-script"><!--  =========================================================
   PCS SNAPSHOT v3.2 • House of SaSS
-  * Update: FULL-SCREEN (100vw / 100vh) + breaks out of Webflow container
-  * EVERYTHING ELSE UNCHANGED
+  * FIX: City JSON now loads from Netlify /api/city (NOT GitHub raw)
+  * Everything else stays the same visually and structurally
 =========================================================  -->
     <div id="pcs-snapshot-shell" style="all: initial;">
       <!--  FONTS + CHART LIBRARIES  -->
@@ -35,8 +35,6 @@
       <style>
     /* =========================================================
        //#0 – FULL SCREEN OVERRIDE (NEW)
-       - Forces the entire embed to fill the viewport, even inside
-         Webflow containers / max-width wrappers.
     ========================================================= */
     #pcs-snapshot-shell{
       position: fixed !important;
@@ -50,7 +48,6 @@
       margin: 0 !important;
       padding: 0 !important;
     }
-    /* Optional: prevent iOS safe-area clipping */
     #pcs-snapshot-shell{
       padding-top: env(safe-area-inset-top);
       padding-right: env(safe-area-inset-right);
@@ -67,13 +64,13 @@
     }
     #pcs-snapshot-wrap {
       width: 100%;
-      max-width: none;              /* <-- CHANGED (was 1200px) */
-      margin: 0;                    /* <-- CHANGED (was 0 auto) */
-      min-height: 100vh;            /* <-- NEW */
+      max-width: none;
+      margin: 0;
+      min-height: 100vh;
       padding: 28px clamp(16px, 2.2vw, 34px) 32px;
       background: #0b0e1a;
-      border-radius: 0;             /* <-- CHANGED (was 22px) */
-      box-shadow: none;             /* <-- CHANGED (was heavy shadow) */
+      border-radius: 0;
+      box-shadow: none;
       color: #e9ecff;
     }
     h2, h3, h4 { margin: 0; padding: 0; }
@@ -93,7 +90,6 @@
     .pcs-small { font-size: 12px; color: #a8b0d6; margin-top: 6px; }
     .pcs-highlight-teal { color: #8ef3c5; font-weight: 600; }
     .pcs-highlight-blue { color: #6aa7ff; font-weight: 600; }
-    /* ===== TREND TOGGLE BUTTONS ===== */
     .trend-toggle {
       display: flex;
       gap: 10px;
@@ -120,8 +116,34 @@
       height: 260px;
       margin-top: 6px;
     }
+    /* quickfacts (kept simple, won’t break if your old CSS lived elsewhere) */
+    .pcs-quickfacts{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .pcs-fact{
+      background: rgba(12,14,25,0.55);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .pcs-fact-label{
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color:#a8b0d6;
+      margin-bottom: 6px;
+    }
+    .pcs-fact-value{
+      font-size: 14px;
+      font-weight: 700;
+      color:#e9ecff;
+    }
     @media (max-width: 900px) {
       .pcs-grid-2 { grid-template-columns: 1fr; }
+      .pcs-quickfacts{ grid-template-columns: 1fr; }
     }
   </style>
       <div id="pcs-snapshot-wrap">
@@ -156,16 +178,14 @@
         </div>
         <!--  =================== BOTTOM GRID ===================  -->
         <div class="pcs-grid-2" style="margin-top:22px;">
-          <!--  LEFT: NEW APEXCHART TREND + PRICE BREAKDOWN  -->
+          <!--  LEFT: APEXCHART TREND + PRICE BREAKDOWN  -->
           <div class="pcs-panel">
             <h4>12-Month Housing Trend</h4>
             <div class="pcs-small">Median home price (interactive trend)</div>
-            <!--  ==== 1YR / 3YR Toggle ====  -->
             <div class="trend-toggle">
               <button class="trend-btn active" id="btn-1yr">1 Year</button>
               <button class="trend-btn" id="btn-3yr">3 Years</button>
             </div>
-            <!--  ==== APEXCHART CONTAINER ====  -->
             <div id="pcs-trend-chart-apex"></div>
             <div id="pcs-trend-summary" class="pcs-small pcs-highlight-teal"></div>
             <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:14px 0;">
@@ -190,8 +210,10 @@
   =========================================================  -->
       <script>
 (function () {
-  const CITY_JSON_URL =
-    "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/cities/SanAntonio.json";
+  // ============================================================
+  // //#0 FIX: City JSON now served from Netlify (NOT GitHub Raw)
+  // ============================================================
+  const API_BASE = "https://theorozcorealty.netlify.app/api";
   const MILPAY_JSON_URL =
     "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/data/militaryPayTables.json";
   function getQuery() {
@@ -199,43 +221,61 @@
     return {
       type: u.searchParams.get("type") || "ad",
       rank: u.searchParams.get("rank") || "E4",
-      yos: parseInt(u.searchParams.get("yos") || "2"),
-      family: parseInt(u.searchParams.get("family") || "1"),
+      yos: parseInt(u.searchParams.get("yos") || "2", 10),
+      family: parseInt(u.searchParams.get("family") || "1", 10),
       base: u.searchParams.get("base") || "San Antonio",
-      va: parseInt(u.searchParams.get("va") || "0")
+      va: parseInt(u.searchParams.get("va") || "0", 10),
+      cityKey: u.searchParams.get("cityKey") || ""   // NEW
     };
   }
   function normRank(r) {
-    const up = r.toUpperCase();
+    const up = String(r || "").toUpperCase();
     return up[0] + "-" + up.slice(1);
   }
-  function isE(r) { return r.startsWith("E-"); }
+  function isE(r) { return String(r || "").startsWith("E-"); }
   function pickYOS(y, table) {
-    const ks = Object.keys(table).map(k => parseInt(k)).sort((a,b)=>a-b);
-    let best = ks[0], diff = Math.abs(y-best);
+    const ks = Object.keys(table || {}).map(k => parseInt(k,10)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+    let best = ks[0] ?? y, diff = Math.abs(y - best);
     ks.forEach(k => {
-      if (Math.abs(y-k)<diff){ diff=Math.abs(y-k); best=k; }
+      const d = Math.abs(y-k);
+      if (d < diff){ diff = d; best = k; }
     });
     return String(best);
   }
-  function money(n){ return "$" + Math.round(n).toLocaleString(); }
+  function money(n){
+    const x = Number(n);
+    if (!Number.isFinite(x)) return "$0";
+    return "$" + Math.round(x).toLocaleString();
+  }
   function safe(obj, path, fb) {
     try { return path.split(".").reduce((a,k)=>a && a[k], obj) ?? fb; }
     catch { return fb; }
   }
   async function load(url){
-    const r = await fetch(url);
-    if(!r.ok) throw "load fail "+url;
+    const r = await fetch(url, { cache: "no-store" });
+    if(!r.ok) throw new Error("load fail "+url+" ("+r.status+")");
     return await r.json();
+  }
+  async function loadCity(cityKey){
+    const key = (cityKey && String(cityKey).trim()) ? String(cityKey).trim() : "SanAntonio";
+    return await load(`${API_BASE}/city?cityKey=${encodeURIComponent(key)}`);
   }
   /* ======================================================
        APEXCHARTS TREND RENDERER
   ====================================================== */
   function renderTrendApex(fullData) {
     const chartEl = document.querySelector("#pcs-trend-chart-apex");
+    if (!chartEl) return;
     if (window.pcsTrendChart) {
-      window.pcsTrendChart.destroy();
+      try { window.pcsTrendChart.destroy(); } catch {}
     }
+    const seriesData = (Array.isArray(fullData) ? fullData : []).map(d => {
+      const dt = d.month || d.date || d.period || d.timestamp || null;
+      const price = d.median_sale_price ?? d.medianSalePrice ?? d.median ?? d.value ?? null;
+      return (dt && Number.isFinite(Number(price)))
+        ? { x: new Date(dt), y: Number(price) }
+        : null;
+    }).filter(Boolean);
     const options = {
       chart: {
         type: 'line',
@@ -250,15 +290,9 @@
       },
       series: [{
         name: "Median Sale Price",
-        data: fullData.map(d => ({
-          x: new Date(d.month),
-          y: d.median_sale_price
-        }))
+        data: seriesData
       }],
-      xaxis: {
-        type: 'datetime',
-        labels: { style: { colors: '#e9ecff' } }
-      },
+      xaxis: { type: 'datetime', labels: { style: { colors: '#e9ecff' } } },
       yaxis: {
         labels: {
           style: { colors: '#e9ecff' },
@@ -270,9 +304,7 @@
         x: { format: "MMM yyyy" },
         y: { formatter: v => "$" + Math.round(v).toLocaleString() }
       },
-      grid: {
-        borderColor: "rgba(255,255,255,0.08)"
-      }
+      grid: { borderColor: "rgba(255,255,255,0.08)" }
     };
     window.pcsTrendChart = new ApexCharts(chartEl, options);
     window.pcsTrendChart.render();
@@ -285,7 +317,7 @@
     const rankKey = normRank(p.rank);
     const isAD = p.type==="ad";
     const [city, pay] = await Promise.all([
-      load(CITY_JSON_URL),
+      loadCity(p.cityKey || "SanAntonio"),
       load(MILPAY_JSON_URL)
     ]);
     /* ------------------------------------
@@ -293,7 +325,7 @@
     ------------------------------------ */
     let base=0, bah=0, bas=0;
     if(isAD){
-      const table = pay.BASEPAY[rankKey]||{};
+      const table = (pay.BASEPAY && pay.BASEPAY[rankKey]) ? pay.BASEPAY[rankKey] : {};
       const yKey = pickYOS(p.yos, table);
       base = table[yKey] || 0;
       bas = isE(rankKey)
@@ -305,10 +337,11 @@
       if (grp && grp[rankKey]) bah = grp[rankKey];
     } else {
       const full = pay.DISABILITY_FULL||{};
-      const keys = Object.keys(full).map(k=>parseInt(k)).sort((a,b)=>a-b);
-      let best = keys[0], diff=Math.abs(p.va-best);
+      const keys = Object.keys(full).map(k=>parseInt(k,10)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+      let best = keys[0] ?? 0, diff=Math.abs(p.va-best);
       keys.forEach(k=>{
-        if(Math.abs(p.va-k)<diff){ diff=Math.abs(p.va-k); best=k; }
+        const d = Math.abs(p.va-k);
+        if(d < diff){ diff=d; best=k; }
       });
       const row = full[String(best)];
       base = row ? row.veteran : 0;
@@ -316,15 +349,18 @@
     }
     const total = base + bah + bas;
     document.getElementById("pcs-city-line").textContent =
-      (city.place||"Selected City")+" • Quick PCS Snapshot";
+      (city.place || city.city || city.name || "Selected City") + " • Quick PCS Snapshot";
     document.getElementById("pcs-income-main").textContent =
-      money(total)+" / month";
+      money(total) + " / month";
     document.getElementById("pcs-income-breakdown").textContent =
-      "Base Pay: "+money(base)+" • BAH: "+money(bah)+" • BAS: "+money(bas);
+      "Base Pay: " + money(base) + " • BAH: " + money(bah) + " • BAS: " + money(bas);
     /* ------------------------------------
        INCOME VS CITY
     ------------------------------------ */
-    const medInc = safe(city,"income.median_household_income",60000);
+    const medInc =
+      safe(city,"income.median_household_income", null) ??
+      safe(city,"demographics.income.median_household_income", null) ??
+      safe(city,"median_household_income", 60000);
     const low = medInc*0.6;
     const avg = medInc;
     const high = medInc*1.35;
@@ -352,9 +388,15 @@
       (((userA-avg)/avg)*100).toFixed(1) +
       "% vs median household income";
     /* ------------------------------------
-       MORTGAGE USING 6.75% — unchanged
+       MORTGAGE USING 6.75% — unchanged (but price path is resilient)
     ------------------------------------ */
-    const P = safe(city,"housing.market.median_listing_price_realtor",295000);
+    const P =
+      safe(city,"housing.market.median_listing_price_realtor", null) ??
+      safe(city,"housing.market.median_listing_price", null) ??
+      safe(city,"housing.market.median_list_price", null) ??
+      safe(city,"avg_home_value", null) ??
+      safe(city,"average_home_value", null) ??
+      safe(city,"housing.median_value_owner_occupied", 295000);
     const rate = 0.0675/12;
     const N = 360;
     const M = P * (rate*Math.pow(1+rate,N)) / (Math.pow(1+rate,N)-1);
@@ -382,12 +424,15 @@
     document.getElementById("pcs-bah-summary").textContent =
       "Your BAH covers ~"+((bah/bahAvg)*100).toFixed(1)+"% of estimated mortgage.";
     /* ======================================================
-         REDFIN-STYLE TREND (NEW)
+         TREND
     ====================================================== */
-    const allMonths = safe(city,"housing.market.sale_history_36_months",[]);
-    const last12 = allMonths.slice(-12);
-    const last36 = allMonths.slice(-36);
-    // default: 1 year
+    const allMonths =
+      safe(city,"housing.market.sale_history_36_months", null) ??
+      safe(city,"housing.sale_history_36_months", null) ??
+      safe(city,"market.sale_history_36_months", []) ??
+      [];
+    const last12 = Array.isArray(allMonths) ? allMonths.slice(-12) : [];
+    const last36 = Array.isArray(allMonths) ? allMonths.slice(-36) : [];
     renderTrendApex(last12);
     document.getElementById("btn-1yr").onclick = () => {
       document.getElementById("btn-1yr").classList.add("active");
@@ -399,16 +444,25 @@
       document.getElementById("btn-1yr").classList.remove("active");
       renderTrendApex(last36);
     };
-    const yoy = safe(city,"housing.market.zillow_one_year_change_percent",0);
+    const yoy =
+      safe(city,"housing.market.zillow_one_year_change_percent", null) ??
+      safe(city,"housing.market.one_year_change_percent", null) ??
+      safe(city,"yoy_change_percent", 0);
     document.getElementById("pcs-trend-summary").textContent =
-      "12-month change: "+yoy+"% • "+
-      safe(city,"housing.market.market_type_summary","");
+      "12-month change: "+(Number(yoy)||0)+"% • " +
+      (safe(city,"housing.market.market_type_summary","") || "");
     /* ------------------------------------
-       PRICE BREAKDOWN — unchanged
+       PRICE BREAKDOWN — unchanged (but resilient)
     ------------------------------------ */
-    const medSale = safe(city,"housing.market.q1.median_sale_price",0);
-    const avgSale = safe(city,"housing.market.q1.average_sale_price",0);
-    const medList = safe(city,"housing.market.q1.median_list_price",0);
+    const medSale =
+      safe(city,"housing.market.q1.median_sale_price", null) ??
+      safe(city,"housing.market.median_sale_price", 0);
+    const avgSale =
+      safe(city,"housing.market.q1.average_sale_price", null) ??
+      safe(city,"housing.market.average_sale_price", 0);
+    const medList =
+      safe(city,"housing.market.q1.median_list_price", null) ??
+      safe(city,"housing.market.median_list_price", 0);
     new Chart(document.getElementById("pcs-pricebreak-chart"),{
       type:"bar",
       data:{
@@ -449,18 +503,20 @@
     document.getElementById("pcs-afford-summary").textContent =
       "Affordability Score: "+score.toFixed(0)+"/100.";
     /* ------------------------------------
-       QUICKFACTS — unchanged
+       QUICKFACTS — unchanged (but resilient)
     ------------------------------------ */
     const facts=[
-      {label:"Population",value:safe(city,"population.estimate",0).toLocaleString()},
-      {label:"Median Age",value:safe(city,"population.median_age",0)},
+      {label:"Population",value:(safe(city,"population.estimate",0) || safe(city,"population",0) || 0).toLocaleString()},
+      {label:"Median Age",value:safe(city,"population.median_age", safe(city,"median_age", 0))},
       {label:"Median Household Income",value:money(medInc)},
-      {label:"Poverty Rate",value:safe(city,"income.poverty_rate_percent",0)+"%"},
-      {label:"Median Home Value",value:money(safe(city,"housing.median_value_owner_occupied",P))},
+      {label:"Poverty Rate",value:(safe(city,"income.poverty_rate_percent", safe(city,"poverty_rate_percent",0)) || 0) + "%"},
+      {label:"Median Home Value",value:money(safe(city,"housing.median_value_owner_occupied", P))},
       {label:"Avg Days on Market",
-        value:safe(city,"housing.market.average_days_on_market_range.low",0)+
-              "–"+
-              safe(city,"housing.market.average_days_on_market_range.high",0)}
+        value:
+          (safe(city,"housing.market.average_days_on_market_range.low", safe(city,"housing.market.avg_days_on_market_low",0)) || 0) +
+          "–" +
+          (safe(city,"housing.market.average_days_on_market_range.high", safe(city,"housing.market.avg_days_on_market_high",0)) || 0)
+      }
     ];
     let html="";
     facts.forEach(f=>{
@@ -472,11 +528,18 @@
     });
     document.getElementById("pcs-quickfacts").innerHTML=html;
   } // end init
-  init().catch(err=>{
-    console.error("PCS Snapshot error:",err);
-    document.getElementById("pcs-snapshot-wrap").innerHTML =
-      "<div style='color:#e9ecff;font-size:14px;'>PCS Snapshot is temporarily unavailable. Try again later.</div>";
-  });
+  function boot(){
+    init().catch(err=>{
+      console.error("PCS Snapshot error:",err);
+      document.getElementById("pcs-snapshot-wrap").innerHTML =
+        "<div style='color:#e9ecff;font-size:14px;padding:24px;'>PCS Snapshot is temporarily unavailable. Try again later.</div>";
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
 })();
 </script>
     </div>

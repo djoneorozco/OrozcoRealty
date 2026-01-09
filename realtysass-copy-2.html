@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Sun Jan 04 2026 02:12:42 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Jan 09 2026 02:39:53 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="69464632d298cb48d5b06894" data-wf-site="68cecb820ec3dbdca3ef9099" lang="en">
 <head>
   <meta charset="utf-8">
@@ -292,316 +292,6 @@
                 <div class="style-three-nav-brand">
                   <a href="#" role="link" class="home-three-nav-menu-brand rezoid w-nav-brand"><img width="139" height="40" alt="" src="images/TOR.png" loading="lazy" srcset="images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, images/TOR.png 2851w" sizes="139px" class="image-124"></a>
                 </div>
-                <div class="code-embed-21 w-embed w-script"><!--  =========================================================
-  HOUSE OF SASS • PCS-STYLE PAY SNAPSHOT (MODEL-AWARE via brain.js)
-  - Active Duty: Base Pay • BAH • BAS • Total Pay
-  - Veteran: Retirement Pay • VA Disability • BAS ($0) • Total Pay
-  Pull order (FIXED to avoid stale cache):
-    1) Wait until unlock + localStorage.realtysass.loginEmail exists
-    2) fallback: localStorage.realtysass.profile_lookup.profile.email
-    3) fallback: orozco@me.com
-  Calls:
-    - POST /api/brain   (Supabase profile + deterministic pay + model-aware)
-=========================================================  -->
-                  <div id="sass-mortgage-strip" style="all: initial;">
-                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-                    <style>
-    #sass-mortgage-strip, #sass-mortgage-strip * {
-      box-sizing: border-box;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    #sass-shell {
-      width: 100%;
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 16px 0;
-    }
-    #sass-input-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-    @media (max-width: 768px) {
-      #sass-input-row { grid-template-columns: repeat(2, 1fr); }
-    }
-    .sass-field-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: #a8b0d6;
-      letter-spacing: .1em;
-      margin-bottom: 6px;
-      display: block;
-    }
-    .sass-number {
-      width: 100%;
-      padding: 9px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(12,14,25,0.65);
-      color: #e9ecff;
-      font-size: 14px;
-      outline: none;
-    }
-    /* hidden unless error */
-    #pay-mini-error{
-      margin-top:10px;
-      font-size:12px;
-      color:#ff8787;
-      min-height:16px;
-      opacity:0;
-      transform:translateY(-2px);
-      transition:.15s ease;
-      white-space:pre-wrap;
-    }
-    #pay-mini-error.show{ opacity:1; transform:translateY(0); }
-  </style>
-                    <div id="sass-shell">
-                      <div id="sass-input-row">
-                        <div>
-                          <label class="sass-field-label" id="pay-l1">Base Pay</label>
-                          <input id="pay-base" class="sass-number" type="text" readonly="" value="$—">
-                        </div>
-                        <div>
-                          <label class="sass-field-label" id="pay-l2">BAH</label>
-                          <input id="pay-bah" class="sass-number" type="text" readonly="" value="$—">
-                        </div>
-                        <div>
-                          <label class="sass-field-label" id="pay-l3">BAS</label>
-                          <input id="pay-bas" class="sass-number" type="text" readonly="" value="$—">
-                        </div>
-                        <div>
-                          <label class="sass-field-label" id="pay-l4">Total Pay</label>
-                          <input id="pay-total" class="sass-number" type="text" readonly="" value="$—">
-                        </div>
-                      </div>
-                      <div id="pay-mini-error"></div>
-                    </div>
-                    <script>
-    (function(){
-      "use strict";
-      // =========================================================
-      // //#1 CONFIG
-      // =========================================================
-      const API_BASE = "https://theorozcorealty.netlify.app/api";
-      const BRAIN_ENDPOINT = API_BASE + "/brain";
-      const FORCE_EMAIL_FALLBACK = "orozco@me.com";
-      const DEFAULT_CITYKEY = "SanAntonio";
-      const DEFAULT_BEDROOMS = 4;
-      // =========================================================
-      // //#2 DOM
-      // =========================================================
-      const baseEl  = document.getElementById("pay-base");
-      const bahEl   = document.getElementById("pay-bah");
-      const basEl   = document.getElementById("pay-bas");
-      const totalEl = document.getElementById("pay-total");
-      const errEl   = document.getElementById("pay-mini-error");
-      const l1 = document.getElementById("pay-l1");
-      const l2 = document.getElementById("pay-l2");
-      const l3 = document.getElementById("pay-l3");
-      const l4 = document.getElementById("pay-l4");
-      function setErr(msg){
-        const m = msg ? String(msg) : "";
-        errEl.textContent = m;
-        errEl.classList.toggle("show", !!m);
-      }
-      function fmtUSD2(n){
-        const v = Number(n);
-        if (!Number.isFinite(v)) return "$—";
-        return v.toLocaleString(undefined, {
-          style:"currency",
-          currency:"USD",
-          minimumFractionDigits:2,
-          maximumFractionDigits:2
-        });
-      }
-      function setLoading(){
-        baseEl.value  = "$—";
-        bahEl.value   = "$—";
-        basEl.value   = "$—";
-        totalEl.value = "$—";
-      }
-      function setLabels(a,b,c,d){
-        if (l1) l1.textContent = a;
-        if (l2) l2.textContent = b;
-        if (l3) l3.textContent = c;
-        if (l4) l4.textContent = d;
-      }
-      function readJSON(key){
-        try { return JSON.parse(localStorage.getItem(key) || "null"); } catch(_) { return null; }
-      }
-      function getLoginEmail(){
-        try{
-          return String(localStorage.getItem("realtysass.loginEmail") || "").trim().toLowerCase();
-        }catch(_){
-          return "";
-        }
-      }
-      function getProfileLookupEmail(){
-        const blob = readJSON("realtysass.profile_lookup");
-        const em = blob && blob.profile && blob.profile.email ? String(blob.profile.email) : "";
-        return String(em || "").trim().toLowerCase();
-      }
-      // Matches your lock behavior used elsewhere
-      function isLocked(){
-        const overlay = document.getElementById("rs-lock-overlay");
-        if (!overlay) return false;
-        if (overlay.classList && overlay.classList.contains("rs-hidden")) return false;
-        if (overlay.getAttribute("aria-hidden") === "true") return false;
-        const vis = String(overlay.style && overlay.style.visibility || "").toLowerCase();
-        const op  = String(overlay.style && overlay.style.opacity || "");
-        if (vis === "hidden") return false;
-        if (String(op).trim() === "0") return false;
-        return true;
-      }
-      // =========================================================
-      // //#3 NO-PREFLIGHT POST (Webflow → Netlify safe)
-      // =========================================================
-      async function postJSON_NoPreflight(url, body){
-        const r = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=UTF-8" },
-          body: JSON.stringify(body || {})
-        });
-        const j = await r.json().catch(()=>({}));
-        if (!r.ok || j.ok === false) throw new Error(j.error || ("HTTP " + r.status));
-        return j;
-      }
-      // =========================================================
-      // //#4 MODEL DETECTION (same as Central Brain Test behavior)
-      // =========================================================
-      function detectModel(brain){
-        const pay = brain?.pay || {};
-        const p = brain?.profile || {};
-        const payModel = String(pay.payModel || "").trim().toLowerCase();
-        const profileMode = String(p.mode || "").trim().toLowerCase();
-        if (payModel.includes("vet")) return "veteran";
-        if (payModel.includes("active")) return "active_duty";
-        if (profileMode === "vet" || profileMode === "veteran" || profileMode === "retired") return "veteran";
-        if (profileMode === "ad" || profileMode === "active" || profileMode === "active_duty") return "active_duty";
-        const hasVetFields =
-          Number.isFinite(Number(pay.retirementPay)) ||
-          Number.isFinite(Number(pay.vaDisabilityPay)) ||
-          String(pay.payAccuracy || "").toLowerCase().includes("retirement");
-        return hasVetFields ? "veteran" : "active_duty";
-      }
-      // =========================================================
-      // //#5 LOAD + PAINT (brain.js is the single source of truth)
-      // =========================================================
-      async function paintFromBrain(email){
-        setErr("");
-        setLoading();
-        const brain = await postJSON_NoPreflight(BRAIN_ENDPOINT, {
-          email,
-          cityKey: DEFAULT_CITYKEY,
-          bedrooms: DEFAULT_BEDROOMS
-        });
-        // Cache profile for other pages
-        if (brain?.profile?.email){
-          localStorage.setItem("realtysass.profile_lookup", JSON.stringify({ ok:true, profile: brain.profile }));
-        }
-        if (brain.ok !== true){
-          const miss = (brain.missing || []).join(", ");
-          setErr(miss ? ("Missing: " + miss) : "Brain returned ok=false.");
-        }
-        const model = detectModel(brain);
-        const pay = brain.pay || {};
-        const p = brain.profile || {};
-        if (model === "veteran") {
-          // Veteran view (your requirement)
-          setLabels("Retirement Pay", "VA Disability", "BAS", "Total Pay");
-          const retirementPay = Number(pay.retirementPay);
-          const vaPay = Number(pay.vaDisabilityPay);
-          const retirement = Number.isFinite(retirementPay) ? retirementPay : NaN;
-          const va = Number.isFinite(vaPay) ? vaPay : NaN;
-          const total = Number.isFinite(Number(pay.totalPay))
-            ? Number(pay.totalPay)
-            : (Number.isFinite(retirement) ? retirement : 0) + (Number.isFinite(va) ? va : 0);
-          baseEl.value  = fmtUSD2(retirement);
-          bahEl.value   = fmtUSD2(va);
-          basEl.value   = fmtUSD2(0);
-          totalEl.value = fmtUSD2(total);
-          localStorage.setItem("realtysass.pay_snapshot", JSON.stringify({
-            ok:true,
-            at:new Date().toISOString(),
-            email,
-            model:"veteran",
-            rank: (p.rank_paygrade || p.rank || null),
-            yos: (p.yos ?? null),
-            retirementPay: Number.isFinite(retirement) ? retirement : null,
-            vaDisabilityPay: Number.isFinite(va) ? va : null,
-            bas: 0,
-            totalPay: Number.isFinite(total) ? total : null
-          }));
-        } else {
-          // Active Duty view
-          setLabels("Base Pay", "BAH", "BAS", "Total Pay");
-          const basePay = Number(pay.basePay);
-          const bah = Number(pay.bah);
-          const bas = Number(pay.bas);
-          const total = Number(pay.totalPay);
-          baseEl.value  = fmtUSD2(basePay);
-          bahEl.value   = fmtUSD2(bah);
-          basEl.value   = fmtUSD2(bas);
-          totalEl.value = fmtUSD2(total);
-          localStorage.setItem("realtysass.pay_snapshot", JSON.stringify({
-            ok:true,
-            at:new Date().toISOString(),
-            email,
-            model:"active_duty",
-            rank: (p.rank_paygrade || p.rank || null),
-            yos: (p.yos ?? null),
-            zip: (p.zip || null),
-            basePay: Number.isFinite(basePay) ? basePay : null,
-            bah: Number.isFinite(bah) ? bah : null,
-            bas: Number.isFinite(bas) ? bas : null,
-            totalPay: Number.isFinite(total) ? total : null
-          }));
-        }
-      }
-      // =========================================================
-      // //#6 WAIT FOR REAL LOGIN EMAIL (fixes your exact bug)
-      // =========================================================
-      function boot(){
-        const maxMs = 30000;
-        const tickMs = 250;
-        let waited = 0;
-        setLoading();
-        setErr("");
-        const timer = setInterval(async ()=>{
-          waited += tickMs;
-          // Wait for unlock if overlay exists
-          if (isLocked()){
-            if (waited >= maxMs){
-              clearInterval(timer);
-              // fallback paths if user never logs in
-              const fallback = getProfileLookupEmail() || FORCE_EMAIL_FALLBACK;
-              try{ await paintFromBrain(fallback); }
-              catch(e){ setErr(String(e?.message || e)); }
-            }
-            return;
-          }
-          // Prefer loginEmail once present (THIS is the fix)
-          const loginEmail = getLoginEmail();
-          if (loginEmail){
-            clearInterval(timer);
-            try{ await paintFromBrain(loginEmail); }
-            catch(e){ setErr(String(e?.message || e)); }
-            return;
-          }
-          // If unlocked but loginEmail not yet written, keep waiting
-          if (waited >= maxMs){
-            clearInterval(timer);
-            const fallback = getProfileLookupEmail() || FORCE_EMAIL_FALLBACK;
-            try{ await paintFromBrain(fallback); }
-            catch(e){ setErr(String(e?.message || e)); }
-          }
-        }, tickMs);
-      }
-      boot();
-    })();
-  </script>
-                  </div>
-                </div>
                 <div class="w-layout-hflex nav-link-box">
                   <div class="w-layout-hflex nav-one-button-wrap">
                     <div class="menu-button-2 w-nav-button"><img width="31" height="18" alt="Hambarger Menu" src="images/Icon-nav-1.svg" loading="lazy"></div>
@@ -624,14 +314,16 @@
   <section>
     <section class="section-193">
       <div class="code-embed-2 w-embed w-iframe w-script"><!--  =========================================================
-  OrozcoRealty • Ask Elena FULLSCREEN SHELL (Option B) v1.3
-  SINGLE WEBFLOW EMBED — Shell + Center iFrame Switcher + встроенный Ask Elena (Right)
-  FIXES:
-  - Ask Elena now renders INSIDE the right box (face + chat + Send)
-  - Tool tray no longer covers the top buttons
-  - Adds a visible EXIT button (top-right) whenever a tool is open
-  - PCS Snapshot stays as the default center SaaS
-  - Links updated to your exact URLs
+  OrozcoRealty • Ask Elena FULLSCREEN SHELL (Option B) v1.4.0
+  SINGLE WEBFLOW EMBED — Shell + Center iFrame Switcher + Ask Elena (FULL SIDE PANEL)
+  ✅ NEW SIMPLIFICATION:
+  - Ask-Elena occupies the FULL side panel (no Profile block shown by default)
+  - Adds "Update Profile" button inside Elena header
+  - Clicking opens a frosted-glass modal with Profile data + edit + save
+  - Profile is ONLY surfaced when user requests it
+  ✅ Keeps:
+  - Tool tray switcher + Analyze iframe + Escape to exit tool
+  - House of SaSS theme tokens
 =========================================================  -->
         <div id="or-shell" style="all: initial;">
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -642,7 +334,7 @@
     #or-shell, #or-shell * { box-sizing:border-box; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
     #or-shell { position: relative; z-index: 999999; }
     /* ============================================================
-      //#2 — TOKENS (Ask Elena colors)
+      //#2 — TOKENS (House of SaSS)
     ============================================================ */
     :root{
       --bg:#0b0e1a;
@@ -659,6 +351,7 @@
       --r18: 18px;
       --r16: 16px;
       --r14: 14px;
+      --r12: 12px;
     }
     /* ============================================================
       //#3 — FULLSCREEN BASE
@@ -676,11 +369,7 @@
       overflow: hidden;
       z-index: 2147483647;
     }
-    #or-stage{
-      width:100%;
-      height:100%;
-      overflow:hidden;
-    }
+    #or-stage{ width:100%; height:100%; overflow:hidden; }
     /* ============================================================
       //#4 — MAIN FRAME (full height)
     ============================================================ */
@@ -694,7 +383,7 @@
       background: rgba(0,0,0,.10);
     }
     /* ============================================================
-      //#5 — TOP BAR (+ Exit button slot)
+      //#5 — TOP BAR
     ============================================================ */
     #or-topbar {
       flex: 0 0 auto;
@@ -768,20 +457,25 @@
       box-shadow: 0 0 0 4px rgba(106,167,255,.10);
     }
     /* ============================================================
-      //#6 — GRID (center longest + full height)
+      //#6 — GRID (2 columns)
+      ✅ Dashboard LEFT, Ask-Elena RIGHT (simpler mental model)
     ============================================================ */
     #or-grid{
       flex: 1 1 auto;
       display:grid;
-      grid-template-columns: 320px minmax(720px, 1fr) 360px;
+      grid-template-columns: 420px minmax(860px, 1fr);
       gap:14px;
       padding:14px;
       height:100%;
       min-height:0;
       overflow:hidden;
     }
+    /* ✅ FIX: Put Ask-Elena on the LEFT, Center tools/dashboard on the RIGHT */
+    #or-elena-card{ grid-column: 1; grid-row: 1; }
+    #or-center{ grid-column: 2; grid-row: 1; }
     @media (max-width: 1180px){
       #or-grid{ grid-template-columns:1fr; overflow:auto; }
+      /* (mobile stack remains unchanged) */
     }
     .or-card{
       border-radius: var(--r16);
@@ -811,20 +505,8 @@
     }
     .or-muted{ color: var(--muted); }
     .or-strong{ color: var(--ink); font-weight:800; }
-    .or-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.88);
-      font-size: 11px;
-      margin-top: 10px;
-    }
     /* ============================================================
-      //#7 — CENTER BUTTONS (Ask Elena "Send" style)
+      //#7 — CENTER BUTTONS (Tools)
     ============================================================ */
     #or-tools{
       display:flex;
@@ -868,12 +550,11 @@
     }
     #or-close:hover{ background: rgba(255,255,255,.10); transform:translateY(-1px); }
     /* ============================================================
-      //#8 — CENTER: PCS DEFAULT + TOOL TRAY (FIXED EXIT)
-      IMPORTANT: tray starts BELOW the header so buttons stay clickable
+      //#8 — CENTER: DEFAULT MAIN + TOOL TRAY
     ============================================================ */
     #or-center{ position:relative; }
     #or-main{
-      padding:12px;
+      padding:0;
       flex:1;
       min-height:0;
       overflow:hidden;
@@ -893,13 +574,12 @@
       margin-top:10px;
       text-align:center;
     }
-    /* Tray overlay fills center area but begins below head */
     #or-tooltray{
       position:absolute;
-      left:12px;
-      right:12px;
-      top:58px;          /* << key fix: below the head */
-      bottom:12px;       /* fill remaining height */
+      left:0;
+      right:0;
+      top:58px;
+      bottom:0;
       transform: translateY(-120%);
       transition: transform .22s ease;
       background: rgba(0,0,0,.45);
@@ -959,8 +639,16 @@
       min-height:0;
     }
     /* ============================================================
-      //#9 — RIGHT: встроенный Ask Elena (compact)
+      //#9 — ASK ELENA (FULL PANEL)
     ============================================================ */
+    #or-elena-panel{
+      padding:14px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:0;
+    }
     #or-elena{
       height:100%;
       min-height:0;
@@ -971,11 +659,18 @@
     #or-elena-head{
       display:flex;
       align-items:center;
+      justify-content:space-between;
       gap:10px;
       padding:10px 10px;
       border-radius: 14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
+    }
+    #or-elena-head-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
     }
     .or-elena-avatar-wrap{
       width:42px;height:42px;border-radius:999px; position:relative; flex:0 0 auto;
@@ -1012,6 +707,27 @@
       text-overflow:ellipsis;
       max-width: 260px;
     }
+    .or-mini-btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: .18s ease;
+      white-space: nowrap;
+    }
+    .or-mini-btn:hover{ background: rgba(255,255,255,.10); transform: translateY(-1px); }
+    .or-mini-btn.primary{
+      border: none;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+      color:#050712;
+      box-shadow:0 16px 34px rgba(0,0,0,.30);
+    }
     #or-elena-chat{
       flex: 1 1 auto;
       min-height:0;
@@ -1040,9 +756,7 @@
       border-color: rgba(142,243,197,.22);
       background: rgba(142,243,197,.08);
     }
-    .or-emsg.bot{
-      align-self:flex-start;
-    }
+    .or-emsg.bot{ align-self:flex-start; }
     .or-emsg.typing{
       font-size:12px;
       opacity:.9;
@@ -1082,34 +796,154 @@
       white-space:nowrap;
     }
     #or-elena-send:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+    /* ============================================================
+      //#10 — PROFILE MODAL (Frosted Glass)
+    ============================================================ */
+    #or-profile-modal{
+      position: fixed;
+      inset: 0;
+      display:none;
+      z-index: 2147483647;
+    }
+    #or-profile-modal.open{ display:block; }
+    #or-profile-backdrop{
+      position:absolute;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+    }
+    #or-profile-panel{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(760px, calc(100vw - 28px));
+      max-height: min(84vh, 820px);
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(900px 500px at 10% 10%, rgba(106,167,255,.16), transparent 55%),
+        radial-gradient(900px 500px at 90% 10%, rgba(142,243,197,.12), transparent 55%),
+        rgba(12,14,25,.80);
+      box-shadow: 0 30px 80px rgba(0,0,0,.85);
+    }
+    #or-profile-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    #or-profile-title{
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.88);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    #or-profile-title small{
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform:none;
+      color: rgba(168,176,214,.90);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    #or-profile-body{
+      padding: 14px;
+      overflow:auto;
+      max-height: calc(84vh - 70px);
+    }
+    .or-form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 760px){
+      .or-form-grid{ grid-template-columns: 1fr; }
+    }
+    .or-field label{
+      display:block;
+      font-size: 11px;
+      color: rgba(168,176,214,.95);
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .or-field input, .or-field select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(12,14,25,.65);
+      color: #e9ecff;
+      outline: none;
+      font-size: 13px;
+    }
+    .or-field input:focus, .or-field select:focus{
+      border-color: rgba(142,243,197,.70);
+      box-shadow: 0 0 0 1px rgba(142,243,197,.25);
+    }
+    .or-row-actions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      flex-wrap: wrap;
+    }
+    #or-profile-note{
+      font-size: 12px;
+      color: rgba(168,176,214,.95);
+      line-height: 1.45;
+      max-width: 520px;
+    }
+    #or-toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.55);
+      color: rgba(255,255,255,.92);
+      font-size: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.70);
+      display:none;
+      z-index: 2147483647;
+      white-space: nowrap;
+    }
+    #or-toast.show{ display:block; }
   </style>
-          <div id="or-fullscreen" aria-label="OrozcoRealty Ask Elena Shell (Fullscreen)">
+          <div id="or-fullscreen" aria-label="OrozcoRealty Shell (Fullscreen)">
             <div id="or-stage">
               <div id="or-frame">
                 <!--  TOP BAR  -->
                 <div id="or-topbar">
                   <div id="or-userline">
                     <div id="or-hello">Hello —</div>
-                    <div id="or-bluf">BLUF: Waiting for profile + affordability verdict…</div>
+                    <div id="or-bluf">BLUF: Ask Elena what you want first — I’ll guide you fast.</div>
                   </div>
                   <div id="or-top-actions">
                     <button id="or-exit" title="Exit current tool">Exit</button>
                     <div id="or-status"><span id="or-dot"></span><span id="or-status-text">Shell Ready</span></div>
                   </div>
                 </div>
-                <!--  GRID  -->
+                <!--  GRID (2 columns)  -->
                 <div id="or-grid">
-                  <!--  LEFT (no title)  -->
-                  <div class="or-card" id="or-left">
-                    <div class="or-card-body" id="or-left-body">
-                      <div class="or-strong">No profile loaded yet.</div>
-                      <div class="or-muted" style="margin-top:6px;">
-                        Embed #2 will inject Rank / YOS / Base / VA% here.
-                      </div>
-                      <div class="or-pill">Source: <span class="or-strong">Supabase</span></div>
-                    </div>
-                  </div>
-                  <!--  CENTER (PCS default)  -->
+                  <!--  CENTER: Analyze default  -->
                   <div class="or-card" id="or-center">
                     <div class="or-card-head">
                       <div id="or-tools">
@@ -1119,7 +953,7 @@
                         <button id="or-close" title="Close tool">Close</button>
                       </div>
                     </div>
-                    <!--  Tool tray overlay (below header)  -->
+                    <!--  Tool tray overlay  -->
                     <div id="or-tooltray" aria-hidden="true">
                       <div id="or-traybar">
                         <div id="or-traytitle">Tool</div>
@@ -1127,25 +961,28 @@
                       </div>
                       <iframe id="or-iframe" title="OrozcoRealty Tool"></iframe>
                     </div>
-                    <!--  PCS Snapshot always visible underneath  -->
+                    <!--  Default Main (Analyze Dashboard)  -->
                     <div id="or-main">
-                      <iframe id="or-main-iframe" title="PCS Snapshot" src="https://new-real-estate-purchase.webflow.io/pcs-snapshot">
+                      <iframe id="or-main-iframe" title="Financial Analyze Dashboard" src="https://new-real-estate-purchase.webflow.io/features/analyze">
                       </iframe>
                       <div id="or-hint">Tip: press <span class="or-strong">Esc</span> to exit a tool.</div>
                     </div>
                   </div>
-                  <!--  RIGHT: Ask Elena (no title)  -->
-                  <div class="or-card" id="or-right">
-                    <div class="or-card-body" id="or-right-body">
+                  <!--  RIGHT: Ask Elena FULL  -->
+                  <div class="or-card" id="or-elena-card">
+                    <div class="or-card-body" id="or-elena-panel">
                       <div id="or-elena">
                         <div id="or-elena-head">
-                          <div class="or-elena-avatar-wrap">
-                            <div class="or-elena-avatar"></div>
+                          <div id="or-elena-head-left">
+                            <div class="or-elena-avatar-wrap">
+                              <div class="or-elena-avatar"></div>
+                            </div>
+                            <div id="or-elena-meta">
+                              <div id="or-elena-name">Elena • A.I. Concierge</div>
+                              <div id="or-elena-sub">Hello —</div>
+                            </div>
                           </div>
-                          <div id="or-elena-meta">
-                            <div id="or-elena-name">Elena • A.I. Concierge</div>
-                            <div id="or-elena-sub">Hello —</div>
-                          </div>
+                          <button id="or-btn-profile" class="or-mini-btn" type="button">Update Profile</button>
                         </div>
                         <div id="or-elena-chat"></div>
                         <div id="or-elena-foot">
@@ -1159,11 +996,77 @@
               </div>
             </div>
           </div>
+          <!--  PROFILE MODAL  -->
+          <div id="or-profile-modal" aria-hidden="true">
+            <div id="or-profile-backdrop"></div>
+            <div id="or-profile-panel" role="dialog" aria-modal="true" aria-label="Update Profile">
+              <div id="or-profile-top">
+                <div id="or-profile-title">
+                  Profile • Supabase
+                  <small id="or-profile-email-hint">—</small>
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <button id="or-profile-edit" class="or-mini-btn" type="button">Edit</button>
+                  <button id="or-profile-close" class="or-mini-btn" type="button">Close</button>
+                </div>
+              </div>
+              <div id="or-profile-body">
+                <div class="or-form-grid">
+                  <div class="or-field">
+                    <label>Email</label>
+                    <input id="pf_email" type="email" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>Name</label>
+                    <input id="pf_full_name" type="text" placeholder="First Last" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>Mode</label>
+                    <input id="pf_mode" type="text" placeholder="ad | vet | retired" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>Rank (Title)</label>
+                    <input id="pf_rank_title" type="text" placeholder="TSgt" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>Rank (Paygrade)</label>
+                    <input id="pf_rank_paygrade" type="text" placeholder="E-6" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>YOS</label>
+                    <input id="pf_yos" type="number" min="0" step="1" placeholder="10" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>Base</label>
+                    <input id="pf_base" type="text" placeholder="Davis-Monthan" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>Family Size</label>
+                    <input id="pf_family" type="number" min="1" step="1" placeholder="3" disabled="">
+                  </div>
+                  <div class="or-field">
+                    <label>VA %</label>
+                    <input id="pf_va" type="number" min="0" max="100" step="10" placeholder="0" disabled="">
+                  </div>
+                </div>
+                <div class="or-row-actions">
+                  <div id="or-profile-note">
+                    Tip: This is “on-demand.” Ask-Elena stays primary, and Profile only appears when users choose to update it.
+                  </div>
+                  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <button id="or-profile-cancel" class="or-mini-btn" type="button" style="display:none;">Cancel</button>
+                    <button id="or-profile-save" class="or-mini-btn primary" type="button" style="display:none;">Save Changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="or-toast">Saved.</div>
           <script>
     (function(){
       "use strict";
       /* ============================================================
-        //#10 — FIX: mount fullscreen to <body> (reliable full screen)
+        //#1 — FULLSCREEN MOUNT (reliable)
       ============================================================ */
       const fullscreen = document.getElementById("or-fullscreen");
       if (fullscreen && fullscreen.parentElement && fullscreen.parentElement.id === "or-shell") {
@@ -1176,18 +1079,20 @@
         } catch(_) {}
       }
       /* ============================================================
-        //#11 — CONFIG (your exact URLs)
+        //#2 — CONFIG
       ============================================================ */
       const TOOL_URLS = {
         mortgage: "https://new-real-estate-purchase.webflow.io/mortgage-estimator-input",
         aiou:     "https://new-real-estate-purchase.webflow.io/features/psychology",
         frs:      "https://new-real-estate-purchase.design.webflow.com/?locale=en&pageId=68dcd360e3426efe81144c09"
       };
-      const PCS_URL = "https://new-real-estate-purchase.webflow.io/pcs-snapshot";
+      const MAIN_URL = "https://new-real-estate-purchase.webflow.io/features/analyze";
       const ELENA_ENDPOINT = "https://theorozcorealty.netlify.app/.netlify/functions/ask-elena";
-      const ELENA_AVATAR = "https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png";
+      // OPTIONAL: if you later add a Netlify function / API route to update Supabase,
+      // set this to your endpoint. Otherwise we save locally + dispatch OR_PROFILE_UPDATE.
+      const PROFILE_UPDATE_ENDPOINT = ""; // e.g. "https://theorozcorealty.netlify.app/api/update-profile"
       /* ============================================================
-        //#12 — DOM
+        //#3 — DOM
       ============================================================ */
       const $ = (id)=>document.getElementById(id);
       const helloEl = $("or-hello");
@@ -1203,29 +1108,170 @@
       const btnAIOU = $("or-btn-aiou");
       const btnFRS = $("or-btn-frs");
       const toolBtns = [btnMortgage, btnAIOU, btnFRS];
-      // Elena DOM
       const elenaSub = $("or-elena-sub");
       const elenaChat = $("or-elena-chat");
       const elenaInput = $("or-elena-input");
       const elenaSend = $("or-elena-send");
+      const btnProfile = $("or-btn-profile");
+      const modal = $("or-profile-modal");
+      const backdrop = $("or-profile-backdrop");
+      const modalClose = $("or-profile-close");
+      const modalEdit = $("or-profile-edit");
+      const modalSave = $("or-profile-save");
+      const modalCancel = $("or-profile-cancel");
+      const emailHint = $("or-profile-email-hint");
+      const toast = $("or-toast");
+      const pf = {
+        email: $("pf_email"),
+        full_name: $("pf_full_name"),
+        mode: $("pf_mode"),
+        rank_title: $("pf_rank_title"),
+        rank_paygrade: $("pf_rank_paygrade"),
+        yos: $("pf_yos"),
+        base: $("pf_base"),
+        family: $("pf_family"),
+        va: $("pf_va")
+      };
       function safeGetJSON(key){
         try { return JSON.parse(localStorage.getItem(key)||"{}"); } catch(_){ return {}; }
       }
+      function safeSetJSON(key, val){
+        try { localStorage.setItem(key, JSON.stringify(val||{})); } catch(_){}
+      }
       function setStatus(t){ statusText.textContent = t || "Shell Ready"; }
-      function setHelloFromIdentity(){
-        const id = safeGetJSON("realtysass.identity");
-        const first = (id.firstName || "").trim();
-        const last  = (id.lastName || "").trim();
-        const name  = [first,last].filter(Boolean).join(" ").trim();
-        helloEl.textContent = name ? `Hello ${name}` : "Hello —";
-        elenaSub.textContent = name ? `Hello ${name}` : "Hello —";
+      function setBLUF(text){ blufEl.textContent = text ? `BLUF: ${String(text)}` : "BLUF: —"; }
+      function showToast(msg){
+        toast.textContent = msg || "Saved.";
+        toast.classList.add("show");
+        setTimeout(()=>toast.classList.remove("show"), 2200);
       }
-      function setBLUF(text){
-        blufEl.textContent = text ? `BLUF: ${String(text)}` : "BLUF: —";
+      function sanitizeName(s){
+        const str = String(s ?? "").trim();
+        if(!str) return "";
+        return str.replace(/^(?:\s*(hello|hi|hey)\b[\s,.:!-]*)+/i, "").trim();
       }
-      function setActive(btn){
-        toolBtns.forEach(b=>b.classList.toggle("active", b===btn));
+      function lastNameFromFullName(full){
+        const cleaned = sanitizeName(full);
+        if(!cleaned) return "";
+        if (cleaned.includes(",")){
+          const parts = cleaned.split(",").map(x=>x.trim()).filter(Boolean);
+          return parts[0] || "";
+        }
+        const parts = cleaned.split(/\s+/).filter(Boolean);
+        return parts.length ? parts[parts.length-1] : "";
       }
+      const PAYGRADE_TITLES = {
+        "E-1":"AB","E-2":"Amn","E-3":"A1C","E-4":"SrA","E-5":"SSgt","E-6":"TSgt","E-7":"MSgt","E-8":"SMSgt","E-9":"CMSgt",
+        "W-1":"WO1","W-2":"CWO2","W-3":"CWO3","W-4":"CWO4","W-5":"CWO5",
+        "O-1":"2d Lt","O-2":"1st Lt","O-3":"Capt","O-4":"Maj","O-5":"Lt Col","O-6":"Col",
+        "O-7":"Brig Gen","O-8":"Maj Gen","O-9":"Lt Gen","O-10":"Gen"
+      };
+      function rankToAFShort(rankTitle){
+        const r = String(rankTitle || "").trim();
+        if(!r) return "";
+        if (/^(AB|Amn|A1C|SrA|SSgt|TSgt|MSgt|SMSgt|CMSgt|2d\sLt|1st\sLt|Capt|Maj|Lt\sCol|Col|Brig\sGen|Maj\sGen|Lt\sGen|Gen)$/i.test(r)){
+          return r.replace(/\s+/g," ").trim();
+        }
+        const map = [
+          [/chief master sergeant/i, "CMSgt"],
+          [/senior master sergeant/i, "SMSgt"],
+          [/master sergeant/i, "MSgt"],
+          [/technical sergeant/i, "TSgt"],
+          [/staff sergeant/i, "SSgt"],
+          [/senior airman/i, "SrA"],
+          [/airman first class/i, "A1C"],
+          [/\bairman\b/i, "Amn"],
+          [/second lieutenant/i, "2d Lt"],
+          [/first lieutenant/i, "1st Lt"],
+          [/\bcaptain\b/i, "Capt"],
+          [/\bmajor\b/i, "Maj"],
+          [/lieutenant colonel/i, "Lt Col"],
+          [/\bcolonel\b/i, "Col"],
+          [/brigadier general/i, "Brig Gen"],
+          [/major general/i, "Maj Gen"],
+          [/lieutenant general/i, "Lt Gen"],
+          [/^general$/i, "Gen"]
+        ];
+        for (const [re, val] of map){
+          if (re.test(r)) return val;
+        }
+        return r;
+      }
+      function readProfile(){
+        const p = safeGetJSON("realtysass.profile");
+        const lookup = safeGetJSON("realtysass.profile_lookup");
+        const p2 = (lookup && lookup.profile) ? lookup.profile : {};
+        // merge: prefer realtysass.profile, fallback lookup.profile
+        const merged = Object.assign({}, p2 || {}, p || {});
+        return merged || {};
+      }
+      function getAFDisplayName(){
+        const prof = readProfile();
+        const full = sanitizeName(prof.full_name || "");
+        const last = (prof.last_name || "").trim() || lastNameFromFullName(full);
+        const paygrade = (prof.rank_paygrade || prof.rank || "").trim();
+        const rankTitleRaw = (prof.rank_title || PAYGRADE_TITLES[paygrade] || paygrade || "").trim();
+        const rankShort = rankToAFShort(rankTitleRaw);
+        const base = (prof.base || "").trim();
+        const email = (prof.email || "").trim().toLowerCase();
+        const display = [rankShort, last].filter(Boolean).join(" ").trim() || last || full || "";
+        const hint = [paygrade, base].filter(Boolean).join(", ");
+        return {
+          display,
+          hint,
+          base,
+          paygrade,
+          email,
+          family: (prof.family ?? null),
+          va: (prof.va_disability ?? prof.va ?? null),
+          raw: prof
+        };
+      }
+      function applyGreeting(){
+        const g = getAFDisplayName();
+        helloEl.textContent = g.display ? `Hello ${g.display}` : "Hello —";
+        const baseLine = g.display ? `Hello ${g.display}` : "Hello —";
+        elenaSub.textContent = g.hint ? `${baseLine} • ${g.hint}` : baseLine;
+        return g;
+      }
+      function buildSummaryOpener(g){
+        const who = g.display ? `Hello ${g.display}` : "Hello —";
+        const lines = [];
+        if (g.base){
+          lines.push(`${who} — I’m Elena. I can see you’re tied to ${g.base}.`);
+        } else {
+          lines.push(`${who} — I’m Elena. Ask me anything — I’ll guide you fast.`);
+        }
+        if (g.family !== null && g.family !== undefined && String(g.family).trim() !== ""){
+          lines.push(`Family: ${g.family}.`);
+        }
+        lines.push(
+          "Quick question so I can guide you fast — what do you want first?\n" +
+          "1) Buy vs Rent verdict\n" +
+          "2) Mortgage estimate + safe budget range\n" +
+          "3) Neighborhoods / schools / commute\n" +
+          "4) PCS step-by-step game plan"
+        );
+        return lines.join("\n\n");
+      }
+      function ensureElenaOpener(){
+        const g = applyGreeting();
+        const existing = elenaChat.querySelector("[data-elena-opener='1']");
+        const text = buildSummaryOpener(g);
+        if (existing){
+          existing.textContent = text;
+          return;
+        }
+        if (elenaChat.children.length === 0){
+          const d = document.createElement("div");
+          d.className = "or-emsg bot";
+          d.dataset.elenaOpener = "1";
+          d.textContent = text;
+          elenaChat.appendChild(d);
+          elenaChat.scrollTop = elenaChat.scrollHeight;
+        }
+      }
+      function setActive(btn){ toolBtns.forEach(b=>b.classList.toggle("active", b===btn)); }
       function buildToolUrl(toolKey){
         const base = TOOL_URLS[toolKey] || "";
         if(!base) return "";
@@ -1234,7 +1280,7 @@
         const hasQ = base.includes("?");
         const qs = new URLSearchParams();
         if(email) qs.set("email", email);
-        // defaults requested
+        // keep your existing defaults
         qs.set("rate", "6.5");
         qs.set("term", "30");
         return base + (hasQ ? "&" : "?") + qs.toString();
@@ -1247,11 +1293,7 @@
         const url = buildToolUrl(toolKey);
         if(!url){ setStatus("Missing tool URL"); return; }
         setActive(btn);
-        const labelMap = {
-          mortgage: "Mortgage Estimator",
-          aiou: "AIOU",
-          frs: "Full Financial Analysis"
-        };
+        const labelMap = { mortgage: "Mortgage Estimator", aiou: "AIOU", frs: "Full Financial Analysis" };
         trayTitle.textContent = (labelMap[toolKey] || "Tool");
         iframe.src = url;
         tray.classList.add("open");
@@ -1272,41 +1314,9 @@
         window.dispatchEvent(new CustomEvent("OR_TOOL_CLOSE", { detail: { ok:true } }));
       }
       /* ============================================================
-        //#13 — WIRING (tools)
+        //#4 — Ask Elena (chat)
       ============================================================ */
-      btnMortgage.addEventListener("click", ()=>openTool("mortgage", btnMortgage));
-      btnAIOU.addEventListener("click", ()=>openTool("aiou", btnAIOU));
-      btnFRS.addEventListener("click", ()=>openTool("frs", btnFRS));
-      closeBtn.addEventListener("click", closeTool);
-      topExitBtn.addEventListener("click", closeTool);
-      trayExitBtn.addEventListener("click", closeTool);
-      window.addEventListener("keydown", (e)=>{
-        if(e && e.key === "Escape" && tray.classList.contains("open")) closeTool();
-      });
-      /* ============================================================
-        //#14 — PUBLIC API (unchanged)
-      ============================================================ */
-      window.OR_SHELL = window.OR_SHELL || {};
-      window.OR_SHELL.setBLUF = (t)=>setBLUF(t);
-      window.OR_SHELL.setHello = (name)=>{
-        helloEl.textContent = name ? `Hello ${name}` : "Hello —";
-        elenaSub.textContent = name ? `Hello ${name}` : "Hello —";
-      };
-      window.OR_SHELL.setStatus = (t)=>setStatus(t);
-      window.OR_SHELL.setLeftHTML = (html)=>{
-        const el = document.getElementById("or-left-body");
-        if(el) el.innerHTML = String(html || "");
-      };
-      window.OR_SHELL.setRightHTML = (html)=>{
-        const el = document.getElementById("or-right-body");
-        if(el) el.innerHTML = String(html || "");
-      };
-      /* ============================================================
-        //#15 — ASK ELENA (compact chat in right panel)
-      ============================================================ */
-      function elenaScrollBottom(){
-        elenaChat.scrollTop = elenaChat.scrollHeight;
-      }
+      function elenaScrollBottom(){ elenaChat.scrollTop = elenaChat.scrollHeight; }
       function elenaAdd(role, text, cls){
         const d = document.createElement("div");
         d.className = "or-emsg " + (cls || (role === "user" ? "user" : "bot"));
@@ -1331,6 +1341,17 @@
         elenaSend.disabled = true;
         elenaShowTyping();
         try{
+          const g = getAFDisplayName();
+          const profileCtx = g && g.raw ? {
+            email: (g.raw.email || "").trim(),
+            mode: g.raw.mode || null,
+            rank_title: g.raw.rank_title || null,
+            rank_paygrade: g.raw.rank_paygrade || null,
+            yos: (g.raw.yos ?? null),
+            base: g.raw.base || null,
+            family: (g.raw.family ?? null),
+            va_disability: (g.raw.va_disability ?? null)
+          } : null;
           const res = await fetch(ELENA_ENDPOINT, {
             method:"POST",
             headers:{ "Content-Type":"application/json" },
@@ -1338,8 +1359,9 @@
               message,
               context: {
                 source: "webflow",
-                widget: "ask-elena-right-panel",
-                version: "shell-1.3"
+                widget: "ask-elena-full-panel",
+                version: "shell-1.4.0",
+                profile: profileCtx
               }
             })
           });
@@ -1365,49 +1387,157 @@
       elenaSend.addEventListener("click", elenaSendNow);
       elenaInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") elenaSendNow(); });
       /* ============================================================
-        //#16 — BOOT
+        //#5 — Profile Modal (View/Edit/Save)
       ============================================================ */
-      // Ensure PCS stays loaded
+      function setFormDisabled(disabled){
+        Object.keys(pf).forEach(k=>{
+          if(!pf[k]) return;
+          pf[k].disabled = !!disabled;
+        });
+        // Email stays read-only always
+        pf.email.disabled = true;
+      }
+      function fillFormFromProfile(){
+        const p = readProfile() || {};
+        const email = String(p.email || "").trim().toLowerCase();
+        pf.email.value = email || "";
+        pf.full_name.value = p.full_name || "";
+        pf.mode.value = p.mode || "";
+        pf.rank_title.value = p.rank_title || "";
+        pf.rank_paygrade.value = p.rank_paygrade || "";
+        pf.yos.value = (p.yos ?? "") === null ? "" : String(p.yos ?? "");
+        pf.base.value = p.base || "";
+        pf.family.value = (p.family ?? "") === null ? "" : String(p.family ?? "");
+        pf.va.value = (p.va_disability ?? p.va ?? "") === null ? "" : String(p.va_disability ?? p.va ?? "");
+        emailHint.textContent = email ? email : "No email loaded";
+      }
+      function openProfileModal(){
+        fillFormFromProfile();
+        setFormDisabled(true);
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden","false");
+        modalSave.style.display = "none";
+        modalCancel.style.display = "none";
+        modalEdit.style.display = "inline-flex";
+      }
+      function closeProfileModal(){
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden","true");
+      }
+      function enterEditMode(){
+        setFormDisabled(false);
+        modalEdit.style.display = "none";
+        modalSave.style.display = "inline-flex";
+        modalCancel.style.display = "inline-flex";
+        showToast("Edit mode enabled.");
+      }
+      function exitEditMode(){
+        fillFormFromProfile();
+        setFormDisabled(true);
+        modalEdit.style.display = "inline-flex";
+        modalSave.style.display = "none";
+        modalCancel.style.display = "none";
+      }
+      function normalizeNumber(v){
+        const n = Number(String(v ?? "").trim());
+        return Number.isFinite(n) ? n : null;
+      }
+      async function tryPostProfileUpdate(payload){
+        if(!PROFILE_UPDATE_ENDPOINT) return { ok:false, skipped:true };
+        const res = await fetch(PROFILE_UPDATE_ENDPOINT, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify(payload || {})
+        });
+        const data = await res.json().catch(()=> ({}));
+        if(!res.ok || data.ok === false) throw new Error(data.error || "Update failed.");
+        return { ok:true, data };
+      }
+      async function saveProfile(){
+        const current = readProfile() || {};
+        const updated = Object.assign({}, current, {
+          // email stays unchanged unless you later enable server logic
+          full_name: String(pf.full_name.value || "").trim(),
+          mode: String(pf.mode.value || "").trim(),
+          rank_title: String(pf.rank_title.value || "").trim(),
+          rank_paygrade: String(pf.rank_paygrade.value || "").trim(),
+          yos: normalizeNumber(pf.yos.value),
+          base: String(pf.base.value || "").trim(),
+          family: normalizeNumber(pf.family.value),
+          va_disability: normalizeNumber(pf.va.value)
+        });
+        // Save locally first (instant UX)
+        safeSetJSON("realtysass.profile", updated);
+        // Let the rest of your system know (optional listener can persist to Supabase)
+        window.dispatchEvent(new CustomEvent("OR_PROFILE_UPDATE", { detail: { profile: updated } }));
+        // Try server update if endpoint exists
+        let serverOk = false;
+        try{
+          const r = await tryPostProfileUpdate({ profile: updated });
+          serverOk = !!r.ok;
+        }catch(_){
+          serverOk = false;
+        }
+        // Update greetings/opener instantly
+        ensureElenaOpener();
+        setFormDisabled(true);
+        modalEdit.style.display = "inline-flex";
+        modalSave.style.display = "none";
+        modalCancel.style.display = "none";
+        showToast(serverOk ? "Profile saved to server." : "Profile saved (local).");
+      }
+      /* ============================================================
+        //#6 — PUBLIC API (compat)
+      ============================================================ */
+      window.OR_SHELL = window.OR_SHELL || {};
+      window.OR_SHELL.setBLUF = (t)=>setBLUF(t);
+      window.OR_SHELL.setHello = (displayName)=>{
+        const dn = sanitizeName(displayName || "");
+        helloEl.textContent = dn ? `Hello ${dn}` : "Hello —";
+        const g = getAFDisplayName();
+        const baseLine = dn ? `Hello ${dn}` : "Hello —";
+        elenaSub.textContent = g.hint ? `${baseLine} • ${g.hint}` : baseLine;
+        ensureElenaOpener();
+      };
+      window.OR_SHELL.setStatus = (t)=>setStatus(t);
+      /* ============================================================
+        //#7 — WIRING
+      ============================================================ */
+      btnMortgage.addEventListener("click", ()=>openTool("mortgage", btnMortgage));
+      btnAIOU.addEventListener("click", ()=>openTool("aiou", btnAIOU));
+      btnFRS.addEventListener("click", ()=>openTool("frs", btnFRS));
+      closeBtn.addEventListener("click", closeTool);
+      topExitBtn.addEventListener("click", closeTool);
+      trayExitBtn.addEventListener("click", closeTool);
+      window.addEventListener("keydown", (e)=>{
+        if(e && e.key === "Escape"){
+          if (modal.classList.contains("open")) closeProfileModal();
+          else if (tray.classList.contains("open")) closeTool();
+        }
+      });
+      btnProfile.addEventListener("click", openProfileModal);
+      backdrop.addEventListener("click", closeProfileModal);
+      modalClose.addEventListener("click", closeProfileModal);
+      modalEdit.addEventListener("click", enterEditMode);
+      modalCancel.addEventListener("click", exitEditMode);
+      modalSave.addEventListener("click", saveProfile);
+      /* ============================================================
+        //#8 — BOOT
+      ============================================================ */
       try{
-        const pcs = document.getElementById("or-main-iframe");
-        if(pcs && PCS_URL) pcs.src = PCS_URL;
+        const main = document.getElementById("or-main-iframe");
+        if(main && MAIN_URL) main.src = MAIN_URL;
       }catch(_){}
-      setHelloFromIdentity();
-      setBLUF("Waiting for profile + affordability verdict…");
+      ensureElenaOpener();
       setStatus("Shell Ready");
       showExitUI(false);
-      // Elena greeting (uses profile if available)
-      (function(){
-        const prof = safeGetJSON("realtysass.profile_lookup");
-        const p = prof && prof.profile ? prof.profile : {};
-        const rank = p.rank || p.rank_paygrade || "";
-        const base = p.base || "";
-        const name = (p.full_name || "").trim();
-        const hint = [rank, base].filter(Boolean).join(", ");
-        const opener =
-          hint
-            ? `Hey — I’m Elena. I can see your profile (${hint}). What are we solving today?`
-            : `Hey — I’m Elena. Ask me anything, and I’ll keep it clean and actionable.`;
-        elenaAdd("assistant", opener, "bot");
-        // Also update right header line with profile-ish context
-        const line = name ? `Hello ${name}` : (safeGetJSON("realtysass.identity").firstName ? `Hello ${safeGetJSON("realtysass.identity").firstName}` : "Hello —");
-        elenaSub.textContent = line + (hint ? ` • ${hint}` : "");
-      })();
-      // Restore last opened tool (optional)
       const lastTool = localStorage.getItem("or_shell.active_tool");
       if(lastTool && TOOL_URLS[lastTool]){
         const btnMap = { mortgage: btnMortgage, aiou: btnAIOU, frs: btnFRS };
         openTool(lastTool, btnMap[lastTool] || btnMortgage);
       }
-      // Optional: listen for Embed #2
-      window.addEventListener("OR_PROFILE_READY", (ev)=>{
-        try{
-          const d = (ev && ev.detail) ? ev.detail : {};
-          if(d.hello) window.OR_SHELL.setHello(d.hello);
-          if(d.bluf) window.OR_SHELL.setBLUF(d.bluf);
-          if(d.status) window.OR_SHELL.setStatus(d.status);
-        }catch(_){}
-      });
+      // If another embed fires OR_PROFILE_READY, refresh greeting/opener
+      window.addEventListener("OR_PROFILE_READY", ()=>{ ensureElenaOpener(); });
     })();
   </script>
         </div>
@@ -1423,14 +1553,10 @@
   - Saves profile to localStorage keys used across your system:
       - realtysass.profile_lookup  (raw response)
       - realtysass.profile         (just profile row, convenience)
-  IMPORTANT:
-  - Display-only. No admin keys. No direct Supabase calls.
-  - Safe for Webflow: calls your serverless function only.
 =========================================================  -->
     <div id="or-shell-embed-2" style="all: initial;">
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
       <style>
-    /* Keep this embed visually invisible (it only injects content into the Shell) */
     #or-shell-embed-2, #or-shell-embed-2 * { box-sizing:border-box; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
     #or-shell-embed-2 { display:none; }
   </style>
@@ -1442,10 +1568,8 @@
       ============================================================ */
       const API_BASE = "https://theorozcorealty.netlify.app/api";
       const ENDPOINT = API_BASE + "/profile-by-email";
-      // Defaults you wanted for this stage (used for BLUF framing only)
       const DEFAULT_RATE = 0.065;   // 6.5%
       const DEFAULT_TERM_YEARS = 30;
-      // If no email is passed, fallback to this demo email
       const FALLBACK_EMAIL = "orozco@me.com";
       /* ============================================================
         //#2 — HELPERS
@@ -1453,7 +1577,7 @@
       const PAYGRADE_TITLES = {
         "E-1":"AB","E-2":"Amn","E-3":"A1C","E-4":"SrA","E-5":"SSgt","E-6":"TSgt","E-7":"MSgt","E-8":"SMSgt","E-9":"CMSgt",
         "W-1":"WO1","W-2":"CWO2","W-3":"CWO3","W-4":"CWO4","W-5":"CWO5",
-        "O-1":"2nd Lt","O-2":"1st Lt","O-3":"Captain","O-4":"Major","O-5":"Lt Col","O-6":"Colonel",
+        "O-1":"2d Lt","O-2":"1st Lt","O-3":"Capt","O-4":"Maj","O-5":"Lt Col","O-6":"Col",
         "O-7":"Brig Gen","O-8":"Maj Gen","O-9":"Lt Gen","O-10":"Gen"
       };
       function safeGetJSON(key){
@@ -1465,13 +1589,7 @@
       function esc(s){
         return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
       }
-      function money(n){
-        const x = Number(n);
-        if(!Number.isFinite(x)) return "—";
-        return x.toLocaleString(undefined, { style:"currency", currency:"USD", maximumFractionDigits:0 });
-      }
       function pickEmail(){
-        // Priority: URL param ?email= > identity email > fallback
         const qs = new URLSearchParams(location.search);
         const qEmail = (qs.get("email") || "").trim().toLowerCase();
         if(qEmail) return qEmail;
@@ -1489,6 +1607,21 @@
         const j = await r.json().catch(()=>({}));
         if(!r.ok || j.ok === false) throw new Error(j.error || ("HTTP " + r.status));
         return j;
+      }
+      function sanitizeName(s){
+        const str = String(s ?? "").trim();
+        if(!str) return "";
+        return str.replace(/^(?:\s*(hello|hi|hey)\b[\s,.:!-]*)+/i, "").trim();
+      }
+      function lastNameFromFullName(full){
+        const cleaned = sanitizeName(full);
+        if(!cleaned) return "";
+        if (cleaned.includes(",")){
+          const parts = cleaned.split(",").map(x=>x.trim()).filter(Boolean);
+          return parts[0] || "";
+        }
+        const parts = cleaned.split(/\s+/).filter(Boolean);
+        return parts.length ? parts[parts.length-1] : "";
       }
       function normalizeProfile(p){
         const prof = p || {};
@@ -1548,17 +1681,22 @@
         `;
       }
       function computeSimpleBLUF(profile){
-        // NOTE: We are NOT calculating affordability here (no pay tables, no city JSON, no debt).
-        // We provide a safe, honest BLUF that confirms data readiness.
         const r = (profile.rank_title || profile.rank_paygrade || "—");
         const y = (profile.yos !== null && profile.yos !== undefined) ? profile.yos : "—";
         const b = (profile.base || "—");
         return `Profile synced (${r}, ${y} YOS, ${b}). Ready to run Mortgage Estimator at ${(DEFAULT_RATE*100).toFixed(1)}% for ${DEFAULT_TERM_YEARS} years.`;
       }
+      function computeHelloDisplay(profile){
+        const full = sanitizeName(profile.full_name || "");
+        const last = (profile.last_name || "").trim() || lastNameFromFullName(full);
+        const rank = (profile.rank_title || profile.rank_paygrade || "").trim();
+        const display = [rank, last].filter(Boolean).join(" ").trim() || last || full || "";
+        return display || null; // IMPORTANT: no "Hello" prefix
+      }
       function dispatchProfileReady(profile){
         const detail = {
           email: profile.email || null,
-          hello: profile.full_name ? ("Hello " + profile.full_name) : null,
+          hello: computeHelloDisplay(profile),           // e.g., "MSgt Orozco"
           bluf: computeSimpleBLUF(profile),
           status: "Profile Synced"
         };
@@ -1569,7 +1707,6 @@
       ============================================================ */
       async function main(){
         const email = pickEmail();
-        // Notify shell we’re working
         if(window.OR_SHELL && typeof window.OR_SHELL.setStatus === "function"){
           window.OR_SHELL.setStatus("Fetching Profile…");
         }
@@ -1592,12 +1729,9 @@
           }
           return;
         }
-        // Expect: { ok:true, profile:{...} } from your /api/profile-by-email
         const profile = normalizeProfile(res && res.profile ? res.profile : { email });
-        // Save (for Mortgage Estimator + everything else)
         safeSetJSON("realtysass.profile_lookup", res);
         safeSetJSON("realtysass.profile", profile);
-        // Update Shell
         if(window.OR_SHELL && typeof window.OR_SHELL.setLeftHTML === "function"){
           window.OR_SHELL.setLeftHTML(buildLeftHTML(profile));
         }
@@ -1607,408 +1741,26 @@
         if(window.OR_SHELL && typeof window.OR_SHELL.setStatus === "function"){
           window.OR_SHELL.setStatus("Profile Synced");
         }
-        // Broadcast for other embeds (center/right)
         dispatchProfileReady(profile);
       }
-      // Run after a tiny delay so the Shell has mounted OR_SHELL
       setTimeout(main, 120);
     })();
   </script>
     </div>
   </div>
   <div class="w-embed w-script"><!--  ============================================================
-  OrozcoRealty • Ask Elena (RIGHT PANEL MOUNT) — EMBED #3 v1.1 FIX
-  FIX GOAL:
-  - Mount Elena INSIDE the Shell’s right-side placeholder (so it does NOT render at page bottom)
-  - Fill the right panel box (100% width/height), House of SaSS theme
-  - Keeps your endpoint + Elena image
+  OrozcoRealty • Ask Elena (RIGHT PANEL MOUNT) — EMBED #3 v1.2.0
+  NOTE:
+  - Your current UI is using Ask Elena INSIDE the Shell (Embed #1).
+  - This embed will auto-disable if it detects the Shell chat exists.
 ===============================================================  -->
     <div id="or-elena-embed3" style="all: initial;">
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-      <style>
-    /* ============================================================
-       //#1 RESET + TOKENS
-    ============================================================ */
-    #or-elena-embed3, #or-elena-embed3 *{
-      box-sizing:border-box;
-      font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    }
-    :root{
-      --bg:#0b0e1a;
-      --panel:#101426;
-      --panel2:#0f1324;
-      --ink:#ffffff;
-      --muted:#a8b0d6;
-      --teal:#8ef3c5;
-      --blue:#6aa7ff;
-      --border:rgba(255,255,255,.10);
-      --shadow: 0 24px 48px rgba(0,0,0,.80);
-      --radius:18px;
-      --danger:#ff8aa6;
-    }
-    /* ============================================================
-       //#2 ROOT (must fill parent)
-    ============================================================ */
-    #ae-root{
-      width:100%;
-      height:100%;
-      min-height:0;                 /* IMPORTANT: allow flex children to shrink */
-      display:flex;
-      flex-direction:column;
-      border-radius: var(--radius);
-      overflow:hidden;
-      background: linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow: var(--shadow);
-    }
-    /* ============================================================
-       //#3 HEADER
-    ============================================================ */
-    #ae-head{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:14px 14px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.02);
-      flex:0 0 auto;
-    }
-    .ae-avatar-wrap{
-      width:42px; height:42px;
-      border-radius:50%;
-      position:relative;
-      flex:0 0 auto;
-    }
-    .ae-avatar-wrap::before{
-      content:"";
-      position:absolute;
-      inset:-14px;
-      border-radius:50%;
-      background: radial-gradient(circle, rgba(142,243,197,.35), rgba(106,167,255,.30), transparent 70%);
-      filter: blur(14px);
-      pointer-events:none;
-    }
-    .ae-avatar{
-      width:42px; height:42px;
-      border-radius:50%;
-      background-image:url("https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png");
-      background-size:cover;
-      background-position:center;
-      border: 2px solid rgba(255,255,255,.14);
-      position:relative;
-      z-index:2;
-    }
-    .ae-title{
-      display:flex;
-      flex-direction:column;
-      line-height:1.1;
-      min-width: 0;
-    }
-    .ae-title strong{
-      font-size:13px;
-      font-weight:900;
-      color:var(--ink);
-      letter-spacing:.02em;
-    }
-    .ae-title span{
-      font-size:11px;
-      color:var(--muted);
-      margin-top:2px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 520px;
-    }
-    /* ============================================================
-       //#4 CHAT
-    ============================================================ */
-    #ae-chat{
-      flex:1 1 auto;
-      min-height:0;                 /* IMPORTANT: prevents “footer pushes chat off screen” */
-      overflow:auto;
-      padding:16px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-    .ae-msg{
-      max-width: 82%;
-      padding:12px 14px;
-      border-radius:14px;
-      font-size:14px;
-      line-height:1.45;
-      white-space: pre-wrap;
-      backdrop-filter: blur(6px);
-      color: var(--ink) !important;
-    }
-    .ae-user{
-      align-self:flex-end;
-      background: rgba(142,243,197,.08);
-      border:1px solid rgba(142,243,197,.25);
-    }
-    .ae-bot{
-      align-self:flex-start;
-      background: rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.12);
-    }
-    .ae-typing{
-      opacity:.92;
-      font-size:12px !important;
-      color: var(--ink) !important;
-    }
-    /* ============================================================
-       //#5 FOOTER
-    ============================================================ */
-    #ae-foot{
-      flex:0 0 auto;
-      padding:14px;
-      border-top:1px solid rgba(255,255,255,.08);
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:10px;
-      background: rgba(0,0,0,.10);
-    }
-    #ae-input{
-      width:100%;
-      padding:13px 14px;
-      font-size:14px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      color: var(--ink) !important;
-      border-radius:12px;
-      outline:none;
-    }
-    #ae-input::placeholder{ color: rgba(255,255,255,.55); }
-    #ae-send{
-      padding:13px 16px;
-      border:none;
-      border-radius:12px;
-      font-weight:900;
-      cursor:pointer;
-      background: linear-gradient(90deg, var(--teal), var(--blue));
-      color:#050712;
-      transition:.15s ease;
-    }
-    #ae-send:hover{ filter:brightness(1.08); transform: translateY(-1px); }
-    #ae-send:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
-    .tw-caret{
-      display:inline-block;
-      width:1px;
-      height:1.2em;
-      background: currentColor;
-      margin-left:2px;
-      animation: tw-blink 1s steps(1,end) infinite;
-    }
-    @keyframes tw-blink{ 50%{ opacity:0; } }
-  </style>
-      <!--  ============================================================
-       //#6 CHAT UI (this gets MOVED into the Shell’s right panel)
-  ============================================================  -->
-      <div id="ae-root" data-endpoint="https://theorozcorealty.netlify.app/.netlify/functions/ask-elena">
-        <div id="ae-head">
-          <div class="ae-avatar-wrap">
-            <div class="ae-avatar"></div>
-          </div>
-          <div class="ae-title">
-            <strong>Elena • A.I. Concierge</strong>
-            <span id="ae-subline">Standing by…</span>
-          </div>
-        </div>
-        <div id="ae-chat"></div>
-        <div id="ae-foot">
-          <input id="ae-input" type="text" placeholder="Ask Elena anything…" autocomplete="off">
-          <button id="ae-send">Send</button>
-        </div>
-      </div>
-      <!--  ============================================================
-       //#7 JS — MOUNT INTO SHELL RIGHT BOX + CHAT ENGINE
-  ============================================================  -->
       <script>
     (function(){
       "use strict";
-      // Avoid double mount
-      if (window.__OR_ELENA_RIGHT_MOUNTED__) return;
-      window.__OR_ELENA_RIGHT_MOUNTED__ = true;
-      const embedWrapper = document.getElementById("or-elena-embed3");
-      const aeRoot = document.getElementById("ae-root");
-      // ---- 1) Find the Shell placeholder (supports multiple possible IDs/selectors) ----
-      function findMountTarget(){
-        const selectors = [
-          "#or-elena-slot",
-          "#or-elena-host",
-          "#rs-elena-slot",
-          "#rs-elena-host",
-          "[data-elena-slot='1']",
-          "[data-elena-slot='true']",
-          "[data-elena-mount='1']",
-          "[data-elena-mount='true']",
-          "#ask-elena-slot",
-          "#ask-elena-host"
-        ];
-        for (const sel of selectors){
-          const el = document.querySelector(sel);
-          if (el) return el;
-        }
-        return null;
-      }
-      const mount = findMountTarget();
-      // If we found the Shell slot, move the chat UI into it (so it’s NOT at the bottom of the page).
-      if (mount){
-        // Make sure the mount can contain a full-height child
-        mount.style.position = mount.style.position || "relative";
-        mount.style.height = mount.style.height || "100%";
-        mount.style.minHeight = mount.style.minHeight || "0";
-        mount.style.overflow = "hidden";
-        // Replace placeholder contents
-        mount.innerHTML = "";
-        mount.appendChild(aeRoot);
-        // Remove this wrapper from layout
-        embedWrapper.style.display = "none";
-      } else {
-        // Fallback: keep it where you placed it (still works), but it will take space in page flow.
-        // (If this happens, your Shell placeholder selector doesn’t match — add data-elena-slot="true" to the right panel div.)
-      }
-      // ---- 2) Chat engine ----
-      const root = aeRoot;
-      const ENDPOINT = root.getAttribute("data-endpoint");
-      const chatEl = document.getElementById("ae-chat");
-      const inputEl = document.getElementById("ae-input");
-      const sendBtn = document.getElementById("ae-send");
-      const subline = document.getElementById("ae-subline");
-      const prefersReduced = () =>
-        window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      function safeGetJSON(key){
-        try { return JSON.parse(localStorage.getItem(key)||"{}"); } catch(_){ return {}; }
-      }
-      function scrollToBottom(){
-        chatEl.scrollTop = chatEl.scrollHeight;
-      }
-      function typewriterInto(el, text, speed=22, startDelay=150){
-        return new Promise((resolve)=>{
-          el.textContent = "";
-          const caret = document.createElement("span");
-          caret.className = "tw-caret";
-          el.appendChild(caret);
-          let i = 0;
-          const tick = () => {
-            if (i < text.length){
-              caret.insertAdjacentText("beforebegin", text.charAt(i++));
-              scrollToBottom();
-              setTimeout(tick, speed);
-            } else {
-              caret.remove();
-              resolve();
-            }
-          };
-          setTimeout(tick, startDelay);
-        });
-      }
-      async function pushMsg(role, content, opts={}){
-        const { typewriter=false, speed=22, delay=150 } = opts;
-        const msg = document.createElement("div");
-        msg.className = "ae-msg " + (role === "user" ? "ae-user" : "ae-bot");
-        const textNode = document.createElement("span");
-        msg.appendChild(textNode);
-        chatEl.appendChild(msg);
-        scrollToBottom();
-        if (!typewriter || prefersReduced() || role === "user"){
-          textNode.textContent = content;
-          scrollToBottom();
-          return;
-        }
-        await typewriterInto(textNode, content, speed, delay);
-        scrollToBottom();
-      }
-      function showTyping(){
-        const t = document.createElement("div");
-        t.className = "ae-msg ae-bot ae-typing";
-        t.id = "ae-typing";
-        t.textContent = "Elena is thinking…";
-        chatEl.appendChild(t);
-        scrollToBottom();
-      }
-      function hideTyping(){
-        const t = document.getElementById("ae-typing");
-        if (t) t.remove();
-      }
-      function getProfileContext(){
-        const profile = safeGetJSON("realtysass.profile");
-        const raw = safeGetJSON("realtysass.profile_lookup");
-        const identity = safeGetJSON("realtysass.identity");
-        const name = profile.full_name || identity.fullName || identity.full_name || "";
-        const rank = profile.rank_title || profile.rank_paygrade || profile.rank || identity.rankTitle || identity.rankPaygrade || "";
-        const base = profile.base || identity.base || "";
-        const bits = [];
-        if (rank) bits.push(rank);
-        if (base) bits.push(base);
-        subline.textContent = (name ? ("Hello " + name) : "Standing by…") + (bits.length ? (" • " + bits.join(" • ")) : "");
-        return {
-          profile: profile || {},
-          raw_profile_lookup: raw || {},
-          identity: identity || {}
-        };
-      }
-      async function callElena(userText){
-        sendBtn.disabled = true;
-        showTyping();
-        try{
-          const ctx = getProfileContext();
-          const res = await fetch(ENDPOINT, {
-            method:"POST",
-            headers:{ "Content-Type":"application/json" },
-            body: JSON.stringify({
-              message: userText,
-              context: {
-                source: "webflow",
-                widget: "ask-elena-right-panel",
-                version: "right-mount-1.1",
-                ...ctx
-              }
-            })
-          });
-          const data = await res.json().catch(()=> ({}));
-          hideTyping();
-          if (!res.ok) throw new Error(data?.error || "Request failed.");
-          const reply = data.reply || "I’m here. What would you like to do next?";
-          const ui = data.ui || {};
-          const speed = Number(ui.speed || 22);
-          const delay = Number(ui.startDelay || 150);
-          await pushMsg("assistant", reply, { typewriter:true, speed, delay });
-        }catch(e){
-          hideTyping();
-          await pushMsg("assistant", "Hmm… I hit a connection snag. Mind asking again?", { typewriter:true, speed:22, delay:120 });
-        }finally{
-          sendBtn.disabled = false;
-        }
-      }
-      function trySend(){
-        const text = (inputEl.value || "").trim();
-        if(!text) return;
-        pushMsg("user", text);
-        inputEl.value = "";
-        callElena(text);
-      }
-      sendBtn.addEventListener("click", trySend);
-      inputEl.addEventListener("keydown", (e)=>{ if(e.key === "Enter") trySend(); });
-      // Optional: update subline when Embed #2 broadcasts readiness
-      window.addEventListener("OR_PROFILE_READY", (ev)=>{
-        try{
-          const d = ev && ev.detail ? ev.detail : {};
-          if (d.hello) subline.textContent = d.hello;
-        }catch(_){}
-      });
-      // Warm greeting
-      const ctx = getProfileContext();
-      const p = ctx.profile || {};
-      const greetName = (p.full_name || "").trim();
-      const greetFirst = greetName ? greetName.split(" ")[0] : "";
-      const greetRank = p.rank_title || p.rank_paygrade || "";
-      const greetBase = p.base || "";
-      const greeting =
-        greetFirst
-          ? `Hey ${greetFirst} — I’m Elena. I can see your profile (${[greetRank, greetBase].filter(Boolean).join(", ") || "synced"}). What are we solving today?`
-          : `Hey — I’m Elena. Ask me anything, and I’ll keep it clean and actionable.`;
-      pushMsg("assistant", greeting, { typewriter:true, speed:22, delay:260 });
+      // If the Shell version exists, do nothing (prevents duplicate behavior/conflicts)
+      if (document.getElementById("or-elena-chat")) return;
+      // (Keep your previous right-panel mount code here if you ever use it later.)
     })();
   </script>
     </div>
