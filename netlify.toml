@@ -4,10 +4,14 @@
 
 # ✅ IMPORTANT: include local JSON files inside serverless bundles
 [functions]
+  node_bundler = "esbuild"
   included_files = [
     "netlify/functions/data/**",
     "netlify/functions/cities/**"
   ]
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/api/*"

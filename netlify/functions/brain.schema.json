@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://theorozcorealty.com/schema/brain.schema.v1.json",
-  "title": "OrozcoRealty Brain Response Schema (v1)",
+  "$id": "https://theorozcorealty.com/schema/brain.schema.v1.2.json",
+  "title": "OrozcoRealty Brain Response Schema (v1.2)",
   "type": "object",
   "required": ["ok", "schemaVersion", "profile", "pay", "city"],
   "properties": {
@@ -9,47 +9,97 @@
 
     "schemaVersion": {
       "type": "string",
-      "description": "Contract version for this payload, e.g. 1.0"
+      "description": "Contract version for this payload, e.g. 1.2"
     },
+
+    "note": { "type": ["string", "null"] },
 
     "profile": { "$ref": "./profile.schema.v1.json" },
 
     "pay": {
       "type": "object",
-      "required": ["basePay", "bas", "bah", "total"],
+      "required": ["basePay", "bas", "bah"],
       "properties": {
         "basePay": { "type": "number", "minimum": 0 },
         "bas": { "type": "number", "minimum": 0 },
         "bah": { "type": "number", "minimum": 0 },
+
         "total": { "type": "number", "minimum": 0 },
+        "totalPay": { "type": "number", "minimum": 0 },
+
+        "disability": { "type": "number", "minimum": 0 },
+        "vaDisabilityPay": { "type": "number", "minimum": 0 },
+        "retirementPay": { "type": "number", "minimum": 0 },
+
+        "payModel": { "type": ["string", "null"] },
+        "payAccuracy": { "type": ["string", "null"] },
 
         "zipUsed": { "type": ["string", "null"] },
         "familyUsed": { "type": ["boolean", "null"] },
         "rankUsed": { "type": ["string", "null"] },
         "yosUsed": { "type": ["number", "null"], "minimum": 0 }
       },
+      "anyOf": [
+        { "required": ["total"] },
+        { "required": ["totalPay"] }
+      ],
+      "additionalProperties": true
+    },
+
+    "mortgage": {
+      "type": ["object", "null"],
+      "description": "Optional: breakdown of the mortgage estimate when available.",
+      "properties": {
+        "aprUsed": { "type": "number", "minimum": 0 },
+        "termYears": { "type": "number", "minimum": 0 },
+        "loanAmount": { "type": "number", "minimum": 0 },
+
+        "principalMonthly": { "type": "number", "minimum": 0 },
+        "interestMonthly": { "type": "number", "minimum": 0 },
+        "taxMonthly": { "type": "number", "minimum": 0 },
+        "insuranceMonthly": { "type": "number", "minimum": 0 },
+        "hoaMonthly": { "type": "number", "minimum": 0 },
+        "pmiMonthly": { "type": "number", "minimum": 0 },
+
+        "principalInterestMonthly": { "type": "number", "minimum": 0 },
+        "totalMonthly": { "type": "number", "minimum": 0 },
+
+        "source": { "type": ["string", "null"], "description": "e.g., brain, local, mixed" }
+      },
       "additionalProperties": true
     },
 
     "city": {
       "type": "object",
-      "required": ["avg_home_value", "target_rent"],
       "properties": {
-        "avg_home_value": { "type": "number", "minimum": 0 },
-        "target_rent": { "type": "number", "minimum": 0 },
-
         "city": { "type": ["string", "null"] },
         "state": { "type": ["string", "null"] },
         "source": { "type": ["string", "null"] },
 
+        "avg_home_value": { "type": "number", "minimum": 0 },
+        "target_rent": { "type": "number", "minimum": 0 },
+
+        "market": {
+          "type": ["object", "null"],
+          "properties": {
+            "avg_home_value": { "type": "number", "minimum": 0 },
+            "target_rent": { "type": "number", "minimum": 0 },
+
+            "average_home_value": { "type": "number", "minimum": 0 },
+            "avgHome": { "type": "number", "minimum": 0 },
+            "city_avg_home": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": true
+        },
+
         "bedrooms": {
-          "type": "object",
-          "description": "Bedroom-based market baselines from the city JSON (rent, home price, utilities). Keys are bedroom counts as strings (e.g., \"1\", \"2\", \"3\", \"4\").",
+          "type": ["object", "null"],
+          "description": "Bedroom-based market baselines from the city JSON. Keys are bedroom counts as strings.",
           "additionalProperties": {
             "type": "object",
             "properties": {
               "rent_monthly": {
-                "type": "object",
+                "type": ["object", "null"],
                 "properties": {
                   "low": { "type": "number", "minimum": 0 },
                   "high": { "type": "number", "minimum": 0 },
@@ -59,7 +109,7 @@
                 "additionalProperties": true
               },
               "home_price": {
-                "type": "object",
+                "type": ["object", "null"],
                 "properties": {
                   "low": { "type": "number", "minimum": 0 },
                   "high": { "type": "number", "minimum": 0 },
@@ -69,10 +119,10 @@
                 "additionalProperties": true
               },
               "utilities": {
-                "type": "object",
+                "type": ["object", "null"],
                 "properties": {
                   "electric_gas": {
-                    "type": "object",
+                    "type": ["object", "null"],
                     "properties": {
                       "low": { "type": "number", "minimum": 0 },
                       "high": { "type": "number", "minimum": 0 },
@@ -81,7 +131,7 @@
                     "additionalProperties": true
                   },
                   "water_sewer": {
-                    "type": "object",
+                    "type": ["object", "null"],
                     "properties": {
                       "low": { "type": "number", "minimum": 0 },
                       "high": { "type": "number", "minimum": 0 },
@@ -90,7 +140,7 @@
                     "additionalProperties": true
                   },
                   "total": {
-                    "type": "object",
+                    "type": ["object", "null"],
                     "properties": {
                       "low": { "type": "number", "minimum": 0 },
                       "high": { "type": "number", "minimum": 0 },
@@ -107,8 +157,14 @@
           }
         }
       },
+      "anyOf": [
+        { "required": ["avg_home_value", "target_rent"] },
+        { "required": ["market"] }
+      ],
       "additionalProperties": true
     },
+
+    "missing": { "type": ["array", "null"], "items": { "type": "string" } },
 
     "errors": {
       "type": "array",
