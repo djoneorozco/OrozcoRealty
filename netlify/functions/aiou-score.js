@@ -1,41 +1,10 @@
 // netlify/functions/aiou-score.js
 // ============================================================
-// A.I.O.U • Scoring Engine API (v1.0)
-// PURPOSE:
-// - Centralize the scoring model so Webflow never needs scoring edits.
-// - Accept raw answers + optional visual slider
-// - Return:
-//   - Big5-style scores (O,C,E,A,N) on 1..5 scale
-//   - Consistency flags (rephrased item mismatches)
-//   - Archetype label
-//   - MBTI type + confidence + blurb
-//
-// INPUT (POST JSON) supports either:
-//
-// Option A (recommended):
-// {
-//   "answers": { "O1": 2, "O1b": -3, ... , "V1": 4 },
-//   "styleVsPriceSlider": 4
-// }
-//
-// Option B (compat with your existing "brief"):
-// {
-//   "brief": {
-//     "answers": { ... },
-//     "visual": { "styleVsPriceSlider": 4 }
-//   }
-// }
-//
-// OUTPUT (200):
-// {
-//   "ok": true,
-//   "version": "aiou.score.v1",
-//   "scores": { "O": 3.88, "C": 3.10, "E": 2.95, "A": 3.40, "N": 4.12 },
-//   "mbti": { "type": "INTJ", "confidence": 0.61, "label": "Architect", "blurb": "..." },
-//   "archetype": "Risk-Guarded Nest-Builder",
-//   "inconsistencies": ["O1/O1b"],
-//   "debug": { "styleVsPriceSlider": 4 }
-// }
+// A.I.O.U • Scoring Engine API (v1.1)
+// UPDATE (v1.1):
+// - Accepts conditionPreference ("new" | "light" | "value_add")
+// - Derives styleVsPriceSlider if not provided
+// - Keeps full backwards compatibility
 // ============================================================
 
 import { Handler } from "@netlify/functions";
@@ -55,8 +24,6 @@ function cors() {
 
 /* ============================================================
    //#2 MODEL: QUESTIONS (Server-side truth)
-   - Keep these IDs aligned with your Webflow quiz
-   - Change scoring here without touching Webflow
 ============================================================ */
 const QUESTIONS = [
   { id: "V1", type: "visual", dim: "O", rev: false },
@@ -86,7 +53,7 @@ const QUESTIONS = [
 ];
 
 /* ============================================================
-   //#3 MBTI GUIDE (same as your client)
+   //#3 MBTI GUIDE
 ============================================================ */
 const MBTI_BUYER_GUIDE = {
   ISTJ: "Stable, detail-first. Prefers proven neighborhoods, low-variance costs, and strong inspection records.",
@@ -130,15 +97,24 @@ function mbtiLabel(type) {
 }
 
 /* ============================================================
-   //#4 SCORING CORE
+   //#4 CONDITION → SLIDER (NEW)
+============================================================ */
+function conditionToSlider(conditionPreference) {
+  const c = String(conditionPreference || "").trim().toLowerCase();
+  if (c === "new") return 4;
+  if (c === "light") return 1;
+  if (c === "value_add" || c === "value-add" || c === "valueadd") return -3;
+  return 0;
+}
+
+/* ============================================================
+   //#5 SCORING CORE
 ============================================================ */
 function clamp(n, lo, hi) {
   return Math.max(lo, Math.min(hi, n));
 }
 
 function mapMinus5toPlus5_to_1to5(v) {
-  // v in [-5, +5] => [1..5]
-  // -5 => 1, 0 => 3, +5 => 5
   return ((v + 5) * 0.4) + 1;
 }
 
@@ -146,7 +122,6 @@ function scoreAll({ answers = {}, styleVsPriceSlider = 0 }) {
   const dims = { O: [], C: [], E: [], A: [], N: [] };
   const qMap = Object.fromEntries(QUESTIONS.map(q => [q.id, q]));
 
-  // score dims from non-visual items
   for (const q of QUESTIONS) {
     if (q.type === "visual") continue;
 
@@ -170,11 +145,9 @@ function scoreAll({ answers = {}, styleVsPriceSlider = 0 }) {
     N: +avg(dims.N).toFixed(2),
   };
 
-  // bias Openness with visual slider (same as your client)
   const v = Number(styleVsPriceSlider || 0);
   S.O = +clamp(S.O + (v / 12.5), 1, 5).toFixed(2);
 
-  // consistency flags (rephrased pairs)
   const inconsistencies = [];
   const handled = new Set();
 
@@ -198,7 +171,6 @@ function scoreAll({ answers = {}, styleVsPriceSlider = 0 }) {
     const aAdj = qa.rev ? -a : a;
     const bAdj = qb?.rev ? -b : b;
 
-    // your current threshold: >= 6 on the -5..+5 scale
     if (Math.abs(aAdj - bAdj) >= 6) inconsistencies.push(`${qa.id}/${pair}`);
 
     handled.add(qa.id);
@@ -209,7 +181,7 @@ function scoreAll({ answers = {}, styleVsPriceSlider = 0 }) {
 }
 
 /* ============================================================
-   //#5 MBTI DERIVATION (same logic as your client)
+   //#6 MBTI DERIVATION
 ============================================================ */
 function letterEI(E) { return E >= 3.75 ? "E" : (E <= 3.25 ? "I" : (E >= 3.5 ? "E" : "I")); }
 function letterSN(O) { return O >= 3.75 ? "N" : (O <= 3.25 ? "S" : (O >= 3.5 ? "N" : "S")); }
@@ -236,7 +208,7 @@ function scoresToMBTI(S) {
 }
 
 /* ============================================================
-   //#6 ARCHETYPE (same as your client)
+   //#7 ARCHETYPE
 ============================================================ */
 function scoresToArchetype(s) {
   const hi = v => v >= 4.0;
@@ -251,34 +223,52 @@ function scoresToArchetype(s) {
 }
 
 /* ============================================================
-   //#7 PARSE INPUT
+   //#8 PARSE INPUT (UPDATED)
 ============================================================ */
 function parsePayload(bodyObj) {
-  // Support both shapes
-  const brief = bodyObj?.brief;
+  const brief = bodyObj?.brief || {};
+
   const answers =
     bodyObj?.answers ||
     brief?.answers ||
     brief?.psych?.answers ||
     {};
 
-  const styleVsPriceSlider =
+  // NEW: condition preference can live at multiple locations
+  const conditionPreference =
+    bodyObj?.conditionPreference ??
+    brief?.house?.conditionPreference ??
+    brief?.conditionPreference ??
+    null;
+
+  // style slider resolution order (most explicit wins)
+  const rawStyle =
     bodyObj?.styleVsPriceSlider ??
     brief?.visual?.styleVsPriceSlider ??
+    brief?.house?.styleVsPriceSlider ??
     answers?.V1 ??
-    0;
+    null;
+
+  let styleVsPriceSlider = (rawStyle === null || rawStyle === undefined)
+    ? conditionToSlider(conditionPreference)
+    : Number(rawStyle || 0);
+
+  if (!Number.isFinite(styleVsPriceSlider)) {
+    styleVsPriceSlider = conditionToSlider(conditionPreference);
+  }
 
   return {
     answers,
-    styleVsPriceSlider: Number(styleVsPriceSlider || 0),
+    styleVsPriceSlider,
+    conditionPreference: conditionPreference ? String(conditionPreference) : null,
+    _derivedStyleFromCondition: (rawStyle === null || rawStyle === undefined),
   };
 }
 
 /* ============================================================
-   //#8 HANDLER
+   //#9 HANDLER
 ============================================================ */
 export const handler = async (event) => {
-  // OPTIONS preflight
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers: cors(), body: "" };
   }
@@ -293,7 +283,7 @@ export const handler = async (event) => {
 
   try {
     const bodyObj = event.body ? JSON.parse(event.body) : {};
-    const { answers, styleVsPriceSlider } = parsePayload(bodyObj);
+    const { answers, styleVsPriceSlider, conditionPreference, _derivedStyleFromCondition } = parsePayload(bodyObj);
 
     const { scores, inconsistencies } = scoreAll({ answers, styleVsPriceSlider });
     const mb = scoresToMBTI(scores);
@@ -308,7 +298,7 @@ export const handler = async (event) => {
       headers: cors(),
       body: JSON.stringify({
         ok: true,
-        version: "aiou.score.v1",
+        version: "aiou.score.v1.1",
         scores,
         mbti: {
           type: mb.type,
@@ -318,7 +308,11 @@ export const handler = async (event) => {
         },
         archetype,
         inconsistencies,
-        debug: { styleVsPriceSlider },
+        debug: {
+          styleVsPriceSlider,
+          conditionPreference,
+          derivedStyleFromCondition: _derivedStyleFromCondition,
+        },
       }),
     };
   } catch (err) {
