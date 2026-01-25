@@ -1,8 +1,8 @@
 {
-  "name": "pcsunited-functions",
+  "name": "orozcorealty-functions",
   "version": "1.0.0",
   "type": "module",
-  "main": "netlify/functions/send-code.js",
+  "main": "netlify/functions/summarize.js",
   "dependencies": {
     "@netlify/blobs": "^8.1.0",
     "@netlify/functions": "^2.7.0",
