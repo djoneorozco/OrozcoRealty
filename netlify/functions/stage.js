@@ -1,275 +1,318 @@
 // netlify/functions/stage.js
-// OrozcoRealty • RE-Defined Stage Proxy
-// v3.0.0
 // CommonJS • Node 18+
+// RE:Defined / OrozcoRealty / PCSUnited compatible
+// Decor8-ready feature router
 
-const crypto = require("crypto");
-
-// ============================================================
-// #1) CONFIG
-// ============================================================
 const DEFAULT_ALLOWED_ORIGINS = [
   "https://new-real-estate-purchase.webflow.io",
+  "https://pcsu.webflow.io",
+  "https://luxury-re.webflow.io",
   "https://theorozcorealty.netlify.app",
-  "https://theorozcorealty.com",
-  "https://www.theorozcorealty.com",
+  "https://pcsunited.netlify.app",
   "http://localhost:8888",
-  "http://localhost:3000",
-  "http://127.0.0.1:8888",
-  "http://127.0.0.1:3000",
+  "http://localhost:3000"
 ];
 
-const EXTRA_ALLOWED_ORIGINS = String(process.env.STAGE_ALLOWED_ORIGINS || "")
-  .split(",")
-  .map(s => s.trim())
-  .filter(Boolean);
+const FALLBACK_WILDCARD = true;
 
-const ALLOWED_ORIGINS = Array.from(new Set([
-  ...DEFAULT_ALLOWED_ORIGINS,
-  ...EXTRA_ALLOWED_ORIGINS,
-]));
+function parseAllowedOrigins() {
+  const extra = String(process.env.ALLOW_ORIGINS || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
 
-const ALLOWED_FEATURES = new Set(["staging", "paint", "landscape"]);
-
-const ALLOWED_ROOM_TYPES = new Set([
-  "livingroom",
-  "kitchen",
-  "diningroom",
-  "bedroom",
-  "bathroom",
-  "kidsroom",
-  "familyroom",
-  "readingnook",
-  "sunroom",
-  "walkincloset",
-  "mudroom",
-  "toyroom",
-  "office",
-  "foyer",
-  "powderroom",
-  "laundryroom",
-  "gym",
-  "basement",
-  "garage",
-  "balcony",
-  "cafe",
-  "homebar",
-  "study_room",
-  "front_porch",
-  "back_porch",
-  "back_patio",
-  "openplan",
-  "boardroom",
-  "meetingroom",
-  "openworkspace",
-  "privateoffice",
-]);
-
-const ALLOWED_DESIGN_STYLES = new Set([
-  "modern",
-  "minimalist",
-  "coastal",
-  "contemporary",
-  "scandinavian",
-  "industrial",
-  "farmhouse",
-  "traditional",
-  "luxury",
-  "transitional",
-  "bohemian",
-]);
-
-const ALLOWED_YARD_TYPES = new Set([
-  "Front Yard",
-  "Back Yard",
-  "Patio",
-  "Balcony",
-  "Garden",
-]);
-
-const MAX_BODY_BYTES = 6 * 1024 * 1024;
-const MAX_DATA_URL_BYTES = 4 * 1024 * 1024;
-const MAX_TEXT_LEN = 400;
-const TIMEOUT_MS = Math.max(5000, Number(process.env.STAGE_TIMEOUT_MS || 45000));
-const ALLOW_DEV_FALLBACK =
-  String(process.env.STAGE_ALLOW_DEV_FALLBACK || "true").toLowerCase() === "true";
-
-const DECOR8_BASE = "https://api.decor8.ai";
-const ENDPOINTS = {
-  staging: `${DECOR8_BASE}/generate_designs_for_room`,
-  paint: `${DECOR8_BASE}/change_wall_color`,
-  landscape: `${DECOR8_BASE}/generate_landscaping_designs`,
-};
-
-// ============================================================
-// #2) HELPERS
-// ============================================================
-function mkRequestId() {
-  return `stg_${crypto.randomBytes(8).toString("hex")}`;
+  return Array.from(new Set([...DEFAULT_ALLOWED_ORIGINS, ...extra]));
 }
 
-function getHeader(event, name) {
-  return (
-    event?.headers?.[name] ||
-    event?.headers?.[name.toLowerCase()] ||
-    event?.headers?.[name.toUpperCase()] ||
-    ""
-  );
-}
+function buildCorsHeaders(origin, acrh) {
+  const allowedOrigins = parseAllowedOrigins();
+  const allowed = allowedOrigins.includes(origin);
+  const allowOrigin = allowed ? origin : (FALLBACK_WILDCARD ? "*" : (allowedOrigins[0] || "*"));
 
-function getOrigin(event) {
-  return (
-    getHeader(event, "origin") ||
-    event?.multiValueHeaders?.origin?.[0] ||
-    ""
-  ).trim();
-}
-
-function isAllowedOrigin(origin) {
-  return !!origin && ALLOWED_ORIGINS.includes(origin);
-}
-
-function buildCorsHeaders(origin, acrh = "") {
+  const baseAllowed = ["Content-Type", "Authorization", "X-Requested-With"];
   const requested = String(acrh || "")
     .split(",")
     .map(h => h.trim())
     .filter(Boolean);
 
-  const allowHeaders = Array.from(new Set([
-    "Content-Type",
-    "Authorization",
-    "X-Requested-With",
-    "X-Stage-Debug",
-    ...requested,
-  ])).join(", ");
-
-  const fallbackOrigin = ALLOWED_ORIGINS[0] || "https://theorozcorealty.netlify.app";
-  const allowOrigin = isAllowedOrigin(origin) ? origin : fallbackOrigin;
+  const allowHeaders = Array.from(new Set([...baseAllowed, ...requested])).join(", ");
 
   return {
     "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Headers": allowHeaders,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Max-Age": "86400",
-    "Content-Type": "application/json; charset=utf-8",
     "Vary": "Origin",
+    "Content-Type": "application/json"
   };
 }
 
-function json(statusCode, headers, obj) {
+function json(statusCode, headers, bodyObj) {
   return {
     statusCode,
     headers,
-    body: JSON.stringify(obj),
+    body: JSON.stringify(bodyObj)
   };
 }
 
-function cleanString(value, maxLen = MAX_TEXT_LEN) {
-  if (value == null) return "";
-  return String(value).trim().slice(0, maxLen);
-}
-
-function byteLengthUtf8(str) {
-  return Buffer.byteLength(String(str || ""), "utf8");
-}
-
-function isHttpUrl(str) {
+function safeJsonParse(raw, fallback) {
   try {
-    const u = new URL(String(str));
-    return u.protocol === "http:" || u.protocol === "https:";
+    return JSON.parse(raw);
   } catch {
-    return false;
+    return fallback;
   }
 }
 
-function isDataImageUrl(str) {
-  return /^data:image\/(png|jpeg|jpg|webp|heic|heif);base64,[a-z0-9+/=\s]+$/i.test(String(str || ""));
+function trimString(value) {
+  return String(value == null ? "" : value).trim();
 }
 
-function isHexColor(str) {
-  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(String(str || "").trim());
+function sanitizeHex(value, fallback = "") {
+  const raw = trimString(value);
+  if (!raw) return fallback;
+  const withHash = raw.startsWith("#") ? raw : `#${raw}`;
+  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(withHash) ? withHash.toUpperCase() : fallback;
 }
 
-function normalizeFeature(feature) {
-  const f = cleanString(feature).toLowerCase();
-  return ALLOWED_FEATURES.has(f) ? f : "";
+function normalizeFeature(raw) {
+  const feature = trimString(raw).toLowerCase();
+
+  const map = {
+    "staging": "staging",
+    "virtual_staging": "staging",
+    "virtual-staging": "staging",
+
+    "redesign": "redesign",
+    "room_redesign": "redesign",
+    "room-redesign": "redesign",
+    "interior_redesign": "redesign",
+    "interior-redesign": "redesign",
+
+    "declutter": "declutter",
+    "cleanup": "declutter",
+    "remove_furniture": "declutter",
+    "remove-furniture": "declutter",
+    "furniture_removal": "declutter",
+    "furniture-removal": "declutter",
+
+    "paint": "paint",
+    "wall_paint": "paint",
+    "wall-paint": "paint",
+
+    "cabinet": "cabinet",
+    "cabinet_color": "cabinet",
+    "cabinet-color": "cabinet",
+    "kitchen_cabinet_color": "cabinet",
+    "kitchen-cabinet-color": "cabinet",
+
+    "landscape": "landscape",
+    "landscaping": "landscape",
+
+    "exterior_refresh": "exterior_refresh",
+    "exterior-refresh": "exterior_refresh",
+    "curb_appeal": "exterior_refresh",
+    "curb-appeal": "exterior_refresh",
+
+    "patio_refresh": "patio_refresh",
+    "patio-refresh": "patio_refresh",
+
+    "balcony_refresh": "balcony_refresh",
+    "balcony-refresh": "balcony_refresh",
+
+    "variations": "variations"
+  };
+
+  return map[feature] || "staging";
 }
 
-function normalizeRoomType(room) {
-  const r = cleanString(room).toLowerCase();
-  return ALLOWED_ROOM_TYPES.has(r) ? r : "";
+function dataUrlToBase64(dataUrl) {
+  const raw = trimString(dataUrl);
+  const match = raw.match(/^data:.*?;base64,(.+)$/i);
+  return match ? match[1] : "";
 }
 
-function normalizeDesignStyle(style) {
-  const s = cleanString(style).toLowerCase();
-  return ALLOWED_DESIGN_STYLES.has(s) ? s : "";
-}
+function inferInputImage(payload) {
+  const inputImage = trimString(payload.input_image);
+  const inputImageUrl = trimString(payload.input_image_url);
 
-function normalizeYardType(yard) {
-  const y = cleanString(yard);
-  return ALLOWED_YARD_TYPES.has(y) ? y : "";
-}
+  if (inputImage) {
+    return {
+      input_image: inputImage,
+      input_image_url: inputImageUrl || ""
+    };
+  }
 
-function maybeDataUrlTooLarge(inputImage) {
-  return isDataImageUrl(inputImage) && byteLengthUtf8(inputImage) > MAX_DATA_URL_BYTES;
-}
+  if (inputImageUrl && inputImageUrl.startsWith("data:")) {
+    return {
+      input_image: dataUrlToBase64(inputImageUrl),
+      input_image_url: inputImageUrl
+    };
+  }
 
-function allowDevFallback(event, origin) {
-  const host = getHeader(event, "host");
-  const isLocal =
-    origin.startsWith("http://localhost") ||
-    origin.startsWith("http://127.0.0.1") ||
-    String(host).includes("localhost") ||
-    String(host).includes("127.0.0.1");
-
-  const isPreview =
-    origin.includes(".webflow.io") ||
-    origin.includes("netlify.app");
-
-  return ALLOW_DEV_FALLBACK && (isLocal || isPreview);
-}
-
-function toErrorPayload(requestId, code, message, extra = {}) {
   return {
-    ok: false,
-    request_id: requestId,
-    code,
-    error: message,
-    ...extra,
+    input_image: "",
+    input_image_url: inputImageUrl || ""
   };
 }
 
-function extractImagesArray(data) {
-  const raw =
-    data?.images ||
-    data?.info?.images ||
-    data?.result?.images ||
-    data?.output?.images ||
-    data?.data?.images ||
-    [];
+function clampInt(value, min, max, fallback) {
+  const n = parseInt(value, 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
 
-  if (!Array.isArray(raw)) return [];
+function buildFeaturePayload(rawPayload) {
+  const feature = normalizeFeature(rawPayload.feature);
+  const roomType = trimString(rawPayload.room_type || rawPayload.roomType || "livingroom");
+  const yardType = trimString(rawPayload.yard_type || rawPayload.yardType || "Front Yard");
+  const designStyle = trimString(rawPayload.design_style || rawPayload.designStyle || "modern");
+  const prompt = trimString(rawPayload.prompt || rawPayload.custom_prompt || rawPayload.customPrompt || "");
+  const paintColor = sanitizeHex(rawPayload.paint_color_hex || rawPayload.paintColor || "", "#D6D6D6");
+  const cabinetColor = sanitizeHex(rawPayload.cabinet_color_hex || rawPayload.cabinetColor || "", "#D6D6D6");
+  const numImages = clampInt(rawPayload.num_images || rawPayload.numImages || 1, 1, 4, 1);
+  const source = trimString(rawPayload.source || "redefined");
+  const email = trimString(rawPayload.email || "");
 
-  return raw
-    .map(img => {
-      if (typeof img === "string") return { url: img };
-      if (img && typeof img === "object" && img.url) {
-        return {
-          url: img.url,
-          width: Number(img.width) || undefined,
-          height: Number(img.height) || undefined,
-        };
-      }
-      return null;
-    })
-    .filter(Boolean);
+  const image = inferInputImage(rawPayload);
+
+  const base = {
+    feature,
+    source,
+    email,
+    input_image: image.input_image,
+    input_image_url: image.input_image_url,
+    room_type: roomType,
+    design_style: designStyle,
+    prompt,
+    num_images: numImages
+  };
+
+  switch (feature) {
+    case "staging":
+      return {
+        ...base,
+        mode: "virtual_staging"
+      };
+
+    case "redesign":
+      return {
+        ...base,
+        mode: "room_redesign"
+      };
+
+    case "declutter":
+      return {
+        ...base,
+        mode: "furniture_removal",
+        remove_furniture: true
+      };
+
+    case "paint":
+      return {
+        ...base,
+        mode: "wall_paint",
+        paint_color_hex: paintColor
+      };
+
+    case "cabinet":
+      return {
+        ...base,
+        mode: "cabinet_color",
+        cabinet_color_hex: cabinetColor,
+        room_type: roomType || "kitchen"
+      };
+
+    case "landscape":
+      return {
+        ...base,
+        mode: "landscape_refresh",
+        yard_type: yardType
+      };
+
+    case "exterior_refresh":
+      return {
+        ...base,
+        mode: "exterior_refresh",
+        yard_type: yardType
+      };
+
+    case "patio_refresh":
+      return {
+        ...base,
+        mode: "patio_refresh",
+        yard_type: "Patio"
+      };
+
+    case "balcony_refresh":
+      return {
+        ...base,
+        mode: "balcony_refresh",
+        yard_type: "Balcony"
+      };
+
+    case "variations":
+      return {
+        ...base,
+        mode: "variations"
+      };
+
+    default:
+      return {
+        ...base,
+        mode: "virtual_staging"
+      };
+  }
+}
+
+function getFeatureEndpoint(feature, forceDev) {
+  if (forceDev) return "";
+
+  const generic = trimString(
+    process.env.STAGE_API_URL ||
+    process.env.DECOR8_API_URL ||
+    process.env.DECOR8_GENERATE_URL ||
+    ""
+  );
+
+  const featureMap = {
+    staging: trimString(process.env.STAGE_ENDPOINT_STAGING || ""),
+    redesign: trimString(process.env.STAGE_ENDPOINT_REDESIGN || ""),
+    declutter: trimString(process.env.STAGE_ENDPOINT_DECLUTTER || ""),
+    paint: trimString(process.env.STAGE_ENDPOINT_PAINT || ""),
+    cabinet: trimString(process.env.STAGE_ENDPOINT_CABINET || ""),
+    landscape: trimString(process.env.STAGE_ENDPOINT_LANDSCAPE || ""),
+    exterior_refresh: trimString(process.env.STAGE_ENDPOINT_EXTERIOR || ""),
+    patio_refresh: trimString(process.env.STAGE_ENDPOINT_PATIO || ""),
+    balcony_refresh: trimString(process.env.STAGE_ENDPOINT_BALCONY || ""),
+    variations: trimString(process.env.STAGE_ENDPOINT_VARIATIONS || "")
+  };
+
+  return featureMap[feature] || generic || "";
+}
+
+function buildUpstreamHeaders() {
+  const apiKey =
+    trimString(process.env.DECOR8_API_KEY) ||
+    trimString(process.env.STAGE_API_KEY) ||
+    trimString(process.env.OPENAI_API_KEY) ||
+    "";
+
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  if (apiKey) {
+    headers["Authorization"] = `Bearer ${apiKey}`;
+    headers["x-api-key"] = apiKey;
+  }
+
+  return headers;
 }
 
 function extractFirstImageUrl(data) {
   return (
     data?.image_url ||
     data?.url ||
-    data?.info?.url ||
     data?.images?.[0]?.url ||
     data?.info?.images?.[0]?.url ||
     data?.result?.images?.[0]?.url ||
@@ -279,172 +322,18 @@ function extractFirstImageUrl(data) {
   );
 }
 
-async function fetchWithTimeout(url, options, timeoutMs) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    return await fetch(url, { ...options, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-function mapLandscapeStyleToGardenStyle(style) {
-  const s = String(style || "").toLowerCase();
-  const map = {
-    modern: "Modern",
-    minimalist: "Modern",
-    coastal: "Tropical",
-    contemporary: "Modern",
-    scandinavian: "Minimalist",
-    industrial: "Modern",
-    farmhouse: "Cottage",
-    traditional: "Classic",
-    luxury: "Luxury",
-    transitional: "Classic",
-    bohemian: "Tropical",
-  };
-  return map[s] || "Garden";
-}
-
-function validatePayload(payload) {
-  const feature = normalizeFeature(payload.feature);
-  const inputImage = cleanString(payload.input_image_url, 8_000_000);
-  const roomType = normalizeRoomType(payload.room_type);
-  const designStyle = normalizeDesignStyle(payload.design_style);
-  const paintColorHex = cleanString(payload.paint_color_hex, 20);
-  const yardType = normalizeYardType(payload.yard_type);
-  const source = cleanString(payload.source || "orozcorealty-redefined", 80);
-  const email = cleanString(payload.email, 200);
-
-  if (!feature) {
-    return { ok: false, message: "feature is required and must be staging, paint, or landscape" };
-  }
-
-  if (!inputImage) {
-    return { ok: false, message: "input_image_url is required" };
-  }
-
-  if (!(isHttpUrl(inputImage) || isDataImageUrl(inputImage))) {
-    return { ok: false, message: "input_image_url must be an http/https URL or data:image base64 URL" };
-  }
-
-  if (isDataImageUrl(inputImage) && maybeDataUrlTooLarge(inputImage)) {
-    return { ok: false, message: "Base64 image exceeds the 4 MB limit" };
-  }
-
-  if (feature === "staging") {
-    if (!roomType) return { ok: false, message: "room_type is required for staging" };
-    if (!designStyle) return { ok: false, message: "design_style is required for staging" };
-  }
-
-  if (feature === "paint") {
-    if (!paintColorHex || !isHexColor(paintColorHex)) {
-      return { ok: false, message: "paint_color_hex is required for paint and must be a valid HEX color" };
-    }
-  }
-
-  if (feature === "landscape") {
-    if (!yardType) return { ok: false, message: "yard_type is required for landscape" };
-  }
-
-  return {
-    ok: true,
-    normalized: {
-      feature,
-      input_image_url: inputImage,
-      room_type: roomType || undefined,
-      design_style: designStyle || undefined,
-      paint_color_hex: paintColorHex || undefined,
-      yard_type: yardType || undefined,
-      source,
-      email: email || undefined,
-    },
-  };
-}
-
-function buildDecor8Request(normalized) {
-  if (normalized.feature === "staging") {
-    return {
-      endpoint: process.env.STAGE_API_URL || ENDPOINTS.staging,
-      payload: {
-        input_image_url: normalized.input_image_url,
-        room_type: normalized.room_type,
-        design_style: normalized.design_style,
-        num_images: 1,
-      },
-    };
-  }
-
-  if (normalized.feature === "paint") {
-    return {
-      endpoint: process.env.STAGE_API_URL || ENDPOINTS.paint,
-      payload: {
-        input_image_url: normalized.input_image_url,
-        wall_color_hex_code: normalized.paint_color_hex,
-        room_type: normalized.room_type || "livingroom",
-      },
-    };
-  }
-
-  return {
-    endpoint: process.env.STAGE_API_URL || ENDPOINTS.landscape,
-    payload: {
-      input_image_url: normalized.input_image_url,
-      yard_type: normalized.yard_type,
-      garden_style: mapLandscapeStyleToGardenStyle(normalized.design_style),
-      num_images: 1,
-    },
-  };
-}
-
-function normalizeSuccessResponse({
-  requestId,
-  provider,
-  mode,
-  normalized,
-  upstreamData,
-}) {
-  const images = extractImagesArray(upstreamData);
-  const imageUrl = extractFirstImageUrl(upstreamData) || images[0]?.url || "";
-
-  return {
-    ok: true,
-    request_id: requestId,
-    provider,
-    mode,
-    image_url: imageUrl || null,
-    images: imageUrl && images.length === 0 ? [{ url: imageUrl }] : images,
-    meta: {
-      feature: normalized.feature,
-      room_type: normalized.room_type || null,
-      design_style: normalized.design_style || null,
-      paint_color_hex: normalized.paint_color_hex || null,
-      yard_type: normalized.yard_type || null,
-      source: normalized.source || "orozcorealty-redefined",
-    },
-    message: upstreamData?.message || "Success",
-  };
-}
-
-function makeDevFallback(normalized) {
-  const original = normalized.input_image_url;
-  return {
-    message: "Dev fallback active.",
-    image_url: original,
-    images: [{ url: original, width: 1600, height: 1067 }],
-    info: { images: [{ url: original, width: 1600, height: 1067 }] },
-  };
-}
-
-// ============================================================
-// #3) HANDLER
-// ============================================================
 module.exports.handler = async (event) => {
-  const requestId = mkRequestId();
-  const origin = getOrigin(event);
-  const acrh = getHeader(event, "access-control-request-headers");
+  const origin =
+    event.headers?.origin ||
+    event.headers?.Origin ||
+    event.multiValueHeaders?.origin?.[0] ||
+    "";
+
+  const acrh =
+    event.headers?.["access-control-request-headers"] ||
+    event.headers?.["Access-Control-Request-Headers"] ||
+    "";
+
   const headers = buildCorsHeaders(origin, acrh);
 
   try {
@@ -452,167 +341,132 @@ module.exports.handler = async (event) => {
       return { statusCode: 204, headers, body: "" };
     }
 
-    const host = getHeader(event, "host");
-    const isLocalHost = String(host).includes("localhost") || String(host).includes("127.0.0.1");
-
-    if (origin && !isAllowedOrigin(origin) && !isLocalHost) {
-      return json(
-        403,
-        headers,
-        toErrorPayload(requestId, "FORBIDDEN_ORIGIN", "Origin not allowed", { origin })
-      );
-    }
+    const host = event.headers?.host || "localhost";
+    const rawUrl = event.rawUrl || `https://${host}${event.path || "/.netlify/functions/stage"}`;
+    const url = new URL(rawUrl);
+    const forceDev = url.searchParams.get("forceDev") === "1";
 
     if (event.httpMethod === "GET") {
       return json(200, headers, {
         ok: true,
         service: "stage",
         version: "3.0.0",
-        request_id: requestId,
-        provider: "decor8",
+        supports: [
+          "staging",
+          "redesign",
+          "declutter",
+          "paint",
+          "cabinet",
+          "landscape",
+          "exterior_refresh",
+          "patio_refresh",
+          "balcony_refresh",
+          "variations"
+        ],
+        expects: {
+          method: "POST",
+          json: {
+            feature: "staging",
+            input_image_url: "data:image/jpeg;base64,... OR https://...",
+            room_type: "livingroom",
+            design_style: "modern",
+            num_images: 1
+          }
+        },
+        env: {
+          generic_upstream: !!trimString(process.env.STAGE_API_URL || process.env.DECOR8_API_URL || ""),
+          feature_endpoints: {
+            staging: !!trimString(process.env.STAGE_ENDPOINT_STAGING || ""),
+            redesign: !!trimString(process.env.STAGE_ENDPOINT_REDESIGN || ""),
+            declutter: !!trimString(process.env.STAGE_ENDPOINT_DECLUTTER || ""),
+            paint: !!trimString(process.env.STAGE_ENDPOINT_PAINT || ""),
+            cabinet: !!trimString(process.env.STAGE_ENDPOINT_CABINET || ""),
+            landscape: !!trimString(process.env.STAGE_ENDPOINT_LANDSCAPE || ""),
+            exterior: !!trimString(process.env.STAGE_ENDPOINT_EXTERIOR || "")
+          }
+        },
+        cors: {
+          origin,
+          allowed: parseAllowedOrigins().includes(origin)
+        },
+        tips: {
+          forceDev,
+          note: "If you only have one Decor8 endpoint today, set STAGE_API_URL and DECOR8_API_KEY."
+        }
       });
     }
 
     if (event.httpMethod !== "POST") {
-      return json(
-        405,
-        headers,
-        toErrorPayload(requestId, "METHOD_NOT_ALLOWED", "Method Not Allowed")
-      );
+      return json(405, headers, { ok: false, error: "Method Not Allowed" });
     }
 
-    const rawBody = String(event.body || "");
-    if (!rawBody) {
-      return json(400, headers, toErrorPayload(requestId, "BAD_REQUEST", "Missing JSON body"));
+    const rawPayload = safeJsonParse(event.body || "{}", null);
+    if (!rawPayload || typeof rawPayload !== "object") {
+      return json(400, headers, { ok: false, error: "Invalid JSON body" });
     }
 
-    if (byteLengthUtf8(rawBody) > MAX_BODY_BYTES) {
-      return json(413, headers, toErrorPayload(requestId, "PAYLOAD_TOO_LARGE", "Request body is too large"));
+    const featurePayload = buildFeaturePayload(rawPayload);
+
+    if (!featurePayload.input_image && !featurePayload.input_image_url) {
+      return json(400, headers, {
+        ok: false,
+        error: "Missing input image. Send input_image or input_image_url."
+      });
     }
 
-    let payload = {};
-    try {
-      payload = JSON.parse(rawBody);
-    } catch {
-      return json(400, headers, toErrorPayload(requestId, "BAD_JSON", "Invalid JSON body"));
-    }
+    const upstream = getFeatureEndpoint(featurePayload.feature, forceDev);
 
-    const valid = validatePayload(payload);
-    if (!valid.ok) {
-      return json(400, headers, toErrorPayload(requestId, "BAD_REQUEST", valid.message));
-    }
+    if (upstream) {
+      const upstreamHeaders = buildUpstreamHeaders();
 
-    const normalized = valid.normalized;
-    const apiKey =
-      cleanString(process.env.DECOR8_API_KEY, 500) ||
-      cleanString(process.env.STAGE_API_KEY, 500) ||
-      cleanString(process.env.OPENAI_API_KEY, 500);
+      const resp = await fetch(upstream, {
+        method: "POST",
+        headers: upstreamHeaders,
+        body: JSON.stringify(featurePayload)
+      });
 
-    if (!apiKey) {
-      const canUseFallback = allowDevFallback(event, origin);
-      if (canUseFallback) {
-        const mock = makeDevFallback(normalized);
-        return json(200, headers, normalizeSuccessResponse({
-          requestId,
-          provider: "mock",
-          mode: "dev-fallback",
-          normalized,
-          upstreamData: mock,
-        }));
+      const text = await resp.text();
+      const data = safeJsonParse(text, { raw: text });
+
+      if (!resp.ok) {
+        return json(resp.status || 502, headers, {
+          ok: false,
+          error: "Upstream error",
+          feature: featurePayload.feature,
+          status: resp.status,
+          detail: data
+        });
       }
 
-      return json(
-        503,
-        headers,
-        toErrorPayload(requestId, "MISSING_API_KEY", "DECOR8_API_KEY is not configured")
-      );
+      return json(200, headers, {
+        ok: true,
+        feature: featurePayload.feature,
+        image_url: extractFirstImageUrl(data),
+        upstream: data
+      });
     }
 
-    const { endpoint, payload: upstreamPayload } = buildDecor8Request(normalized);
+    const demo =
+      featurePayload.input_image_url ||
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1600&q=80";
 
-    let upstreamResp;
-    try {
-      upstreamResp = await fetchWithTimeout(
-        endpoint,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`,
-            "X-Request-Id": requestId,
-          },
-          body: JSON.stringify(upstreamPayload),
-        },
-        TIMEOUT_MS
-      );
-    } catch (err) {
-      const isAbort = err?.name === "AbortError";
-      return json(
-        isAbort ? 504 : 502,
-        headers,
-        toErrorPayload(
-          requestId,
-          isAbort ? "UPSTREAM_TIMEOUT" : "UPSTREAM_FETCH_ERROR",
-          isAbort ? "Decor8 request timed out" : "Failed to reach Decor8"
-        )
-      );
-    }
-
-    const upstreamText = await upstreamResp.text();
-    let upstreamData;
-    try {
-      upstreamData = upstreamText ? JSON.parse(upstreamText) : {};
-    } catch {
-      upstreamData = { raw: upstreamText };
-    }
-
-    if (!upstreamResp.ok) {
-      return json(
-        upstreamResp.status || 502,
-        headers,
-        toErrorPayload(
-          requestId,
-          "UPSTREAM_ERROR",
-          upstreamData?.message || upstreamData?.error || "Decor8 request failed",
-          {
-            status: upstreamResp.status || 502,
-            endpoint,
-            detail: upstreamData,
-          }
-        )
-      );
-    }
-
-    const normalizedResponse = normalizeSuccessResponse({
-      requestId,
-      provider: "decor8",
-      mode: "live",
-      normalized,
-      upstreamData,
+    return json(200, headers, {
+      ok: true,
+      feature: featurePayload.feature,
+      image_url: demo,
+      info: {
+        images: [{ url: demo, width: 1600, height: 1067 }]
+      },
+      echo: {
+        received: featurePayload
+      },
+      note: "Dev fallback: set STAGE_API_URL and DECOR8_API_KEY (or feature-specific STAGE_ENDPOINT_* vars) in Netlify."
     });
-
-    if (!normalizedResponse.image_url && (!normalizedResponse.images || normalizedResponse.images.length === 0)) {
-      return json(
-        502,
-        headers,
-        toErrorPayload(requestId, "BAD_UPSTREAM_RESPONSE", "Decor8 returned no usable image", {
-          endpoint,
-          detail: upstreamData,
-        })
-      );
-    }
-
-    return json(200, headers, normalizedResponse);
   } catch (err) {
-    console.error("[stage.js] unhandled", {
-      request_id: requestId,
-      error: String(err?.message || err),
+    return json(500, headers, {
+      ok: false,
+      error: "Server exception",
+      detail: String(err?.message || err)
     });
-
-    return json(
-      500,
-      headers,
-      toErrorPayload(requestId, "SERVER_EXCEPTION", "Server exception")
-    );
   }
 };
