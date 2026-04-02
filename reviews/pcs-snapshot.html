@@ -1,0 +1,2426 @@
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Thu Apr 02 2026 01:09:14 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="69240e09fb479a4f554bb468" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PSC Snapshot</title>
+  <meta content="PSC Snapshot" property="og:title">
+  <meta content="PSC Snapshot" property="twitter:title">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="Webflow" name="generator">
+  <link href="../css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="../css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="../css/luxury-re.webflow.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["PT Serif:400,400italic,700,700italic","Droid Serif:400,400italic,700,700italic","Varela:400","Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Inconsolata:400,700","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Barlow:300,400,500,600,700","Barlow Condensed:300,400,500,600,700","Gilda Display:300,400,500,600,700","Material Icons Outlined:300,400,500,600,700","Material Icons Two Tone:300,400,500,600,700","Material Symbols Outlined:300,400,500,600,700"]  }});</script>
+  <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+  <link href="../images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="../images/webclip.png" rel="apple-touch-icon">
+</head>
+<body>
+  <div class="w-embed w-script"><!--  =========================================================
+PCS SNAPSHOT v4.2.2 • House of SaSS
+CODE #1 = FULL HTML + CSS ONLY
+UPDATED:
+- Replaced Ownership Breakdown with Your Living Strategy
+- Added lightweight Living Strategy shell
+- Removed external JS loader
+- Fixed Living Strategy chart runaway height bug
+- Preserved existing runtime IDs and legacy hidden targets
+=========================================================  -->
+    <div id="pcs-snapshot-shell" style="all: initial;">
+      <!--  //#1) FONTS  -->
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+      <!--  //#2) OPTIONAL LIBS FOR FUTURE RUNTIME  -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <!--  //#3) STYLES  -->
+      <style>
+    /* =========================================================
+       //#3.1) SCOPE RESET + TOKENS
+    ========================================================= */
+    #pcs-snapshot-shell,
+    #pcs-snapshot-shell *{
+      box-sizing:border-box;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    #pcs-snapshot-shell{
+      width:100%;
+      display:block;
+      --pcs-border-06:rgba(255,255,255,.06);
+      --pcs-border-07:rgba(255,255,255,.07);
+      --pcs-border-08:rgba(255,255,255,.08);
+      --pcs-border-10:rgba(255,255,255,.10);
+      --pcs-topline-03:rgba(255,255,255,.03);
+      --pcs-topline-04:rgba(255,255,255,.04);
+      --pcs-shadow-inset-soft:inset 0 1px 0 var(--pcs-topline-03);
+      --pcs-shadow-inset:inset 0 1px 0 var(--pcs-topline-04);
+      --pcs-shadow-card:0 18px 42px rgba(0,0,0,.30);
+      --pcs-shadow-glass:0 22px 44px rgba(0,0,0,.34);
+      --pcs-shadow-wrap:0 30px 80px rgba(0,0,0,.46);
+      --pcs-grad-glass:linear-gradient(180deg, rgba(14,18,38,.74), rgba(8,12,27,.88));
+      --pcs-grad-card:linear-gradient(180deg, rgba(11,16,34,.76), rgba(7,11,24,.90));
+      --pcs-grad-subcard:linear-gradient(180deg, rgba(12,16,34,.88), rgba(7,10,22,.96));
+      --pcs-grad-panel:linear-gradient(180deg, rgba(10,14,30,.82), rgba(7,10,22,.96));
+      --pcs-grad-pill:linear-gradient(180deg, rgba(13,18,38,.92), rgba(8,11,24,.98));
+      --pcs-grad-deep:linear-gradient(180deg, rgba(12,16,34,.90), rgba(7,10,22,.97));
+      --pcs-grad-box:linear-gradient(180deg, rgba(9,14,34,.72), rgba(6,10,26,.88));
+    }
+    #pcs-snapshot-shell svg{ display:block; }
+    /* =========================================================
+       //#3.2) THEME
+    ========================================================= */
+    #pcs-snapshot-wrap{
+      width:min(1480px,100%);
+      margin:0 auto;
+      padding:20px;
+      color:#e9ecff;
+      background:
+        radial-gradient(1200px 720px at 14% 8%, rgba(52,93,255,.18), transparent 52%),
+        radial-gradient(900px 520px at 86% 16%, rgba(126,239,210,.09), transparent 42%),
+        radial-gradient(900px 700px at 50% 100%, rgba(32,57,125,.18), transparent 58%),
+        linear-gradient(180deg,#060914 0%,#080d19 38%,#070b16 100%);
+      border-radius:28px;
+      border:1px solid var(--pcs-border-07);
+      box-shadow:var(--pcs-shadow-inset),var(--pcs-shadow-wrap);
+      overflow:hidden;
+      position:relative;
+      isolation:isolate;
+    }
+    #pcs-snapshot-wrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(95,125,255,.06) 50%, transparent 100%),
+        radial-gradient(circle at 25% 30%, rgba(255,255,255,.05), transparent 28%);
+      mix-blend-mode:screen;
+      opacity:.55;
+    }
+    .pcs-card{
+      background:var(--pcs-grad-card);
+      border:1px solid var(--pcs-border-08);
+      box-shadow:var(--pcs-shadow-inset),var(--pcs-shadow-card);
+      border-radius:24px;
+      backdrop-filter:blur(14px) saturate(145%);
+      -webkit-backdrop-filter:blur(14px) saturate(145%);
+    }
+    .pcs-subcard{
+      background:var(--pcs-grad-subcard);
+      border:1px solid var(--pcs-border-07);
+      border-radius:20px;
+      box-shadow:var(--pcs-shadow-inset);
+    }
+    .pcs-title{
+      margin:0;
+      color:#f5f7ff;
+      text-transform:uppercase;
+      letter-spacing:.02em;
+      font-weight:900;
+    }
+    .pcs-dot{
+      width:5px;
+      height:5px;
+      border-radius:999px;
+      background:#8ea3df;
+      display:inline-block;
+      margin:0 8px;
+      transform:translateY(-1px);
+    }
+    /* =========================================================
+       //#3.3) TOP STRIP — UPGRADED 4 CARD HEADER
+    ========================================================= */
+    .pcs-top{
+      margin-bottom:18px;
+    }
+    .pcs-top-head{
+      margin:0 0 14px;
+      padding:0 2px;
+    }
+    .pcs-top-head .pcs-title{
+      font-size:24px;
+      line-height:1.08;
+      margin-bottom:10px;
+    }
+    #pcs-city-line{
+      font-size:14px;
+      font-weight:600;
+      color:#c9d3f6;
+      display:block;
+    }
+    .pts-grid{
+      display:grid;
+      grid-template-columns:1.18fr 1fr 1fr 1fr;
+      gap:16px;
+      align-items:stretch;
+    }
+    .pts-card{
+      min-height:178px;
+      border-radius:24px;
+      border:1px solid var(--pcs-border-08);
+      background:linear-gradient(180deg, rgba(10,15,32,.82), rgba(6,10,24,.94));
+      box-shadow:var(--pcs-shadow-inset),0 12px 28px rgba(0,0,0,.20);
+      padding:20px 20px 18px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      overflow:hidden;
+      position:relative;
+    }
+    .pts-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:radial-gradient(circle at 18% 18%, rgba(255,255,255,.03), transparent 22%);
+      opacity:.8;
+    }
+    .pts-card > *{
+      position:relative;
+      z-index:1;
+    }
+    .pts-top{
+      display:grid;
+      grid-template-columns:72px 1fr;
+      gap:14px;
+      align-items:center;
+    }
+    .pts-icon{
+      width:58px;
+      height:58px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid var(--pcs-border-10);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 0 24px rgba(77,121,255,.16);
+      flex:0 0 58px;
+    }
+    .pts-icon svg{
+      width:26px;
+      height:26px;
+    }
+    .pts-copy{ min-width:0; }
+    .pts-kicker{
+      margin:0 0 4px;
+      font-size:12px;
+      line-height:1.15;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#9eabdd;
+    }
+    .pts-bigline{
+      display:flex;
+      align-items:baseline;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .pts-value{
+      margin:0;
+      font-size:27px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#fff;
+    }
+    .pts-unit{
+      font-size:14px;
+      line-height:1;
+      font-weight:700;
+      color:#d8def8;
+    }
+    .pts-body{ margin-top:16px; }
+    .pts-body-copy,
+    .pts-income-breakdown{
+      margin:0;
+      font-size:13px;
+      line-height:1.45;
+      font-weight:700;
+      color:#eef2ff;
+    }
+    .pts-meta{
+      margin-top:10px;
+      padding-top:12px;
+      border-top:1px solid var(--pcs-border-08);
+      font-size:12px;
+      line-height:1.4;
+      font-weight:700;
+      color:#cdd5f3;
+    }
+    .pts-card-income .pts-icon{
+      background:radial-gradient(circle at 30% 30%, rgba(29,94,255,.40), rgba(20,35,88,.95));
+      color:#1f7dff;
+    }
+    .pts-card-income .pts-value,
+    .pts-card-bah .pts-value,
+    .pts-card-market .pts-value{
+      color:#26f0cf;
+    }
+    .pts-card-bah .pts-icon{
+      background:radial-gradient(circle at 30% 30%, rgba(57,126,255,.42), rgba(20,35,88,.95));
+      color:#b9d7ff;
+    }
+    .pts-card-market .pts-icon{
+      background:radial-gradient(circle at 30% 30%, rgba(31,235,185,.28), rgba(13,68,58,.94));
+      color:#72f1da;
+    }
+    .pts-card-market .pts-value{ font-size:26px; }
+    .pts-card-power .pts-icon{
+      background:radial-gradient(circle at 30% 30%, rgba(111,95,255,.26), rgba(34,29,73,.95));
+      color:#ffbf45;
+    }
+    .pts-power-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .pts-power-score{
+      font-size:27px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#fff;
+    }
+    .pts-stars{
+      font-size:24px;
+      line-height:1;
+      letter-spacing:.08em;
+      color:#ffc84d;
+      white-space:nowrap;
+    }
+    /* =========================================================
+       //#3.4) MAIN GRID
+    ========================================================= */
+    .pcs-main{
+      display:grid;
+      grid-template-columns:.98fr 1.02fr;
+      gap:18px;
+    }
+    .pcs-stack{
+      display:grid;
+      gap:18px;
+    }
+    /* =========================================================
+       //#3.5) LEFT — CURRENT DUTY STATION
+    ========================================================= */
+    .pcs-current-panel{
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .pcs-current-panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(95,125,255,.05) 50%, transparent 100%),
+        radial-gradient(circle at 24% 22%, rgba(255,255,255,.04), transparent 24%);
+      mix-blend-mode:screen;
+      opacity:.55;
+    }
+    .pcs-current-shell{
+      position:relative;
+      z-index:1;
+    }
+    .pcs-current-title{
+      margin:0 0 10px;
+      color:#f5f7ff;
+      font-size:15px;
+      line-height:1.15;
+      text-transform:uppercase;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-align:left;
+      padding:0 2px;
+    }
+    .pcs-current-grid{
+      display:grid;
+      grid-template-columns:.93fr 1.07fr;
+      gap:12px;
+      align-items:stretch;
+      min-height:372px;
+    }
+    .pcs-image-card{
+      overflow:hidden;
+      min-height:372px;
+      position:relative;
+      border-radius:20px;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(102,160,255,.18), transparent 30%),
+        linear-gradient(180deg, rgba(10,14,30,.76), rgba(4,8,20,.95));
+      border:1px solid var(--pcs-border-08);
+      box-shadow:var(--pcs-shadow-inset),0 12px 32px rgba(0,0,0,.22);
+    }
+    .pcs-image-card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .pcs-image-chip{
+      position:absolute;
+      top:10px;
+      left:10px;
+      z-index:2;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:24px;
+      padding:0 10px;
+      border-radius:999px;
+      border:1px solid var(--pcs-border-10);
+      background:var(--pcs-grad-glass);
+      color:#f4f7ff;
+      font-size:9px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      white-space:nowrap;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 8px 18px rgba(0,0,0,.18);
+    }
+    .pcs-image-overlay{
+      position:absolute;
+      inset:auto 0 0 0;
+      z-index:2;
+      padding:12px 12px 10px;
+      background:linear-gradient(180deg, rgba(4,6,15,0) 0%, rgba(4,6,15,.18) 24%, rgba(4,6,15,.76) 100%);
+      text-align:center;
+    }
+    .pcs-image-city{
+      display:block;
+      font-weight:900;
+      font-size:18px;
+      line-height:1.05;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color:#fff;
+      text-shadow:0 8px 24px rgba(0,0,0,.55);
+    }
+    .pcs-image-tagline{
+      display:block;
+      margin-top:4px;
+      color:#f3c98a;
+      font-size:10px;
+      line-height:1.25;
+      font-weight:700;
+      text-shadow:0 8px 22px rgba(0,0,0,.45);
+    }
+    .pcs-info-card{
+      min-height:372px;
+      padding:10px;
+      display:grid;
+      grid-template-rows:auto auto auto 1fr;
+      gap:8px;
+      align-self:stretch;
+    }
+    .pcs-brief-banner{
+      display:flex;
+      align-items:flex-start;
+      gap:8px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--pcs-border-07);
+      background:var(--pcs-grad-card);
+      box-shadow:var(--pcs-shadow-inset-soft),0 8px 18px rgba(0,0,0,.16);
+    }
+    .pcs-brief-banner-icon{
+      width:22px;
+      height:22px;
+      min-width:22px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#eef7ff;
+      background:radial-gradient(circle at 30% 30%, #88d9ff, #426cff);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 16px rgba(91,141,255,.28);
+      flex:0 0 22px;
+    }
+    .pcs-brief-banner-icon svg{
+      width:12px;
+      height:12px;
+    }
+    .pcs-brief-banner-copy{ min-width:0; }
+    .pcs-brief-banner-head{
+      margin:0 0 2px;
+      font-size:10px;
+      line-height:1.2;
+      font-weight:900;
+      color:#fff;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .pcs-brief-banner-sub{
+      margin:0;
+      font-size:10px;
+      line-height:1.35;
+      font-weight:600;
+      color:#dce4ff;
+    }
+    .pcs-mini-section{
+      border-radius:14px;
+      border:1px solid var(--pcs-border-07);
+      background:var(--pcs-grad-panel);
+      padding:9px;
+      box-shadow:var(--pcs-shadow-inset-soft);
+    }
+    .pcs-mini-head{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      margin-bottom:7px;
+    }
+    .pcs-mini-head-icon{
+      width:18px;
+      height:18px;
+      min-width:18px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--pcs-border-08);
+      color:#dfe7ff;
+      flex:0 0 18px;
+    }
+    .pcs-mini-head-icon svg{
+      width:11px;
+      height:11px;
+    }
+    .pcs-mini-head-title{
+      margin:0;
+      color:#e9ecff;
+      font-size:10px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+    }
+    .pcs-mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:7px;
+    }
+    .pcs-mini-stat{
+      min-height:54px;
+      border-radius:12px;
+      padding:8px 8px 7px;
+      border:1px solid var(--pcs-border-06);
+      background:var(--pcs-grad-deep);
+      box-shadow:var(--pcs-shadow-inset-soft);
+    }
+    .pcs-mini-label{
+      font-size:9px;
+      line-height:1.1;
+      font-weight:800;
+      color:#cfd8f5;
+      margin-bottom:5px;
+      display:flex;
+      align-items:center;
+      gap:5px;
+    }
+    .pcs-mini-label svg{
+      width:10px;
+      height:10px;
+      flex:0 0 10px;
+    }
+    .pcs-mini-value{
+      font-size:14px;
+      line-height:1.08;
+      font-weight:900;
+      color:#fff;
+      letter-spacing:-.02em;
+    }
+    .pcs-mini-sub{
+      margin-top:2px;
+      font-size:9px;
+      line-height:1.1;
+      font-weight:700;
+      color:#c7d0ee;
+    }
+    .pcs-mini-list{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:6px;
+    }
+    .pcs-mini-item{
+      display:flex;
+      align-items:flex-start;
+      gap:7px;
+      font-size:10px;
+      line-height:1.3;
+      font-weight:600;
+      color:#dbe3ff;
+    }
+    .pcs-mini-dot{
+      width:6px;
+      height:6px;
+      min-width:6px;
+      border-radius:999px;
+      margin-top:4px;
+      background:radial-gradient(circle at 30% 30%, #77c9ff, #4a66ff);
+      box-shadow:0 0 10px rgba(90,145,255,.28);
+      flex:0 0 6px;
+    }
+    .pcs-fin-box{
+      border-radius:12px;
+      padding:9px 9px 8px;
+      border:1px solid var(--pcs-border-06);
+      background:var(--pcs-grad-deep);
+      box-shadow:var(--pcs-shadow-inset-soft);
+      align-self:end;
+    }
+    .pcs-fin-top{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      margin-bottom:4px;
+    }
+    .pcs-fin-dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:#77e59e;
+      box-shadow:0 0 14px rgba(119,229,158,.36);
+      flex:0 0 10px;
+    }
+    .pcs-fin-head{
+      margin:0;
+      font-size:11px;
+      line-height:1.15;
+      font-weight:900;
+      color:#8ef3c5;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+    .pcs-fin-copy{
+      margin:0;
+      font-size:10px;
+      line-height:1.35;
+      font-weight:600;
+      color:#e7eeff;
+    }
+    /* =========================================================
+       //#3.6) LEFT — HOUSING AFFORDABILITY
+    ========================================================= */
+    .pcs-afford-panel{
+      padding:16px 18px 16px;
+      position:relative;
+    }
+    .pcs-afford-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:2px;
+      margin-bottom:6px;
+      flex-wrap:wrap;
+    }
+    .pcs-afford-title{
+      font-size:18px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.03em;
+      color:#f5f7ff;
+      margin:0;
+    }
+    .pcs-afford-kicker{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:14px;
+      background:var(--pcs-grad-pill);
+      border:1px solid var(--pcs-border-08);
+      box-shadow:var(--pcs-shadow-inset-soft);
+      white-space:nowrap;
+    }
+    .pcs-bedroom-left{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      line-height:1;
+      min-width:28px;
+    }
+    #pcs-bedroom-value{
+      font-size:30px;
+      color:#e9ecff;
+      font-weight:900;
+      letter-spacing:-.04em;
+      line-height:1;
+    }
+    .pcs-bedroom-label{
+      margin-top:3px;
+      font-size:10px;
+      color:#c0c9eb;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .pcs-bedroom-right{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .pcs-bedroom-btn{
+      width:20px;
+      height:16px;
+      border-radius:6px;
+      border:1px solid var(--pcs-border-10);
+      background:rgba(255,255,255,.06);
+      color:#f5f7ff;
+      font-size:9px;
+      font-weight:900;
+      line-height:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      padding:0;
+      appearance:none;
+      box-shadow:var(--pcs-shadow-inset-soft);
+    }
+    .pcs-bedroom-btn:hover{ background:rgba(255,255,255,.10); }
+    .pcs-bedroom-btn:active{ transform:translateY(1px); }
+    .pcs-afford-grid{
+      display:grid;
+      grid-template-columns:.98fr .92fr;
+      gap:10px;
+      align-items:start;
+    }
+    .pcs-afford-copy{
+      padding-right:6px;
+      padding-top:2px;
+    }
+    #pcs-afford-headline{
+      font-size:28px;
+      font-weight:900;
+      color:#8ef3c5;
+      line-height:1.08;
+      letter-spacing:-.025em;
+      margin-bottom:10px;
+    }
+    #pcs-afford-headline span{
+      color:#dff6ea;
+      font-weight:800;
+    }
+    #pcs-afford-subline{
+      font-size:14px;
+      color:#d8e2ff;
+      font-weight:600;
+      line-height:1.35;
+      margin-bottom:14px;
+    }
+    .pcs-checklist{
+      display:grid;
+      gap:12px;
+    }
+    .pcs-check{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      color:#dfe6ff;
+      font-size:13px;
+      line-height:1.45;
+      font-weight:600;
+    }
+    .pcs-check-mark{
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 18px;
+      font-size:12px;
+      margin-top:1px;
+      color:#08111f;
+      background:radial-gradient(circle at 30% 30%, #9ef7d0, #68b3ff);
+      box-shadow:0 0 14px rgba(102,170,255,.28);
+    }
+    .pcs-check strong{
+      color:#fff;
+      font-weight:900;
+    }
+    .pcs-donut-zone{
+      min-height:250px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      position:relative;
+      overflow:visible;
+      padding-top:4px;
+    }
+    .pcs-donut-wrap{
+      width:292px;
+      height:292px;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .pcs-donut{
+      width:292px;
+      height:292px;
+      border-radius:50%;
+      position:relative;
+      transform:rotate(-8deg);
+      background:conic-gradient(#4f7fff 0deg 72deg,#5774ff 72deg 135deg,#203c8d 135deg 192deg,#d3af58 192deg 232deg,#4ba2b6 232deg 282deg,#57b293 282deg 360deg);
+      box-shadow:inset 0 10px 22px rgba(255,255,255,.08),inset 0 -18px 30px rgba(0,0,0,.28),0 22px 46px rgba(0,0,0,.34);
+    }
+    .pcs-donut::before{
+      content:"";
+      position:absolute;
+      inset:56px;
+      border-radius:50%;
+      background:radial-gradient(circle at 50% 38%, rgba(33,44,78,.96), rgba(8,12,27,.98));
+      box-shadow:inset 0 2px 10px rgba(255,255,255,.04),0 0 0 8px rgba(255,255,255,.025);
+    }
+    .pcs-donut-center{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+      text-align:center;
+      z-index:3;
+    }
+    .pcs-donut-center-inner{
+      width:126px;
+      transform:translateY(-1px);
+    }
+    #pcs-donut-buffer{
+      font-size:20px;
+      font-weight:900;
+      color:#98e3ff;
+      line-height:1;
+      letter-spacing:-.03em;
+      margin-bottom:4px;
+    }
+    #pcs-donut-buffer-label{
+      font-size:12px;
+      font-weight:900;
+      line-height:1.1;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      color:#f4f7ff;
+    }
+    .pcs-donut-amount{
+      position:absolute;
+      font-size:16px;
+      font-weight:900;
+      color:#f7f9ff;
+      text-shadow:0 5px 18px rgba(0,0,0,.48);
+      z-index:4;
+      letter-spacing:-.02em;
+    }
+    .pcs-afford-footer{
+      margin-top:14px;
+      font-size:13px;
+      font-weight:700;
+      color:#dfe6ff;
+      line-height:1.45;
+      padding-top:12px;
+      border-top:1px solid var(--pcs-border-08);
+    }
+    /* =========================================================
+       //#3.7) RIGHT — 12 MONTH HOUSING TREND
+    ========================================================= */
+    .pcs-trend-panel{
+      padding:18px 18px 16px;
+      min-height:388px;
+    }
+    .pcs-trend-title{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+      color:#fff;
+      margin:0 0 4px;
+    }
+    .pcs-trend-sub{
+      font-size:13px;
+      color:#b9c5eb;
+      font-weight:600;
+      margin-bottom:12px;
+    }
+    .trend-toggle{
+      display:flex;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .trend-btn{
+      appearance:none;
+      border:none;
+      padding:9px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--pcs-border-08);
+      color:#dce4ff;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      cursor:pointer;
+      box-shadow:var(--pcs-shadow-inset-soft);
+    }
+    .trend-btn.active{
+      color:#08111e;
+      border-color:rgba(173,255,223,.30);
+      background:linear-gradient(180deg, rgba(166,246,218,.96), rgba(130,218,195,.92));
+    }
+    #pcs-trend-chart-apex{
+      min-height:232px;
+      margin-top:2px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border:1px solid var(--pcs-border-06);
+      padding:6px 8px 0;
+      overflow:hidden;
+    }
+    #pcs-trend-summary{
+      margin-top:12px;
+      font-size:14px;
+      font-weight:700;
+      color:#8ef3c5;
+      line-height:1.4;
+    }
+    /* =========================================================
+       //#3.8) RIGHT — YOUR LIVING STRATEGY
+    ========================================================= */
+    .pcs-ls-panel{
+      padding:18px 18px 16px;
+      min-height:298px;
+    }
+    .pcs-own-title{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:.03em;
+      text-transform:uppercase;
+      color:#fff;
+      margin:0 0 10px;
+    }
+    .pcs-ls-tabs{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+      margin-bottom:10px;
+    }
+    .pcs-ls-tab{
+      appearance:none;
+      border:none;
+      padding:10px 8px;
+      border-radius:12px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--pcs-border-08);
+      color:#dce4ff;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      cursor:pointer;
+      box-shadow:var(--pcs-shadow-inset-soft);
+    }
+    .pcs-ls-tab.active{
+      color:#08111e;
+      border-color:rgba(173,255,223,.30);
+      background:linear-gradient(180deg, rgba(166,246,218,.96), rgba(130,218,195,.92));
+    }
+    .pcs-ls-status{
+      min-height:18px;
+      font-size:12px;
+      font-weight:900;
+      color:#8ef3c5;
+      line-height:1.3;
+      letter-spacing:.04em;
+      margin-bottom:10px;
+      text-transform:uppercase;
+    }
+    .pcs-ls-chart-wrap{
+      height:220px;
+      margin-top:2px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border:1px solid var(--pcs-border-06);
+      padding:8px 10px 6px;
+      overflow:hidden;
+      position:relative;
+    }
+    #pcs-ls-chart{
+      width:100% !important;
+      height:100% !important;
+      display:block;
+    }
+    .pcs-ls-stats{
+      display:grid;
+      grid-template-columns:1fr .85fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    .pcs-ls-main{
+      border-radius:18px;
+      padding:14px;
+      background:var(--pcs-grad-pill);
+      border:1px solid var(--pcs-border-08);
+      box-shadow:var(--pcs-shadow-inset-soft);
+    }
+    #pcs-ls-main{
+      font-size:30px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#fff;
+      margin:0 0 6px;
+    }
+    #pcs-ls-sub{
+      font-size:13px;
+      line-height:1.35;
+      font-weight:700;
+      color:#d7e0ff;
+      margin:0 0 10px;
+    }
+    #pcs-ls-equity{
+      font-size:18px;
+      line-height:1.1;
+      font-weight:900;
+      color:#8ef3c5;
+      margin:0 0 10px;
+    }
+    #pcs-ls-bluf{
+      font-size:13px;
+      line-height:1.45;
+      font-weight:700;
+      color:#e9ecff;
+      margin:0;
+    }
+    .pcs-ls-side{
+      display:grid;
+      gap:10px;
+    }
+    .pcs-ls-side > div{
+      min-height:58px;
+      border-radius:16px;
+      padding:12px 14px;
+      background:var(--pcs-grad-pill);
+      border:1px solid var(--pcs-border-08);
+      box-shadow:var(--pcs-shadow-inset-soft);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .pcs-ls-side span{
+      font-size:11px;
+      line-height:1.2;
+      font-weight:800;
+      color:#cdd5f3;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .pcs-ls-side b{
+      font-size:18px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.02em;
+      color:#fff;
+    }
+    /* =========================================================
+       //#3.9) HIDDEN LEGACY / RUNTIME TARGETS
+    ========================================================= */
+    #pcs-quickfacts,
+    #pcsc-status,
+    #side-upcoming,
+    #chart-current,
+    #chart-upcoming,
+    #rating-current,
+    #rating-upcoming,
+    #stars-current,
+    #stars-upcoming,
+    #pcs-income-chart,
+    #pcs-bah-chart,
+    #pcs-income-summary,
+    #pcs-bah-summary,
+    #pcs-own-bar-low,
+    #pcs-own-bar-high,
+    #pcs-own-high-tag,
+    #pcs-own-chip-median,
+    #pcs-own-chip-gap-low,
+    #pcs-own-chip-gap-high,
+    #pcs-afford-chart,
+    #pcs-afford-summary,
+    #pcs-pricebreak-chart,
+    #pcs-pricebreak-note{
+      display:none !important;
+    }
+    /* =========================================================
+       //#3.10) RESPONSIVE
+    ========================================================= */
+    @media (max-width:1220px){
+      .pts-grid{ grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:1180px){
+      .pcs-main{ grid-template-columns:1fr; }
+    }
+    @media (max-width:860px){
+      #pcs-snapshot-wrap{
+        padding:14px;
+        border-radius:22px;
+      }
+      .pcs-top-head .pcs-title{ font-size:20px; }
+      .pcs-current-grid,
+      .pcs-afford-grid,
+      .pcs-ls-stats{ grid-template-columns:1fr; }
+      .pcs-image-card{ min-height:300px; }
+      .pcs-info-card{
+        min-height:auto;
+        grid-template-rows:auto auto auto auto;
+      }
+      #pcs-afford-headline{ font-size:24px; }
+      .pcs-donut-wrap,
+      .pcs-donut{
+        width:252px;
+        height:252px;
+      }
+      .pcs-donut::before{ inset:48px; }
+      .pcs-ls-chart-wrap{ height:200px; }
+    }
+    @media (max-width:760px){
+      .pts-grid{ grid-template-columns:1fr; }
+      .pts-card{ min-height:auto; }
+      .pts-top{
+        grid-template-columns:58px 1fr;
+        gap:12px;
+      }
+      .pts-icon{
+        width:52px;
+        height:52px;
+        flex-basis:52px;
+      }
+      .pts-value,
+      .pts-power-score{ font-size:24px; }
+      .pts-stars{ font-size:20px; }
+    }
+  </style>
+      <!--  //#4) SHELL  -->
+      <div id="pcs-snapshot-wrap">
+        <!--  =====================================================
+         //#4.1) TOP STRIP
+    ======================================================  -->
+        <section class="pcs-top">
+          <div class="pcs-top-head">
+            <h2 class="pcs-title">Permanent Change of Duty Station PCS Snapshot</h2>
+            <span id="pcs-city-line">San Antonio, TX <span class="pcs-dot"></span> Quick PCS Snapshot</span>
+          </div>
+          <div class="pts-grid">
+            <!--  MONTHLY INCOME  -->
+            <article class="pts-card pts-card-income">
+              <div class="pts-top">
+                <div class="pts-icon" aria-hidden="true">
+                  <svg viewbox="0 0 64 64" fill="none">
+                    <text x="14" y="42" font-size="28" font-weight="900" fill="currentColor" font-family="Georgia, serif">A</text>
+                    <text x="30" y="52" font-size="28" font-weight="900" fill="currentColor" font-family="Georgia, serif">F</text>
+                  </svg>
+                </div>
+                <div class="pts-copy">
+                  <p class="pts-kicker">Monthly Income</p>
+                  <div class="pts-bigline">
+                    <p class="pts-value" id="pcs-income-main">$8,259</p>
+                    <span class="pts-unit">/ month</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pts-body">
+                <p class="pts-income-breakdown" id="pcs-income-breakdown">Base Pay: $5,621, BAH $2,172,<br>BAS $466</p>
+              </div>
+              <div class="pts-meta" id="pts-income-meta">True disposable baseline before housing</div>
+            </article>
+            <!--  BAH COMPARISON  -->
+            <article class="pts-card pts-card-bah">
+              <div class="pts-top">
+                <div class="pts-icon" aria-hidden="true">
+                  <svg viewbox="0 0 24 24" fill="none">
+                    <path d="M8 4v16M8 4l-3 3M8 4l3 3" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M16 20V4M16 20l-3-3M16 20l3-3" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M3 12h18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".35"></path>
+                    <path d="M4.5 9.5h7M12.5 14.5h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".35"></path>
+                  </svg>
+                </div>
+                <div class="pts-copy">
+                  <p class="pts-kicker">BAH Comparison</p>
+                  <div class="pts-bigline">
+                    <p class="pts-value" id="pts-bah-delta">+$350</p>
+                    <span class="pts-unit">/ month</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pts-body">
+                <p class="pts-body-copy" id="pts-bah-copy">Compared with your previous duty station housing allowance.</p>
+              </div>
+              <div class="pts-meta" id="pts-bah-meta">vs. Previous Duty Station</div>
+            </article>
+            <!--  MARKET SIGNAL  -->
+            <article class="pts-card pts-card-market">
+              <div class="pts-top">
+                <div class="pts-icon" aria-hidden="true">
+                  <svg viewbox="0 0 24 24" fill="none">
+                    <path d="M4 10.5 12 5l8 5.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+                    <path d="M9 20v-5h6v5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+                    <path d="M8 11h.01M12 11h.01M16 11h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+                <div class="pts-copy">
+                  <p class="pts-kicker">Market Signal</p>
+                  <div class="pts-bigline">
+                    <p class="pts-value" id="pts-market-signal">Buyer-Friendly</p>
+                  </div>
+                </div>
+              </div>
+              <div class="pts-body">
+                <p class="pts-body-copy" id="pts-market-copy">Inventory elevated • Softer prices • Better leverage</p>
+              </div>
+              <div class="pts-meta" id="pts-market-meta">Current market condition</div>
+            </article>
+            <!--  PURCHASE POWER  -->
+            <article class="pts-card pts-card-power">
+              <div class="pts-top">
+                <div class="pts-icon" aria-hidden="true">
+                  <svg viewbox="0 0 24 24" fill="none">
+                    <path d="M8.5 8.5a4.5 4.5 0 1 1 5.7 6.9L12 18l-2.2-2.1A4.5 4.5 0 0 1 8.5 8.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+                    <path d="M15 6.5h3.5a2.5 2.5 0 0 1 0 5H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                    <path d="M5.5 17.5H4a2.5 2.5 0 0 1 0-5h1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                    <path d="M9.7 11.6h4.6M12 9.3v4.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                  </svg>
+                </div>
+                <div class="pts-copy">
+                  <p class="pts-kicker">Purchase Power</p>
+                  <div class="pts-power-row">
+                    <span class="pts-power-score" id="pts-power-score">4.5</span>
+                    <span class="pts-stars" id="pts-power-stars">★★★★★</span>
+                  </div>
+                </div>
+              </div>
+              <div class="pts-body">
+                <p class="pts-body-copy" id="pts-power-copy">Based on total income &amp; housing market</p>
+              </div>
+              <div class="pts-meta" id="pts-power-meta">Overall affordability signal</div>
+            </article>
+          </div>
+        </section>
+        <!--  =====================================================
+         //#4.2) MAIN GRID
+    ======================================================  -->
+        <section class="pcs-main">
+          <!--  =========================
+           //#4.2A) LEFT STACK
+      ==========================  -->
+          <div class="pcs-stack">
+            <!--  CURRENT DUTY STATION  -->
+            <div class="pcs-current-panel pcs-card">
+              <div class="pcs-current-shell">
+                <h3 class="pcs-current-title">PCS City Intelligence Brief</h3>
+                <div class="pcs-current-grid">
+                  <div class="pcs-image-card">
+                    <img id="img-current" src="" alt="Current location image">
+                    <div class="pcs-image-chip">Your New City</div>
+                    <div class="pcs-image-overlay">
+                      <span class="pcs-image-city" id="pcs-current-city">San Antonio, TX</span>
+                      <span class="pcs-image-tagline" id="pcs-current-tagline">“Military Metropolis with Affordable Expansion”</span>
+                    </div>
+                  </div>
+                  <div class="pcs-info-card pcs-subcard">
+                    <div class="pcs-brief-banner">
+                      <div class="pcs-brief-banner-icon" aria-hidden="true">
+                        <svg viewbox="0 0 24 24" fill="none">
+                          <path d="M7 12.5l3.2 3.2L17.5 8.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                      </div>
+                      <div class="pcs-brief-banner-copy">
+                        <p class="pcs-brief-banner-head" id="pcs-current-bluf-headline">Buyer-Leaning Market</p>
+                        <p class="pcs-brief-banner-sub" id="pcs-current-bluf-summary">Softening prices and extended inventory create strong opportunity for negotiation below asking.</p>
+                      </div>
+                    </div>
+                    <div class="pcs-mini-section">
+                      <div class="pcs-mini-head">
+                        <div class="pcs-mini-head-icon" aria-hidden="true">
+                          <svg viewbox="0 0 24 24" fill="none">
+                            <path d="M8 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM3.5 19.5c.5-3 2.8-4.5 6.5-4.5s6 1.5 6.5 4.5M13 19.5c.4-2.2 2.1-3.5 5-3.5 1.3 0 2.4.2 3.2.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                          </svg>
+                        </div>
+                        <h4 class="pcs-mini-head-title">Snapshot</h4>
+                      </div>
+                      <div class="pcs-mini-grid">
+                        <div class="pcs-mini-stat">
+                          <div class="pcs-mini-label">
+                            <svg viewbox="0 0 24 24" fill="currentColor">
+                              <path d="M12 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-4.1 0-7 2.1-7 5v1h14v-1c0-2.9-2.9-5-7-5Z"></path>
+                            </svg>
+                            Population
+                          </div>
+                          <div class="pcs-mini-value" id="pcs-cur-population-city">1.5M</div>
+                          <div class="pcs-mini-sub" id="pcs-cur-population-metro">Metro: 2.6M</div>
+                        </div>
+                        <div class="pcs-mini-stat">
+                          <div class="pcs-mini-label">
+                            <svg viewbox="0 0 24 24" fill="currentColor">
+                              <path d="M12 2a5 5 0 0 0-5 5v2H6a2 2 0 0 0-2 2v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 7V7a3 3 0 1 1 6 0v2H9Z"></path>
+                            </svg>
+                            Income
+                          </div>
+                          <div class="pcs-mini-value" id="pcs-cur-median-income">$69,906</div>
+                        </div>
+                        <div class="pcs-mini-stat">
+                          <div class="pcs-mini-label">
+                            <svg viewbox="0 0 24 24" fill="none">
+                              <path d="M4 18h16M6 16V9M12 16V5M18 16v-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path>
+                              <path d="m7 8 4-3 3 2 4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            Trend
+                          </div>
+                          <div class="pcs-mini-value" id="pcs-cur-market-trend">-3.2% YoY</div>
+                        </div>
+                        <div class="pcs-mini-stat">
+                          <div class="pcs-mini-label">
+                            <svg viewbox="0 0 24 24" fill="currentColor">
+                              <path d="M12 4 3 11h2v8h5v-5h4v5h5v-8h2L12 4Z"></path>
+                            </svg>
+                            Median Home
+                          </div>
+                          <div class="pcs-mini-value" id="pcs-cur-median-home">$288K</div>
+                        </div>
+                        <div class="pcs-mini-stat">
+                          <div class="pcs-mini-label">
+                            <svg viewbox="0 0 24 24" fill="currentColor">
+                              <path d="M7 6h10l2 5v6h-2a2 2 0 1 1-4 0H11a2 2 0 1 1-4 0H5v-6l2-5Zm1.4 2L7 12h10l-1.4-4H8.4Z"></path>
+                            </svg>
+                            Traffic
+                          </div>
+                          <div class="pcs-mini-value" id="pcs-cur-traffic-level">Moderate</div>
+                        </div>
+                        <div class="pcs-mini-stat">
+                          <div class="pcs-mini-label">
+                            <svg viewbox="0 0 24 24" fill="currentColor">
+                              <path d="M9 6V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1h3a2 2 0 0 1 2 2v3H4V8a2 2 0 0 1 2-2h3Zm2 0h2V5h-2v1Zm9 7v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6h16Z"></path>
+                            </svg>
+                            Employment
+                          </div>
+                          <div class="pcs-mini-value" id="pcs-cur-employment-status">Stable</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pcs-mini-section">
+                      <div class="pcs-mini-head">
+                        <div class="pcs-mini-head-icon" aria-hidden="true">
+                          <svg viewbox="0 0 24 24" fill="none">
+                            <path d="M12 3v3M12 18v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M3 12h3M18 12h3M4.9 19.1 7 17M17 7l2.1-2.1M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+                          </svg>
+                        </div>
+                        <h4 class="pcs-mini-head-title">Lifestyle</h4>
+                      </div>
+                      <ul class="pcs-mini-list" id="pcs-cur-lifestyle-list">
+                        <li class="pcs-mini-item"><span class="pcs-mini-dot"></span><span>Hot summers, mild winters, low snow risk</span></li>
+                        <li class="pcs-mini-item"><span class="pcs-mini-dot"></span><span>Strong military presence and family-heavy suburbs</span></li>
+                        <li class="pcs-mini-item"><span class="pcs-mini-dot"></span><span>Moderate congestion with typical 20–35 min commute</span></li>
+                      </ul>
+                    </div>
+                    <div class="pcs-fin-box">
+                      <div class="pcs-fin-top">
+                        <span class="pcs-fin-dot"></span>
+                        <p class="pcs-fin-head" id="pcs-cur-financial-headline">Strategic Buy Window</p>
+                      </div>
+                      <p class="pcs-fin-copy" id="pcs-cur-financial-summary">Favorable pricing and elevated inventory create opportunity for below-market acquisition.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--  HOUSING AFFORDABILITY BREAKDOWN  -->
+            <div class="pcs-afford-panel pcs-card">
+              <div class="pcs-afford-head">
+                <h3 class="pcs-afford-title">Housing Affordability Breakdown</h3>
+                <div class="pcs-afford-kicker">
+                  <div class="pcs-bedroom-left">
+                    <div id="pcs-bedroom-value">3</div>
+                    <div class="pcs-bedroom-label">Bedroom</div>
+                  </div>
+                  <div class="pcs-bedroom-right">
+                    <button id="pcs-bedroom-up" class="pcs-bedroom-btn" type="button" aria-label="Increase bedroom">▲</button>
+                    <button id="pcs-bedroom-down" class="pcs-bedroom-btn" type="button" aria-label="Decrease bedroom">▼</button>
+                  </div>
+                </div>
+              </div>
+              <div class="pcs-afford-grid">
+                <div class="pcs-afford-copy">
+                  <div id="pcs-afford-headline">$25 <span>Monthly Buffer</span></div>
+                  <div id="pcs-afford-subline">BAH covers <strong>101%</strong> of a typical mortgage stack</div>
+                  <div class="pcs-checklist">
+                    <div class="pcs-check">
+                      <span class="pcs-check-mark">✓</span>
+                      <span>Average Home Price <strong id="pcs-afford-home-price">$302,500</strong></span>
+                    </div>
+                    <div class="pcs-check">
+                      <span class="pcs-check-mark">✓</span>
+                      <span>Mortgage (P&amp;I) <strong id="pcs-afford-mortgage">$1,912</strong></span>
+                    </div>
+                    <div class="pcs-check">
+                      <span class="pcs-check-mark">✓</span>
+                      <span>Taxes <strong id="pcs-afford-taxes">$0</strong> • Insurance <strong id="pcs-afford-insurance">$0</strong></span>
+                    </div>
+                    <div class="pcs-check">
+                      <span class="pcs-check-mark">✓</span>
+                      <span>HOA <strong id="pcs-afford-hoa">$0</strong> • Utilities <strong id="pcs-afford-utilities">$235</strong></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="pcs-donut-zone">
+                  <div class="pcs-donut-wrap">
+                    <div class="pcs-donut" id="pcs-afford-donut"></div>
+                    <div class="pcs-donut-center">
+                      <div class="pcs-donut-center-inner">
+                        <div id="pcs-donut-buffer">+25</div>
+                        <div id="pcs-donut-buffer-label">Monthly Buffer</div>
+                      </div>
+                    </div>
+                    <div class="pcs-donut-amount" id="pcs-amt-mortgage">$1,912</div>
+                    <div class="pcs-donut-amount" id="pcs-amt-taxes">$0</div>
+                    <div class="pcs-donut-amount" id="pcs-amt-insurance">$0</div>
+                    <div class="pcs-donut-amount" id="pcs-amt-hoa">$0</div>
+                    <div class="pcs-donut-amount" id="pcs-amt-utilities">$235</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pcs-afford-footer" id="pcs-afford-footer">
+                Based on BAH only, ownership is still being evaluated for this market.
+              </div>
+            </div>
+          </div>
+          <!--  =========================
+           //#4.2B) RIGHT STACK
+      ==========================  -->
+          <div class="pcs-stack">
+            <!--  12-MONTH HOUSING TREND  -->
+            <div class="pcs-trend-panel pcs-card">
+              <h3 class="pcs-trend-title">12-Month Housing Trend</h3>
+              <div class="pcs-trend-sub">Median home price (interactive trend)</div>
+              <div class="trend-toggle">
+                <button class="trend-btn active" id="btn-1yr" type="button">1 Year</button>
+                <button class="trend-btn" id="btn-3yr" type="button">3 Years</button>
+              </div>
+              <div id="pcs-trend-chart-apex"></div>
+              <div id="pcs-trend-summary">12-month change: -3.2% • Balanced to buyer-friendly with elevated inventory and moderate price stability</div>
+            </div>
+            <!--  YOUR LIVING STRATEGY  -->
+            <div class="pcs-ls-panel pcs-card">
+              <h3 class="pcs-own-title">Your Living Strategy</h3>
+              <div class="pcs-ls-tabs">
+                <button class="pcs-ls-tab active" type="button" data-mode="buy">Buy</button>
+                <button class="pcs-ls-tab" type="button" data-mode="rent">Rent</button>
+                <button class="pcs-ls-tab" type="button" data-mode="base">Base Housing</button>
+              </div>
+              <div id="pcs-ls-status" class="pcs-ls-status">Wealth Building · Higher Cost</div>
+              <div class="pcs-ls-chart-wrap">
+                <canvas id="pcs-ls-chart"></canvas>
+              </div>
+              <div class="pcs-ls-stats">
+                <div class="pcs-ls-main">
+                  <div id="pcs-ls-main">$0</div>
+                  <div id="pcs-ls-sub">vs BAH</div>
+                  <div id="pcs-ls-equity">$0 equity</div>
+                  <div id="pcs-ls-bluf">Living strategy summary will appear here.</div>
+                </div>
+                <div class="pcs-ls-side">
+                  <div><span>12M Cost</span><b id="pcs-ls-annual">$0</b></div>
+                  <div><span>vs BAH</span><b id="pcs-ls-vs">$0</b></div>
+                  <div><span>Monthly Gap</span><b id="pcs-ls-gap">$0</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--  =====================================================
+         //#4.3) HIDDEN LEGACY / RUNTIME TARGETS
+    ======================================================  -->
+        <div style="display:none !important;">
+          <div id="pcs-compare-block"></div>
+          <div id="pcsc-frame"></div>
+          <div id="pcsc-grid"></div>
+          <div id="side-current"></div>
+          <div id="side-upcoming"></div>
+          <div id="pcsc-status"></div>
+          <img id="img-upcoming" alt="Upcoming location image">
+          <div id="loc-upcoming">—</div>
+          <div id="bah-upcoming">$0</div>
+          <div id="price-upcoming">—</div>
+          <div id="yoy-upcoming">—</div>
+          <div id="dom-upcoming">—</div>
+          <div id="facts-upcoming"></div>
+          <canvas id="chart-current"></canvas>
+          <canvas id="chart-upcoming"></canvas>
+          <div id="rating-current"></div>
+          <div id="rating-upcoming"></div>
+          <div id="stars-current"></div>
+          <div id="stars-upcoming"></div>
+          <div id="pcs-qf-block"></div>
+          <div id="pcs-quickfacts"></div>
+          <div id="pcs-qf-poverty">14.4%</div>
+          <div id="pcs-qf-home">$288,700</div>
+          <div id="pcs-qf-dom">83</div>
+          <canvas id="pcs-income-chart"></canvas>
+          <canvas id="pcs-bah-chart"></canvas>
+          <div id="pcs-income-summary"></div>
+          <div id="pcs-bah-summary"></div>
+          <div id="pcs-leg-mortgage">$1,912</div>
+          <div id="pcs-leg-taxes">$0</div>
+          <div id="pcs-leg-insurance">$0</div>
+          <div id="pcs-leg-hoa">$0</div>
+          <div id="pcs-leg-utilities">$235</div>
+          <div id="pcs-own-gap-note">Your price range is still loading…</div>
+          <div id="pcs-own-right-text">Comparing low vs high market entry</div>
+          <div id="pcs-own-y1">$450K</div>
+          <div id="pcs-own-y2">$350K</div>
+          <div id="pcs-own-y3">$250K</div>
+          <div id="pcs-own-y4">$150K</div>
+          <div id="pcs-own-low-value">$0</div>
+          <div id="pcs-own-high-value">$0</div>
+          <div id="pcs-own-bar-low"></div>
+          <div id="pcs-own-bar-high"></div>
+          <div id="pcs-own-high-tag"></div>
+          <div id="pcs-own-chip-median"></div>
+          <div id="pcs-own-chip-gap-low"></div>
+          <div id="pcs-own-chip-gap-high"></div>
+          <canvas id="pcs-afford-chart"></canvas>
+          <div id="pcs-afford-summary"></div>
+          <canvas id="pcs-pricebreak-chart"></canvas>
+          <div id="pcs-pricebreak-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-embed w-script">
+    <script>
+(function () {
+  "use strict";
+  /* =========================================================
+     OROZCOREALTY • PCS SNAPSHOT RUNTIME
+     v1.0.0
+     UPDATED FOR:
+     - OrozcoRealty input strip query/session flow
+     - luxury-re.webflow.io/pcs-snapshot
+     - OrozcoRealty GitHub city/pay JSON sources
+  ========================================================= */
+  const MILPAY_JSON_URL = "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/data/militaryPayTables.json";
+  const CITY_GITHUB_RAW_BASE = "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/cities/";
+  const BASE_INDEX_URL = "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/cities/index.byBase.json";
+  const DEFAULT_BASE = "Lackland AFB";
+  const DEFAULT_FILE_KEY = "Lackland";
+  const DEFAULT_ZIP = "78236";
+  const DONUT_ROTATION_DEG = -8;
+  const CONIC_TO_CARTESIAN_OFFSET_DEG = -90;
+  let CURRENT_BEDROOM = 3;
+  let LOADED_PRIMARY_CITY = null;
+  let LOADED_PAY = null;
+  let LOADED_QUERY = null;
+  let BASE_INDEX = { bases: {}, aliases: {} };
+  let livingChart = null;
+  let trendChart = null;
+  let LIVING_STATE = null;
+  let livingBound = false;
+  const $ = s => document.querySelector(s);
+  const setText = (s, v) => { const e = $(s); if (e) e.textContent = v; };
+  const setHTML = (s, v) => { const e = $(s); if (e) e.innerHTML = v; };
+  const safe = (o, p, f) => { try { const v = p.split(".").reduce((a, k) => a && a[k], o); return v == null ? f : v; } catch { return f; } };
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const money = n => {
+    const x = Number(n);
+    return Number.isFinite(x) ? "$" + Math.round(x).toLocaleString() : "$0";
+  };
+  const pct = (n, d) => {
+    const x = Number(n);
+    return Number.isFinite(x) ? x.toFixed(d == null ? 0 : d) + "%" : "0%";
+  };
+  const compactPop = n => {
+    const x = Number(n || 0);
+    if (!Number.isFinite(x) || x <= 0) return "—";
+    if (x >= 1e6) return (x / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+    if (x >= 1e3) return Math.round(x / 1e3) + "K";
+    return String(Math.round(x));
+  };
+  const compactMoney = n => {
+    const x = Number(n || 0);
+    if (!Number.isFinite(x) || x <= 0) return "$0";
+    if (x >= 1e6) return "$" + (x / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+    if (x >= 1e3) return "$" + Math.round(x / 1e3) + "K";
+    return "$" + Math.round(x);
+  };
+  const esc = s => String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+  const destroy = c => { if (c) try { c.destroy(); } catch (e) {} };
+  async function load(url) {
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error("load fail " + url + " (" + r.status + ")");
+    const ct = (r.headers.get("content-type") || "").toLowerCase();
+    if (ct.includes("text/html")) throw new Error("non-json response " + url + " (html)");
+    return r.json();
+  }
+  async function loadBaseIndex() {
+    if (Object.keys(BASE_INDEX.bases || {}).length) return BASE_INDEX;
+    BASE_INDEX = await fetch(BASE_INDEX_URL, { cache: "no-store" })
+      .then(r => r.json())
+      .catch(() => ({ bases: {}, aliases: {} }));
+    return BASE_INDEX;
+  }
+  function idx() {
+    return BASE_INDEX || { bases: {}, aliases: {} };
+  }
+  function baseName(raw) {
+    const s = String(raw || "").trim();
+    if (!s) return "";
+    const i = idx();
+    const b = i.bases || {};
+    const a = i.aliases || {};
+    return b[s] ? s : (a[s] || s);
+  }
+  function fileKeyFromBase(raw) {
+    const rec = (idx().bases || {})[baseName(raw)];
+    return (rec && rec.file) || "";
+  }
+  function zipFromBase(raw) {
+    const rec = (idx().bases || {})[baseName(raw)];
+    return (rec && rec.zip) || "";
+  }
+  const fallbackBase = raw => baseName(raw) || DEFAULT_BASE;
+  const fallbackFileKey = raw => fileKeyFromBase(raw) || DEFAULT_FILE_KEY;
+  const fallbackZip = raw => zipFromBase(raw) || DEFAULT_ZIP;
+  async function loadCityExact(fileKey) {
+    const k = String(fileKey || "").trim() || DEFAULT_FILE_KEY;
+    return load(CITY_GITHUB_RAW_BASE + encodeURIComponent(k) + ".json");
+  }
+  function normRank(r) {
+    const s = String(r || "").toUpperCase().trim();
+    const m = s.match(/^([EO])\s*-\s*(\d+)$/) ||
+              s.match(/^([EO])(\d+)$/) ||
+              s.match(/^(W)\s*-\s*(\d+)$/) ||
+              s.match(/^(W)(\d+)$/);
+    return m ? (m[1] + "-" + m[2]) : s.replace(/\s+/g, "");
+  }
+  const isE = r => String(r || "").startsWith("E-");
+  function pickYOS(y, table) {
+    const ks = Object.keys(table || {})
+      .map(k => parseInt(k, 10))
+      .filter(n => !isNaN(n))
+      .sort((a, b) => a - b);
+    if (!ks.length) return String(y || 2);
+    let chosen = ks[0];
+    for (const k of ks) if (k <= y) chosen = k;
+    return String(chosen);
+  }
+  async function calcBahFromPay(pay, opts) {
+    const rankKey = normRank(opts.rank);
+    const table = (pay.BASEPAY && pay.BASEPAY[rankKey]) ? pay.BASEPAY[rankKey] : {};
+    const yKey = pickYOS(parseInt(opts.yos, 10), table);
+    const basePay = Number(table[yKey] || 0) || 0;
+    const bas = isE(rankKey)
+      ? Number(safe(pay, "BAS.enlisted", 0) || 0)
+      : Number(safe(pay, "BAS.officer", 0) || 0);
+    const zip = String(opts.zip || fallbackZip(opts.baseLoc) || DEFAULT_ZIP).trim();
+    const rec = (safe(pay, "BAH.by_zip", {}) || {})[zip] || null;
+    const grp = (parseInt(opts.family, 10) > 1) ? safe(rec, "with", null) : safe(rec, "without", null);
+    let bah = 0;
+    if (grp && grp[rankKey] != null) bah = Number(grp[rankKey]) || 0;
+    return { bah, basePay, bas, zip };
+  }
+  async function getQuery() {
+    await loadBaseIndex();
+    const u = new URL(window.location.href);
+    const curBase = fallbackBase(
+      u.searchParams.get("curBase") ||
+      sessionStorage.getItem("pcs_current_base") ||
+      DEFAULT_BASE
+    );
+    const newBase = fallbackBase(
+      u.searchParams.get("newBase") ||
+      sessionStorage.getItem("pcs_new_base") ||
+      u.searchParams.get("base") ||
+      DEFAULT_BASE
+    );
+    const curFileKey = u.searchParams.get("curFileKey") ||
+      sessionStorage.getItem("pcs_current_fileKey") ||
+      fileKeyFromBase(curBase) ||
+      DEFAULT_FILE_KEY;
+    const newFileKey = u.searchParams.get("newFileKey") ||
+      sessionStorage.getItem("pcs_new_fileKey") ||
+      u.searchParams.get("cityKey") ||
+      sessionStorage.getItem("pcs_new_cityKey") ||
+      fileKeyFromBase(newBase) ||
+      DEFAULT_FILE_KEY;
+    const curZip = u.searchParams.get("curZip") ||
+      sessionStorage.getItem("pcs_current_zip") ||
+      zipFromBase(curBase) ||
+      DEFAULT_ZIP;
+    const newZip = u.searchParams.get("newZip") ||
+      sessionStorage.getItem("pcs_new_zip") ||
+      zipFromBase(newBase) ||
+      DEFAULT_ZIP;
+    return {
+      type: (u.searchParams.get("type") || "ad").toLowerCase(),
+      rank: u.searchParams.get("rank") || sessionStorage.getItem("pcs_rank") || "E-7",
+      yos: parseInt(u.searchParams.get("yos") || sessionStorage.getItem("pcs_yos") || "16", 10),
+      family: parseInt(u.searchParams.get("family") || sessionStorage.getItem("pcs_family") || "4", 10),
+      base: newBase,
+      cityKey: u.searchParams.get("cityKey") || sessionStorage.getItem("pcs_new_cityKey") || newFileKey || DEFAULT_FILE_KEY,
+      curBase,
+      newBase,
+      curFileKey,
+      newFileKey,
+      curZip,
+      newZip,
+      va: parseInt(u.searchParams.get("va") || "0", 10)
+    };
+  }
+  const pickMedianPrice = city =>
+    safe(city, "housing.market.median_listing_price_realtor", null) ??
+    safe(city, "housing.market.median_listing_price", null) ??
+    safe(city, "housing.market.median_list_price", null) ??
+    safe(city, "avg_home_value", null) ??
+    safe(city, "average_home_value", null) ??
+    safe(city, "housing.median_value_owner_occupied", null) ?? 0;
+  const pickYoY = city =>
+    safe(city, "housing.market.zillow_one_year_change_percent", null) ??
+    safe(city, "housing.market.one_year_change_percent", null) ??
+    safe(city, "yoy_change_percent", null);
+  const pickDOM = city =>
+    safe(city, "housing.market.average_days_on_market", null) ??
+    safe(city, "housing.market.average_days_on_market_range.low", null) ?? null;
+  const locationName = (city, baseLoc) => city.place || city.city || city.name || baseLoc || "—";
+  function setImgFromCity(imgEl, city) {
+    if (!imgEl) return;
+    const url = safe(city, "image_url", "") || safe(city, "imageUrl", "") || "";
+    if (url && String(url).startsWith("http")) {
+      imgEl.src = String(url);
+      imgEl.style.opacity = "1";
+    } else {
+      imgEl.removeAttribute("src");
+      imgEl.style.opacity = "0";
+    }
+  }
+  function renderQuickFacts(city, fallbackPrice) {
+    const medInc =
+      safe(city, "snapshot.median_household_income", null) ??
+      safe(city, "income.median_household_income", null) ??
+      safe(city, "demographics.income.median_household_income", null) ??
+      safe(city, "median_household_income", 60000);
+    const popEst =
+      safe(city, "snapshot.population_city", null) ??
+      safe(city, "population.estimate", safe(city, "population", 0)) ?? 0;
+    const days =
+      safe(city, "housing.market.average_days_on_market", null) ??
+      safe(city, "housing.market.average_days_on_market_range.low", null);
+    const facts = [
+      { label: "Population", value: Number(popEst).toLocaleString() },
+      { label: "Median Age", value: safe(city, "population.median_age", safe(city, "median_age", 0)) },
+      { label: "Median Household Income", value: money(medInc) },
+      { label: "Poverty Rate", value: (safe(city, "income.poverty_rate_percent", safe(city, "poverty_rate_percent", 0)) || 0) + "%" },
+      { label: "Median Home Value", value: money(safe(city, "housing.median_value_owner_occupied", fallbackPrice)) },
+      { label: "Avg Days on Market", value: (days != null ? String(days) : "—") }
+    ];
+    setHTML("#pcs-quickfacts", facts.map(f =>
+      `<div class="pcs-fact"><div class="pcs-fact-label">${f.label}</div><div class="pcs-fact-value">${f.value}</div></div>`
+    ).join(""));
+  }
+  function familyToBedrooms(family) {
+    const n = Number(family) || 1;
+    if (n <= 3) return 2;
+    if (n === 4) return 3;
+    if (n === 5) return 4;
+    return 5;
+  }
+  function getBedroomProfile(city, beds) {
+    const rec = safe(city, `by_bedroom.${beds}`, {}) || {};
+    return {
+      beds,
+      rent: Number(safe(rec, "rent_monthly.avg", 0) || 0),
+      mortgage: Number(safe(rec, "mortgage_monthly.avg", 0) || 0),
+      utilities: Number(safe(rec, "utilities.total.avg", 0) || 0),
+      homePrice: Number(safe(rec, "home_price.avg", 0) || 0)
+    };
+  }
+  const pickHOA = (city, beds) =>
+    Number(safe(city, `by_bedroom.${beds}.hoa_monthly.avg`, 0) || 0) ||
+    Number(safe(city, "housing.costs.hoa_monthly.avg", 0) || 0) ||
+    Number(safe(city, "hoa_monthly", 0) || 0) ||
+    Number(safe(city, "avg_hoa_monthly", 0) || 0) || 0;
+  const pickTaxRatePercent = city =>
+    Number(safe(city, "property_tax_rate", 0) || 0) ||
+    Number(safe(city, "property_tax_rate_percent", 0) || 0) ||
+    Number(safe(city, "mortgage_assumptions.property_tax_percent", 0) || 0) ||
+    Number(safe(city, "mortgage_assumptions.tax_rate_percent", 0) || 0) ||
+    Number(safe(city, "mortgage_assumptions.tax_percent", 0) || 0) || 0;
+  function pickInsuranceAnnual(city, price) {
+    const rate =
+      Number(safe(city, "insurance_rate", 0) || 0) ||
+      Number(safe(city, "insurance_rate_percent", 0) || 0) ||
+      Number(safe(city, "homeowners_insurance_rate_percent", 0) || 0) || 0;
+    if (rate > 0 && price > 0) return price * (rate / 100);
+    return Number(safe(city, "mortgage_assumptions.insurance_annual", 0) || 0) ||
+      Number(safe(city, "mortgage_assumptions.homeowners_insurance_annual", 0) || 0) ||
+      Number(safe(city, "avg_homeowners_insurance_annual", 0) || 0) || 0;
+  }
+  function estimateTaxesMonthly(city, price) {
+    const taxPct = pickTaxRatePercent(city);
+    if (taxPct > 0 && price > 0) return (price * (taxPct / 100)) / 12;
+    return (Number(safe(city, "mortgage_assumptions.property_tax_annual", 0) || 0) / 12) ||
+      (Number(safe(city, "mortgage_assumptions.tax_annual", 0) || 0) / 12) || 0;
+  }
+  const estimateInsuranceMonthly = (city, price) => {
+    const annual = pickInsuranceAnnual(city, price);
+    return annual > 0 ? annual / 12 : 0;
+  };
+  function monthlyMortgageEstimate(price, annualRate) {
+    const P = Number(price);
+    if (!Number.isFinite(P) || P <= 0) return 0;
+    const r = (Number(annualRate) || 0.0675) / 12;
+    const N = 360;
+    const M = P * (r * Math.pow(1 + r, N)) / (Math.pow(1 + r, N) - 1);
+    return Number.isFinite(M) ? M : 0;
+  }
+  function marketSignalFromCity(city) {
+    const yoy = Number(
+      safe(city, "snapshot.market_trend_yoy", null) ??
+      safe(city, "housing.market.zillow_one_year_change_percent", null) ??
+      safe(city, "housing.market.one_year_change_percent", null) ?? 0
+    ) || 0;
+    const dom = Number(
+      safe(city, "housing.market.average_days_on_market", null) ??
+      safe(city, "housing.market.average_days_on_market_range.low", null) ?? 0
+    ) || 0;
+    const marketSummary = safe(city, "market_bluf.bluf_summary", "") || safe(city, "housing.market.market_type_summary", "") || "";
+    const marketType = String(safe(city, "market_bluf.status", "") || safe(city, "housing.market.market_type", "") || "").toLowerCase();
+    if (marketType.includes("buyer") || yoy <= -2 || dom >= 55) {
+      return {
+        label: "Buyer-Friendly",
+        sub: marketSummary || "Inventory elevated • Softer prices • Better leverage",
+        meta: "Current market condition"
+      };
+    }
+    if (marketType.includes("seller") || yoy >= 2 || dom <= 30) {
+      return {
+        label: "Seller-Leaning",
+        sub: marketSummary || "Tighter inventory • Firmer pricing • Less leverage",
+        meta: "Current market condition"
+      };
+    }
+    return {
+      label: "Balanced",
+      sub: marketSummary || "Supply and pricing appear balanced for disciplined entry",
+      meta: "Current market condition"
+    };
+  }
+  function purchasePowerFromInputs(totalPay, stack) {
+    const ratio = (Number(totalPay) || 0) / Math.max(Number(stack) || 0, 1);
+    let score = 1;
+    if (ratio >= 4.0) score = 5.0;
+    else if (ratio >= 3.3) score = 4.5;
+    else if (ratio >= 2.8) score = 4.0;
+    else if (ratio >= 2.4) score = 3.5;
+    else if (ratio >= 2.1) score = 3.0;
+    else if (ratio >= 1.8) score = 2.5;
+    else if (ratio >= 1.6) score = 2.0;
+    else if (ratio >= 1.4) score = 1.5;
+    return Number(score.toFixed(1));
+  }
+  const starsFrom5 = score => {
+    const rounded = Math.round(Number(score) || 0);
+    let out = "";
+    for (let i = 1; i <= 5; i++) out += i <= rounded ? "★" : "☆";
+    return out;
+  };
+  function housingStackForTopCard(city, family) {
+    const beds = familyToBedrooms(family);
+    const bedroom = getBedroomProfile(city, beds);
+    const price = Number(bedroom.homePrice || 0) || Number(pickMedianPrice(city) || 0);
+    const mortgage = Number(bedroom.mortgage || 0) || Number(monthlyMortgageEstimate(price, 0.0675) || 0);
+    const taxes = Number(estimateTaxesMonthly(city, price) || 0);
+    const insurance = Number(estimateInsuranceMonthly(city, price) || 0);
+    const hoa = Number(pickHOA(city, beds) || 0);
+    const utilities = Number(bedroom.utilities || 0);
+    return {
+      beds,
+      price,
+      mortgage,
+      taxes,
+      insurance,
+      hoa,
+      utilities,
+      total: mortgage + taxes + insurance + hoa + utilities
+    };
+  }
+  function updateTopStripCards(data) {
+    const totalPay = Number(data.totalPay || 0);
+    const bahDelta = Number(data.bahDelta || 0);
+    const market = data.market || { label: "Balanced", sub: "", meta: "Current market condition" };
+    const powerScore = Number(data.powerScore || 0);
+    setText("#pcs-income-main", money(totalPay));
+    setHTML("#pcs-income-breakdown", `Base Pay: ${money(data.basePay)} <span class="pcs-dot"></span> BAH: ${money(data.bah)} <span class="pcs-dot"></span> BAS: ${money(data.bas)}`);
+    setText("#pts-income-meta", "True disposable baseline before housing");
+    setText("#pts-bah-delta", `${bahDelta >= 0 ? "+" : "-"}${money(Math.abs(bahDelta)).replace("$", "$")}`);
+    setText("#pts-bah-copy", "Compared with your previous duty station housing allowance.");
+    setText("#pts-bah-meta", "vs. Previous Duty Station");
+    setText("#pts-market-signal", market.label);
+    setText("#pts-market-copy", market.sub);
+    setText("#pts-market-meta", market.meta);
+    setText("#pts-power-score", powerScore.toFixed(1));
+    setText("#pts-power-stars", starsFrom5(powerScore));
+    setText("#pts-power-copy", "Based on total income & housing market");
+    setText("#pts-power-meta", "Overall affordability signal");
+  }
+  function normalizeTrendDate(dt) {
+    const s = String(dt || "").trim();
+    if (!s) return null;
+    const m = s.match(/^(\d{4})-(\d{2})-W(\d{1,2})$/);
+    if (m) {
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const w = Number(m[3]);
+      const day = Math.min(28, 1 + (w - 1) * 7);
+      const d = new Date(`${y}-${String(mo).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function renderTrendApex(fullData) {
+    const chartEl = $("#pcs-trend-chart-apex");
+    if (!chartEl || typeof ApexCharts === "undefined") return;
+    if (trendChart) try { trendChart.destroy(); } catch (e) {}
+    const seriesData = (Array.isArray(fullData) ? fullData : [])
+      .map(d => {
+        const x = normalizeTrendDate(d.month || d.date || d.period || d.timestamp || null);
+        const y = Number(d.median_sale_price ?? d.medianSalePrice ?? d.median ?? d.value ?? null);
+        return (x && Number.isFinite(y)) ? { x, y } : null;
+      })
+      .filter(Boolean);
+    trendChart = new ApexCharts(chartEl, {
+      chart: { type: "line", height: 200, foreColor: "#e9ecff", toolbar: { show: false } },
+      stroke: { width: 3, curve: "smooth", colors: ["#8ef3c5"] },
+      series: [{ name: "Median Sale Price", data: seriesData }],
+      xaxis: { type: "datetime", labels: { style: { colors: "#e9ecff" } } },
+      yaxis: { labels: { style: { colors: "#e9ecff" }, formatter: v => "$" + Math.round(v).toLocaleString() } },
+      tooltip: { theme: "dark", x: { format: "MMM yyyy" }, y: { formatter: v => "$" + Math.round(v).toLocaleString() } },
+      grid: { borderColor: "rgba(255,255,255,0.08)" }
+    });
+    trendChart.render();
+  }
+  async function initHeaderAndCharts(pay, p, city) {
+    const isAD = p.type === "ad";
+    let base = 0, bah = 0, bas = 0, prevBah = 0;
+    if (isAD) {
+      const vals = await calcBahFromPay(pay, {
+        rank: p.rank,
+        yos: p.yos,
+        family: p.family,
+        baseLoc: p.newBase || p.base || DEFAULT_BASE,
+        zip: p.newZip || fallbackZip(p.newBase || p.base || DEFAULT_BASE)
+      });
+      const prevVals = await calcBahFromPay(pay, {
+        rank: p.rank,
+        yos: p.yos,
+        family: p.family,
+        baseLoc: p.curBase || DEFAULT_BASE,
+        zip: p.curZip || fallbackZip(p.curBase || DEFAULT_BASE)
+      });
+      base = vals.basePay || 0;
+      bah = vals.bah || 0;
+      bas = vals.bas || 0;
+      prevBah = prevVals.bah || 0;
+    } else {
+      const full = pay.DISABILITY_FULL || {};
+      const keys = Object.keys(full).map(k => parseInt(k, 10)).filter(n => !isNaN(n)).sort((a, b) => a - b);
+      let best = keys[0] ?? 0;
+      let diff = Math.abs(p.va - best);
+      keys.forEach(k => {
+        const d = Math.abs(p.va - k);
+        if (d < diff) {
+          diff = d;
+          best = k;
+        }
+      });
+      const row = full[String(best)];
+      base = row ? row.veteran : 0;
+    }
+    const total = base + bah + bas;
+    setHTML("#pcs-city-line", `${locationName(city, p.newBase || p.base || DEFAULT_BASE)} <span class="pcs-dot"></span> Quick PCS Snapshot`);
+    setText("#pcs-qf-poverty", (safe(city, "income.poverty_rate_percent", safe(city, "poverty_rate_percent", 0)) || 0) + "%");
+    setText("#pcs-qf-home", money(safe(city, "housing.median_value_owner_occupied", pickMedianPrice(city))));
+    setText("#pcs-qf-dom", String(pickDOM(city) ?? "—"));
+    const medInc =
+      safe(city, "snapshot.median_household_income", null) ??
+      safe(city, "income.median_household_income", null) ??
+      safe(city, "demographics.income.median_household_income", null) ??
+      safe(city, "median_household_income", 60000);
+    const P = pickMedianPrice(city) || 295000;
+    const M = monthlyMortgageEstimate(P, 0.0675);
+    setText("#pcs-income-summary", (((total * 12 - medInc) >= 0 ? "+" : "") + ((((total * 12) - medInc) / Math.max(medInc, 1)) * 100).toFixed(1) + "% vs median household income"));
+    setText("#pcs-bah-summary", bah > 0 && M > 0
+      ? `Your BAH covers ~${((bah / M) * 100).toFixed(1)}% of estimated mortgage.`
+      : "BAH not found for this rank/base yet — pay tables may be missing that row.");
+    const allMonths =
+      safe(city, "housing.market.sale_history_36_months", null) ??
+      safe(city, "housing.sale_history_36_months", null) ??
+      safe(city, "market.sale_history_36_months", []) ?? [];
+    const last12 = Array.isArray(allMonths) ? allMonths.slice(-12) : [];
+    const last36 = Array.isArray(allMonths) ? allMonths.slice(-36) : [];
+    renderTrendApex(last12);
+    const btn1 = $("#btn-1yr");
+    const btn3 = $("#btn-3yr");
+    if (btn1) btn1.onclick = () => {
+      btn1.classList.add("active");
+      if (btn3) btn3.classList.remove("active");
+      renderTrendApex(last12);
+    };
+    if (btn3) btn3.onclick = () => {
+      btn3.classList.add("active");
+      if (btn1) btn1.classList.remove("active");
+      renderTrendApex(last36);
+    };
+    const yoy =
+      safe(city, "snapshot.market_trend_yoy", null) ??
+      safe(city, "housing.market.zillow_one_year_change_percent", null) ??
+      safe(city, "housing.market.one_year_change_percent", null) ??
+      safe(city, "yoy_change_percent", 0);
+    const marketSummary = safe(city, "market_bluf.bluf_summary", "") || safe(city, "housing.market.market_type_summary", "") || "";
+    setText("#pcs-trend-summary", `12-month change: ${Number(yoy) || 0}% • ${marketSummary}`);
+    renderQuickFacts(city, P);
+    const stack = housingStackForTopCard(city, p.family);
+    updateTopStripCards({
+      totalPay: total,
+      basePay: base,
+      bah,
+      bas,
+      bahDelta: bah - prevBah,
+      market: marketSignalFromCity(city),
+      powerScore: purchasePowerFromInputs(total, stack.total)
+    });
+  }
+  async function initComparison(pay, p) {
+    const status = $("#pcsc-status");
+    const newBase = fallbackBase(p.newBase || p.base || DEFAULT_BASE);
+    const newFileKey = String(p.newFileKey || fallbackFileKey(newBase) || DEFAULT_FILE_KEY).trim();
+    if (status) status.textContent = "Loading base comparison…";
+    const cityNew = await loadCityExact(newFileKey);
+    setImgFromCity($("#img-current"), cityNew);
+    setText("#pcs-current-city", locationName(cityNew, newBase));
+    const buyLabel = marketSignalFromCity(cityNew).label;
+    const buySummary = safe(cityNew, "market_bluf.bluf_summary", "") || safe(cityNew, "housing.market.market_type_summary", "") || "Housing conditions are being evaluated for this market.";
+    setText("#pcs-current-bluf-headline", buyLabel);
+    setText("#pcs-current-bluf-summary", buySummary);
+    const popCity = safe(cityNew, "snapshot.population_city", null) ?? safe(cityNew, "population.estimate", null) ?? 0;
+    const popMetro = safe(cityNew, "snapshot.population_metro", null) ?? safe(cityNew, "population.metro", null) ?? null;
+    const medIncome = safe(cityNew, "snapshot.median_household_income", null) ?? safe(cityNew, "income.median_household_income", null) ?? 0;
+    const medHome =
+      safe(cityNew, "snapshot.median_home_price", null) ??
+      safe(cityNew, "housing.market.median_listing_price_realtor", null) ??
+      safe(cityNew, "housing.market.median_sale_price_current", null) ??
+      safe(cityNew, "avg_home_value", null) ?? 0;
+    const yoy =
+      safe(cityNew, "snapshot.market_trend_yoy", null) ??
+      safe(cityNew, "housing.market.zillow_one_year_change_percent", null) ??
+      safe(cityNew, "housing.market.one_year_change_percent", null) ?? 0;
+    const traffic = safe(cityNew, "snapshot.traffic_level", null) ?? safe(cityNew, "traffic_level", null) ?? "—";
+    const employment = safe(cityNew, "snapshot.employment_status", null) ?? safe(cityNew, "employment_status", null) ?? "—";
+    setText("#pcs-cur-population-city", compactPop(popCity));
+    setText("#pcs-cur-population-metro", popMetro ? `Metro: ${compactPop(popMetro)}` : "Metro: —");
+    setText("#pcs-cur-median-income", money(medIncome));
+    setText("#pcs-cur-market-trend", `${Number(yoy) > 0 ? "+" : ""}${Number(yoy).toFixed(1)}% YoY`);
+    setText("#pcs-cur-median-home", compactMoney(medHome));
+    setText("#pcs-cur-traffic-level", String(traffic));
+    setText("#pcs-cur-employment-status", String(employment));
+    const tagline = safe(cityNew, "city_identity.display_tagline", "") || safe(cityNew, "city_identity.nickname", "") || safe(cityNew, "market_label", "") || "";
+    if (tagline) setText("#pcs-current-tagline", `“${tagline}”`);
+    const lifestyleBulletsRaw = (Array.isArray(safe(cityNew, "lifestyle.outdoor_hubs", null)) ? safe(cityNew, "lifestyle.outdoor_hubs", []) : [])
+      .map(v => String(v || "").trim())
+      .filter(Boolean);
+    const watchoutsRaw = (Array.isArray(safe(cityNew, "pcs_quality_of_life.watchouts", null)) ? safe(cityNew, "pcs_quality_of_life.watchouts", []) : [])
+      .map(v => String(v || "").trim())
+      .filter(Boolean);
+    const lifestyleFallback = [
+      safe(cityNew, "climate_weather.summer", ""),
+      safe(cityNew, "military_lifestyle_fit.description", ""),
+      safe(cityNew, "snapshot.traffic_level", "") ? `${safe(cityNew, "snapshot.traffic_level", "")} congestion with typical commute patterns` : ""
+    ].filter(Boolean);
+    const lifestyleFinal = []
+      .concat(lifestyleBulletsRaw.length ? lifestyleBulletsRaw : [])
+      .concat(watchoutsRaw.length ? watchoutsRaw : [])
+      .concat((!lifestyleBulletsRaw.length && !watchoutsRaw.length) ? lifestyleFallback : [])
+      .filter(Boolean)
+      .slice(0, 3);
+    if (lifestyleFinal.length) {
+      setHTML("#pcs-cur-lifestyle-list", lifestyleFinal.map(item =>
+        `<li class="pcs-mini-item"><span class="pcs-mini-dot"></span><span>${esc(item)}</span></li>`
+      ).join(""));
+    }
+    setText("#pcs-cur-financial-headline",
+      safe(cityNew, "market_bluf.verdict", "") ||
+      safe(cityNew, "market_bluf.bluf_headline", "") ||
+      "Market Opportunity"
+    );
+    setText("#pcs-cur-financial-summary",
+      safe(cityNew, "financial_brief.buyer_opportunity", "") ||
+      safe(cityNew, "financial_brief.affordability_summary", "") ||
+      safe(cityNew, "market_bluf.bluf_summary", "") ||
+      "Pricing and inventory conditions are being evaluated for this market."
+    );
+    setText("#loc-upcoming", locationName(cityNew, newBase));
+    setText("#price-upcoming", money(pickMedianPrice(cityNew)));
+    const yoyNew = pickYoY(cityNew);
+    const domNew = pickDOM(cityNew);
+    setText("#yoy-upcoming", yoyNew == null ? "—" : String(yoyNew) + "%");
+    setText("#dom-upcoming", domNew == null ? "—" : String(domNew));
+    if (status) status.textContent = "Loaded.";
+  }
+  function setAffordDonutVisual(parts) {
+    const values = [
+      Number(parts.mortgage || 0),
+      Number(parts.taxes || 0),
+      Number(parts.insurance || 0),
+      Number(parts.hoa || 0),
+      Number(parts.utilities || 0)
+    ];
+    const total = Math.max(values.reduce((sum, v) => sum + v, 0), 1);
+    const degs = values.map(v => (v / total) * 360);
+    const s1 = degs[0], s2 = s1 + degs[1], s3 = s2 + degs[2], s4 = s3 + degs[3], s5 = s4 + degs[4];
+    const donut = $("#pcs-afford-donut");
+    if (!donut) return;
+    donut.style.background = `conic-gradient(#4f7fff 0deg ${s1}deg,#5774ff ${s1}deg ${s2}deg,#203c8d ${s2}deg ${s3}deg,#d3af58 ${s3}deg ${s4}deg,#57b293 ${s4}deg ${s5}deg)`;
+    const slices = [
+      { selector: "#pcs-amt-mortgage", value: values[0] },
+      { selector: "#pcs-amt-taxes", value: values[1] },
+      { selector: "#pcs-amt-insurance", value: values[2] },
+      { selector: "#pcs-amt-hoa", value: values[3] },
+      { selector: "#pcs-amt-utilities", value: values[4] }
+    ];
+    const wrap = $(".pcs-donut-wrap");
+    if (!wrap) return;
+    const size = wrap.getBoundingClientRect().width;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const outerRadius = size / 2;
+    const innerRadius = size * (56 / 292);
+    const ringMidRadius = (outerRadius + innerRadius) / 2;
+    let startDeg = 0;
+    slices.forEach(slice => {
+      const el = $(slice.selector);
+      if (!el) return;
+      const value = Number(slice.value || 0);
+      const sweepDeg = (value / total) * 360;
+      const midDeg = startDeg + (sweepDeg / 2);
+      const cartesianDeg = midDeg + DONUT_ROTATION_DEG + CONIC_TO_CARTESIAN_OFFSET_DEG;
+      const radiusBoost = sweepDeg < 8 ? 26 : sweepDeg < 14 ? 18 : sweepDeg < 22 ? 10 : 0;
+      const labelRadius = ringMidRadius + radiusBoost;
+      const rad = cartesianDeg * Math.PI / 180;
+      el.style.left = `${centerX + Math.cos(rad) * labelRadius}px`;
+      el.style.top = `${centerY + Math.sin(rad) * labelRadius}px`;
+      el.style.right = "auto";
+      el.style.bottom = "auto";
+      el.style.transform = "translate(-50%, -50%)";
+      startDeg += sweepDeg;
+    });
+  }
+  async function getPayPacketForPrimary() {
+    const p = LOADED_QUERY;
+    const pay = LOADED_PAY;
+    if (!p || !pay) return { bah: 0, basePay: 0, bas: 0 };
+    if (p.type === "ad") {
+      return calcBahFromPay(pay, {
+        rank: p.rank,
+        yos: p.yos,
+        family: p.family,
+        baseLoc: p.newBase || p.base || DEFAULT_BASE,
+        zip: p.newZip || fallbackZip(p.newBase || p.base || DEFAULT_BASE)
+      });
+    }
+    const full = pay.DISABILITY_FULL || {};
+    const keys = Object.keys(full).map(k => parseInt(k, 10)).filter(n => !isNaN(n)).sort((a, b) => a - b);
+    let best = keys[0] ?? 0;
+    let diff = Math.abs(p.va - best);
+    keys.forEach(k => {
+      const d = Math.abs(p.va - k);
+      if (d < diff) {
+        diff = d;
+        best = k;
+      }
+    });
+    const row = full[String(best)];
+    return { bah: 0, basePay: row ? row.veteran : 0, bas: 0 };
+  }
+  async function renderAffordabilityBreakdownForBedroom(beds) {
+    if (!LOADED_PRIMARY_CITY || !LOADED_PAY || !LOADED_QUERY) return null;
+    CURRENT_BEDROOM = clamp(Number(beds) || familyToBedrooms(LOADED_QUERY.family), 2, 5);
+    const payVals = await getPayPacketForPrimary();
+    const bah = Number(payVals.bah || 0);
+    const city = LOADED_PRIMARY_CITY;
+    const bedroom = getBedroomProfile(city, CURRENT_BEDROOM);
+    const avgHomePrice = Number(bedroom.homePrice || 0) || Number(pickMedianPrice(city) || 0);
+    const mortgage = Number(bedroom.mortgage || 0) || Number(monthlyMortgageEstimate(avgHomePrice, 0.0675) || 0);
+    const taxes = Number(estimateTaxesMonthly(city, avgHomePrice) || 0);
+    const insurance = Number(estimateInsuranceMonthly(city, avgHomePrice) || 0);
+    const hoa = Number(pickHOA(city, CURRENT_BEDROOM) || 0);
+    const utilities = Number(bedroom.utilities || 0);
+    const stackTotal = mortgage + taxes + insurance + hoa + utilities;
+    const coveragePct = stackTotal > 0 ? (bah / stackTotal) * 100 : 0;
+    const gap = bah - stackTotal;
+    const isPositive = gap >= 0;
+    setText("#pcs-bedroom-value", String(CURRENT_BEDROOM));
+    setHTML("#pcs-afford-headline", `${isPositive ? money(gap) : money(Math.abs(gap))} <span>${isPositive ? "Monthly Buffer" : "Required from Base Pay"}</span>`);
+    setHTML("#pcs-afford-subline", `BAH covers <strong>${pct(coveragePct, 0)}</strong> of a typical ${CURRENT_BEDROOM}-bedroom housing stack`);
+    setText("#pcs-afford-home-price", money(avgHomePrice));
+    setText("#pcs-afford-mortgage", money(mortgage));
+    setText("#pcs-afford-taxes", money(taxes));
+    setText("#pcs-afford-insurance", money(insurance));
+    setText("#pcs-afford-hoa", money(hoa));
+    setText("#pcs-afford-utilities", money(utilities));
+    setText("#pcs-donut-buffer", `${isPositive ? "+" : "-"}${Math.round(Math.abs(gap)).toLocaleString()}`);
+    setText("#pcs-donut-buffer-label", isPositive ? "Monthly Buffer" : "Required from Base Pay");
+    setText("#pcs-amt-mortgage", money(mortgage));
+    setText("#pcs-amt-taxes", money(taxes));
+    setText("#pcs-amt-insurance", money(insurance));
+    setText("#pcs-amt-hoa", money(hoa));
+    setText("#pcs-amt-utilities", money(utilities));
+    setText("#pcs-leg-mortgage", money(mortgage));
+    setText("#pcs-leg-taxes", money(taxes));
+    setText("#pcs-leg-insurance", money(insurance));
+    setText("#pcs-leg-hoa", money(hoa));
+    setText("#pcs-leg-utilities", money(utilities));
+    setText("#pcs-afford-footer",
+      isPositive
+        ? `Based on BAH-only analysis, this market leaves an estimated ${money(gap)} monthly housing buffer at the ${CURRENT_BEDROOM}-bedroom level.`
+        : `Based on BAH-only analysis, this market would require about ${money(Math.abs(gap))} from base pay each month at the ${CURRENT_BEDROOM}-bedroom level.`
+    );
+    setAffordDonutVisual({ mortgage, taxes, insurance, hoa, utilities });
+    return {
+      bedroom,
+      bah,
+      avgHomePrice,
+      mortgage,
+      taxes,
+      insurance,
+      hoa,
+      utilities,
+      stackTotal,
+      gap,
+      coveragePct
+    };
+  }
+  function buildLivingState(affordData, city) {
+    const bah = Number(affordData.bah || 0);
+    const rentMonthly = Number(affordData.bedroom?.rent || 0) + Number(affordData.utilities || 0);
+    const buyMonthly = Number(affordData.stackTotal || 0);
+    const baseMonthly = bah;
+    const annualBah = bah * 12;
+    const price = Number(affordData.avgHomePrice || 0);
+    const equity = Math.max(0, price * 0.02);
+    return {
+      labels: ["M1", "M4", "M8", "M12"],
+      bah,
+      buy: {
+        status: "WEALTH BUILDING · HIGHER COST",
+        statusColor: "#8ef3c5",
+        monthly: buyMonthly,
+        annual: buyMonthly * 12,
+        annualVsBah: buyMonthly * 12 - annualBah,
+        gap: bah - buyMonthly,
+        equity,
+        bluf: bah >= buyMonthly
+          ? `Build equity while staying within BAH by about ${money(Math.abs(bah - buyMonthly))} per month.`
+          : `Build equity, but ownership would require about ${money(Math.abs(buyMonthly - bah))} beyond BAH each month.`,
+        points: [buyMonthly * 0.94, buyMonthly * 0.97, buyMonthly, buyMonthly * 1.01].map(Math.round)
+      },
+      rent: {
+        status: "FLEXIBILITY · LOWER COMMITMENT",
+        statusColor: "#8fd4ff",
+        monthly: rentMonthly,
+        annual: rentMonthly * 12,
+        annualVsBah: rentMonthly * 12 - annualBah,
+        gap: bah - rentMonthly,
+        equity: 0,
+        bluf: bah >= rentMonthly
+          ? `Rent stays under BAH by about ${money(Math.abs(bah - rentMonthly))} per month, but builds no ownership equity.`
+          : `Rent would still require about ${money(Math.abs(rentMonthly - bah))} beyond BAH each month, with no equity upside.`,
+        points: [rentMonthly * 0.98, rentMonthly * 0.99, rentMonthly, rentMonthly * 1.01].map(Math.round)
+      },
+      base: {
+        status: "STABILITY · ZERO OUT-OF-POCKET",
+        statusColor: "#8fd4ff",
+        monthly: baseMonthly,
+        annual: baseMonthly * 12,
+        annualVsBah: 0,
+        gap: 0,
+        equity: 0,
+        bluf: "Base housing matches your full BAH with no monthly overage, but builds no ownership equity.",
+        points: [baseMonthly, baseMonthly, baseMonthly, baseMonthly].map(Math.round)
+      }
+    };
+  }
+  function setLivingTab(mode) {
+    document.querySelectorAll(".pcs-ls-tab").forEach(btn => btn.classList.toggle("active", btn.dataset.mode === mode));
+  }
+  function renderLivingChart(mode) {
+    const canvas = $("#pcs-ls-chart");
+    if (!canvas || typeof Chart === "undefined" || !LIVING_STATE || !LIVING_STATE[mode]) return;
+    destroy(livingChart);
+    const cfg = LIVING_STATE[mode];
+    livingChart = new Chart(canvas, {
+      type: "line",
+      data: {
+        labels: LIVING_STATE.labels,
+        datasets: [
+          {
+            data: cfg.points,
+            borderColor: "#8fd4ff",
+            borderWidth: 3,
+            pointRadius: 4,
+            pointBackgroundColor: "#8fd4ff",
+            pointBorderColor: "#ffffff",
+            pointBorderWidth: 1.5,
+            tension: 0.35,
+            fill: false
+          },
+          {
+            data: LIVING_STATE.labels.map(() => LIVING_STATE.bah),
+            borderColor: "#8ef3c5",
+            borderDash: [7, 6],
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            ticks: { color: "#e9ecff", callback: v => money(v) },
+            grid: { color: "rgba(255,255,255,.08)" },
+            border: { display: false }
+          },
+          x: {
+            ticks: { color: "#e9ecff" },
+            grid: { display: false },
+            border: { display: false }
+          }
+        }
+      }
+    });
+  }
+  function renderLivingMode(mode) {
+    if (!LIVING_STATE || !LIVING_STATE[mode]) return;
+    const d = LIVING_STATE[mode];
+    const sub =
+      d.gap > 0 ? `${pct(Math.abs((d.gap / Math.max(d.monthly, 1)) * 100), 0)} under BAH` :
+      d.gap < 0 ? `${pct(Math.abs((d.gap / Math.max(d.monthly, 1)) * 100), 0)} over BAH` :
+      "0% at BAH";
+    setLivingTab(mode);
+    setText("#pcs-ls-status", d.status);
+    const st = $("#pcs-ls-status");
+    if (st) st.style.color = d.statusColor;
+    setText("#pcs-ls-main", money(d.monthly));
+    setText("#pcs-ls-sub", sub);
+    setText("#pcs-ls-equity", d.equity > 0 ? `${money(d.equity)} equity` : "$0 equity");
+    setText("#pcs-ls-bluf", d.bluf);
+    setText("#pcs-ls-annual", money(d.annual));
+    setText("#pcs-ls-vs", `${d.annualVsBah >= 0 ? "+" : "-"}${money(Math.abs(d.annualVsBah))}`);
+    setText("#pcs-ls-gap", `${d.gap >= 0 ? "+" : "-"}${money(Math.abs(d.gap))}`);
+    const vs = $("#pcs-ls-vs");
+    const gap = $("#pcs-ls-gap");
+    if (vs) vs.style.color = d.annualVsBah <= 0 ? "#8ef3c5" : "#fff";
+    if (gap) gap.style.color = d.gap >= 0 ? "#8ef3c5" : "#fff";
+    renderLivingChart(mode);
+  }
+  function renderLivingFromAfford(affordData, city) {
+    LIVING_STATE = buildLivingState(affordData, city);
+    const active = document.querySelector(".pcs-ls-tab.active");
+    renderLivingMode(active ? active.dataset.mode : "buy");
+  }
+  function bindLivingTabs() {
+    if (livingBound) return;
+    livingBound = true;
+    document.querySelectorAll(".pcs-ls-tab").forEach(btn => {
+      btn.addEventListener("click", () => renderLivingMode(btn.dataset.mode || "buy"));
+    });
+  }
+  function bindBedroomControls() {
+    const up = $("#pcs-bedroom-up");
+    const down = $("#pcs-bedroom-down");
+    if (up) up.addEventListener("click", async () => {
+      const data = await renderAffordabilityBreakdownForBedroom(CURRENT_BEDROOM + 1);
+      if (data) renderLivingFromAfford(data, LOADED_PRIMARY_CITY);
+    });
+    if (down) down.addEventListener("click", async () => {
+      const data = await renderAffordabilityBreakdownForBedroom(CURRENT_BEDROOM - 1);
+      if (data) renderLivingFromAfford(data, LOADED_PRIMARY_CITY);
+    });
+  }
+  function bindAffordResize() {
+    window.addEventListener("resize", async () => {
+      if (!LOADED_PRIMARY_CITY) return;
+      const data = await renderAffordabilityBreakdownForBedroom(CURRENT_BEDROOM);
+      if (data) renderLivingFromAfford(data, LOADED_PRIMARY_CITY);
+    });
+  }
+  async function init() {
+    const p = await getQuery();
+    const pay = await load(MILPAY_JSON_URL);
+    const primaryFileKey = String(
+      p.newFileKey ||
+      p.cityKey ||
+      fallbackFileKey(p.newBase || p.base || DEFAULT_BASE) ||
+      DEFAULT_FILE_KEY
+    ).trim() || DEFAULT_FILE_KEY;
+    const primaryCity = await loadCityExact(primaryFileKey);
+    LOADED_QUERY = p;
+    LOADED_PAY = pay;
+    LOADED_PRIMARY_CITY = primaryCity;
+    CURRENT_BEDROOM = familyToBedrooms(p.family);
+    await initHeaderAndCharts(pay, p, primaryCity);
+    await initComparison(pay, p);
+    bindLivingTabs();
+    bindBedroomControls();
+    bindAffordResize();
+    const affordData = await renderAffordabilityBreakdownForBedroom(CURRENT_BEDROOM);
+    if (affordData) renderLivingFromAfford(affordData, primaryCity);
+  }
+  function boot() {
+    init().catch(err => {
+      console.error("OrozcoRealty PCS Snapshot error:", err);
+      const wrap = document.getElementById("pcs-snapshot-wrap");
+      if (wrap) {
+        wrap.innerHTML = "<div style='color:#e9ecff;font-size:14px;padding:24px;'>PCS Snapshot is temporarily unavailable. Check city JSON files, pay tables, and query/session values.</div>";
+      }
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+  </div>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=691facbe35fbba00c096f2b7" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="../js/webflow.js" type="text/javascript"></script>
+</body>
+</html>
