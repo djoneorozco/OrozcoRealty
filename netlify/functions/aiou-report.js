@@ -1,13 +1,17 @@
-// A.I.O.U → Executive Buyer Memo (5 paragraphs) — CORS-hardened
+// A.I.O.U → Executive Buyer Memo (5 paragraphs) — CORS-hardened (v1.1)
+// UPDATE (v1.1):
+// - Accepts optional house/conditionPreference signals and tailors the playbook paragraph.
+// - Backwards compatible: if not provided, defaults to your original guidance.
+
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 /* ---------------- CORS helpers ---------------- */
 const corsHeaders = {
   "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",               // allow Webflow origin
-  "Access-Control-Allow-Headers": "*",              // accept any header
-  "Access-Control-Allow-Methods": "POST, OPTIONS",  // preflight & POST
-  "Access-Control-Max-Age": "86400",                // cache preflight
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
   "Vary": "Origin",
 };
 const ok = (bodyObj) => ({ statusCode: 200, headers: corsHeaders, body: JSON.stringify(bodyObj) });
@@ -29,20 +33,52 @@ function enforceFiveParagraphsFromText(text, fallbackBlocks) {
   return parts.map(p => `<p>${p.replace(/</g, "&lt;")}</p>`).join("");
 }
 
+/* ---------------- condition guidance (NEW) ---------------- */
+function conditionGuidance(conditionPreference, yearBand) {
+  const c = String(conditionPreference || "").trim().toLowerCase();
+
+  if (c === "new") {
+    return {
+      label: "New Home",
+      yearText: yearBand || "0–1 years",
+      playbook: "Focus on new builds or nearly-new homes. Verify builder reputation, HOA rules, and what is actually included (upgrades, lot premium). Treat inspection as a 'quality control' step (punch list, drainage, roofline, grading), and keep reserves for moving + initial setup rather than repairs."
+    };
+  }
+  if (c === "light") {
+    return {
+      label: "Light Touch-Ups",
+      yearText: yearBand || "2–7 years",
+      playbook: "Target move-in-ready homes where the work is cosmetic: paint, fixtures, small landscaping, minor flooring. Still inspect the big systems (roof age, HVAC, water heater), but avoid projects that require multiple trades or extended timelines."
+    };
+  }
+  if (c === "value_add" || c === "value-add" || c === "valueadd") {
+    return {
+      label: "$25K+ Upgrades",
+      yearText: yearBand || "8+ years",
+      playbook: "You’re open to value-add. That means you must protect your budget: require clean inspection scope, price concessions/credits, and carry a realistic reserve (at least $25K+) for repairs and upgrades. Prioritize structural/mechanical health first (roof, HVAC, plumbing, foundation) before cosmetic dreams."
+    };
+  }
+
+  // default behavior (back-compat)
+  return {
+    label: "Balanced",
+    yearText: yearBand || "5–10 years (or quality renovation)",
+    playbook: "Focus on 5–10 year-old homes or quality renovations (clean inspection; recent roof/HVAC/water heater). Prefer open kitchen/living or outdoor space over an extra unused bedroom. Lock your top 3 must-haves (safety, location, design) before touring."
+  };
+}
+
 /* ---------------- entry ---------------- */
 exports.handler = async (event) => {
-  // Always answer preflight with CORS headers
   if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers: corsHeaders, body: "" };
-
   if (event.httpMethod !== "POST") return bad(405, "Use POST");
-
   if (!OPENAI_API_KEY) return bad(500, "OPENAI_API_KEY not configured");
 
   let brief = {};
   try { brief = JSON.parse(event.body || "{}"); }
   catch { return bad(400, "Invalid JSON"); }
 
-  const { profile = {}, scores = {}, archetype = "", psych = {} } = brief;
+  const { profile = {}, scores = {}, archetype = "", psych = {}, house = {} } = brief;
+
   const first = String(profile.firstName || "").trim() || "Client";
   const last  = lastNameOf(`${profile.firstName || ""} ${profile.lastName || ""}`);
   const budgetMax = Number(profile.budgetMax || 0);
@@ -50,16 +86,30 @@ exports.handler = async (event) => {
   const setting   = String(profile.setting || "city");
   const safetyPriority = Number(profile.safetyPriority || 3);
 
+  // NEW: accept condition fields if present
+  const conditionPreference =
+    house.conditionPreference ??
+    profile.conditionPreference ??
+    brief.conditionPreference ??
+    null;
+
+  const yearBand =
+    house.yearBand ??
+    brief.yearBand ??
+    null;
+
+  const cond = conditionGuidance(conditionPreference, yearBand);
+
   // Heuristic monthly income if not provided
   const assumedIncomeMonthly = Math.max(3500, Math.min(12000, budgetMax / 60));
   const lane = housingLane(assumedIncomeMonthly);
 
-  // Local fallback memo (5 blocks)
+  // Local fallback memo (5 blocks) — UPDATED P4 to reflect condition if provided
   const localBlocks = [
     `<strong>${last}</strong>, this memo turns your A.I.O.U profile into a plan. Archetype: <strong>${archetype || "Balanced Explorer"}</strong>. We’ll match homes to how you live and avoid regret buys.`,
     `Targets: keep housing near <strong>28–33%</strong> of income. With ~${toCurrency(assumedIncomeMonthly,0)}/mo income, aim for <strong>${toCurrency(lane.laneMin,0)}–${toCurrency(lane.laneMax,0)}</strong> all-in (PITI/HOA/PMI). Shop <strong>under</strong> your max price to leave room for inspection and upgrades.`,
     `Key risks: stretching budget for style, thin reserves, and surprise repair costs. We size payment first, then pick homes that fit your style and hosting needs.`,
-    `Playbook: focus on <strong>5–10 year-old</strong> homes or quality renovations (clean inspection; recent roof/HVAC/water heater). Prefer open kitchen/living or outdoor space over an extra unused bedroom. Lock your <strong>top 3 must-haves</strong> (safety, location, design) before touring.`,
+    `${cond.playbook} Keep your touring decision rule simple: if it violates safety/location/payment, it’s a no—no matter how pretty it looks.`,
     `Next steps: pre-underwrite in the lane above, preview homes that hit your must-haves, and use seller credits/points to balance cash vs rate. CFPB: https://www.consumerfinance.gov/  • Free credit reports: https://www.annualcreditreport.com/`,
   ];
 
@@ -68,7 +118,11 @@ You are "Elena", an Executive Real Estate Strategist. Write EXACTLY 5 short para
 P1: Greet with last name + purpose; mention archetype in one sentence.
 P2: Dollar targets: housing lane 28–33% using monthly income estimate; show min–max in USD; advise shopping below max price.
 P3: 2–3 biggest risks/blind spots tuned to scores.
-P4: Action playbook: 5–10 year-old or quality renovation, inspection strategy, open-plan/hosting vs extra bedroom, define top 3 must-haves. Include 1–2 credible links (CFPB, AnnualCreditReport).
+P4: Action playbook tailored to conditionPreference:
+    - If New Home: builder diligence + inspection for QC + inclusion list.
+    - If Light Touch-Ups: cosmetic upgrades + big system checks.
+    - If $25K+ Upgrades: reserve discipline + scope control + credits.
+    Include 1–2 credible links (CFPB, AnnualCreditReport).
 P5: Closing + next steps.
 Style: crisp, friendly, no jargon, whole dollars only.
 `;
@@ -77,12 +131,24 @@ Style: crisp, friendly, no jargon, whole dollars only.
 INPUT:
 ${JSON.stringify({
   profile: { first, last, bedrooms, budgetMax, setting, safetyPriority },
-  scores, archetype, psych,
+  house: {
+    conditionPreference: conditionPreference || null,
+    yearBand: yearBand || null,
+    guidanceLabel: cond.label,
+    typicalYearText: cond.yearText
+  },
+  scores,
+  archetype,
+  psych,
   computed: {
     assumedIncomeMonthly: Math.round(assumedIncomeMonthly),
     housingLaneMin: Math.round(lane.laneMin),
     housingLaneMax: Math.round(lane.laneMax),
-    guidance: { preferSetting: setting, suggestAgeWindow: "5–10 years or quality renovation" }
+    guidance: {
+      preferSetting: setting,
+      conditionLabel: cond.label,
+      yearBandText: cond.yearText
+    }
   }
 }, null, 2)}
 Write the five paragraphs now.`;
@@ -110,7 +176,14 @@ Write the five paragraphs now.`;
       memo: memoText,
       memoHtml,
       meta: {
-        archetype, scores,
+        archetype,
+        scores,
+        condition: {
+          conditionPreference: conditionPreference || null,
+          yearBand: yearBand || null,
+          label: cond.label,
+          typicalYearText: cond.yearText
+        },
         assumedIncomeMonthly: Math.round(assumedIncomeMonthly),
         lane: { minMonthly: Math.round(lane.laneMin), maxMonthly: Math.round(lane.laneMax) }
       }
@@ -123,7 +196,15 @@ Write the five paragraphs now.`;
       memo: localBlocks.join("\n\n"),
       memoHtml,
       meta: {
-        fallback: true, archetype, scores,
+        fallback: true,
+        archetype,
+        scores,
+        condition: {
+          conditionPreference: conditionPreference || null,
+          yearBand: yearBand || null,
+          label: cond.label,
+          typicalYearText: cond.yearText
+        },
         assumedIncomeMonthly: Math.round(assumedIncomeMonthly),
         lane: { minMonthly: Math.round(lane.laneMin), maxMonthly: Math.round(lane.laneMax) }
       }
