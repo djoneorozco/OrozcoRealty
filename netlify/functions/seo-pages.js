@@ -64,6 +64,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://theorozcorealty.com",
   "https://www.theorozcorealty.com",
   "https://theorozcorealty.netlify.app",
+  "https://luxury-re.webflow.io",
   "https://new-real-estate-purchase.webflow.io",
   "https://pcsunited.com",
   "https://www.pcsunited.com",
