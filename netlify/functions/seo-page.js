@@ -1,7 +1,7 @@
 // netlify/functions/seo-page.js
 // ============================================================
 // OrozcoRealty / PCSUnited PUBLIC SEO ENGINE
-// v1.0.0-cjs
+// v1.0.1-cjs
 //
 // GOAL
 // - Public affordability endpoint for SEO pages and ads
@@ -49,16 +49,23 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { handler: mortgageHandler } = require("./mortgage.js");
 
-const SCHEMA_VERSION = "1.0.0";
+const SCHEMA_VERSION = "1.0.1";
 
+const __RUNTIME_DIR = __dirname;
 const __ROOT = process.cwd();
 
 const __PAY_TABLES_PATHS = [
+  path.join(__RUNTIME_DIR, "militaryPayTables.json"),
+  path.join(__RUNTIME_DIR, "data", "militaryPayTables.json"),
   path.join(__ROOT, "netlify", "functions", "militaryPayTables.json"),
   path.join(__ROOT, "netlify", "functions", "data", "militaryPayTables.json"),
 ];
 
-const __CITIES_DIR = path.join(__ROOT, "netlify", "functions", "cities");
+const __CITY_DIR_CANDIDATES = [
+  path.join(__RUNTIME_DIR, "cities"),
+  path.join(__ROOT, "netlify", "functions", "cities"),
+  path.join(__ROOT, "cities"),
+];
 
 const ALLOWED_ORIGINS = new Set([
   "https://theorozcorealty.com",
@@ -198,6 +205,15 @@ function avg(nums) {
   return vals.reduce((a, b) => a + b, 0) / vals.length;
 }
 
+function findExistingPath(paths) {
+  for (const p of paths || []) {
+    try {
+      if (fs.existsSync(p)) return p;
+    } catch (_) {}
+  }
+  return null;
+}
+
 // ------------------------------------------------------------
 // //#3) CITY RESOLUTION
 // ------------------------------------------------------------
@@ -216,16 +232,23 @@ function resolveCityKey(input) {
 function loadCity(cityInput) {
   const canonical = resolveCityKey(cityInput);
   if (!canonical) {
-    throw new Error(`Unsupported city. Supported cities right now: SanAntonio, McAllen.`);
+    throw new Error("Unsupported city. Supported cities right now: SanAntonio, McAllen.");
   }
 
   if (__CITY_CACHE__.has(canonical)) {
     return __CITY_CACHE__.get(canonical);
   }
 
-  const filePath = path.join(__CITIES_DIR, `${canonical}.json`);
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`City JSON not found for ${canonical} at ${filePath}`);
+  const candidateFiles = __CITY_DIR_CANDIDATES.map((dir) =>
+    path.join(dir, `${canonical}.json`)
+  );
+
+  const filePath = findExistingPath(candidateFiles);
+
+  if (!filePath) {
+    throw new Error(
+      `City JSON not found for ${canonical}. Tried: ${candidateFiles.join(" | ")}`
+    );
   }
 
   const data = parseJsonFile(filePath, `city:${canonical}`);
@@ -267,7 +290,8 @@ function loadCity(cityInput) {
     avgHome: avgHome,
     city_avg_home: avgHome,
     zip: str(data?.zip || data?.postal_code || ""),
-    raw: data
+    raw: data,
+    _debug_file_path: filePath
   };
 
   __CITY_CACHE__.set(canonical, city);
@@ -280,17 +304,11 @@ function loadCity(cityInput) {
 function loadPayTables() {
   if (__PAY_TABLES_CACHE__) return __PAY_TABLES_CACHE__;
 
-  let found = null;
-  for (const p of __PAY_TABLES_PATHS) {
-    if (fs.existsSync(p)) {
-      found = p;
-      break;
-    }
-  }
+  const found = findExistingPath(__PAY_TABLES_PATHS);
 
   if (!found) {
     throw new Error(
-      `militaryPayTables.json not found. Tried:\n- ${__PAY_TABLES_PATHS.join("\n- ")}`
+      `militaryPayTables.json not found. Tried: ${__PAY_TABLES_PATHS.join(" | ")}`
     );
   }
 
@@ -428,7 +446,7 @@ function resolveIncome(body, city) {
 // //#6) PRICE RESOLUTION
 // ------------------------------------------------------------
 function deriveBedroomPrice(city, bedrooms) {
-  const bedsRoot = city?.bedrooms || null;
+  const bedsRoot = city?.bedrooms || city?.by_bedroom || city?.byBedroom || null;
   if (!bedsRoot || typeof bedsRoot !== "object") return null;
 
   const key = String(bedrooms || 3);
@@ -751,6 +769,12 @@ exports.handler = async function handler(event) {
             termYears: 30,
             loanType: "va"
           }
+        },
+        debug: {
+          runtimeDir: __RUNTIME_DIR,
+          cwd: __ROOT,
+          payTableCandidates: __PAY_TABLES_PATHS,
+          cityDirCandidates: __CITY_DIR_CANDIDATES
         }
       });
     }
@@ -893,13 +917,27 @@ exports.handler = async function handler(event) {
         headline: seo.headline,
         summary: seo.summary,
         recommendation: seo.recommendation
+      },
+
+      debug: {
+        runtimeDir: __RUNTIME_DIR,
+        cwd: __ROOT,
+        cityFilePath: city?._debug_file_path || null,
+        cityDirCandidates: __CITY_DIR_CANDIDATES,
+        payTableCandidates: __PAY_TABLES_PATHS
       }
     });
   } catch (e) {
     return respond(event, 500, {
       ok: false,
       schemaVersion: SCHEMA_VERSION,
-      error: String(e?.message || e)
+      error: String(e?.message || e),
+      debug: {
+        runtimeDir: __RUNTIME_DIR,
+        cwd: __ROOT,
+        cityDirCandidates: __CITY_DIR_CANDIDATES,
+        payTableCandidates: __PAY_TABLES_PATHS
+      }
     });
   }
 };
