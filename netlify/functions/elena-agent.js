@@ -1,7 +1,7 @@
 // netlify/functions/elena-agent.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — elena-agent (Deterministic Orchestrator)
-// v1.0.0 (2026-04-09)
+// v1.1.0 (2026-04-09)
 //
 // PURPOSE
 // - Deterministic orchestration layer for OrozcoRealty Ask-Elena
@@ -103,7 +103,7 @@ const ALLOW_ORIGINS = [
   "https://orozcorealty.netlify.app",
   "https://www.orozcorealty.netlify.app",
   "https://pcsunited.netlify.app",
-  "https://www.pcsunited.netlify.app",
+  "https://www.pcsunited.netlify.app"
 ];
 
 function corsHeaders(origin) {
@@ -113,7 +113,7 @@ function corsHeaders(origin) {
     "Access-Control-Allow-Headers": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Content-Type": "application/json",
-    Vary: "Origin",
+    "Vary": "Origin"
   };
 }
 
@@ -121,7 +121,7 @@ function respond(statusCode, payload, origin) {
   return {
     statusCode,
     headers: corsHeaders(origin),
-    body: JSON.stringify(payload),
+    body: JSON.stringify(payload)
   };
 }
 
@@ -227,7 +227,7 @@ async function postJSON(url, payload, timeoutMs = 12000) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload || {}),
-      signal: controller.signal,
+      signal: controller.signal
     });
 
     const text = await res.text();
@@ -294,14 +294,14 @@ async function loadCoreKnowledge() {
     loadKnowledgePack("elena-core.json"),
     loadKnowledgePack("finance-rules.json"),
     loadKnowledgePack("real-estate-knowledge-texas.json"),
-    loadKnowledgePack("markets-texas-index.json"),
+    loadKnowledgePack("markets-texas-index.json")
   ]);
 
   return {
     core: core || {},
     financeRules: financeRules || {},
     realtyKnowledge: realtyKnowledge || {},
-    marketIndex: marketIndex || {},
+    marketIndex: marketIndex || {}
   };
 }
 
@@ -311,7 +311,7 @@ async function loadMarketPackBySlug(slug) {
   const candidates = [
     path.join(DATA_DIR, "markets", "texas", `${slug}.json`),
     path.join(DATA_DIR, "markets", `${slug}.json`),
-    path.join(DATA_DIR, `${slug}.json`),
+    path.join(DATA_DIR, `${slug}.json`)
   ];
 
   for (const absPath of candidates) {
@@ -333,7 +333,7 @@ function classifyQuestion(question) {
   if (!q) {
     return {
       intent: "general_real_estate_guidance",
-      topic_tags: ["general_guidance"],
+      topic_tags: ["general_guidance"]
     };
   }
 
@@ -377,7 +377,7 @@ function classifyQuestion(question) {
 
   return {
     intent,
-    topic_tags: uniq(tags.length ? tags : ["general_guidance"]),
+    topic_tags: uniq(tags.length ? tags : ["general_guidance"])
   };
 }
 
@@ -425,54 +425,113 @@ function parsePercentDownFromQuestion(question, price) {
 
   return {
     percent: pctVal,
-    amount: Math.round(price * (pctVal / 100)),
+    amount: Math.round(price * (pctVal / 100))
   };
+}
+
+function parseLabeledMoney(question, labels) {
+  const t = String(question || "").toLowerCase();
+  if (!t || !Array.isArray(labels) || !labels.length) return null;
+
+  const moneyPattern = "(\\$?\\s*[0-9][0-9,]*(?:\\.\\d{1,2})?)";
+  const normalizedLabels = labels
+    .map((x) => String(x || "").trim().toLowerCase())
+    .filter(Boolean);
+
+  for (const label of normalizedLabels) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    const patterns = [
+      new RegExp(`\\b${escaped}\\b\\D{0,20}${moneyPattern}`, "i"),
+      new RegExp(`${moneyPattern}\\D{0,20}\\b${escaped}\\b`, "i")
+    ];
+
+    for (const re of patterns) {
+      const m = t.match(re);
+      if (m) {
+        const raw = String(m[1] || "").replace(/\$/g, "").replace(/,/g, "").trim();
+        const n = Number(raw);
+        if (Number.isFinite(n)) return Math.round(n);
+      }
+    }
+  }
+
+  return null;
 }
 
 function parseIncomeFromQuestion(question) {
   const t = String(question || "").toLowerCase();
+  if (!t) return null;
 
-  const monthly =
-    t.match(/\$?\s*([1-9]\d{2,3}(?:,\d{3})?)\s*(?:\/\s*month|per month|monthly)\b/) ||
-    t.match(/\bmake\s+\$?\s*([1-9]\d{2,3}(?:,\d{3})?)\s*(?:a month|monthly)\b/);
+  // Strong label-first parsing so we do NOT confuse debt/expenses with income.
+  const labeled = parseLabeledMoney(t, [
+    "monthly income",
+    "income",
+    "gross income",
+    "household income",
+    "monthly take home",
+    "take home pay",
+    "bring home",
+    "bring in",
+    "make",
+    "earn"
+  ]);
 
-  if (monthly) {
-    const n = Number(String(monthly[1]).replace(/,/g, ""));
-    return Number.isFinite(n) ? Math.round(n) : null;
+  if (Number.isFinite(labeled)) return labeled;
+
+  // "I make $9,500 a month"
+  let m = t.match(/\b(?:i\s+)?(?:make|earn|bring in|bring home)\s+\$?\s*([0-9][0-9,]*)\s*(?:a\s*month|per\s*month|monthly)\b/i);
+  if (m) {
+    const n = Number(String(m[1]).replace(/,/g, ""));
+    if (Number.isFinite(n)) return Math.round(n);
   }
 
-  const annual =
-    t.match(/\$?\s*([1-9]\d{2,3}(?:,\d{3})?)\s*(?:\/\s*year|per year|annually|a year)\b/) ||
-    t.match(/\bmake\s+\$?\s*([1-9]\d{2,3}(?:,\d{3})?)\s*(?:a year|annually)\b/);
+  // "$9,500 monthly income"
+  m = t.match(/\$?\s*([0-9][0-9,]*)\s*(?:\/\s*month|per\s*month|monthly)\s+(?:income|take\s*home|take-home|pay)\b/i);
+  if (m) {
+    const n = Number(String(m[1]).replace(/,/g, ""));
+    if (Number.isFinite(n)) return Math.round(n);
+  }
 
-  if (annual) {
-    const n = Number(String(annual[1]).replace(/,/g, ""));
-    return Number.isFinite(n) ? Math.round(n / 12) : null;
+  // "$114,000 per year income"
+  m = t.match(/\b(?:income|gross income|household income)\D{0,20}\$?\s*([0-9][0-9,]*)\s*(?:a\s*year|per\s*year|annually|annual)\b/i);
+  if (m) {
+    const n = Number(String(m[1]).replace(/,/g, ""));
+    if (Number.isFinite(n)) return Math.round(n / 12);
+  }
+
+  // "I make $114,000 a year"
+  m = t.match(/\b(?:i\s+)?(?:make|earn|bring in|bring home)\s+\$?\s*([0-9][0-9,]*)\s*(?:a\s*year|per\s*year|annually|annual)\b/i);
+  if (m) {
+    const n = Number(String(m[1]).replace(/,/g, ""));
+    if (Number.isFinite(n)) return Math.round(n / 12);
   }
 
   return null;
 }
 
 function parseMonthlyDebtFromQuestion(question) {
-  const t = String(question || "").toLowerCase();
-  const m =
-    t.match(/\bdebt\D{0,15}\$?\s*([1-9]\d{1,4}(?:,\d{3})?)\b/) ||
-    t.match(/\bmonthly debt\D{0,10}\$?\s*([1-9]\d{1,4}(?:,\d{3})?)\b/);
+  const labeled = parseLabeledMoney(question, [
+    "monthly debt",
+    "debt",
+    "debt payments",
+    "monthly debt payments"
+  ]);
+  if (Number.isFinite(labeled)) return labeled;
 
-  if (!m) return null;
-  const n = Number(String(m[1]).replace(/,/g, ""));
-  return Number.isFinite(n) ? Math.round(n) : null;
+  return null;
 }
 
 function parseMonthlyExpensesFromQuestion(question) {
-  const t = String(question || "").toLowerCase();
-  const m =
-    t.match(/\bexpenses\D{0,15}\$?\s*([1-9]\d{1,4}(?:,\d{3})?)\b/) ||
-    t.match(/\bmonthly expenses\D{0,10}\$?\s*([1-9]\d{1,4}(?:,\d{3})?)\b/);
+  const labeled = parseLabeledMoney(question, [
+    "monthly expenses",
+    "expenses",
+    "monthly bills",
+    "monthly spending"
+  ]);
+  if (Number.isFinite(labeled)) return labeled;
 
-  if (!m) return null;
-  const n = Number(String(m[1]).replace(/,/g, ""));
-  return Number.isFinite(n) ? Math.round(n) : null;
+  return null;
 }
 
 function parseQuestionFacts(question) {
@@ -488,7 +547,7 @@ function parseQuestionFacts(question) {
     inferred_downpayment:
       downObj && Number.isFinite(downObj.amount) ? downObj.amount : null,
     inferred_downpayment_pct:
-      downObj && Number.isFinite(downObj.percent) ? downObj.percent : null,
+      downObj && Number.isFinite(downObj.percent) ? downObj.percent : null
   };
 }
 
@@ -510,7 +569,7 @@ function flattenMarketIndex(indexJson) {
         slug: v.slug || slugify(v.city || v.name || k),
         city: v.city || v.name || titleCase(k),
         aliases: v.aliases || [],
-        ...v,
+        ...v
       };
     }
     return null;
@@ -538,7 +597,7 @@ function resolveMarketSlug({ question, overrides, scenario, marketIndex }) {
         item.slug,
         slugify(item.city),
         slugify(item.name),
-        ...(Array.isArray(item.aliases) ? item.aliases.map(slugify) : []),
+        ...(Array.isArray(item.aliases) ? item.aliases.map(slugify) : [])
       ]);
       return candidates.includes(s);
     });
@@ -555,7 +614,7 @@ function resolveMarketSlug({ question, overrides, scenario, marketIndex }) {
       item.city,
       item.name,
       item.slug,
-      ...(Array.isArray(item.aliases) ? item.aliases : []),
+      ...(Array.isArray(item.aliases) ? item.aliases : [])
     ]).map((x) => String(x || "").toLowerCase());
 
     const found = candidates.find((term) => term && q.includes(term));
@@ -563,7 +622,7 @@ function resolveMarketSlug({ question, overrides, scenario, marketIndex }) {
       return {
         slug: item.slug || slugify(item.city || item.name || found),
         matched_by: "question_index",
-        item,
+        item
       };
     }
   }
@@ -578,14 +637,14 @@ function resolveMarketSlug({ question, overrides, scenario, marketIndex }) {
     "el paso",
     "corpus christi",
     "new braunfels",
-    "laredo",
+    "laredo"
   ].find((city) => q.includes(city));
 
   if (cityRegexHits) {
     return {
       slug: slugify(cityRegexHits),
       matched_by: "question_fallback",
-      item: null,
+      item: null
     };
   }
 
@@ -711,7 +770,7 @@ function buildScenario(body, questionFacts) {
     hoaMonthly,
     pmiMonthly,
     city: pickFirst(overrides.city, scenario.city) || null,
-    marketSlug: pickFirst(overrides.marketSlug, scenario.marketSlug) || null,
+    marketSlug: pickFirst(overrides.marketSlug, scenario.marketSlug) || null
   };
 }
 
@@ -853,13 +912,13 @@ function buildQuickAffordability({ income, monthlyDebt = 0, monthlyExpenses = 0,
       back_end_dti_pct: backEndDtiPct,
       buffer_factor: reservesBuffer,
       apr_assumed: pct(apr, 5),
-      term_years: termYears,
+      term_years: termYears
     },
     quick_max_price: {
       price_0_down: money(price0),
       price_5_down: money(price5),
-      price_10_down: money(price10),
-    },
+      price_10_down: money(price10)
+    }
   };
 }
 
@@ -874,7 +933,7 @@ function computeFallbackMortgage({
   insuranceAnnual,
   hoaMonthly,
   pmiMonthly,
-  marketPack,
+  marketPack
 }) {
   if (!Number.isFinite(price) || price <= 0) return null;
 
@@ -919,12 +978,12 @@ function computeFallbackMortgage({
       taxes: money(taxesMonthly),
       insurance: money(insuranceMonthly),
       hoa: money(hoa),
-      pmi: money(pmi),
+      pmi: money(pmi)
     },
     assumptions: {
       tax_annual_used: money(estTaxAnnual),
-      insurance_annual_used: money(estInsuranceAnnual),
-    },
+      insurance_annual_used: money(estInsuranceAnnual)
+    }
   };
 }
 
@@ -933,7 +992,7 @@ function computeAffordabilityVerdict({
   monthlyExpenses,
   monthlyDebt,
   housingAllIn,
-  financeRules,
+  financeRules
 }) {
   if (!Number.isFinite(income) || income <= 0) {
     return {
@@ -943,9 +1002,9 @@ function computeAffordabilityVerdict({
       ratios: {
         housing_ratio: null,
         debt_ratio: null,
-        total_fixed_ratio: null,
+        total_fixed_ratio: null
       },
-      notes: ["Missing income; cannot compute a finance-grade affordability verdict."],
+      notes: ["Missing income; cannot compute a finance-grade affordability verdict."]
     };
   }
 
@@ -979,9 +1038,9 @@ function computeAffordabilityVerdict({
       ratios: {
         housing_ratio: null,
         debt_ratio: Number.isFinite(debt) ? pct(debt / income, 4) : null,
-        total_fixed_ratio: Number.isFinite(expenses + debt) ? pct((expenses + debt) / income, 4) : null,
+        total_fixed_ratio: Number.isFinite(expenses + debt) ? pct((expenses + debt) / income, 4) : null
       },
-      notes: ["Mortgage estimate is missing; quick affordability rails are available but not a full verdict."],
+      notes: ["Mortgage estimate is missing; quick affordability rails are available but not a full verdict."]
     };
   }
 
@@ -1027,13 +1086,13 @@ function computeAffordabilityVerdict({
     ratios: {
       housing_ratio: pct(housingRatio, 4),
       debt_ratio: pct(debtRatio, 4),
-      total_fixed_ratio: pct(totalFixedRatio, 4),
+      total_fixed_ratio: pct(totalFixedRatio, 4)
     },
     rails: {
       housing_cap_pct: housingCapPct,
-      back_end_dti_pct: backEndDtiPct,
+      back_end_dti_pct: backEndDtiPct
     },
-    notes,
+    notes
   };
 }
 
@@ -1044,7 +1103,7 @@ function pickKnowledgeByIntent({ intent, topic_tags, realtyKnowledge, financeRul
   const out = {
     finance_points: [],
     realty_points: [],
-    guardrails: [],
+    guardrails: []
   };
 
   const financeFaq = realtyKnowledge?.finance_faq || financeRules?.faq || [];
@@ -1054,7 +1113,7 @@ function pickKnowledgeByIntent({ intent, topic_tags, realtyKnowledge, financeRul
   const texasSpecific = realtyKnowledge?.texas_specific || [];
   const guardrails = uniq([
     ...(Array.isArray(financeRules?.guardrails) ? financeRules.guardrails : []),
-    ...(Array.isArray(realtyKnowledge?.guardrails) ? realtyKnowledge.guardrails : []),
+    ...(Array.isArray(realtyKnowledge?.guardrails) ? realtyKnowledge.guardrails : [])
   ]);
 
   if (intent === "finance_affordability") {
@@ -1094,7 +1153,7 @@ function buildMarketSummary(marketPack) {
       metrics: {},
       neighborhoods: [],
       risks: [],
-      opportunities: [],
+      opportunities: []
     };
   }
 
@@ -1146,7 +1205,7 @@ function buildMarketSummary(marketPack) {
         marketPack?.ownership_costs?.property_tax_rate,
         marketPack?.property_tax_rate
       )
-    ),
+    )
   };
 
   return {
@@ -1212,7 +1271,7 @@ function buildMarketSummary(marketPack) {
         []
       ),
       5
-    ),
+    )
   };
 }
 
@@ -1235,8 +1294,8 @@ function pickNextAction({ intent, verdict, quick, marketSummary, inputs }) {
       type: "collect_missing_inputs",
       why: "I can tighten this answer as soon as the missing finance inputs are provided.",
       target: {
-        missing: buildMissingInputs(inputs),
-      },
+        missing: buildMissingInputs(inputs)
+      }
     };
   }
 
@@ -1246,8 +1305,8 @@ function pickNextAction({ intent, verdict, quick, marketSummary, inputs }) {
       why: "Use the local market metrics and risks to decide whether timing, neighborhood, or budget should move first.",
       target: {
         city: marketSummary.city,
-        next_review: ["inventory", "days_on_market", "property_tax", "price_band"],
-      },
+        next_review: ["inventory", "days_on_market", "property_tax", "price_band"]
+      }
     };
   }
 
@@ -1256,8 +1315,8 @@ function pickNextAction({ intent, verdict, quick, marketSummary, inputs }) {
       type: "prepare_listing_plan",
       why: "Next move is a pricing, prep, and positioning plan tailored to the market pack.",
       target: {
-        focus: ["pricing_band", "prep_items", "days_on_market", "buyer_pool"],
-      },
+        focus: ["pricing_band", "prep_items", "days_on_market", "buyer_pool"]
+      }
     };
   }
 
@@ -1268,7 +1327,7 @@ function pickNextAction({ intent, verdict, quick, marketSummary, inputs }) {
         verdict.status === "GREEN"
           ? "Run the full investor underwriting next."
           : "The deal needs a stronger entry point, lower basis, or higher rent spread.",
-      target: null,
+      target: null
     };
   }
 
@@ -1281,8 +1340,8 @@ function pickNextAction({ intent, verdict, quick, marketSummary, inputs }) {
       why: "This scenario is stretching beyond healthy rails.",
       target: {
         current_price: money(currentPrice),
-        rough_target_price: money(cap),
-      },
+        rough_target_price: money(cap)
+      }
     };
   }
 
@@ -1290,14 +1349,14 @@ function pickNextAction({ intent, verdict, quick, marketSummary, inputs }) {
     return {
       type: "build_more_buffer",
       why: "A modest reduction in housing payment, debt, or monthly expenses should materially strengthen the scenario.",
-      target: null,
+      target: null
     };
   }
 
   return {
     type: "move_to_execution",
     why: "The scenario looks workable. Next step is tightening assumptions and turning this into a transaction plan.",
-    target: null,
+    target: null
   };
 }
 
@@ -1312,14 +1371,14 @@ async function fetchProfileIfPossible({ API_BASE, email }) {
     return {
       ok: true,
       source: "api/profile-by-email",
-      profile: r.data?.profile || r.data || null,
+      profile: r.data?.profile || r.data || null
     };
   }
 
   return {
     ok: false,
     source: "api/profile-by-email:failed",
-    profile: null,
+    profile: null
   };
 }
 
@@ -1347,7 +1406,7 @@ exports.handler = async (event) => {
 
   const [packs, profileResult] = await Promise.all([
     loadCoreKnowledge(),
-    fetchProfileIfPossible({ API_BASE, email }),
+    fetchProfileIfPossible({ API_BASE, email })
   ]);
 
   const questionInfo = classifyQuestion(question);
@@ -1358,7 +1417,7 @@ exports.handler = async (event) => {
     question,
     overrides: body?.overrides || {},
     scenario: body?.scenario || {},
-    marketIndex: packs.marketIndex,
+    marketIndex: packs.marketIndex
   });
 
   const marketSlug = sc.marketSlug || marketResolution.slug || null;
@@ -1418,7 +1477,7 @@ exports.handler = async (event) => {
     hoaMonthly: Number.isFinite(sc.hoaMonthly) ? sc.hoaMonthly : undefined,
     pmi: Number.isFinite(sc.pmiMonthly) ? sc.pmiMonthly : undefined,
     occupancy: sc.occupancy,
-    propertyType: sc.propertyType,
+    propertyType: sc.propertyType
   };
 
   const hasMortgageInputs =
@@ -1480,11 +1539,11 @@ exports.handler = async (event) => {
           ),
           insurance: money(num(mortgageRes?.data?.ins)),
           hoa: money(num(mortgageRes?.data?.hoa)),
-          pmi: money(num(mortgageRes?.data?.pmi)),
+          pmi: money(num(mortgageRes?.data?.pmi))
         },
         assumptions: {
-          raw_api: undefined,
-        },
+          raw_api: undefined
+        }
       };
       mortgageSource = "api/mortgage-calculator";
     } else {
@@ -1499,7 +1558,7 @@ exports.handler = async (event) => {
         insuranceAnnual: sc.insuranceAnnual,
         hoaMonthly: sc.hoaMonthly,
         pmiMonthly: sc.pmiMonthly,
-        marketPack,
+        marketPack
       });
       mortgageSource = mortgage ? "deterministic_fallback" : "missing";
     }
@@ -1515,7 +1574,7 @@ exports.handler = async (event) => {
       insuranceAnnual: sc.insuranceAnnual,
       hoaMonthly: sc.hoaMonthly,
       pmiMonthly: sc.pmiMonthly,
-      marketPack,
+      marketPack
     });
     mortgageSource = mortgage ? "deterministic_fallback_partial" : "insufficient_inputs_for_mortgage";
   }
@@ -1526,7 +1585,7 @@ exports.handler = async (event) => {
     monthlyExpenses,
     apr: aprUsed,
     termYears: sc.termYears,
-    financeRules: packs.financeRules,
+    financeRules: packs.financeRules
   });
 
   const verdict = computeAffordabilityVerdict({
@@ -1534,14 +1593,14 @@ exports.handler = async (event) => {
     monthlyExpenses,
     monthlyDebt,
     housingAllIn: mortgage?.all_in_monthly || null,
-    financeRules: packs.financeRules,
+    financeRules: packs.financeRules
   });
 
   const knowledge = pickKnowledgeByIntent({
     intent: questionInfo.intent,
     topic_tags: questionInfo.topic_tags,
     realtyKnowledge: packs.realtyKnowledge,
-    financeRules: packs.financeRules,
+    financeRules: packs.financeRules
   });
 
   const next_action = pickNextAction({
@@ -1554,8 +1613,8 @@ exports.handler = async (event) => {
       monthlyExpenses,
       price,
       downpayment,
-      creditScore,
-    },
+      creditScore
+    }
   });
 
   const answer_packet = {
@@ -1565,21 +1624,21 @@ exports.handler = async (event) => {
         packs.core?.role,
         "OrozcoRealty real estate and financial guidance specialist"
       ),
-      market_scope: "Texas",
+      market_scope: "Texas"
     },
     user_question: question || null,
     answer_mode: questionInfo.intent,
     bottom_line: {
       verdict: verdict?.status || "INSUFFICIENT",
       grade: verdict?.grade || "N/A",
-      next_move: next_action?.type || null,
+      next_move: next_action?.type || null
     },
     market_context: marketSummary?.available
       ? {
           city: marketSummary.city,
           metrics: marketSummary.metrics,
           opportunities: marketSummary.opportunities,
-          risks: marketSummary.risks,
+          risks: marketSummary.risks
         }
       : null,
     finance_context: {
@@ -1588,13 +1647,13 @@ exports.handler = async (event) => {
       monthly_debt: money(monthlyDebt),
       estimated_housing_payment: money(mortgage?.all_in_monthly),
       residual: money(verdict?.residual),
-      quick_buying_power: quick?.quick_max_price || null,
+      quick_buying_power: quick?.quick_max_price || null
     },
     teaching_points: uniq([
       ...knowledge.finance_points,
-      ...knowledge.realty_points,
+      ...knowledge.realty_points
     ]).slice(0, 8),
-    guardrails: knowledge.guardrails,
+    guardrails: knowledge.guardrails
   };
 
   const payload = {
@@ -1609,14 +1668,14 @@ exports.handler = async (event) => {
           email,
           first_name: pickFirst(profile?.first_name, profile?.firstName) || null,
           last_name: pickFirst(profile?.last_name, profile?.lastName) || null,
-          full_name: pickFirst(profile?.full_name, profile?.fullName) || null,
+          full_name: pickFirst(profile?.full_name, profile?.fullName) || null
         }
       : null,
     market: {
       requested_slug: marketSlug,
       matched_by: marketResolution.matched_by,
       loaded: !!marketPack,
-      summary: marketSummary,
+      summary: marketSummary
     },
     inputs_used: {
       income: money(income),
@@ -1639,19 +1698,19 @@ exports.handler = async (event) => {
         downpayment: Number.isFinite(sc.downpayment) ? "request/question" : "missing",
         creditScore: Number.isFinite(sc.creditScore) ? "request/question" : "missing",
         market: marketPack ? "local_json" : "not_found",
-        mortgage: mortgageSource,
-      },
+        mortgage: mortgageSource
+      }
     },
     affordability: quick || null,
     mortgage: mortgage || {
       source: mortgageSource,
       all_in_monthly: null,
-      breakdown: null,
+      breakdown: null
     },
     knowledge,
     verdict,
     next_action,
-    answer_packet,
+    answer_packet
   };
 
   const debugEnabled =
@@ -1672,7 +1731,7 @@ exports.handler = async (event) => {
       mortgage_payload_sent: mortgagePayload,
       finance_rule_keys: Object.keys(packs.financeRules || {}),
       core_keys: Object.keys(packs.core || {}),
-      realty_knowledge_keys: Object.keys(packs.realtyKnowledge || {}),
+      realty_knowledge_keys: Object.keys(packs.realtyKnowledge || {})
     };
   }
 
