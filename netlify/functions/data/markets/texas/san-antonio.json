@@ -1,1 +1,220 @@
-a
+{
+  "city": "Lackland AFB, TX",
+  "place": "Lackland AFB, TX",
+  "state": "TX",
+  "geo_id": "1600000US4840036",
+  "year": 2026,
+  "last_updated_data_from_sources": "March 2026",
+  "image_url": "https://cdn.prod.website-files.com/69b6b526f23748df9f189b16/69c0dc6d478fad1e706ff1f4_dc56ce56878bed382d61aab987ab76eb_San_Antonio.png",
+  "zip": "78236",
+  "market_label": "San Antonio Metro",
+
+  "avg_home_value": 275000,
+  "average_home_value": 275000,
+  "avgHome": 275000,
+  "city_avg_home": 275000,
+
+  "snapshot": {
+    "population_city": 5896,
+    "population_metro": 2750000,
+    "median_household_income": 73646,
+    "median_home_price": 275167,
+    "market_trend_yoy": -3.0,
+    "traffic_level": "High",
+    "employment_status": "Stable"
+  },
+
+  "mortgage_assumptions": {
+    "apr_percent": 6.2,
+    "term_years": 30,
+    "down_payment_percent": 0,
+    "includes": "va_loan_all_in",
+    "defaults_note": "Based on March 2026 San Antonio VA loan rates."
+  },
+
+  "property_tax_rate": 2.15,
+  "insurance_rate": 0.85,
+  "hoa_monthly": 25,
+
+  "avg_home_mortgage_monthly": {
+    "avg": 2150,
+    "as_of": "2026-03",
+    "notes": "VA loan estimate for San Antonio area"
+  },
+
+  "population": {
+    "estimate": 5896,
+    "median_age": 21.2,
+    "persons_per_household": 3.2
+  },
+
+  "households": {
+    "total_households": 1450
+  },
+
+  "income": {
+    "median_household_income": 73646,
+    "per_capita_income": 24500,
+    "poverty_rate_percent": 11.4
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 97.8,
+    "bachelors_degree_or_higher_percent": 41.1
+  },
+
+  "veterans": {
+    "veteran_population_percent": 12.4
+  },
+
+  "immigration": {
+    "foreign_born_percent": 6.4
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 18.5,
+    "unemployment_rate_percent": 4.8
+  },
+
+  "crime_status": {
+    "installation": "Extremely safe; gated military access with 24/7 security.",
+    "metro_san_antonio": "Property crime rates are moderate; focus on West Side safety awareness."
+  },
+
+  "school_quality": {
+    "on_base": "Highly rated Lackland ISD (On-base schools).",
+    "off_base": "Varies; Northside ISD is generally preferred for off-base residents."
+  },
+
+  "rental_vacancy": {
+    "rate_percent": 9.2,
+    "notes": "Healthy inventory for military renters in 2026."
+  },
+
+  "climate_weather": {
+    "spring": "Warm/Humid; 70–85°F",
+    "summer": "Hot/Humid; 95–105°F",
+    "fall": "Warm/Mild; 65–85°F",
+    "winter": "Cool/Mild; 45–65°F"
+  },
+
+  "special_events": [
+    "The Great Texas Airshow",
+    "Fiesta San Antonio",
+    "San Antonio Stock Show & Rodeo",
+    "Spurs NBA Games"
+  ],
+
+  "military_lifestyle_fit": {
+    "rating": "Exceptional",
+    "description": "Gateway to the Air Force; massive military infrastructure and local support."
+  },
+
+  "financial_brief": {
+    "bah_vs_buy_position": "Favorable",
+    "bah_vs_rent_position": "Strong",
+    "affordability_summary": "San Antonio remains one of the most affordable major military metros.",
+    "buyer_opportunity": "Strong equity potential in West/Southwest expansion areas.",
+    "renter_advantage": false
+  },
+
+  "market_bluf": {
+    "bluf_headline": "Affordable Entry-Level Haven",
+    "bluf_summary": "Lackland area offers some of the best military home-buying value in the US.",
+    "status": "Buyer-leaning",
+    "inventory_trend": "Increasing",
+    "buyer_leverage": "High",
+    "verdict": "STRONG BUY",
+    "verdict_color": "green",
+    "confidence_score": 88
+  },
+
+  "scorecard": {
+    "affordability_score": 92,
+    "growth_score": 75,
+    "stability_score": 85,
+    "military_fit_score": 98,
+    "overall_score": 87
+  },
+
+  "rules": {
+    "max_safe_housing_ratio": 0.30,
+    "warning_ratio": 0.35,
+    "danger_ratio": 0.40
+  },
+
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 1200, "high": 1500, "avg": 1350, "as_of": "2026-03" },
+      "home_price": { "low": 190000, "high": 230000, "avg": 210000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 1550, "high": 1850, "avg": 1700, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 140, "high": 210, "avg": 175 },
+        "water_sewer": { "low": 40, "high": 60, "avg": 50 },
+        "total": { "low": 180, "high": 270, "avg": 225 },
+        "as_of": "2026-03"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 1650, "high": 2000, "avg": 1825 },
+      "home_price": { "low": 240000, "high": 310000, "avg": 275000 },
+      "mortgage_monthly": { "low": 1950, "high": 2400, "avg": 2150 },
+      "utilities": {
+        "electric_gas": { "low": 180, "high": 260, "avg": 220 },
+        "water_sewer": { "low": 50, "high": 80, "avg": 65 },
+        "total": { "low": 230, "high": 340, "avg": 285 },
+        "as_of": "2026-03"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 2000, "high": 2600, "avg": 2300 },
+      "home_price": { "low": 320000, "high": 420000, "avg": 370000 },
+      "mortgage_monthly": { "low": 2500, "high": 3200, "avg": 2850 },
+      "utilities": {
+        "electric_gas": { "low": 220, "high": 330, "avg": 275 },
+        "water_sewer": { "low": 65, "high": 95, "avg": 80 },
+        "total": { "low": 285, "high": 425, "avg": 355 },
+        "as_of": "2026-03"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 2500, "high": 3300, "avg": 2900 },
+      "home_price": { "low": 420000, "high": 550000, "avg": 485000 },
+      "mortgage_monthly": { "low": 3200, "high": 4200, "avg": 3700 },
+      "utilities": {
+        "electric_gas": { "low": 270, "high": 400, "avg": 335 },
+        "water_sewer": { "low": 80, "high": 120, "avg": 100 },
+        "total": { "low": 350, "high": 520, "avg": 435 },
+        "as_of": "2026-03"
+      }
+    }
+  },
+
+  "housing": {
+    "housing_units": 1650,
+    "median_value_owner_occupied": 275000,
+    "market": {
+      "zillow_average_home_value": 275000,
+      "zillow_one_year_change_percent": -3.0,
+      "market_type_summary": "Stable with healthy buyer inventory",
+      "average_days_on_market": 69,
+      "median_sale_price_current": 275167,
+      "median_listing_price_realtor": 282667,
+      "median_listing_price_per_sqft": 165,
+      "active_listings_total": 7450,
+      "q1_2026": { "median_sale_price": 275167 },
+      "sale_history_36_months": [
+        { "month": "2023-01", "median_sale_price": 265000 },
+        { "month": "2024-12", "median_sale_price": 285000 },
+        { "month": "2025-06", "median_sale_price": 282000 },
+        { "month": "2026-01", "median_sale_price": 275167 }
+      ]
+    }
+  },
+
+  "sources": {
+    "demographics": { "provider": "US Census Bureau / World Population Review", "as_of": "2026-03" },
+    "rent": { "provider": "Trulia / RentHop", "as_of": "2026-03" },
+    "home_price": { "provider": "Zillow / Redfin", "as_of": "2026-01" }
+  }
+}
