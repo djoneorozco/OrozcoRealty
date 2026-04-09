@@ -1,7 +1,7 @@
 // netlify/functions/elena-agent.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — elena-agent (Deterministic Orchestrator)
-// v2.0.0 (2026-04-09)
+// v2.1.0 (2026-04-09)
 //
 // PURPOSE
 // - Deterministic orchestration layer for OrozcoRealty Ask-Elena
@@ -531,7 +531,7 @@ function detectCoverageLane(question, facts) {
     /\binvestor\b|\brental\b|\brent\b|\bcash flow\b|\bcap rate\b|\barv\b|\bbrrrr\b/.test(q);
 
   const asksMarket =
-    /\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\bprice per sqft\b|\bappreciation\b/.test(q);
+    /\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\baverage home price\b|\bavg home price\b|\bhome value\b|\baverage home value\b|\bmedian home price\b|\bmedian price\b|\bprice per sqft\b|\bappreciation\b/.test(q);
 
   if (asksPaymentToPrice) return "payment_to_price";
   if (asksMortgagePayment) return "mortgage_payment_estimate";
@@ -566,7 +566,7 @@ function classifyQuestion(question, facts) {
 
   if (/\bmortgage\b|\bmonthly payment\b|\bpayment\b|\bapr\b|\binterest rate\b/.test(q)) tags.push("mortgage");
   if (/\bafford\b|\baffordability\b|\bcan i buy\b|\bbuying power\b|\bdti\b/.test(q)) tags.push("affordability");
-  if (/\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\bprice per sqft\b|\bappreciation\b/.test(q)) tags.push("market_analysis");
+  if (/\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\baverage home price\b|\bavg home price\b|\bhome value\b|\baverage home value\b|\bmedian home price\b|\bmedian price\b|\bprice per sqft\b|\bappreciation\b/.test(q)) tags.push("market_analysis");
   if (/\binvestor\b|\brental\b|\brent\b|\bbrrrr\b|\bcash flow\b|\bcap rate\b|\barv\b/.test(q)) tags.push("investor");
   if (/\bproperty tax\b|\btaxes\b|\bhomestead\b|\binsurance\b|\bhoa\b/.test(q)) tags.push("ownership_costs");
   if (/\bbuyer\b|\bbuying\b|\boffer\b|\bpreapproval\b|\bclosing costs\b/.test(q)) tags.push("buyer_guidance");
@@ -1329,18 +1329,31 @@ function buildMarketSummary(marketPack) {
   }
 
   const metrics = {
+    average_home_value: num(
+      pickFirst(
+        marketPack?.avg_home_value,
+        marketPack?.average_home_value,
+        marketPack?.avgHome,
+        marketPack?.city_avg_home,
+        marketPack?.snapshot?.median_home_price,
+        marketPack?.housing?.median_value_owner_occupied
+      )
+    ),
     median_list_price: num(
       pickFirst(
         marketPack?.market_metrics?.median_list_price,
         marketPack?.metrics?.median_list_price,
-        marketPack?.median_list_price
+        marketPack?.median_list_price,
+        marketPack?.housing?.market?.median_listing_price_realtor
       )
     ),
     median_sold_price: num(
       pickFirst(
         marketPack?.market_metrics?.median_sold_price,
         marketPack?.metrics?.median_sold_price,
-        marketPack?.median_sold_price
+        marketPack?.median_sold_price,
+        marketPack?.housing?.market?.median_sale_price_current,
+        marketPack?.housing?.market?.q1_2026?.median_sale_price
       )
     ),
     median_rent: num(
@@ -1354,7 +1367,8 @@ function buildMarketSummary(marketPack) {
       pickFirst(
         marketPack?.market_metrics?.days_on_market,
         marketPack?.metrics?.days_on_market,
-        marketPack?.days_on_market
+        marketPack?.days_on_market,
+        marketPack?.housing?.market?.average_days_on_market
       )
     ),
     inventory_months: num(
@@ -1368,7 +1382,8 @@ function buildMarketSummary(marketPack) {
       pickFirst(
         marketPack?.market_metrics?.price_per_sqft,
         marketPack?.metrics?.price_per_sqft,
-        marketPack?.price_per_sqft
+        marketPack?.price_per_sqft,
+        marketPack?.housing?.market?.median_listing_price_per_sqft
       )
     ),
     property_tax_rate: num(
