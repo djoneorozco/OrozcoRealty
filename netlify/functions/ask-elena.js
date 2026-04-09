@@ -1,21 +1,24 @@
 // netlify/functions/ask-elena.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — OpenAI Conversational Wrapper
-// v1.1.0 (2026-04-09)
+// v1.2.0 (2026-04-09)
 //
 // PURPOSE
 // - OpenAI is ALWAYS the primary conversational layer
 // - Uses elena-agent.js as the deterministic housing/math engine
 // - Supports normal chat, greetings, education, market questions,
 //   affordability questions, mortgage questions, payment-to-price questions
+// - Accepts verified profile context from the Ask-Elena widget
+// - Lets Elena answer using saved user profile data when email is verified
 // - Returns natural conversational replies, not raw finance packets
 //
 // FLOW
 // 1) Receive user message
-// 2) Light intent routing
-// 3) Call elena-agent.js when structured housing truth is useful
-// 4) Feed user message + agent packet + persona rules into OpenAI
-// 5) Return polished Elena response
+// 2) Accept verified profile context from frontend when available
+// 3) Light intent routing
+// 4) Call elena-agent.js when structured housing truth is useful
+// 5) Feed user message + verified profile + agent packet into OpenAI
+// 6) Return polished Elena response
 //
 // REQUIRED ENV
 // - OPENAI_API_KEY
@@ -29,6 +32,8 @@
 //   message: "What home price can I get with a $2400 monthly payment?",
 //   email?: "user@email.com",
 //   marketSlug?: "san-antonio",
+//   verifiedProfile?: { ... },
+//   profileContext?: "Name: ... | Base: ...",
 //   context?: { ... },
 //   debug?: true
 // }
@@ -188,6 +193,156 @@ async function postJSON(url, payload, timeoutMs = 18000) {
 }
 
 // ------------------------------------------------------------
+// //#2A VERIFIED PROFILE HELPERS
+// ------------------------------------------------------------
+function cleanProfileValue(v) {
+  if (v === undefined || v === null) return null;
+
+  if (typeof v === "string") {
+    const s = v.trim();
+    return s ? s : null;
+  }
+
+  if (typeof v === "number") {
+    return Number.isFinite(v) ? v : null;
+  }
+
+  if (typeof v === "boolean") {
+    return v;
+  }
+
+  if (Array.isArray(v)) {
+    const arr = v
+      .map((x) => cleanProfileValue(x))
+      .filter((x) => x !== null && x !== undefined && x !== "");
+    return arr.length ? arr : null;
+  }
+
+  if (typeof v === "object") {
+    return v;
+  }
+
+  return null;
+}
+
+function sanitizeVerifiedProfile(raw) {
+  if (!raw || typeof raw !== "object") return null;
+
+  const profile = {
+    email: normalizeEmail(raw.email),
+    full_name: cleanProfileValue(
+      raw.full_name ||
+      raw.fullName ||
+      raw.name ||
+      [raw.first_name, raw.last_name].filter(Boolean).join(" ")
+    ),
+    first_name: cleanProfileValue(raw.first_name || raw.firstName),
+    last_name: cleanProfileValue(raw.last_name || raw.lastName),
+    phone: cleanProfileValue(raw.phone),
+    mode: cleanProfileValue(raw.mode || raw.user_type),
+    rank: cleanProfileValue(raw.rank),
+    rank_paygrade: cleanProfileValue(raw.rank_paygrade || raw.rankPaygrade),
+    va_disability: cleanProfileValue(raw.va_disability || raw.vaDisability),
+    yos: cleanProfileValue(raw.yos),
+    family: cleanProfileValue(raw.family),
+    base: cleanProfileValue(raw.base),
+    notes: cleanProfileValue(raw.notes),
+
+    projected_home_price: cleanProfileValue(
+      raw.projected_home_price ||
+      raw.projectedHomePrice ||
+      raw.price ||
+      raw.homePrice
+    ),
+    monthly_expenses: cleanProfileValue(
+      raw.monthly_expenses ||
+      raw.monthlyExpenses ||
+      raw.expenses
+    ),
+    downpayment: cleanProfileValue(
+      raw.downpayment ||
+      raw.downPayment ||
+      raw.dpAmt
+    ),
+    savings: cleanProfileValue(raw.savings),
+    credit_score: cleanProfileValue(
+      raw.credit_score ||
+      raw.creditScore ||
+      raw.fico
+    ),
+
+    bedrooms: cleanProfileValue(raw.bedrooms),
+    bathrooms: cleanProfileValue(raw.bathrooms),
+    sqft: cleanProfileValue(raw.sqft),
+    property_type: cleanProfileValue(raw.property_type || raw.propertyType),
+    home_condition: cleanProfileValue(raw.home_condition || raw.homeCondition),
+    amenities: cleanProfileValue(raw.amenities)
+  };
+
+  const out = {};
+  Object.keys(profile).forEach((k) => {
+    if (profile[k] !== null && profile[k] !== undefined && profile[k] !== "") {
+      out[k] = profile[k];
+    }
+  });
+
+  return Object.keys(out).length ? out : null;
+}
+
+function buildProfileContextSummary(profile, profileContextFromClient) {
+  const parts = [];
+
+  if (safeStr(profileContextFromClient)) {
+    parts.push(safeStr(profileContextFromClient));
+  }
+
+  if (profile && typeof profile === "object") {
+    if (profile.full_name) parts.push(`Name: ${profile.full_name}`);
+    if (profile.email) parts.push(`Email: ${profile.email}`);
+    if (profile.base) parts.push(`Base: ${profile.base}`);
+    if (profile.rank_paygrade || profile.rank) {
+      parts.push(`Rank: ${profile.rank_paygrade || profile.rank}`);
+    }
+    if (hasPositiveMoney(profile.projected_home_price)) {
+      parts.push(`Target Price: ${money(profile.projected_home_price)}`);
+    }
+    if (hasPositiveMoney(profile.monthly_expenses)) {
+      parts.push(`Monthly Expenses: ${money(profile.monthly_expenses)}`);
+    }
+    if (hasPositiveMoney(profile.downpayment)) {
+      parts.push(`Down Payment: ${money(profile.downpayment)}`);
+    }
+    if (hasPositiveMoney(profile.savings)) {
+      parts.push(`Savings: ${money(profile.savings)}`);
+    }
+    if (num(profile.credit_score)) {
+      parts.push(`Credit Score: ${profile.credit_score}`);
+    }
+    if (num(profile.bedrooms)) {
+      parts.push(`Bedrooms: ${profile.bedrooms}`);
+    }
+    if (num(profile.bathrooms)) {
+      parts.push(`Bathrooms: ${profile.bathrooms}`);
+    }
+    if (num(profile.sqft)) {
+      parts.push(`SqFt: ${profile.sqft}`);
+    }
+    if (profile.property_type) {
+      parts.push(`Property Type: ${profile.property_type}`);
+    }
+    if (profile.home_condition) {
+      parts.push(`Home Condition: ${profile.home_condition}`);
+    }
+    if (profile.notes) {
+      parts.push(`Notes: ${profile.notes}`);
+    }
+  }
+
+  const deduped = [...new Set(parts.filter(Boolean))];
+  return deduped.join(" | ");
+}
+
+// ------------------------------------------------------------
 // //#3 LOCAL JSON LOADERS
 // ------------------------------------------------------------
 const DATA_DIR = path.join(process.cwd(), "netlify", "functions", "data");
@@ -245,7 +400,7 @@ function likelyNeedsAgent(message) {
 // ------------------------------------------------------------
 // //#5 AGENT CALL
 // ------------------------------------------------------------
-async function callElenaAgent({ API_BASE, message, email, marketSlug, body }) {
+async function callElenaAgent({ API_BASE, message, email, marketSlug, body, verifiedProfile }) {
   const payload = {
     email: email || undefined,
     question: message,
@@ -254,6 +409,7 @@ async function callElenaAgent({ API_BASE, message, email, marketSlug, body }) {
       ...((body?.overrides && typeof body.overrides === "object") ? body.overrides : {})
     },
     scenario: (body?.scenario && typeof body.scenario === "object") ? body.scenario : undefined,
+    verifiedProfile: verifiedProfile || undefined,
     debug: body?.debug === true
   };
 
@@ -285,8 +441,10 @@ function buildSystemPrompt({ core, financeRules }) {
     "You are NOT a raw calculator and you must NOT answer like a JSON dump or robotic receipt.",
     "OpenAI-style conversation is ALWAYS active.",
     "When deterministic agent data is provided, trust it over your own invented math.",
-    "Never fabricate numbers that were not provided by the agent packet.",
+    "When a verified user profile is provided, you may use that profile as true user context for personalization.",
+    "Never fabricate numbers that were not provided by the agent packet or verified profile.",
     "If deterministic_packet.market.summary.metrics contains market price data, use it directly and state it confidently instead of saying you do not have the data.",
+    "If the user asks a personal question like their name, budget, base, or saved profile detail, and verified profile data exists, answer from that verified profile.",
     "If the user is greeting you or asking what you can do, answer like a normal concierge and do NOT force a finance summary.",
     "If the question is broad or educational, answer naturally and use the Texas real-estate context provided.",
     "If the agent packet contains finance or market outputs, explain them in plain English.",
@@ -302,7 +460,15 @@ function buildSystemPrompt({ core, financeRules }) {
   ].filter(Boolean).join(" ");
 }
 
-function buildUserPayload({ message, email, marketSlug, agentPacket, packs }) {
+function buildUserPayload({
+  message,
+  email,
+  marketSlug,
+  agentPacket,
+  packs,
+  verifiedProfile,
+  profileContextSummary
+}) {
   return {
     user_message: message,
     email: email || null,
@@ -316,11 +482,14 @@ function buildUserPayload({ message, email, marketSlug, agentPacket, packs }) {
       bluf_first: true,
       conversational: true,
       deterministic_data_overrides_model_math: true,
-      do_not_answer_like_json: true
+      do_not_answer_like_json: true,
+      may_use_verified_profile: true
     },
+    verified_user_profile: verifiedProfile || null,
+    verified_user_profile_summary: profileContextSummary || null,
     deterministic_packet: agentPacket || null,
     note_for_model:
-      "If deterministic_packet is null or lacks numbers, answer conversationally. If deterministic_packet contains housing math or market context, explain it clearly and naturally."
+      "If deterministic_packet is null or lacks numbers, answer conversationally. If deterministic_packet contains housing math or market context, explain it clearly and naturally. If verified_user_profile exists, you may use it to answer personal questions about the user's saved info."
   };
 }
 
@@ -371,8 +540,18 @@ async function callOpenAI({ systemPrompt, userPayload }) {
 // ------------------------------------------------------------
 // //#7 FALLBACK REPLY BUILDERS
 // ------------------------------------------------------------
-function buildGreetingReply(core) {
+function buildGreetingReply(core, verifiedProfile) {
   const name = core?.name || "Elena";
+  const firstName = safeStr(
+    verifiedProfile?.first_name ||
+    verifiedProfile?.full_name?.split?.(" ")?.[0] ||
+    ""
+  );
+
+  if (firstName) {
+    return `Hey ${firstName} — I’m ${name}, your OrozcoRealty concierge. I’ve got your saved profile loaded, so I can help with Texas home prices, monthly payment pressure, affordability, and market questions in a more personalized way.`;
+  }
+
   return `Hey — I’m ${name}, your OrozcoRealty concierge. I can help with Texas home prices, monthly payment pressure, affordability, and market questions like San Antonio or McAllen. Ask me a price, payment, city, buyer, seller, or investor question and I’ll break it down.`;
 }
 
@@ -381,8 +560,73 @@ function buildCapabilityReply(core) {
   return `${name} can help with Texas home affordability, estimated monthly payments, payment-to-price questions, buyer and seller strategy, and market reads for selected cities. I can also explain ownership costs like property taxes, insurance, HOA, and what those numbers mean in plain English.`;
 }
 
-function buildEmergencyFallback({ message, agentPacket, core }) {
-  if (isGreeting(message)) return buildGreetingReply(core);
+function buildVerifiedProfileFallbackAnswer(message, verifiedProfile) {
+  if (!verifiedProfile) return null;
+
+  const t = safeStr(message).toLowerCase();
+  const fullName = safeStr(
+    verifiedProfile.full_name ||
+    [verifiedProfile.first_name, verifiedProfile.last_name].filter(Boolean).join(" ")
+  );
+  const firstName = safeStr(verifiedProfile.first_name || fullName.split(" ")[0] || "");
+  const base = safeStr(verifiedProfile.base);
+  const rank = safeStr(verifiedProfile.rank_paygrade || verifiedProfile.rank);
+  const propertyType = safeStr(verifiedProfile.property_type);
+  const homeCondition = safeStr(verifiedProfile.home_condition);
+
+  if (/\bwhat is my name\b|\bwhat's my name\b|\bwho am i\b/.test(t)) {
+    if (fullName) return `Your saved name is ${fullName}.`;
+    if (firstName) return `Your saved first name is ${firstName}.`;
+  }
+
+  if (/\bwhat base\b|\bmy base\b|\bwhere am i stationed\b/.test(t) && base) {
+    return `Your saved base is ${base}.`;
+  }
+
+  if (/\bmy rank\b|\bwhat rank\b/.test(t) && rank) {
+    return `Your saved rank is ${rank}.`;
+  }
+
+  if (/\bmy budget\b|\btarget price\b|\bhome price\b/.test(t) && hasPositiveMoney(verifiedProfile.projected_home_price)) {
+    return `Your saved target home price is ${money(verifiedProfile.projected_home_price)}.`;
+  }
+
+  if (/\bmonthly expenses\b|\bmy expenses\b/.test(t) && hasPositiveMoney(verifiedProfile.monthly_expenses)) {
+    return `Your saved monthly expenses are ${money(verifiedProfile.monthly_expenses)}.`;
+  }
+
+  if (/\bdown payment\b|\bmy downpayment\b/.test(t) && hasPositiveMoney(verifiedProfile.downpayment)) {
+    return `Your saved down payment is ${money(verifiedProfile.downpayment)}.`;
+  }
+
+  if (/\bcredit score\b|\bmy credit\b/.test(t) && num(verifiedProfile.credit_score)) {
+    return `Your saved credit score is ${verifiedProfile.credit_score}.`;
+  }
+
+  if (/\bbedroom\b|\bbedrooms\b/.test(t) && num(verifiedProfile.bedrooms)) {
+    return `Your saved bedroom target is ${verifiedProfile.bedrooms}.`;
+  }
+
+  if (/\bbathroom\b|\bbathrooms\b/.test(t) && num(verifiedProfile.bathrooms)) {
+    return `Your saved bathroom target is ${verifiedProfile.bathrooms}.`;
+  }
+
+  if (/\bproperty type\b|\bhome type\b/.test(t) && propertyType) {
+    return `Your saved property type is ${propertyType}.`;
+  }
+
+  if (/\bhome condition\b|\bcondition\b/.test(t) && homeCondition) {
+    return `Your saved home condition is ${homeCondition}.`;
+  }
+
+  return null;
+}
+
+function buildEmergencyFallback({ message, agentPacket, core, verifiedProfile }) {
+  const verifiedReply = buildVerifiedProfileFallbackAnswer(message, verifiedProfile);
+  if (verifiedReply) return verifiedReply;
+
+  if (isGreeting(message)) return buildGreetingReply(core, verifiedProfile);
   if (isCapabilityQuestion(message)) return buildCapabilityReply(core);
 
   const verdict = agentPacket?.verdict || {};
@@ -436,6 +680,10 @@ function buildEmergencyFallback({ message, agentPacket, core }) {
     return `I can help with that. Right now the main issue is: ${verdict.notes[0]} ${nextAction?.why || ""}`.trim();
   }
 
+  if (verifiedProfile?.full_name) {
+    return `I’ve got your saved profile loaded, ${verifiedProfile.full_name}. Ask me about affordability, monthly payment, what home price fits a target payment, or what’s happening in a Texas market like San Antonio or McAllen.`;
+  }
+
   return `I’m here and ready. Ask me about affordability, monthly payment, what home price fits a target payment, or what’s happening in a Texas market like San Antonio or McAllen.`;
 }
 
@@ -455,8 +703,32 @@ exports.handler = async (event) => {
 
   const body = safeJsonParse(event.body);
   const message = safeStr(body?.message || body?.question);
-  const email = normalizeEmail(body?.email || body?.context?.email || body?.context?.profile?.email);
-  const marketSlug = safeStr(body?.marketSlug || body?.context?.marketSlug || body?.overrides?.marketSlug);
+
+  const verifiedProfile = sanitizeVerifiedProfile(
+    body?.verifiedProfile ||
+    body?.context?.verifiedProfile ||
+    body?.context?.profile ||
+    null
+  );
+
+  const email = normalizeEmail(
+    body?.email ||
+    verifiedProfile?.email ||
+    body?.context?.email ||
+    body?.context?.profile?.email
+  );
+
+  const marketSlug = safeStr(
+    body?.marketSlug ||
+    body?.context?.marketSlug ||
+    body?.overrides?.marketSlug
+  );
+
+  const profileContextSummary = buildProfileContextSummary(
+    verifiedProfile,
+    body?.profileContext || body?.context?.profileContext || ""
+  );
+
   const debug = body?.debug === true;
 
   if (!message) {
@@ -476,7 +748,8 @@ exports.handler = async (event) => {
       message,
       email,
       marketSlug,
-      body
+      body,
+      verifiedProfile
     });
 
     agentMeta.ok = !!agentRes.ok;
@@ -498,7 +771,9 @@ exports.handler = async (event) => {
     email,
     marketSlug,
     agentPacket,
-    packs
+    packs,
+    verifiedProfile,
+    profileContextSummary
   });
 
   const openaiRes = await callOpenAI({
@@ -516,7 +791,8 @@ exports.handler = async (event) => {
     reply = buildEmergencyFallback({
       message,
       agentPacket,
-      core: packs.core
+      core: packs.core,
+      verifiedProfile
     });
   }
 
@@ -537,6 +813,7 @@ exports.handler = async (event) => {
   if (agentPacket?.mortgage) payload.mortgage = agentPacket.mortgage;
   if (agentPacket?.payment_to_price) payload.payment_to_price = agentPacket.payment_to_price;
   if (agentPacket?.answer_packet) payload.answer_packet = agentPacket.answer_packet;
+  if (verifiedProfile) payload.profile_loaded = true;
 
   if (debug) {
     payload.debug = {
@@ -544,6 +821,8 @@ exports.handler = async (event) => {
       message,
       email: email || null,
       marketSlug: marketSlug || null,
+      profile_loaded: !!verifiedProfile,
+      profile_context_summary: profileContextSummary || null,
       used_agent: agentMeta.called,
       agent_ok: agentMeta.ok,
       agent_status: agentMeta.status,
