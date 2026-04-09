@@ -1,20 +1,30 @@
 // netlify/functions/elena-agent.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — elena-agent (Deterministic Orchestrator)
-// v1.1.0 (2026-04-09)
+// v2.0.0 (2026-04-09)
 //
 // PURPOSE
 // - Deterministic orchestration layer for OrozcoRealty Ask-Elena
-// - Answers Texas real estate + finance + selected-market questions
+// - Handles broader housing question coverage for Texas real estate + finance
 // - Pulls from local JSON knowledge packs
-// - Optionally verifies affordability / mortgage via your API
-// - Returns a clean "truth packet" for Ask-Elena narration
+// - Uses deterministic math for affordability, payment, and price-range logic
+// - Optionally verifies mortgage via your API when inputs are available
+//
+// CORE QUESTION LANES
+// - affordability_check            -> "Can I afford a $425k home?"
+// - payment_to_price               -> "What home price can I get with a $2400 payment?"
+// - mortgage_payment_estimate      -> "What would my payment be on a $380k home with 5% down?"
+// - price_range_guidance           -> "What price range should I shop in?"
+// - market_analysis                -> "How is San Antonio for buyers right now?"
+// - seller_strategy                -> "How should I price my home in McAllen?"
+// - investor_analysis              -> "Is San Antonio a good rental market?"
+// - general_real_estate_guidance   -> catch-all / educational questions
 //
 // DESIGN PRINCIPLES
 // - No AI math
-// - JSON knowledge packs are the source of truth for market/domain context
-// - Mortgage / affordability math stays deterministic
-// - Safe fallbacks + explicit sources
+// - JSON packs are source of truth for knowledge/market framing
+// - Deterministic formulas for numbers
+// - Graceful degradation when inputs are missing
 //
 // EXPECTED JSON FILES
 // - netlify/functions/data/elena-core.json
@@ -22,61 +32,6 @@
 // - netlify/functions/data/real-estate-knowledge-texas.json
 // - netlify/functions/data/markets-texas-index.json
 // - netlify/functions/data/markets/texas/<market-slug>.json
-//
-// OPTIONAL MARKET FILE EXAMPLES
-// - netlify/functions/data/markets/texas/san-antonio.json
-// - netlify/functions/data/markets/texas/mcallen.json
-// - netlify/functions/data/markets/texas/austin.json
-// - netlify/functions/data/markets/texas/dallas.json
-// - netlify/functions/data/markets/texas/houston.json
-//
-// INPUT (POST JSON)
-// {
-//   email?: "user@email.com",
-//   question?: "Can I afford a $420k home in San Antonio with 8% down and 710 credit?",
-//   overrides?: {
-//     marketSlug?: "san-antonio",
-//     city?: "San Antonio",
-//     state?: "Texas",
-//     income?: 9500,
-//     monthlyExpenses?: 2600,
-//     monthlyDebt?: 550,
-//     price?: 420000,
-//     downpayment?: 33600,
-//     creditScore?: 710,
-//     apr?: 6.875,
-//     termYears?: 30,
-//     taxRate?: 0.0225,
-//     taxAnnual?: 9450,
-//     insuranceAnnual?: 2400,
-//     hoaMonthly?: 65,
-//     pmiMonthly?: 0,
-//     propertyType?: "single-family",
-//     occupancy?: "primary",
-//     strategy?: "buy"
-//   },
-//   scenario?: { ... },
-//   debug?: true
-// }
-//
-// OUTPUT (JSON)
-// {
-//   ok: true,
-//   scenario_id: "elena_...",
-//   ts: 1700000000,
-//   email: "...",
-//   intent: "...",
-//   topic_tags: [...],
-//   market: {...},
-//   inputs_used: {...},
-//   affordability: {...},
-//   mortgage: {...},
-//   knowledge: {...},
-//   verdict: {...},
-//   next_action: {...},
-//   answer_packet: {...},
-//   debug?: {...}
-// }
 // ============================================================
 
 /* eslint-disable no-console */
@@ -147,7 +102,7 @@ function clamp(n, lo, hi) {
 }
 
 function roundTo(n, step) {
-  if (!Number.isFinite(n)) return n;
+  if (!Number.isFinite(n) || !Number.isFinite(step) || step <= 0) return n;
   return Math.round(n / step) * step;
 }
 
@@ -216,6 +171,11 @@ function titleCase(s) {
 
 function summarizeArray(arr, max = 5) {
   return Array.isArray(arr) ? arr.filter(Boolean).slice(0, max) : [];
+}
+
+function hasPositiveMoney(v) {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0;
 }
 
 async function postJSON(url, payload, timeoutMs = 12000) {
@@ -325,60 +285,42 @@ async function loadMarketPackBySlug(slug) {
 }
 
 // ------------------------------------------------------------
-// //#4 QUESTION + INTENT PARSERS
+// //#4 QUESTION CLASSIFICATION + PARSERS
 // ------------------------------------------------------------
-function classifyQuestion(question) {
-  const q = String(question || "").trim().toLowerCase();
+function parseMoneyToken(raw) {
+  if (!raw) return null;
+  const cleaned = String(raw).replace(/\$/g, "").replace(/,/g, "").trim();
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? Math.round(n) : null;
+}
 
-  if (!q) {
-    return {
-      intent: "general_real_estate_guidance",
-      topic_tags: ["general_guidance"]
-    };
-  }
+function parseLabeledMoney(question, labels) {
+  const t = String(question || "").toLowerCase();
+  if (!t || !Array.isArray(labels) || !labels.length) return null;
 
-  const tags = [];
+  const moneyPattern = "(\\$?\\s*[0-9][0-9,]*(?:\\.\\d{1,2})?)";
+  const normalizedLabels = labels
+    .map((x) => String(x || "").trim().toLowerCase())
+    .filter(Boolean);
 
-  if (/\bmortgage\b|\bmonthly payment\b|\bpayment\b|\bapr\b|\binterest rate\b/.test(q)) {
-    tags.push("mortgage");
-  }
-  if (/\bafford\b|\baffordability\b|\bcan i buy\b|\bbuying power\b|\bdti\b/.test(q)) {
-    tags.push("affordability");
-  }
-  if (/\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\bprice per sqft\b|\bappreciation\b/.test(q)) {
-    tags.push("market_analysis");
-  }
-  if (/\binvestor\b|\brental\b|\brent\b|\bbrrrr\b|\bcash flow\b|\bcap rate\b|\barv\b/.test(q)) {
-    tags.push("investor");
-  }
-  if (/\bproperty tax\b|\btaxes\b|\bhomestead\b|\binsurance\b|\bhoa\b/.test(q)) {
-    tags.push("ownership_costs");
-  }
-  if (/\bbuyer\b|\bbuying\b|\boffer\b|\bpreapproval\b|\bclosing costs\b/.test(q)) {
-    tags.push("buyer_guidance");
-  }
-  if (/\bseller\b|\blist\b|\blisting\b|\bstaging\b|\bpricing\b/.test(q)) {
-    tags.push("seller_guidance");
-  }
-  if (/\bcondo\b|\btownhome\b|\bduplex\b|\bmultifamily\b|\bsingle[- ]family\b/.test(q)) {
-    tags.push("property_type");
-  }
-  if (/\btexas\b|\bsan antonio\b|\bmcallen\b|\baustin\b|\bdallas\b|\bhouston\b|\bfort worth\b|\bel paso\b/.test(q)) {
-    tags.push("texas_market");
+  for (const label of normalizedLabels) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    const patterns = [
+      new RegExp(`\\b${escaped}\\b\\D{0,24}${moneyPattern}`, "i"),
+      new RegExp(`${moneyPattern}\\D{0,24}\\b${escaped}\\b`, "i")
+    ];
+
+    for (const re of patterns) {
+      const m = t.match(re);
+      if (m) {
+        const n = parseMoneyToken(m[1]);
+        if (Number.isFinite(n)) return n;
+      }
+    }
   }
 
-  let intent = "general_real_estate_guidance";
-
-  if (tags.includes("affordability") || tags.includes("mortgage")) intent = "finance_affordability";
-  if (tags.includes("market_analysis")) intent = "market_analysis";
-  if (tags.includes("investor")) intent = "investor_analysis";
-  if (tags.includes("seller_guidance")) intent = "seller_strategy";
-  if (tags.includes("buyer_guidance") && intent === "general_real_estate_guidance") intent = "buyer_strategy";
-
-  return {
-    intent,
-    topic_tags: uniq(tags.length ? tags : ["general_guidance"])
-  };
+  return null;
 }
 
 function parseCreditScoreFromQuestion(question) {
@@ -397,19 +339,16 @@ function parseCreditScoreFromQuestion(question) {
 function parsePriceFromQuestion(question) {
   const t = String(question || "").toLowerCase();
 
-  const moneyMatch =
+  const m =
     t.match(/\$?\s*([1-9]\d{2,3}(?:,\d{3})+)\b/) ||
     t.match(/\$?\s*([1-9]\d{2,3})\s*k\b/) ||
     t.match(/\$?\s*([1-9]\d{5,6})\b/);
 
-  if (!moneyMatch) return null;
+  if (!m) return null;
 
-  const raw = String(moneyMatch[1]).replace(/,/g, "");
-  let n = Number(raw);
+  let n = parseMoneyToken(m[1]);
   if (!Number.isFinite(n)) return null;
-
-  if (/\bk\b/.test(moneyMatch[0])) n *= 1000;
-
+  if (/\bk\b/.test(m[0])) n *= 1000;
   if (n < 25000) return null;
   return Math.round(n);
 }
@@ -429,41 +368,10 @@ function parsePercentDownFromQuestion(question, price) {
   };
 }
 
-function parseLabeledMoney(question, labels) {
-  const t = String(question || "").toLowerCase();
-  if (!t || !Array.isArray(labels) || !labels.length) return null;
-
-  const moneyPattern = "(\\$?\\s*[0-9][0-9,]*(?:\\.\\d{1,2})?)";
-  const normalizedLabels = labels
-    .map((x) => String(x || "").trim().toLowerCase())
-    .filter(Boolean);
-
-  for (const label of normalizedLabels) {
-    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    const patterns = [
-      new RegExp(`\\b${escaped}\\b\\D{0,20}${moneyPattern}`, "i"),
-      new RegExp(`${moneyPattern}\\D{0,20}\\b${escaped}\\b`, "i")
-    ];
-
-    for (const re of patterns) {
-      const m = t.match(re);
-      if (m) {
-        const raw = String(m[1] || "").replace(/\$/g, "").replace(/,/g, "").trim();
-        const n = Number(raw);
-        if (Number.isFinite(n)) return Math.round(n);
-      }
-    }
-  }
-
-  return null;
-}
-
 function parseIncomeFromQuestion(question) {
   const t = String(question || "").toLowerCase();
   if (!t) return null;
 
-  // Strong label-first parsing so we do NOT confuse debt/expenses with income.
   const labeled = parseLabeledMoney(t, [
     "monthly income",
     "income",
@@ -476,34 +384,29 @@ function parseIncomeFromQuestion(question) {
     "make",
     "earn"
   ]);
-
   if (Number.isFinite(labeled)) return labeled;
 
-  // "I make $9,500 a month"
   let m = t.match(/\b(?:i\s+)?(?:make|earn|bring in|bring home)\s+\$?\s*([0-9][0-9,]*)\s*(?:a\s*month|per\s*month|monthly)\b/i);
   if (m) {
-    const n = Number(String(m[1]).replace(/,/g, ""));
-    if (Number.isFinite(n)) return Math.round(n);
+    const n = parseMoneyToken(m[1]);
+    if (Number.isFinite(n)) return n;
   }
 
-  // "$9,500 monthly income"
   m = t.match(/\$?\s*([0-9][0-9,]*)\s*(?:\/\s*month|per\s*month|monthly)\s+(?:income|take\s*home|take-home|pay)\b/i);
   if (m) {
-    const n = Number(String(m[1]).replace(/,/g, ""));
-    if (Number.isFinite(n)) return Math.round(n);
+    const n = parseMoneyToken(m[1]);
+    if (Number.isFinite(n)) return n;
   }
 
-  // "$114,000 per year income"
   m = t.match(/\b(?:income|gross income|household income)\D{0,20}\$?\s*([0-9][0-9,]*)\s*(?:a\s*year|per\s*year|annually|annual)\b/i);
   if (m) {
-    const n = Number(String(m[1]).replace(/,/g, ""));
+    const n = parseMoneyToken(m[1]);
     if (Number.isFinite(n)) return Math.round(n / 12);
   }
 
-  // "I make $114,000 a year"
   m = t.match(/\b(?:i\s+)?(?:make|earn|bring in|bring home)\s+\$?\s*([0-9][0-9,]*)\s*(?:a\s*year|per\s*year|annually|annual)\b/i);
   if (m) {
-    const n = Number(String(m[1]).replace(/,/g, ""));
+    const n = parseMoneyToken(m[1]);
     if (Number.isFinite(n)) return Math.round(n / 12);
   }
 
@@ -511,27 +414,70 @@ function parseIncomeFromQuestion(question) {
 }
 
 function parseMonthlyDebtFromQuestion(question) {
-  const labeled = parseLabeledMoney(question, [
+  return parseLabeledMoney(question, [
     "monthly debt",
     "debt",
     "debt payments",
     "monthly debt payments"
   ]);
-  if (Number.isFinite(labeled)) return labeled;
-
-  return null;
 }
 
 function parseMonthlyExpensesFromQuestion(question) {
-  const labeled = parseLabeledMoney(question, [
+  return parseLabeledMoney(question, [
     "monthly expenses",
     "expenses",
     "monthly bills",
     "monthly spending"
   ]);
+}
+
+function parseTargetMonthlyPaymentFromQuestion(question) {
+  const t = String(question || "").toLowerCase();
+  if (!t) return null;
+
+  const labeled = parseLabeledMoney(t, [
+    "monthly payment",
+    "payment",
+    "per month",
+    "a month",
+    "monthly budget",
+    "max payment",
+    "payment budget",
+    "all-in payment",
+    "all in payment",
+    "housing payment",
+    "monthly housing payment",
+    "payment ceiling",
+    "target payment"
+  ]);
   if (Number.isFinite(labeled)) return labeled;
 
+  let m = t.match(/\bwith\s+a?\s*\$?\s*([0-9][0-9,]*)\s*(?:monthly\s*)?payment\b/i);
+  if (m) {
+    const n = parseMoneyToken(m[1]);
+    if (Number.isFinite(n)) return n;
+  }
+
+  m = t.match(/\bunder\s+\$?\s*([0-9][0-9,]*)\s*(?:\/\s*month|per\s*month|monthly)\b/i);
+  if (m) {
+    const n = parseMoneyToken(m[1]);
+    if (Number.isFinite(n)) return n;
+  }
+
+  m = t.match(/\b(?:at|around|about)\s+\$?\s*([0-9][0-9,]*)\s*(?:\/\s*month|per\s*month|monthly)\b/i);
+  if (m) {
+    const n = parseMoneyToken(m[1]);
+    if (Number.isFinite(n)) return n;
+  }
+
   return null;
+}
+
+function parseTermYearsFromQuestion(question) {
+  const t = String(question || "").toLowerCase();
+  const m = t.match(/\b(10|15|20|25|30|40)\s*[- ]?year\b/);
+  if (!m) return null;
+  return Math.round(Number(m[1]));
 }
 
 function parseQuestionFacts(question) {
@@ -544,10 +490,106 @@ function parseQuestionFacts(question) {
     inferred_income_monthly: parseIncomeFromQuestion(question),
     inferred_monthly_debt: parseMonthlyDebtFromQuestion(question),
     inferred_monthly_expenses: parseMonthlyExpensesFromQuestion(question),
+    inferred_target_monthly_payment: parseTargetMonthlyPaymentFromQuestion(question),
+    inferred_term_years: parseTermYearsFromQuestion(question),
     inferred_downpayment:
       downObj && Number.isFinite(downObj.amount) ? downObj.amount : null,
     inferred_downpayment_pct:
       downObj && Number.isFinite(downObj.percent) ? downObj.percent : null
+  };
+}
+
+function detectCoverageLane(question, facts) {
+  const q = String(question || "").trim().toLowerCase();
+
+  const asksPaymentToPrice =
+    (
+      /\bwhat\b.*\bhome price\b/.test(q) ||
+      /\bhow much house\b/.test(q) ||
+      /\bwhat price\b/.test(q) ||
+      /\bmax home price\b/.test(q) ||
+      /\bprice range\b/.test(q)
+    ) &&
+    hasPositiveMoney(facts.inferred_target_monthly_payment);
+
+  const asksMortgagePayment =
+    (
+      /\bwhat would\b.*\bpayment\b/.test(q) ||
+      /\bwhat is\b.*\bpayment\b/.test(q) ||
+      /\bmonthly payment\b/.test(q) ||
+      /\bmortgage payment\b/.test(q)
+    ) &&
+    hasPositiveMoney(facts.inferred_price);
+
+  const asksAffordability =
+    /\bcan i afford\b|\bafford\b|\bbuying power\b|\bcan i buy\b|\bdti\b/.test(q);
+
+  const asksSeller =
+    /\bseller\b|\blist\b|\blisting\b|\bstaging\b|\bpricing my home\b|\bsell my home\b/.test(q);
+
+  const asksInvestor =
+    /\binvestor\b|\brental\b|\brent\b|\bcash flow\b|\bcap rate\b|\barv\b|\bbrrrr\b/.test(q);
+
+  const asksMarket =
+    /\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\bprice per sqft\b|\bappreciation\b/.test(q);
+
+  if (asksPaymentToPrice) return "payment_to_price";
+  if (asksMortgagePayment) return "mortgage_payment_estimate";
+  if (asksAffordability) return "affordability_check";
+  if (asksSeller) return "seller_strategy";
+  if (asksInvestor) return "investor_analysis";
+  if (asksMarket) return "market_analysis";
+
+  if (hasPositiveMoney(facts.inferred_target_monthly_payment) && !hasPositiveMoney(facts.inferred_price)) {
+    return "payment_to_price";
+  }
+
+  if (hasPositiveMoney(facts.inferred_price) && /\bpayment\b|\bmortgage\b/.test(q)) {
+    return "mortgage_payment_estimate";
+  }
+
+  return "general_real_estate_guidance";
+}
+
+function classifyQuestion(question, facts) {
+  const q = String(question || "").trim().toLowerCase();
+
+  if (!q) {
+    return {
+      intent: "general_real_estate_guidance",
+      coverage_lane: "general_real_estate_guidance",
+      topic_tags: ["general_guidance"]
+    };
+  }
+
+  const tags = [];
+
+  if (/\bmortgage\b|\bmonthly payment\b|\bpayment\b|\bapr\b|\binterest rate\b/.test(q)) tags.push("mortgage");
+  if (/\bafford\b|\baffordability\b|\bcan i buy\b|\bbuying power\b|\bdti\b/.test(q)) tags.push("affordability");
+  if (/\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\bprice per sqft\b|\bappreciation\b/.test(q)) tags.push("market_analysis");
+  if (/\binvestor\b|\brental\b|\brent\b|\bbrrrr\b|\bcash flow\b|\bcap rate\b|\barv\b/.test(q)) tags.push("investor");
+  if (/\bproperty tax\b|\btaxes\b|\bhomestead\b|\binsurance\b|\bhoa\b/.test(q)) tags.push("ownership_costs");
+  if (/\bbuyer\b|\bbuying\b|\boffer\b|\bpreapproval\b|\bclosing costs\b/.test(q)) tags.push("buyer_guidance");
+  if (/\bseller\b|\blist\b|\blisting\b|\bstaging\b|\bpricing\b/.test(q)) tags.push("seller_guidance");
+  if (/\bcondo\b|\btownhome\b|\bduplex\b|\bmultifamily\b|\bsingle[- ]family\b/.test(q)) tags.push("property_type");
+  if (/\btexas\b|\bsan antonio\b|\bmcallen\b|\baustin\b|\bdallas\b|\bhouston\b|\bfort worth\b|\bel paso\b/.test(q)) tags.push("texas_market");
+  if (hasPositiveMoney(facts?.inferred_target_monthly_payment)) tags.push("payment_target");
+
+  const coverage_lane = detectCoverageLane(question, facts);
+
+  let intent = "general_real_estate_guidance";
+  if (coverage_lane === "affordability_check") intent = "finance_affordability";
+  else if (coverage_lane === "payment_to_price") intent = "finance_payment_to_price";
+  else if (coverage_lane === "mortgage_payment_estimate") intent = "finance_mortgage_payment";
+  else if (coverage_lane === "market_analysis") intent = "market_analysis";
+  else if (coverage_lane === "investor_analysis") intent = "investor_analysis";
+  else if (coverage_lane === "seller_strategy") intent = "seller_strategy";
+  else if (tags.includes("buyer_guidance")) intent = "buyer_strategy";
+
+  return {
+    intent,
+    coverage_lane,
+    topic_tags: uniq(tags.length ? tags : ["general_guidance"])
   };
 }
 
@@ -701,6 +743,18 @@ function buildScenario(body, questionFacts) {
     )
   );
 
+  const targetMonthlyPayment = num(
+    pickFirst(
+      overrides.targetMonthlyPayment,
+      overrides.monthlyPaymentTarget,
+      overrides.paymentTarget,
+      scenario.targetMonthlyPayment,
+      scenario.monthlyPaymentTarget,
+      scenario.paymentTarget,
+      questionFacts.inferred_target_monthly_payment
+    )
+  );
+
   const downpayment = num(
     pickFirst(
       overrides.downpayment,
@@ -723,7 +777,14 @@ function buildScenario(body, questionFacts) {
   );
 
   const apr = num(pickFirst(overrides.apr, scenario.apr, scenario.rate));
-  const termYearsRaw = num(pickFirst(overrides.termYears, scenario.termYears, scenario.term));
+  const termYearsRaw = num(
+    pickFirst(
+      overrides.termYears,
+      scenario.termYears,
+      scenario.term,
+      questionFacts.inferred_term_years
+    )
+  );
   const termYears = termYearsRaw ? clamp(Math.round(termYearsRaw), 10, 40) : 30;
 
   const propertyType = String(
@@ -757,6 +818,7 @@ function buildScenario(body, questionFacts) {
     income,
     monthlyExpenses,
     monthlyDebt,
+    targetMonthlyPayment,
     downpayment,
     creditScore: creditScore ? clamp(Math.round(creditScore), 300, 850) : null,
     apr,
@@ -890,7 +952,6 @@ function buildQuickAffordability({ income, monthlyDebt = 0, monthlyExpenses = 0,
 
   const frontEndCap = income * housingCapPct;
   const totalCap = income * backEndDtiPct;
-
   const availableByTotalDti = totalCap - (Number.isFinite(monthlyDebt) ? monthlyDebt : 0);
   const allInCap = Math.max(0, Math.min(frontEndCap, availableByTotalDti));
   const piTarget = allInCap / reservesBuffer;
@@ -963,7 +1024,6 @@ function computeFallbackMortgage({
 
   const taxesMonthly = Number.isFinite(estTaxAnnual) ? estTaxAnnual / 12 : 0;
   const insuranceMonthly = Number.isFinite(estInsuranceAnnual) ? estInsuranceAnnual / 12 : 0;
-
   const allIn = pi + taxesMonthly + insuranceMonthly + hoa + pmi;
 
   return {
@@ -1096,10 +1156,112 @@ function computeAffordabilityVerdict({
   };
 }
 
+function buildPaymentToPriceEstimate({
+  targetMonthlyPayment,
+  apr,
+  termYears,
+  taxRate,
+  taxAnnual,
+  insuranceAnnual,
+  hoaMonthly,
+  pmiMonthly,
+  marketPack,
+  downpayment,
+  downpaymentPct
+}) {
+  if (!hasPositiveMoney(targetMonthlyPayment)) return null;
+
+  const hoa = Number.isFinite(hoaMonthly) ? hoaMonthly : 0;
+  const flatPmi = Number.isFinite(pmiMonthly) ? pmiMonthly : 0;
+  const defaultTaxRate = Number.isFinite(taxRate)
+    ? taxRate
+    : num(pickFirst(
+        marketPack?.ownership_costs?.property_tax_rate,
+        marketPack?.property_tax_rate
+      ));
+
+  const defaultInsuranceAnnual = Number.isFinite(insuranceAnnual)
+    ? insuranceAnnual
+    : estimateInsuranceAnnual({ insuranceAnnual: null, price: 300000, marketPack });
+
+  const dpPctFromAmount =
+    Number.isFinite(downpayment) && hasPositiveMoney(downpayment)
+      ? null
+      : Number.isFinite(downpaymentPct)
+        ? clamp(downpaymentPct / 100, 0, 0.95)
+        : 0.10;
+
+  let lo = 50000;
+  let hi = 3000000;
+  let best = null;
+
+  for (let i = 0; i < 50; i++) {
+    const price = (lo + hi) / 2;
+    const appliedDown =
+      Number.isFinite(downpayment) && downpayment >= 0
+        ? downpayment
+        : price * (Number.isFinite(dpPctFromAmount) ? dpPctFromAmount : 0.10);
+
+    const mortgage = computeFallbackMortgage({
+      price,
+      downpayment: appliedDown,
+      creditScore: null,
+      apr,
+      termYears,
+      taxRate: defaultTaxRate,
+      taxAnnual,
+      insuranceAnnual: defaultInsuranceAnnual,
+      hoaMonthly: hoa,
+      pmiMonthly: flatPmi,
+      marketPack
+    });
+
+    const allIn = num(mortgage?.all_in_monthly);
+    if (!Number.isFinite(allIn)) break;
+
+    if (allIn <= targetMonthlyPayment) {
+      best = {
+        price,
+        allIn,
+        downpayment: appliedDown,
+        mortgage
+      };
+      lo = price;
+    } else {
+      hi = price;
+    }
+  }
+
+  if (!best) return null;
+
+  const conservative = roundTo(best.price * 0.93, 1000);
+  const target = roundTo(best.price, 1000);
+  const upper = roundTo(best.price * 1.03, 1000);
+
+  return {
+    target_monthly_payment: money(targetMonthlyPayment),
+    estimated_price_range: {
+      conservative: money(conservative),
+      target: money(target),
+      upper: money(upper)
+    },
+    assumptions: {
+      apr_used: pct(apr, 5),
+      term_years: termYears,
+      tax_rate_used: Number.isFinite(defaultTaxRate) ? pct(defaultTaxRate, 5) : null,
+      insurance_annual_used: money(defaultInsuranceAnnual),
+      hoa_monthly_used: money(hoa),
+      pmi_monthly_used: money(flatPmi),
+      downpayment_used: money(best.downpayment)
+    },
+    estimated_mortgage: best.mortgage || null
+  };
+}
+
 // ------------------------------------------------------------
 // //#8 KNOWLEDGE EXTRACTION
 // ------------------------------------------------------------
-function pickKnowledgeByIntent({ intent, topic_tags, realtyKnowledge, financeRules }) {
+function pickKnowledgeByIntent({ intent, coverage_lane, topic_tags, realtyKnowledge, financeRules }) {
   const out = {
     finance_points: [],
     realty_points: [],
@@ -1111,6 +1273,7 @@ function pickKnowledgeByIntent({ intent, topic_tags, realtyKnowledge, financeRul
   const sellerGuide = realtyKnowledge?.seller_guidance || [];
   const investorGuide = realtyKnowledge?.investor_guidance || [];
   const texasSpecific = realtyKnowledge?.texas_specific || [];
+  const ownership = realtyKnowledge?.ownership_costs || [];
   const guardrails = uniq([
     ...(Array.isArray(financeRules?.guardrails) ? financeRules.guardrails : []),
     ...(Array.isArray(realtyKnowledge?.guardrails) ? realtyKnowledge.guardrails : [])
@@ -1119,6 +1282,15 @@ function pickKnowledgeByIntent({ intent, topic_tags, realtyKnowledge, financeRul
   if (intent === "finance_affordability") {
     out.finance_points = summarizeArray(financeFaq, 6);
     out.realty_points = summarizeArray(buyerGuide, 4);
+  } else if (intent === "finance_payment_to_price") {
+    out.finance_points = summarizeArray(financeFaq, 6);
+    out.realty_points = uniq([
+      ...summarizeArray(buyerGuide, 3),
+      ...summarizeArray(ownership, 3)
+    ]).slice(0, 6);
+  } else if (intent === "finance_mortgage_payment") {
+    out.finance_points = summarizeArray(financeFaq, 6);
+    out.realty_points = summarizeArray(ownership, 4);
   } else if (intent === "market_analysis") {
     out.finance_points = summarizeArray(financeFaq, 3);
     out.realty_points = summarizeArray(texasSpecific, 6);
@@ -1135,8 +1307,7 @@ function pickKnowledgeByIntent({ intent, topic_tags, realtyKnowledge, financeRul
     out.finance_points = summarizeArray(financeFaq, 3);
   }
 
-  if (topic_tags.includes("ownership_costs")) {
-    const ownership = realtyKnowledge?.ownership_costs || [];
+  if (topic_tags.includes("ownership_costs") || coverage_lane === "payment_to_price" || coverage_lane === "mortgage_payment_estimate") {
     out.realty_points = uniq([...out.realty_points, ...summarizeArray(ownership, 4)]);
   }
 
@@ -1278,24 +1449,54 @@ function buildMarketSummary(marketPack) {
 // ------------------------------------------------------------
 // //#9 NEXT ACTION ENGINE
 // ------------------------------------------------------------
-function buildMissingInputs({ income, price, downpayment, creditScore, monthlyExpenses }) {
+function buildMissingInputs({ coverage_lane, income, price, downpayment, creditScore, monthlyExpenses, targetMonthlyPayment }) {
   const missing = [];
+
+  if (coverage_lane === "payment_to_price") {
+    if (!Number.isFinite(targetMonthlyPayment)) missing.push("targetMonthlyPayment");
+    return missing;
+  }
+
+  if (coverage_lane === "mortgage_payment_estimate") {
+    if (!Number.isFinite(price)) missing.push("price");
+    if (!Number.isFinite(downpayment)) missing.push("downpayment");
+    if (!Number.isFinite(creditScore)) missing.push("creditScore");
+    return missing;
+  }
+
   if (!Number.isFinite(income)) missing.push("income");
   if (!Number.isFinite(monthlyExpenses)) missing.push("monthlyExpenses");
   if (!Number.isFinite(price)) missing.push("price");
   if (!Number.isFinite(downpayment)) missing.push("downpayment");
   if (!Number.isFinite(creditScore)) missing.push("creditScore");
+
   return missing;
 }
 
-function pickNextAction({ intent, verdict, quick, marketSummary, inputs }) {
+function pickNextAction({ intent, coverage_lane, verdict, quick, paymentToPrice, marketSummary, inputs }) {
+  if (coverage_lane === "payment_to_price") {
+    if (!paymentToPrice) {
+      return {
+        type: "collect_missing_inputs",
+        why: "I need the target monthly payment to convert payment into an estimated home-price range.",
+        target: { missing: buildMissingInputs({ coverage_lane, ...inputs }) }
+      };
+    }
+
+    return {
+      type: "shop_in_price_band",
+      why: "Use the target band, then tighten taxes, insurance, HOA, and down payment so the payment stays inside your comfort zone.",
+      target: {
+        price_band: paymentToPrice.estimated_price_range
+      }
+    };
+  }
+
   if (!verdict || verdict.status === "INSUFFICIENT") {
     return {
       type: "collect_missing_inputs",
       why: "I can tighten this answer as soon as the missing finance inputs are provided.",
-      target: {
-        missing: buildMissingInputs(inputs)
-      }
+      target: { missing: buildMissingInputs({ coverage_lane, ...inputs }) }
     };
   }
 
@@ -1409,8 +1610,8 @@ exports.handler = async (event) => {
     fetchProfileIfPossible({ API_BASE, email })
   ]);
 
-  const questionInfo = classifyQuestion(question);
   const questionFacts = parseQuestionFacts(question);
+  const questionInfo = classifyQuestion(question, questionFacts);
   const sc = buildScenario(body, questionFacts);
 
   const marketResolution = resolveMarketSlug({
@@ -1423,7 +1624,6 @@ exports.handler = async (event) => {
   const marketSlug = sc.marketSlug || marketResolution.slug || null;
   const marketPack = marketSlug ? await loadMarketPackBySlug(marketSlug) : null;
   const marketSummary = buildMarketSummary(marketPack);
-
   const profile = profileResult.profile || null;
 
   const profileIncome = num(
@@ -1459,7 +1659,7 @@ exports.handler = async (event) => {
     : aprTierFromScore(creditScore, packs.financeRules);
 
   // ----------------------------------------------------------
-  // //#11A Mortgage Verification
+  // //#11A Mortgage Verification / Estimate
   // ----------------------------------------------------------
   let mortgage = null;
   let mortgageSource = "missing";
@@ -1489,7 +1689,6 @@ exports.handler = async (event) => {
 
   if (hasMortgageInputs) {
     const mortgageRes = await postJSON(`${API_BASE}/api/mortgage-calculator`, mortgagePayload);
-
     mortgageApiStatus = mortgageRes.status;
 
     const apiAllIn = num(
@@ -1562,10 +1761,10 @@ exports.handler = async (event) => {
       });
       mortgageSource = mortgage ? "deterministic_fallback" : "missing";
     }
-  } else {
+  } else if (Number.isFinite(price) && price > 0) {
     mortgage = computeFallbackMortgage({
       price,
-      downpayment,
+      downpayment: Number.isFinite(downpayment) ? downpayment : Math.round(price * 0.10),
       creditScore,
       apr: aprUsed,
       termYears: sc.termYears,
@@ -1579,6 +1778,9 @@ exports.handler = async (event) => {
     mortgageSource = mortgage ? "deterministic_fallback_partial" : "insufficient_inputs_for_mortgage";
   }
 
+  // ----------------------------------------------------------
+  // //#11B Quick affordability / Payment-to-price
+  // ----------------------------------------------------------
   const quick = buildQuickAffordability({
     income,
     monthlyDebt,
@@ -1588,16 +1790,67 @@ exports.handler = async (event) => {
     financeRules: packs.financeRules
   });
 
-  const verdict = computeAffordabilityVerdict({
-    income,
-    monthlyExpenses,
-    monthlyDebt,
-    housingAllIn: mortgage?.all_in_monthly || null,
-    financeRules: packs.financeRules
+  const paymentToPrice = buildPaymentToPriceEstimate({
+    targetMonthlyPayment: sc.targetMonthlyPayment,
+    apr: aprUsed,
+    termYears: sc.termYears,
+    taxRate: sc.taxRate,
+    taxAnnual: sc.taxAnnual,
+    insuranceAnnual: sc.insuranceAnnual,
+    hoaMonthly: sc.hoaMonthly,
+    pmiMonthly: sc.pmiMonthly,
+    marketPack,
+    downpayment: sc.downpayment,
+    downpaymentPct: questionFacts.inferred_downpayment_pct
   });
 
+  // ----------------------------------------------------------
+  // //#11C Coverage-lane-specific verdict
+  // ----------------------------------------------------------
+  let verdict = null;
+
+  if (questionInfo.coverage_lane === "payment_to_price") {
+    if (!paymentToPrice) {
+      verdict = {
+        status: "INSUFFICIENT",
+        grade: "N/A",
+        residual: null,
+        ratios: {
+          housing_ratio: null,
+          debt_ratio: null,
+          total_fixed_ratio: null
+        },
+        notes: ["Missing target monthly payment; cannot convert payment into an estimated home-price range."]
+      };
+    } else {
+      verdict = {
+        status: "GREEN",
+        grade: "B",
+        residual: null,
+        ratios: {
+          housing_ratio: null,
+          debt_ratio: null,
+          total_fixed_ratio: null
+        },
+        notes: ["This estimate converts your target monthly payment into an approximate purchase-price band using current assumptions for rate, taxes, insurance, and monthly carrying costs."]
+      };
+    }
+  } else {
+    verdict = computeAffordabilityVerdict({
+      income,
+      monthlyExpenses,
+      monthlyDebt,
+      housingAllIn: mortgage?.all_in_monthly || null,
+      financeRules: packs.financeRules
+    });
+  }
+
+  // ----------------------------------------------------------
+  // //#11D Knowledge + action
+  // ----------------------------------------------------------
   const knowledge = pickKnowledgeByIntent({
     intent: questionInfo.intent,
+    coverage_lane: questionInfo.coverage_lane,
     topic_tags: questionInfo.topic_tags,
     realtyKnowledge: packs.realtyKnowledge,
     financeRules: packs.financeRules
@@ -1605,18 +1858,25 @@ exports.handler = async (event) => {
 
   const next_action = pickNextAction({
     intent: questionInfo.intent,
+    coverage_lane: questionInfo.coverage_lane,
     verdict,
     quick,
+    paymentToPrice,
     marketSummary,
     inputs: {
       income,
       monthlyExpenses,
+      monthlyDebt,
       price,
       downpayment,
-      creditScore
+      creditScore,
+      targetMonthlyPayment: sc.targetMonthlyPayment
     }
   });
 
+  // ----------------------------------------------------------
+  // //#11E Answer packet
+  // ----------------------------------------------------------
   const answer_packet = {
     persona: {
       name: pickFirst(packs.core?.name, "Elena"),
@@ -1628,6 +1888,7 @@ exports.handler = async (event) => {
     },
     user_question: question || null,
     answer_mode: questionInfo.intent,
+    coverage_lane: questionInfo.coverage_lane,
     bottom_line: {
       verdict: verdict?.status || "INSUFFICIENT",
       grade: verdict?.grade || "N/A",
@@ -1645,9 +1906,11 @@ exports.handler = async (event) => {
       income: money(income),
       monthly_expenses: money(monthlyExpenses),
       monthly_debt: money(monthlyDebt),
+      target_monthly_payment: money(sc.targetMonthlyPayment),
       estimated_housing_payment: money(mortgage?.all_in_monthly),
       residual: money(verdict?.residual),
-      quick_buying_power: quick?.quick_max_price || null
+      quick_buying_power: quick?.quick_max_price || null,
+      payment_to_price_range: paymentToPrice?.estimated_price_range || null
     },
     teaching_points: uniq([
       ...knowledge.finance_points,
@@ -1662,6 +1925,7 @@ exports.handler = async (event) => {
     ts,
     email: email || null,
     intent: questionInfo.intent,
+    coverage_lane: questionInfo.coverage_lane,
     topic_tags: questionInfo.topic_tags,
     profile_used: profile
       ? {
@@ -1681,6 +1945,7 @@ exports.handler = async (event) => {
       income: money(income),
       monthlyExpenses: money(monthlyExpenses),
       monthlyDebt: money(monthlyDebt),
+      targetMonthlyPayment: money(sc.targetMonthlyPayment),
       price: money(price),
       downpayment: money(downpayment),
       creditScore: Number.isFinite(creditScore) ? creditScore : null,
@@ -1691,9 +1956,10 @@ exports.handler = async (event) => {
       strategy: sc.strategy,
       sources: {
         profile: profileResult.source,
-        income: Number.isFinite(sc.income) ? "request" : Number.isFinite(profileIncome) ? "profile" : "missing",
-        monthlyExpenses: Number.isFinite(sc.monthlyExpenses) ? "request" : "missing",
-        monthlyDebt: Number.isFinite(sc.monthlyDebt) ? "request" : "missing",
+        income: Number.isFinite(sc.income) ? "request/question" : Number.isFinite(profileIncome) ? "profile" : "missing",
+        monthlyExpenses: Number.isFinite(sc.monthlyExpenses) ? "request/question" : "missing",
+        monthlyDebt: Number.isFinite(sc.monthlyDebt) ? "request/question" : "missing",
+        targetMonthlyPayment: Number.isFinite(sc.targetMonthlyPayment) ? "request/question" : "missing",
         price: Number.isFinite(sc.price) ? "request/question" : "missing",
         downpayment: Number.isFinite(sc.downpayment) ? "request/question" : "missing",
         creditScore: Number.isFinite(sc.creditScore) ? "request/question" : "missing",
@@ -1702,6 +1968,7 @@ exports.handler = async (event) => {
       }
     },
     affordability: quick || null,
+    payment_to_price: paymentToPrice || null,
     mortgage: mortgage || {
       source: mortgageSource,
       all_in_monthly: null,
