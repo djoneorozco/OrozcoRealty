@@ -1,7 +1,7 @@
 // netlify/functions/ask-elena.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — OpenAI Conversational Wrapper
-// v1.0.0 (2026-04-09)
+// v1.1.0 (2026-04-09)
 //
 // PURPOSE
 // - OpenAI is ALWAYS the primary conversational layer
@@ -119,6 +119,11 @@ function num(v) {
   return Number.isFinite(n) ? n : null;
 }
 
+function hasPositiveMoney(v) {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0;
+}
+
 function money(n) {
   const x = Number(n);
   if (!Number.isFinite(x)) return null;
@@ -196,14 +201,6 @@ async function readJsonFile(absPath) {
   }
 }
 
-function fileExists(absPath) {
-  try {
-    return fs.existsSync(absPath);
-  } catch {
-    return false;
-  }
-}
-
 async function loadKnowledgePack(relPath) {
   const absPath = path.join(DATA_DIR, relPath);
   return readJsonFile(absPath);
@@ -238,11 +235,10 @@ function isCapabilityQuestion(message) {
 
 function likelyNeedsAgent(message) {
   const t = safeStr(message).toLowerCase();
-
   if (!t) return false;
 
   return (
-    /\bafford\b|\bbuying power\b|\bpayment\b|\bmortgage\b|\bhome price\b|\bprice range\b|\bwhat house\b|\bhow much house\b|\bdown payment\b|\bcredit score\b|\bmonthly debt\b|\bmonthly expenses\b|\bincome\b|\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bseller\b|\blist\b|\binvestor\b|\brental\b|\brent\b|\bcash flow\b|\bcap rate\b|\bhoa\b|\binsurance\b|\bproperty tax\b|\btaxes\b/.test(t)
+    /\bafford\b|\bbuying power\b|\bpayment\b|\bmortgage\b|\bhome price\b|\baverage home price\b|\bavg home price\b|\bhome value\b|\baverage home value\b|\bmedian home price\b|\bmedian price\b|\bprice range\b|\bwhat house\b|\bhow much house\b|\bdown payment\b|\bcredit score\b|\bmonthly debt\b|\bmonthly expenses\b|\bincome\b|\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bseller\b|\blist\b|\binvestor\b|\brental\b|\brent\b|\bcash flow\b|\bcap rate\b|\bhoa\b|\binsurance\b|\bproperty tax\b|\btaxes\b/.test(t)
   );
 }
 
@@ -290,6 +286,7 @@ function buildSystemPrompt({ core, financeRules }) {
     "OpenAI-style conversation is ALWAYS active.",
     "When deterministic agent data is provided, trust it over your own invented math.",
     "Never fabricate numbers that were not provided by the agent packet.",
+    "If deterministic_packet.market.summary.metrics contains market price data, use it directly and state it confidently instead of saying you do not have the data.",
     "If the user is greeting you or asking what you can do, answer like a normal concierge and do NOT force a finance summary.",
     "If the question is broad or educational, answer naturally and use the Texas real-estate context provided.",
     "If the agent packet contains finance or market outputs, explain them in plain English.",
@@ -393,8 +390,20 @@ function buildEmergencyFallback({ message, agentPacket, core }) {
   const paymentToPrice = agentPacket?.payment_to_price || {};
   const nextAction = agentPacket?.next_action || {};
   const market = agentPacket?.market?.summary || null;
+  const metrics = market?.metrics || {};
 
   const lines = [];
+
+  if (hasPositiveMoney(metrics.average_home_value)) {
+    lines.push(`The average home value in ${market?.city || "this market"} is about ${money(metrics.average_home_value)}.`);
+    if (hasPositiveMoney(metrics.median_list_price)) {
+      lines.push(`Median list pricing is around ${money(metrics.median_list_price)}.`);
+    }
+    if (hasPositiveMoney(metrics.median_sold_price)) {
+      lines.push(`Recent sold pricing is around ${money(metrics.median_sold_price)}.`);
+    }
+    return lines.join(" ");
+  }
 
   if (agentPacket?.coverage_lane === "payment_to_price" && paymentToPrice?.estimated_price_range) {
     lines.push("Here’s the bottom line:");
@@ -457,7 +466,6 @@ exports.handler = async (event) => {
   const API_BASE = pickApiBase(event);
   const packs = await loadCorePacks();
 
-  // Decide whether deterministic agent should be consulted.
   let agentPacket = null;
   let agentMeta = { called: false, ok: false, status: null, error: null };
 
