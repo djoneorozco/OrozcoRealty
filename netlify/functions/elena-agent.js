@@ -1,7 +1,7 @@
 // netlify/functions/elena-agent.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — elena-agent (Deterministic Orchestrator)
-// v2.2.0 (2026-04-09)
+// v2.3.0 (2026-04-09)
 //
 // PURPOSE
 // - Deterministic orchestration layer for OrozcoRealty Ask-Elena
@@ -225,7 +225,30 @@ function pickApiBase(event) {
 // ------------------------------------------------------------
 // //#3 FILE LOADERS
 // ------------------------------------------------------------
-const DATA_DIR = path.join(process.cwd(), "netlify", "functions", "data");
+function fileExists(absPath) {
+  try {
+    return fs.existsSync(absPath);
+  } catch {
+    return false;
+  }
+}
+
+function resolveDataDir() {
+  const candidates = [
+    path.join(__dirname, "data"),
+    path.join(__dirname, "netlify", "functions", "data"),
+    path.join(process.cwd(), "netlify", "functions", "data"),
+    path.join(process.cwd(), "data")
+  ];
+
+  for (const p of candidates) {
+    if (fileExists(p)) return p;
+  }
+
+  return candidates[0];
+}
+
+const DATA_DIR = resolveDataDir();
 
 async function readJsonFile(absPath) {
   try {
@@ -233,14 +256,6 @@ async function readJsonFile(absPath) {
     return safeJsonParse(raw);
   } catch {
     return null;
-  }
-}
-
-function fileExists(absPath) {
-  try {
-    return fs.existsSync(absPath);
-  } catch {
-    return false;
   }
 }
 
@@ -265,14 +280,19 @@ async function loadCoreKnowledge() {
   };
 }
 
-async function loadMarketPackBySlug(slug) {
-  if (!slug) return null;
-
-  const candidates = [
+function buildMarketFileCandidates(slug) {
+  if (!slug) return [];
+  return [
     path.join(DATA_DIR, "markets", "texas", `${slug}.json`),
     path.join(DATA_DIR, "markets", `${slug}.json`),
     path.join(DATA_DIR, `${slug}.json`)
   ];
+}
+
+async function loadMarketPackBySlug(slug) {
+  if (!slug) return null;
+
+  const candidates = buildMarketFileCandidates(slug);
 
   for (const absPath of candidates) {
     if (fileExists(absPath)) {
@@ -2056,13 +2076,23 @@ exports.handler = async (event) => {
         event.queryStringParameters.debug === "true"));
 
   if (debugEnabled) {
+    const marketFileCandidates = marketSlug ? buildMarketFileCandidates(marketSlug) : [];
     payload.debug = {
       API_BASE,
+      cwd: process.cwd(),
+      dirname: __dirname,
+      data_dir: DATA_DIR,
       profile_found: !!profile,
       question_facts: questionFacts,
       market_resolution: marketResolution,
       market_slug: marketSlug,
       market_file_loaded: !!marketPack,
+      market_file_candidates: marketFileCandidates,
+      market_file_exists_checks: marketSlug ? {
+        texas: fileExists(path.join(DATA_DIR, "markets", "texas", `${marketSlug}.json`)),
+        markets_root: fileExists(path.join(DATA_DIR, "markets", `${marketSlug}.json`)),
+        data_root: fileExists(path.join(DATA_DIR, `${marketSlug}.json`))
+      } : null,
       requested_bedrooms: requestedBedrooms,
       bedroom_slice_found: !!(bedroomContext && bedroomContext.market_slice),
       mortgage_api_status: mortgageApiStatus,
