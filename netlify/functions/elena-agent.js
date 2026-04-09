@@ -1,7 +1,7 @@
 // netlify/functions/elena-agent.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — elena-agent (Deterministic Orchestrator)
-// v2.1.0 (2026-04-09)
+// v2.2.0 (2026-04-09)
 //
 // PURPOSE
 // - Deterministic orchestration layer for OrozcoRealty Ask-Elena
@@ -368,6 +368,20 @@ function parsePercentDownFromQuestion(question, price) {
   };
 }
 
+function parseBedroomsFromQuestion(question) {
+  const t = String(question || "").toLowerCase();
+
+  const m =
+    t.match(/\b([1-9])\s*bed(?:room)?s?\b/) ||
+    t.match(/\b([1-9])br\b/) ||
+    t.match(/\b([1-9])\s*bd\b/);
+
+  if (!m) return null;
+
+  const n = Number(m[1]);
+  return Number.isFinite(n) ? Math.round(n) : null;
+}
+
 function parseIncomeFromQuestion(question) {
   const t = String(question || "").toLowerCase();
   if (!t) return null;
@@ -492,6 +506,7 @@ function parseQuestionFacts(question) {
     inferred_monthly_expenses: parseMonthlyExpensesFromQuestion(question),
     inferred_target_monthly_payment: parseTargetMonthlyPaymentFromQuestion(question),
     inferred_term_years: parseTermYearsFromQuestion(question),
+    inferred_bedrooms: parseBedroomsFromQuestion(question),
     inferred_downpayment:
       downObj && Number.isFinite(downObj.amount) ? downObj.amount : null,
     inferred_downpayment_pct:
@@ -531,7 +546,7 @@ function detectCoverageLane(question, facts) {
     /\binvestor\b|\brental\b|\brent\b|\bcash flow\b|\bcap rate\b|\barv\b|\bbrrrr\b/.test(q);
 
   const asksMarket =
-    /\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\baverage home price\b|\bavg home price\b|\bhome value\b|\baverage home value\b|\bmedian home price\b|\bmedian price\b|\bprice per sqft\b|\bappreciation\b/.test(q);
+    /\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\baverage home price\b|\bavg home price\b|\bhome value\b|\baverage home value\b|\bmedian home price\b|\bmedian price\b|\bprice per sqft\b|\bappreciation\b|\bbedroom\b|\bbedrooms\b|\b2br\b|\b3br\b|\b4br\b|\b5br\b/.test(q);
 
   if (asksPaymentToPrice) return "payment_to_price";
   if (asksMortgagePayment) return "mortgage_payment_estimate";
@@ -544,7 +559,7 @@ function detectCoverageLane(question, facts) {
     return "payment_to_price";
   }
 
-  if (hasPositiveMoney(facts.inferred_price) && /\bpayment\b|\bmortgage\b/.test(q)) {
+  if (hasPositiveMoney(facts.inferred_price) && (/\bpayment\b|\bmortgage\b/.test(q))) {
     return "mortgage_payment_estimate";
   }
 
@@ -566,7 +581,7 @@ function classifyQuestion(question, facts) {
 
   if (/\bmortgage\b|\bmonthly payment\b|\bpayment\b|\bapr\b|\binterest rate\b/.test(q)) tags.push("mortgage");
   if (/\bafford\b|\baffordability\b|\bcan i buy\b|\bbuying power\b|\bdti\b/.test(q)) tags.push("affordability");
-  if (/\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\baverage home price\b|\bavg home price\b|\bhome value\b|\baverage home value\b|\bmedian home price\b|\bmedian price\b|\bprice per sqft\b|\bappreciation\b/.test(q)) tags.push("market_analysis");
+  if (/\bmarket\b|\binventory\b|\bdays on market\b|\bdom\b|\bmedian\b|\baverage home price\b|\bavg home price\b|\bhome value\b|\baverage home value\b|\bmedian home price\b|\bmedian price\b|\bprice per sqft\b|\bappreciation\b|\bbedroom\b|\bbedrooms\b|\b2br\b|\b3br\b|\b4br\b|\b5br\b/.test(q)) tags.push("market_analysis");
   if (/\binvestor\b|\brental\b|\brent\b|\bbrrrr\b|\bcash flow\b|\bcap rate\b|\barv\b/.test(q)) tags.push("investor");
   if (/\bproperty tax\b|\btaxes\b|\bhomestead\b|\binsurance\b|\bhoa\b/.test(q)) tags.push("ownership_costs");
   if (/\bbuyer\b|\bbuying\b|\boffer\b|\bpreapproval\b|\bclosing costs\b/.test(q)) tags.push("buyer_guidance");
@@ -574,6 +589,7 @@ function classifyQuestion(question, facts) {
   if (/\bcondo\b|\btownhome\b|\bduplex\b|\bmultifamily\b|\bsingle[- ]family\b/.test(q)) tags.push("property_type");
   if (/\btexas\b|\bsan antonio\b|\bmcallen\b|\baustin\b|\bdallas\b|\bhouston\b|\bfort worth\b|\bel paso\b/.test(q)) tags.push("texas_market");
   if (hasPositiveMoney(facts?.inferred_target_monthly_payment)) tags.push("payment_target");
+  if (Number.isFinite(facts?.inferred_bedrooms)) tags.push("bedroom_specific");
 
   const coverage_lane = detectCoverageLane(question, facts);
 
@@ -808,6 +824,15 @@ function buildScenario(body, questionFacts) {
   );
   const hoaMonthly = num(pickFirst(overrides.hoaMonthly, scenario.hoaMonthly, scenario.hoa_monthly));
   const pmiMonthly = num(pickFirst(overrides.pmiMonthly, scenario.pmiMonthly, scenario.pmi_monthly));
+  const bedrooms = num(
+    pickFirst(
+      overrides.bedrooms,
+      overrides.beds,
+      scenario.bedrooms,
+      scenario.beds,
+      questionFacts.inferred_bedrooms
+    )
+  );
 
   return {
     question: String(body?.question || "").trim(),
@@ -831,6 +856,7 @@ function buildScenario(body, questionFacts) {
     insuranceAnnual,
     hoaMonthly,
     pmiMonthly,
+    bedrooms: Number.isFinite(bedrooms) ? Math.round(bedrooms) : null,
     city: pickFirst(overrides.city, scenario.city) || null,
     marketSlug: pickFirst(overrides.marketSlug, scenario.marketSlug) || null
   };
@@ -1324,7 +1350,8 @@ function buildMarketSummary(marketPack) {
       metrics: {},
       neighborhoods: [],
       risks: [],
-      opportunities: []
+      opportunities: [],
+      by_bedroom: {}
     };
   }
 
@@ -1394,6 +1421,11 @@ function buildMarketSummary(marketPack) {
     )
   };
 
+  const byBedroom =
+    marketPack?.by_bedroom && typeof marketPack.by_bedroom === "object"
+      ? marketPack.by_bedroom
+      : {};
+
   return {
     available: true,
     slug: marketPack?.slug || null,
@@ -1457,7 +1489,8 @@ function buildMarketSummary(marketPack) {
         []
       ),
       5
-    )
+    ),
+    by_bedroom: byBedroom
   };
 }
 
@@ -1890,7 +1923,24 @@ exports.handler = async (event) => {
   });
 
   // ----------------------------------------------------------
-  // //#11E Answer packet
+  // //#11E Bedroom context
+  // ----------------------------------------------------------
+  const requestedBedrooms = Number.isFinite(sc.bedrooms)
+    ? sc.bedrooms
+    : Number.isFinite(questionFacts?.inferred_bedrooms)
+      ? questionFacts.inferred_bedrooms
+      : null;
+
+  const bedroomContext = Number.isFinite(requestedBedrooms)
+    ? {
+        requested_bedrooms: requestedBedrooms,
+        market_slice:
+          marketSummary?.by_bedroom?.[String(requestedBedrooms)] || null
+      }
+    : null;
+
+  // ----------------------------------------------------------
+  // //#11F Answer packet
   // ----------------------------------------------------------
   const answer_packet = {
     persona: {
@@ -1914,9 +1964,11 @@ exports.handler = async (event) => {
           city: marketSummary.city,
           metrics: marketSummary.metrics,
           opportunities: marketSummary.opportunities,
-          risks: marketSummary.risks
+          risks: marketSummary.risks,
+          by_bedroom: marketSummary.by_bedroom || {}
         }
       : null,
+    bedroom_context: bedroomContext,
     finance_context: {
       income: money(income),
       monthly_expenses: money(monthlyExpenses),
@@ -1966,6 +2018,7 @@ exports.handler = async (event) => {
       creditScore: Number.isFinite(creditScore) ? creditScore : null,
       apr_used: pct(aprUsed, 5),
       termYears: sc.termYears,
+      bedrooms: Number.isFinite(requestedBedrooms) ? requestedBedrooms : null,
       propertyType: sc.propertyType,
       occupancy: sc.occupancy,
       strategy: sc.strategy,
@@ -1978,6 +2031,7 @@ exports.handler = async (event) => {
         price: Number.isFinite(sc.price) ? "request/question" : "missing",
         downpayment: Number.isFinite(sc.downpayment) ? "request/question" : "missing",
         creditScore: Number.isFinite(sc.creditScore) ? "request/question" : "missing",
+        bedrooms: Number.isFinite(requestedBedrooms) ? "request/question" : "missing",
         market: marketPack ? "local_json" : "not_found",
         mortgage: mortgageSource
       }
@@ -2009,6 +2063,8 @@ exports.handler = async (event) => {
       market_resolution: marketResolution,
       market_slug: marketSlug,
       market_file_loaded: !!marketPack,
+      requested_bedrooms: requestedBedrooms,
+      bedroom_slice_found: !!(bedroomContext && bedroomContext.market_slice),
       mortgage_api_status: mortgageApiStatus,
       mortgage_payload_sent: mortgagePayload,
       finance_rule_keys: Object.keys(packs.financeRules || {}),
