@@ -1,7 +1,7 @@
 // netlify/functions/elena-agent.js
 // ============================================================
 // OrozcoRealty • Ask-Elena — elena-agent (Deterministic Orchestrator)
-// v2.3.0 (2026-04-09)
+// v2.3.1 (2026-04-09)
 //
 // PURPOSE
 // - Deterministic orchestration layer for OrozcoRealty Ask-Elena
@@ -9,6 +9,8 @@
 // - Pulls from local JSON knowledge packs
 // - Uses deterministic math for affordability, payment, and price-range logic
 // - Optionally verifies mortgage via your API when inputs are available
+// - Accepts verifiedProfile from Ask-Elena widget so Elena can use
+//   already-verified user data immediately
 //
 // CORE QUESTION LANES
 // - affordability_check            -> "Can I afford a $425k home?"
@@ -176,6 +178,170 @@ function summarizeArray(arr, max = 5) {
 function hasPositiveMoney(v) {
   const n = Number(v);
   return Number.isFinite(n) && n > 0;
+}
+
+function cleanString(v) {
+  return String(v == null ? "" : v).trim();
+}
+
+function cleanProfileValue(v) {
+  if (v === undefined || v === null) return null;
+
+  if (typeof v === "string") {
+    const s = v.trim();
+    return s ? s : null;
+  }
+
+  if (typeof v === "number") {
+    return Number.isFinite(v) ? v : null;
+  }
+
+  if (typeof v === "boolean") {
+    return v;
+  }
+
+  if (Array.isArray(v)) {
+    const arr = v
+      .map((x) => cleanProfileValue(x))
+      .filter((x) => x !== null && x !== undefined && x !== "");
+    return arr.length ? arr : null;
+  }
+
+  if (typeof v === "object") return v;
+
+  return null;
+}
+
+function sanitizeVerifiedProfile(raw) {
+  if (!raw || typeof raw !== "object") return null;
+
+  const fullName = cleanProfileValue(
+    raw.full_name ||
+    raw.fullName ||
+    raw.name ||
+    [raw.first_name || raw.firstName, raw.last_name || raw.lastName].filter(Boolean).join(" ")
+  );
+
+  const mapped = {
+    email: normalizeEmail(raw.email),
+    full_name: fullName,
+    first_name: cleanProfileValue(raw.first_name || raw.firstName),
+    last_name: cleanProfileValue(raw.last_name || raw.lastName),
+    phone: cleanProfileValue(raw.phone),
+    mode: cleanProfileValue(raw.mode || raw.user_type),
+    rank: cleanProfileValue(raw.rank),
+    rank_paygrade: cleanProfileValue(raw.rank_paygrade || raw.rankPaygrade),
+    va_disability: cleanProfileValue(raw.va_disability || raw.vaDisability),
+    yos: cleanProfileValue(raw.yos),
+    family: cleanProfileValue(raw.family),
+    base: cleanProfileValue(raw.base),
+    notes: cleanProfileValue(raw.notes),
+
+    monthly_income: cleanProfileValue(
+      raw.monthly_income ||
+      raw.monthlyIncome ||
+      raw.income ||
+      raw.total_monthly_income ||
+      raw.totalMonthlyIncome ||
+      raw.pay_total
+    ),
+    income: cleanProfileValue(
+      raw.income ||
+      raw.monthly_income ||
+      raw.monthlyIncome ||
+      raw.total_monthly_income ||
+      raw.totalMonthlyIncome ||
+      raw.pay_total
+    ),
+    total_monthly_income: cleanProfileValue(
+      raw.total_monthly_income ||
+      raw.totalMonthlyIncome ||
+      raw.monthly_income ||
+      raw.monthlyIncome ||
+      raw.income ||
+      raw.pay_total
+    ),
+
+    monthly_expenses: cleanProfileValue(
+      raw.monthly_expenses ||
+      raw.monthlyExpenses ||
+      raw.expenses
+    ),
+    expenses: cleanProfileValue(
+      raw.expenses ||
+      raw.monthly_expenses ||
+      raw.monthlyExpenses
+    ),
+
+    monthly_debt: cleanProfileValue(
+      raw.monthly_debt ||
+      raw.monthlyDebt ||
+      raw.debt ||
+      raw.debt_monthly ||
+      raw.debtPayments
+    ),
+    debt: cleanProfileValue(
+      raw.debt ||
+      raw.monthly_debt ||
+      raw.monthlyDebt ||
+      raw.debt_monthly ||
+      raw.debtPayments
+    ),
+
+    projected_home_price: cleanProfileValue(
+      raw.projected_home_price ||
+      raw.projectedHomePrice ||
+      raw.price ||
+      raw.homePrice
+    ),
+    price: cleanProfileValue(
+      raw.price ||
+      raw.homePrice ||
+      raw.projected_home_price ||
+      raw.projectedHomePrice
+    ),
+
+    downpayment: cleanProfileValue(
+      raw.downpayment ||
+      raw.downPayment ||
+      raw.dpAmt
+    ),
+    savings: cleanProfileValue(raw.savings),
+    credit_score: cleanProfileValue(
+      raw.credit_score ||
+      raw.creditScore ||
+      raw.fico
+    ),
+
+    bedrooms: cleanProfileValue(raw.bedrooms || raw.beds),
+    bathrooms: cleanProfileValue(raw.bathrooms || raw.baths),
+    sqft: cleanProfileValue(raw.sqft),
+    property_type: cleanProfileValue(raw.property_type || raw.propertyType),
+    home_condition: cleanProfileValue(raw.home_condition || raw.homeCondition),
+    amenities: cleanProfileValue(raw.amenities)
+  };
+
+  const out = {};
+  Object.keys(mapped).forEach((k) => {
+    if (mapped[k] !== null && mapped[k] !== undefined && mapped[k] !== "") {
+      out[k] = mapped[k];
+    }
+  });
+
+  return Object.keys(out).length ? out : null;
+}
+
+function mergeProfiles(verifiedProfile, fetchedProfile) {
+  const a = sanitizeVerifiedProfile(verifiedProfile) || {};
+  const b = fetchedProfile && typeof fetchedProfile === "object" ? fetchedProfile : {};
+  const merged = { ...b, ...a };
+
+  if (!merged.full_name) {
+    const fullName = [merged.first_name, merged.last_name].filter(Boolean).join(" ").trim();
+    if (fullName) merged.full_name = fullName;
+  }
+
+  return Object.keys(merged).length ? merged : null;
 }
 
 async function postJSON(url, payload, timeoutMs = 12000) {
@@ -1666,7 +1832,8 @@ exports.handler = async (event) => {
   }
 
   const body = safeJsonParse(event.body);
-  const email = normalizeEmail(body.email);
+  const verifiedProfile = sanitizeVerifiedProfile(body?.verifiedProfile || null);
+  const email = normalizeEmail(body.email || verifiedProfile?.email);
   const question = String(body?.question || "").trim();
 
   const API_BASE = pickApiBase(event);
@@ -1675,7 +1842,13 @@ exports.handler = async (event) => {
 
   const [packs, profileResult] = await Promise.all([
     loadCoreKnowledge(),
-    fetchProfileIfPossible({ API_BASE, email })
+    verifiedProfile
+      ? Promise.resolve({
+          ok: true,
+          source: "verified_profile_from_widget",
+          profile: verifiedProfile
+        })
+      : fetchProfileIfPossible({ API_BASE, email })
   ]);
 
   const questionFacts = parseQuestionFacts(question);
@@ -1692,13 +1865,15 @@ exports.handler = async (event) => {
   const marketSlug = sc.marketSlug || marketResolution.slug || null;
   const marketPack = marketSlug ? await loadMarketPackBySlug(marketSlug) : null;
   const marketSummary = buildMarketSummary(marketPack);
-  const profile = profileResult.profile || null;
+  const profile = mergeProfiles(verifiedProfile, profileResult.profile);
 
   const profileIncome = num(
     pickFirst(
       profile?.monthly_income,
       profile?.income,
-      profile?.monthlyIncome
+      profile?.monthlyIncome,
+      profile?.total_monthly_income,
+      profile?.totalMonthlyIncome
     )
   );
 
@@ -1719,9 +1894,29 @@ exports.handler = async (event) => {
     )
   );
 
-  const downpayment = sc.downpayment;
-  const price = sc.price;
-  const creditScore = sc.creditScore;
+  const downpayment = num(
+    pickFirst(
+      sc.downpayment,
+      profile?.downpayment,
+      profile?.savings
+    )
+  );
+
+  const price = num(
+    pickFirst(
+      sc.price,
+      profile?.projected_home_price,
+      profile?.price
+    )
+  );
+
+  const creditScore = num(
+    pickFirst(
+      sc.creditScore,
+      profile?.credit_score
+    )
+  );
+
   const aprUsed = Number.isFinite(sc.apr)
     ? (sc.apr > 1 ? sc.apr / 100 : sc.apr)
     : aprTierFromScore(creditScore, packs.financeRules);
@@ -1868,7 +2063,7 @@ exports.handler = async (event) => {
     hoaMonthly: sc.hoaMonthly,
     pmiMonthly: sc.pmiMonthly,
     marketPack,
-    downpayment: sc.downpayment,
+    downpayment: downpayment,
     downpaymentPct: questionFacts.inferred_downpayment_pct
   });
 
@@ -1949,7 +2144,9 @@ exports.handler = async (event) => {
     ? sc.bedrooms
     : Number.isFinite(questionFacts?.inferred_bedrooms)
       ? questionFacts.inferred_bedrooms
-      : null;
+      : Number.isFinite(num(profile?.bedrooms))
+        ? Math.round(num(profile?.bedrooms))
+        : null;
 
   const bedroomContext = Number.isFinite(requestedBedrooms)
     ? {
@@ -1999,6 +2196,22 @@ exports.handler = async (event) => {
       quick_buying_power: quick?.quick_max_price || null,
       payment_to_price_range: paymentToPrice?.estimated_price_range || null
     },
+    verified_profile_context: profile
+      ? {
+          full_name: pickFirst(profile?.full_name, null),
+          first_name: pickFirst(profile?.first_name, null),
+          last_name: pickFirst(profile?.last_name, null),
+          base: pickFirst(profile?.base, null),
+          rank: pickFirst(profile?.rank_paygrade, profile?.rank, null),
+          projected_home_price: money(num(profile?.projected_home_price || profile?.price)),
+          monthly_expenses: money(num(profile?.monthly_expenses || profile?.expenses)),
+          downpayment: money(num(profile?.downpayment || profile?.savings)),
+          credit_score: Number.isFinite(num(profile?.credit_score)) ? Math.round(num(profile?.credit_score)) : null,
+          bedrooms: Number.isFinite(num(profile?.bedrooms)) ? Math.round(num(profile?.bedrooms)) : null,
+          property_type: pickFirst(profile?.property_type, null),
+          home_condition: pickFirst(profile?.home_condition, null)
+        }
+      : null,
     teaching_points: uniq([
       ...knowledge.finance_points,
       ...knowledge.realty_points
@@ -2016,10 +2229,11 @@ exports.handler = async (event) => {
     topic_tags: questionInfo.topic_tags,
     profile_used: profile
       ? {
-          email,
+          email: email || profile?.email || null,
           first_name: pickFirst(profile?.first_name, profile?.firstName) || null,
           last_name: pickFirst(profile?.last_name, profile?.lastName) || null,
-          full_name: pickFirst(profile?.full_name, profile?.fullName) || null
+          full_name: pickFirst(profile?.full_name, profile?.fullName) || null,
+          source: verifiedProfile ? "verified_profile_from_widget" : profileResult.source
         }
       : null,
     market: {
@@ -2043,15 +2257,15 @@ exports.handler = async (event) => {
       occupancy: sc.occupancy,
       strategy: sc.strategy,
       sources: {
-        profile: profileResult.source,
+        profile: verifiedProfile ? "verified_profile_from_widget" : profileResult.source,
         income: Number.isFinite(sc.income) ? "request/question" : Number.isFinite(profileIncome) ? "profile" : "missing",
-        monthlyExpenses: Number.isFinite(sc.monthlyExpenses) ? "request/question" : "missing",
-        monthlyDebt: Number.isFinite(sc.monthlyDebt) ? "request/question" : "missing",
+        monthlyExpenses: Number.isFinite(sc.monthlyExpenses) ? "request/question" : Number.isFinite(num(profile?.monthly_expenses || profile?.expenses)) ? "profile" : "missing",
+        monthlyDebt: Number.isFinite(sc.monthlyDebt) ? "request/question" : Number.isFinite(num(profile?.monthly_debt || profile?.debt)) ? "profile" : "missing",
         targetMonthlyPayment: Number.isFinite(sc.targetMonthlyPayment) ? "request/question" : "missing",
-        price: Number.isFinite(sc.price) ? "request/question" : "missing",
-        downpayment: Number.isFinite(sc.downpayment) ? "request/question" : "missing",
-        creditScore: Number.isFinite(sc.creditScore) ? "request/question" : "missing",
-        bedrooms: Number.isFinite(requestedBedrooms) ? "request/question" : "missing",
+        price: Number.isFinite(sc.price) ? "request/question" : Number.isFinite(num(profile?.projected_home_price || profile?.price)) ? "profile" : "missing",
+        downpayment: Number.isFinite(sc.downpayment) ? "request/question" : Number.isFinite(num(profile?.downpayment || profile?.savings)) ? "profile" : "missing",
+        creditScore: Number.isFinite(sc.creditScore) ? "request/question" : Number.isFinite(num(profile?.credit_score)) ? "profile" : "missing",
+        bedrooms: Number.isFinite(sc.bedrooms) || Number.isFinite(questionFacts?.inferred_bedrooms) ? "request/question" : Number.isFinite(num(profile?.bedrooms)) ? "profile" : "missing",
         market: marketPack ? "local_json" : "not_found",
         mortgage: mortgageSource
       }
@@ -2083,6 +2297,7 @@ exports.handler = async (event) => {
       dirname: __dirname,
       data_dir: DATA_DIR,
       profile_found: !!profile,
+      profile_source: verifiedProfile ? "verified_profile_from_widget" : profileResult.source,
       question_facts: questionFacts,
       market_resolution: marketResolution,
       market_slug: marketSlug,
