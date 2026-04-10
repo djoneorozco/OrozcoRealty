@@ -1,0 +1,1099 @@
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Apr 10 2026 02:56:12 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="69d83ca266740b298eb424f9" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>NEWPage</title>
+  <meta content="NEWPage" property="og:title">
+  <meta content="NEWPage" property="twitter:title">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="Webflow" name="generator">
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/orozcorealty.webflow.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["PT Serif:400,400italic,700,700italic","Droid Serif:400,400italic,700,700italic","Varela:400","Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Inconsolata:400,700","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Barlow:300,400,500,600,700","Barlow Condensed:300,400,500,600,700","Gilda Display:300,400,500,600,700","Material Icons Outlined:300,400,500,600,700","Material Icons Two Tone:300,400,500,600,700","Material Symbols Outlined:300,400,500,600,700"]  }});</script>
+  <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+  <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="images/webclip.png" rel="apple-touch-icon"><!--  ============================================================
+  OROZCOREALTY • INTRO VIDEO + ASK ELENA
+  v5.3 MERGED
+  - Keeps small Our Story panel
+  - Opens intro video on click
+  - Reveals Ask Elena launcher after video ends
+  - Uses new Ask Elena v5.3 Executive-Muted Gold theme
+===============================================================  -->
+  <!--  ============================================================
+  #1) INTRO VIDEO PANEL
+===============================================================  -->
+  <div id="about-video-wrap" style="
+  position:fixed;
+  bottom:5.5rem;
+  right:1rem;
+  z-index:2147480000;
+  width:340px;
+  height:460px;
+  max-width:90vw;
+  border-radius:16px;
+  overflow:hidden;
+  background:rgba(8,9,13,.94);
+  border:1px solid rgba(201,170,115,.16);
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  opacity:0;
+  transform:translateY(20px) scale(.98);
+  pointer-events:none;
+  transition:
+    opacity .4s cubic-bezier(.16,1,.3,1),
+    transform .4s cubic-bezier(.16,1,.3,1);
+  backdrop-filter:blur(12px) saturate(130%);
+  -webkit-backdrop-filter:blur(12px) saturate(130%);
+">
+    <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:.6rem .8rem;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+  ">
+      <div style="
+      color:#f4efe6;
+      font:700 .8rem/1 Barlow,Inter,system-ui,sans-serif;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    ">Listen to Our Story</div>
+      <button id="about-video-close" aria-label="Close video" style="
+      appearance:none;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      font:.8rem/1 Inter,system-ui,sans-serif;
+      padding:.3rem .55rem;
+      border-radius:.55rem;
+      cursor:pointer;
+    ">✕</button>
+    </div>
+    <video id="about-video" playsinline="" controls="" preload="auto" style="
+      display:block;
+      width:100%;
+      height:calc(100% - 2.2rem);
+      object-fit:cover;
+      background:#000;
+    ">
+      <source src="https://s3.amazonaws.com/webflow-prod-assets/68cecb820ec3dbdca3ef9099/691a6b9d794bab50e32a1b1c_About_2.mp4">
+    </video>
+  </div>
+  <!--  ============================================================
+  #2) OUR STORY CHIP
+===============================================================  -->
+  <div id="voice-trigger" style="
+  position:fixed;
+  bottom:1rem;
+  right:1rem;
+  z-index:2147480000;
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  min-width:220px;
+  background:rgba(12,14,19,.76);
+  border:1px solid rgba(201,170,115,.16);
+  border-radius:1rem;
+  padding:.75rem 1rem;
+  color:#fff;
+  font-family:Barlow,Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  cursor:pointer;
+  box-shadow:0 18px 48px rgba(0,0,0,.6);
+  backdrop-filter:blur(12px) saturate(125%);
+  -webkit-backdrop-filter:blur(12px) saturate(125%);
+  opacity:0;
+  transform:translateY(20px) scale(.98);
+  pointer-events:none;
+  transition:
+    opacity .6s cubic-bezier(.16,1,.3,1),
+    transform .6s cubic-bezier(.16,1,.3,1);
+">
+    <img src="https://cdn.prod.website-files.com/68cecb820ec3dbdca3ef9099/68d22c4cdc731c120013c338_cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window.png" alt="Elena Concierge" style="
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,.24);
+      box-shadow:0 10px 30px rgba(201,170,115,.20);
+    ">
+    <div style="display:flex; flex-direction:column; line-height:1.2;">
+      <div style="font-size:.82rem; font-weight:700; color:#f4efe6;">Our Story</div>
+      <div style="font-size:.7rem; color:rgba(220,207,185,.72);">Elena • A.I. Concierge</div>
+    </div>
+    <div id="voice-status" style="
+    margin-left:auto;
+    font-size:.72rem;
+    font-weight:800;
+    color:#e3c792;
+    border:1px solid rgba(201,170,115,.30);
+    background:rgba(201,170,115,.08);
+    padding:.42rem .62rem;
+    border-radius:.55rem;
+    white-space:nowrap;
+  ">▶ Play</div>
+  </div>
+  <!--  ============================================================
+  #3) ASK ELENA LAUNCHER
+===============================================================  -->
+  <div id="ask-elena-launcher" style="
+  position:fixed;
+  bottom:1rem;
+  right:1rem;
+  z-index:2147480000;
+  padding:1rem 1.2rem;
+  border-radius:1rem;
+  cursor:pointer;
+  background:rgba(15,17,22,.84);
+  backdrop-filter:blur(18px) saturate(130%);
+  -webkit-backdrop-filter:blur(18px) saturate(130%);
+  border:1px solid rgba(201,170,115,.16);
+  color:#fff;
+  font-family:Barlow,Inter,sans-serif;
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(20px);
+  transition:.4s ease;
+  box-shadow:0 24px 52px rgba(0,0,0,.56);
+">
+    <img src="images/ElenaProfile.jpg" alt="Elena" style="width:42px;height:42px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.14);">
+    <div style="display:flex;flex-direction:column;line-height:1.2;">
+      <div style="font-size:.8rem;font-weight:700;color:#f4efe6;">Ask Elena</div>
+      <div style="font-size:.7rem;color:rgba(220,207,185,.72);">Your A.I. Concierge</div>
+    </div>
+  </div>
+  <!--  ============================================================
+  #4) ASK ELENA PANEL
+===============================================================  -->
+  <div id="ask-elena-shell" data-endpoint="https://theorozcorealty.netlify.app/.netlify/functions/ask-elena" style="
+  position:fixed;
+  bottom:1rem;
+  right:1rem;
+  z-index:2147480000;
+  width:min(1180px, calc(100vw - 2rem));
+  max-width:95vw;
+  display:none;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 28px 70px rgba(0,0,0,.60);
+">
+    <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+    #ask-elena-shell,
+    #ask-elena-shell * {
+      box-sizing: border-box;
+      font-family: Barlow, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    #ask-elena-shell{
+      --ae-bg:#06070b;
+      --ae-bg2:#0b0d12;
+      --ae-bg3:#12151b;
+      --ae-card:rgba(15,17,22,.82);
+      --ae-card2:rgba(18,20,26,.90);
+      --ae-card3:rgba(22,24,31,.84);
+      --ae-ink:#f4efe6;
+      --ae-ink-soft:#e8dece;
+      --ae-muted:rgba(220,207,185,.72);
+      --ae-muted2:rgba(220,207,185,.52);
+      --ae-line:rgba(201,170,115,.16);
+      --ae-line2:rgba(201,170,115,.28);
+      --ae-gold:#c9aa73;
+      --ae-gold2:#e3c792;
+      --ae-gold3:#a88752;
+      --ae-bronze:#8d6a3d;
+      --ae-cream:#f7f0e3;
+      --ae-danger:#d78f97;
+      --ae-warn:#d7b06a;
+      --ae-mint:#9fe7d5;
+      --ae-radius:20px;
+      --ae-radius-lg:24px;
+      --ae-shadow:0 22px 55px rgba(0,0,0,.54);
+      --ae-shadow-soft:0 14px 28px rgba(0,0,0,.34);
+      --ae-shadow-deep:0 28px 70px rgba(0,0,0,.60);
+      background:
+        radial-gradient(1200px 720px at 14% 8%, rgba(201,170,115,.10), transparent 52%),
+        radial-gradient(980px 580px at 86% 14%, rgba(227,199,146,.06), transparent 42%),
+        radial-gradient(900px 700px at 52% 100%, rgba(110,89,55,.12), transparent 58%),
+        linear-gradient(180deg, #050608 0%, #090b10 34%, #07080c 100%);
+      color:var(--ae-ink);
+    }
+    #ae-container {
+      width:100%;
+      max-width:1400px;
+      display:grid;
+      grid-template-columns:280px minmax(0, 1fr);
+      gap:24px;
+      position:relative;
+      align-items:stretch;
+      padding:24px;
+    }
+    #ae-close-shell{
+      position:absolute;
+      top:16px;
+      right:16px;
+      z-index:10;
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      border:1px solid rgba(201,170,115,.20);
+      background:rgba(255,255,255,.05);
+      color:var(--ae-cream);
+      cursor:pointer;
+      font-size:16px;
+      box-shadow:var(--ae-shadow-soft);
+    }
+    #ae-left {
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--ae-radius-lg);
+      padding:28px 24px;
+      background:
+        radial-gradient(700px 260px at 18% 10%, rgba(201,170,115,.10), transparent 60%),
+        radial-gradient(520px 200px at 82% 16%, rgba(227,199,146,.05), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      background-color:var(--ae-card);
+      border:1px solid var(--ae-line);
+      box-shadow:var(--ae-shadow);
+      backdrop-filter:blur(14px) saturate(135%);
+      -webkit-backdrop-filter:blur(14px) saturate(135%);
+    }
+    #ae-left::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255,255,255,.04), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0));
+      opacity:.72;
+    }
+    .ae-avatar-wrapper {
+      width:168px;
+      height:168px;
+      margin:0 auto 18px auto;
+      position:relative;
+      border-radius:50%;
+    }
+    .ae-avatar-wrapper::before {
+      content:"";
+      position:absolute;
+      inset:-30px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle, rgba(201,170,115,.32), rgba(141,106,61,.20), transparent 72%);
+      filter:blur(26px);
+      z-index:0;
+    }
+    .ae-avatar {
+      position:relative;
+      z-index:2;
+      width:168px;
+      height:168px;
+      border-radius:50%;
+      background-image:url('https://cdn.prod.website-files.com/691facbe35fbba00c096f2b7/69d8372486a31818a04707cc_899e128589ef79640c238b19e7b24416_ElenaProfile.jpg');
+      background-size:cover;
+      background-position:center;
+      border:2px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 0 0 8px rgba(255,255,255,.025),
+        0 18px 32px rgba(0,0,0,.34);
+    }
+    .ae-name {
+      text-align:center;
+      font-family:"Gilda Display", Georgia, serif;
+      font-size:28px;
+      line-height:1.05;
+      letter-spacing:.02em;
+      margin-top:10px;
+      color:var(--ae-cream);
+    }
+    .ae-sub {
+      text-align:center;
+      font-size:13px;
+      color:var(--ae-muted);
+      margin-top:6px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-weight:800;
+    }
+    .ae-links {
+      margin-top:26px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      position:relative;
+      z-index:1;
+    }
+    .ae-link-btn {
+      display:block;
+      text-decoration:none;
+      padding:11px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--ae-ink);
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--ae-line);
+      transition:.22s ease;
+      box-shadow:var(--ae-shadow-soft);
+    }
+    .ae-link-btn:hover {
+      transform:translateY(-1px);
+      border-color:var(--ae-line2);
+      background:rgba(201,170,115,.08);
+      color:var(--ae-cream);
+    }
+    .ae-badge {
+      margin-top:28px;
+      text-align:center;
+      font-size:11px;
+      line-height:1.45;
+      color:var(--ae-gold2);
+      opacity:.92;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-weight:800;
+      position:relative;
+      z-index:1;
+    }
+    #ae-right {
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--ae-radius-lg);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(201,170,115,.10), transparent 55%),
+        radial-gradient(800px 460px at 92% 12%, rgba(227,199,146,.05), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      background-color:var(--ae-card);
+      border:1px solid var(--ae-line);
+      box-shadow:var(--ae-shadow);
+      display:flex;
+      flex-direction:column;
+      height:760px;
+      min-height:760px;
+      max-height:760px;
+      min-width:0;
+      backdrop-filter:blur(14px) saturate(135%);
+      -webkit-backdrop-filter:blur(14px) saturate(135%);
+    }
+    #ae-right::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0));
+      opacity:.7;
+    }
+    .ae-topbar{
+      position:relative;
+      z-index:1;
+      flex:0 0 auto;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      padding:20px 20px 12px 20px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01));
+    }
+    .ae-topbar-copy h2{
+      margin:0;
+      font-family:"Gilda Display", Georgia, serif;
+      font-size:24px;
+      line-height:1.05;
+      color:var(--ae-cream);
+      letter-spacing:.02em;
+    }
+    .ae-topbar-copy p{
+      margin:6px 0 0 0;
+      font-size:13px;
+      line-height:1.4;
+      font-weight:700;
+      color:var(--ae-muted);
+      max-width:540px;
+    }
+    .ae-topbar-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(201,170,115,.08);
+      border:1px solid var(--ae-line);
+      font-size:11px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:var(--ae-gold2);
+      white-space:nowrap;
+      box-shadow:var(--ae-shadow-soft);
+    }
+    .ae-top-controls {
+      position:relative;
+      z-index:1;
+      flex:0 0 auto;
+      padding:16px 18px 0 18px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    .ae-control-input {
+      width:100%;
+      padding:13px 14px;
+      font-size:13px;
+      font-weight:800;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--ae-line);
+      color:var(--ae-cream) !important;
+      border-radius:14px;
+      outline:none;
+      transition:.16s ease;
+      box-shadow:inset 0 14px 28px rgba(0,0,0,.20);
+      min-width:0;
+    }
+    .ae-control-input:focus,
+    .ae-input:focus {
+      border-color:rgba(201,170,115,.52);
+      box-shadow:
+        inset 0 14px 28px rgba(0,0,0,.20),
+        0 0 0 4px rgba(201,170,115,.10);
+    }
+    .ae-chat {
+      position:relative;
+      z-index:1;
+      flex:1 1 auto;
+      min-height:0;
+      min-width:0;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      scroll-behavior:smooth;
+      overscroll-behavior:contain;
+    }
+    .ae-msg {
+      max-width:82%;
+      padding:13px 15px;
+      border-radius:16px;
+      font-size:14px;
+      line-height:1.55;
+      white-space:pre-wrap;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      color:var(--ae-cream) !important;
+      box-shadow:var(--ae-shadow-soft);
+      border:1px solid rgba(255,255,255,.10);
+      flex:0 0 auto;
+    }
+    .ae-user {
+      align-self:flex-end;
+      background:
+        radial-gradient(220px 110px at 20% 25%, rgba(201,170,115,.14), transparent 65%),
+        rgba(201,170,115,.08);
+      border-color:rgba(201,170,115,.24);
+      color:var(--ae-cream) !important;
+    }
+    .ae-bot {
+      align-self:flex-start;
+      background:
+        radial-gradient(220px 110px at 20% 25%, rgba(227,199,146,.10), transparent 65%),
+        rgba(255,255,255,.04);
+      border-color:rgba(255,255,255,.10);
+      color:var(--ae-cream) !important;
+    }
+    .ae-typing {
+      opacity:.92;
+      font-size:12px !important;
+      color:var(--ae-ink-soft) !important;
+    }
+    .ae-footer {
+      position:relative;
+      z-index:1;
+      flex:0 0 auto;
+      padding:18px;
+      border-top:1px solid rgba(255,255,255,.08);
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:10px;
+      background:rgba(0,0,0,.12);
+    }
+    .ae-input {
+      width:100%;
+      min-width:0;
+      padding:14px;
+      font-size:14px;
+      font-weight:800;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--ae-line);
+      color:var(--ae-cream) !important;
+      border-radius:14px;
+      outline:none;
+      transition:.16s ease;
+      box-shadow:inset 0 14px 28px rgba(0,0,0,.20);
+    }
+    .ae-input::placeholder,
+    .ae-control-input::placeholder {
+      color:rgba(231,214,186,.55);
+    }
+    .ae-btn {
+      padding:14px 20px;
+      background:linear-gradient(180deg, rgba(227,199,146,.98), rgba(169,135,82,.95));
+      color:#1b1308;
+      border-radius:14px;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      cursor:pointer;
+      border:none;
+      transition:.22s ease;
+      box-shadow:0 16px 30px rgba(0,0,0,.36);
+      flex:0 0 auto;
+    }
+    .ae-btn:hover {
+      filter:brightness(1.06);
+      transform:translateY(-1px);
+    }
+    .ae-btn[disabled] {
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+    }
+    .tw-caret {
+      display:inline-block;
+      width:1px;
+      height:1.2em;
+      background:currentColor;
+      margin-left:2px;
+      animation:tw-blink 1s steps(1,end) infinite;
+    }
+    @keyframes tw-blink { 50% { opacity:0; } }
+    @media (max-width: 980px){
+      #ask-elena-shell{
+        width:calc(100vw - 1rem);
+        right:.5rem;
+        bottom:.5rem;
+      }
+      #ae-container{
+        grid-template-columns:1fr;
+        padding:16px;
+      }
+      #ae-right{
+        height:680px;
+        min-height:680px;
+        max-height:680px;
+      }
+      .ae-topbar{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+    }
+  </style>
+    <div id="ae-container">
+      <button id="ae-close-shell" aria-label="Close Ask Elena">✕</button>
+      <div id="ae-left">
+        <div class="ae-avatar-wrapper">
+          <div class="ae-avatar"></div>
+        </div>
+        <div class="ae-name">Elena</div>
+        <div class="ae-sub">A.I. Concierge • OrozcoRealty</div>
+        <div class="ae-links">
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/va-loan-process" target="_blank">VA Loan Process</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/home-buying-steps" target="_blank">Benefits & Risks</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/do-i-need-a-realtor" target="_blank">Do I Need A Realtor</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/new-blog" target="_blank">New Blog</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/new-blog-2" target="_blank">New Blog 2</a>
+        </div>
+        <div class="ae-badge">OrozcoRealty • A.I.-Powered Real Estate Intelligence</div>
+      </div>
+      <div id="ae-right">
+        <div class="ae-topbar">
+          <div class="ae-topbar-copy">
+            <h2>Ask Elena</h2>
+            <p>Realtor &amp; Financial Expert.</p>
+          </div>
+          <div class="ae-topbar-pill">The Orozco Realty</div>
+        </div>
+        <div class="ae-top-controls">
+          <input id="ae-email" class="ae-control-input" type="email" placeholder="Enter your email to load your saved profile">
+        </div>
+        <div class="ae-chat" id="ae-chat"></div>
+        <div class="ae-footer">
+          <input id="ae-input" class="ae-input" type="text" placeholder="Ask Elena anything…">
+          <button id="ae-send" class="ae-btn">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  ============================================================
+  #5) MERGED RUNTIME
+===============================================================  -->
+  <script>
+(() => {
+  const chip = document.getElementById('voice-trigger');
+  const statusEl = document.getElementById('voice-status');
+  const wrap = document.getElementById('about-video-wrap');
+  const video = document.getElementById('about-video');
+  const closeVideoBtn = document.getElementById('about-video-close');
+  const launcher = document.getElementById('ask-elena-launcher');
+  const panel = document.getElementById('ask-elena-shell');
+  const closePanelBtn = document.getElementById('ae-close-shell');
+  if (!chip || !statusEl || !wrap || !video || !closeVideoBtn || !launcher || !panel || !closePanelBtn) return;
+  let revealed = false;
+  let storyFinished = false;
+  function revealChip() {
+    if (!revealed && window.scrollY > 150) {
+      revealed = true;
+      chip.style.opacity = '1';
+      chip.style.transform = 'translateY(0)';
+      chip.style.pointerEvents = 'auto';
+    }
+  }
+  revealChip();
+  window.addEventListener('scroll', revealChip, { passive: true });
+  function showPlayer() {
+    wrap.style.opacity = '1';
+    wrap.style.pointerEvents = 'auto';
+    wrap.style.transform = 'translateY(0) scale(1)';
+  }
+  function hidePlayer() {
+    wrap.style.opacity = '0';
+    wrap.style.pointerEvents = 'none';
+    wrap.style.transform = 'translateY(20px) scale(.98)';
+  }
+  function showLauncher() {
+    launcher.style.opacity = '1';
+    launcher.style.pointerEvents = 'auto';
+    launcher.style.transform = 'translateY(0)';
+  }
+  function hideLauncher() {
+    launcher.style.opacity = '0';
+    launcher.style.pointerEvents = 'none';
+    launcher.style.transform = 'translateY(20px)';
+  }
+  function openPanel() {
+    panel.style.display = 'block';
+    hideLauncher();
+  }
+  function closePanel() {
+    panel.style.display = 'none';
+    if (storyFinished) showLauncher();
+  }
+  chip.addEventListener('click', async () => {
+    if (wrap.style.pointerEvents !== 'auto') showPlayer();
+    if (!video.paused) {
+      video.pause();
+      statusEl.textContent = '▶ Play';
+      statusEl.style.color = '#e3c792';
+    } else {
+      try {
+        await video.play();
+        statusEl.textContent = '● Playing';
+        statusEl.style.color = '#f7f0e3';
+      } catch (e) {}
+    }
+  });
+  closeVideoBtn.addEventListener('click', () => {
+    video.pause();
+    statusEl.textContent = '▶ Play';
+    statusEl.style.color = '#e3c792';
+    hidePlayer();
+  });
+  video.addEventListener('ended', () => {
+    storyFinished = true;
+    hidePlayer();
+    chip.style.opacity = '0';
+    chip.style.pointerEvents = 'none';
+    chip.style.transform = 'translateY(20px) scale(.98)';
+    setTimeout(() => {
+      showLauncher();
+    }, 500);
+  });
+  launcher.addEventListener('click', openPanel);
+  closePanelBtn.addEventListener('click', closePanel);
+  /* ============================================================
+     ASK ELENA v5.3 RUNTIME
+  ============================================================ */
+  const root = document.getElementById("ask-elena-shell");
+  const RAW_ENDPOINT = root.getAttribute("data-endpoint") || "";
+  const chatEl = document.getElementById("ae-chat");
+  const inputEl = document.getElementById("ae-input");
+  const sendBtn = document.getElementById("ae-send");
+  const emailEl = document.getElementById("ae-email");
+  const STORAGE_KEY = "orozco.ask_elena.v5_3";
+  const VERIFIED_EMAIL_KEY = "orozco.ask_elena.verified_email.v1";
+  const VERIFIED_PROFILE_KEY = "orozco.ask_elena.verified_profile.v1";
+  let verifyTimer = null;
+  let verifySeq = 0;
+  let lastVerifiedEmail = "";
+  let verifiedProfile = null;
+  let verifyingEmail = "";
+  function resolveAskEndpoint(raw) {
+    if (location.hostname && /webflow\.io$/i.test(location.hostname)) {
+      return "https://theorozcorealty.netlify.app/.netlify/functions/ask-elena";
+    }
+    if (!raw) return "/.netlify/functions/ask-elena";
+    return raw;
+  }
+  function resolveApiBase() {
+    if (location.hostname && /webflow\.io$/i.test(location.hostname)) {
+      return "https://theorozcorealty.netlify.app/api";
+    }
+    return (location.origin || "") + "/api";
+  }
+  const ENDPOINT = resolveAskEndpoint(RAW_ENDPOINT);
+  const API_BASE = resolveApiBase();
+  const prefersReduced = () =>
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function scrollToBottom() {
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
+  function clean(v) {
+    return String(v == null ? "" : v).trim();
+  }
+  function lowerEmail(v) {
+    return clean(v).toLowerCase();
+  }
+  function safeParse(raw, fallback = null) {
+    try { return JSON.parse(raw || "null") ?? fallback; }
+    catch { return fallback; }
+  }
+  function savePrefs() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        email: emailEl ? emailEl.value : ""
+      }));
+    } catch {}
+  }
+  function loadPrefs() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (emailEl && data.email) emailEl.value = data.email;
+    } catch {}
+  }
+  function saveVerifiedState(email, profile) {
+    try {
+      localStorage.setItem(VERIFIED_EMAIL_KEY, email || "");
+      localStorage.setItem(VERIFIED_PROFILE_KEY, JSON.stringify(profile || null));
+    } catch {}
+  }
+  function loadVerifiedState() {
+    try {
+      const savedEmail = lowerEmail(localStorage.getItem(VERIFIED_EMAIL_KEY) || "");
+      const savedProfile = safeParse(localStorage.getItem(VERIFIED_PROFILE_KEY), null);
+      if (savedEmail && savedProfile && typeof savedProfile === "object") {
+        lastVerifiedEmail = savedEmail;
+        verifiedProfile = savedProfile;
+      }
+    } catch {}
+  }
+  function clearVerifiedState() {
+    lastVerifiedEmail = "";
+    verifiedProfile = null;
+    try {
+      localStorage.removeItem(VERIFIED_EMAIL_KEY);
+      localStorage.removeItem(VERIFIED_PROFILE_KEY);
+    } catch {}
+  }
+  function getDisplayName(profile) {
+    if (!profile || typeof profile !== "object") return "";
+    return clean(
+      profile.full_name ||
+      profile.fullName ||
+      [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
+      profile.name ||
+      ""
+    );
+  }
+  function getFirstName(profile) {
+    if (!profile || typeof profile !== "object") return "";
+    return clean(
+      profile.first_name ||
+      profile.firstName ||
+      getDisplayName(profile).split(" ")[0] ||
+      ""
+    );
+  }
+  function normalizeProfile(profile) {
+    if (!profile || typeof profile !== "object") return null;
+    return {
+      id: profile.id ?? null,
+      email: lowerEmail(profile.email || ""),
+      full_name: clean(
+        profile.full_name ||
+        profile.fullName ||
+        [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
+        profile.name ||
+        ""
+      ),
+      first_name: clean(profile.first_name || profile.firstName || ""),
+      last_name: clean(profile.last_name || profile.lastName || ""),
+      phone: clean(profile.phone || ""),
+      mode: clean(profile.mode || profile.user_type || ""),
+      rank: clean(profile.rank || profile.rank_paygrade || ""),
+      rank_paygrade: clean(profile.rank_paygrade || profile.rank || ""),
+      va_disability: profile.va_disability ?? null,
+      yos: profile.yos ?? null,
+      family: profile.family ?? null,
+      base: clean(profile.base || ""),
+      notes: clean(profile.notes || ""),
+      projected_home_price: profile.projected_home_price ?? profile.projectedHomePrice ?? profile.price ?? null,
+      monthly_expenses: profile.monthly_expenses ?? profile.monthlyExpenses ?? profile.expenses ?? null,
+      downpayment: profile.downpayment ?? profile.downPayment ?? null,
+      savings: profile.savings ?? null,
+      credit_score: profile.credit_score ?? profile.creditScore ?? null,
+      bedrooms: profile.bedrooms ?? null,
+      bathrooms: profile.bathrooms ?? null,
+      sqft: profile.sqft ?? null,
+      property_type: clean(profile.property_type || profile.propertyType || ""),
+      home_condition: clean(profile.home_condition || profile.homeCondition || ""),
+      amenities: Array.isArray(profile.amenities) ? profile.amenities : clean(profile.amenities || "")
+    };
+  }
+  function buildContextSummary(profile) {
+    if (!profile) return "";
+    const parts = [];
+    if (profile.full_name) parts.push("Name: " + profile.full_name);
+    if (profile.base) parts.push("Base: " + profile.base);
+    if (profile.rank_paygrade || profile.rank) parts.push("Rank: " + (profile.rank_paygrade || profile.rank));
+    if (profile.projected_home_price) parts.push("Target Price: $" + Number(profile.projected_home_price).toLocaleString("en-US"));
+    if (profile.monthly_expenses) parts.push("Monthly Expenses: $" + Number(profile.monthly_expenses).toLocaleString("en-US"));
+    if (profile.downpayment) parts.push("Down Payment: $" + Number(profile.downpayment).toLocaleString("en-US"));
+    if (profile.credit_score) parts.push("Credit Score: " + profile.credit_score);
+    if (profile.bedrooms) parts.push("Bedrooms: " + profile.bedrooms);
+    if (profile.home_condition) parts.push("Home Condition: " + profile.home_condition);
+    return parts.join(" | ");
+  }
+  async function pushMsg(role, content, opts = {}) {
+    const { typewriter = false, speed = 18, delay = 120 } = opts;
+    const msg = document.createElement("div");
+    msg.className = "ae-msg " + (role === "user" ? "ae-user" : "ae-bot");
+    const textNode = document.createElement("span");
+    msg.appendChild(textNode);
+    chatEl.appendChild(msg);
+    scrollToBottom();
+    if (!typewriter || prefersReduced() || role === "user") {
+      textNode.textContent = content;
+      scrollToBottom();
+      return;
+    }
+    await typewriterInto(textNode, content, speed, delay);
+    scrollToBottom();
+  }
+  function showTyping() {
+    const t = document.createElement("div");
+    t.className = "ae-msg ae-bot ae-typing";
+    t.id = "ae-typing";
+    t.textContent = "Elena is reviewing your question…";
+    chatEl.appendChild(t);
+    scrollToBottom();
+  }
+  function hideTyping() {
+    const t = document.getElementById("ae-typing");
+    if (t) t.remove();
+  }
+  function typewriterInto(el, text, speed = 18, startDelay = 120) {
+    return new Promise((resolve) => {
+      el.textContent = "";
+      const caret = document.createElement("span");
+      caret.className = "tw-caret";
+      el.appendChild(caret);
+      let i = 0;
+      const tick = () => {
+        if (i < text.length) {
+          caret.insertAdjacentText("beforebegin", text.charAt(i++));
+          scrollToBottom();
+          setTimeout(tick, speed);
+        } else {
+          caret.remove();
+          resolve();
+        }
+      };
+      setTimeout(tick, startDelay);
+    });
+  }
+  async function postJSON(url, body) {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {})
+    });
+    const text = await res.text();
+    let data = {};
+    try { data = text ? JSON.parse(text) : {}; }
+    catch { data = {}; }
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.error || data.message || ("HTTP " + res.status));
+    }
+    return data;
+  }
+  async function verifyEmailAndLoadProfile(email) {
+    const out = await postJSON(API_BASE + "/profile-by-email", { email });
+    const profile = out.profile || out.data || out || null;
+    if (!profile || typeof profile !== "object") {
+      throw new Error("Profile not found.");
+    }
+    const normalized = normalizeProfile(profile);
+    if (!normalized || !normalized.email) {
+      throw new Error("Profile loaded, but email data was missing.");
+    }
+    if (normalized.email !== lowerEmail(email)) {
+      throw new Error("Loaded profile email did not match the entered email.");
+    }
+    return normalized;
+  }
+  async function autoVerifyEmail(showFailureMessage = true) {
+    const email = lowerEmail(emailEl && emailEl.value);
+    if (!email) {
+      clearVerifiedState();
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      clearVerifiedState();
+      return;
+    }
+    if (email === lastVerifiedEmail && verifiedProfile) {
+      return;
+    }
+    const seq = ++verifySeq;
+    verifyingEmail = email;
+    try {
+      const profile = await verifyEmailAndLoadProfile(email);
+      if (seq !== verifySeq) return;
+      lastVerifiedEmail = profile.email;
+      verifiedProfile = profile;
+      saveVerifiedState(profile.email, profile);
+      await pushMsg(
+        "assistant",
+        `Perfect — I verified ${profile.email} and loaded your saved profile${getFirstName(profile) ? `, ${getFirstName(profile)}` : ""}. You can ask me questions that use your saved OrozcoRealty information now.`,
+        { typewriter: true, speed: 16, delay: 90 }
+      );
+    } catch (err) {
+      if (seq !== verifySeq) return;
+      clearVerifiedState();
+      if (showFailureMessage && email === lowerEmail(emailEl && emailEl.value)) {
+        await pushMsg(
+          "assistant",
+          "Verification failed, please try again.",
+          { typewriter: true, speed: 16, delay: 80 }
+        );
+      }
+    } finally {
+      if (seq === verifySeq) verifyingEmail = "";
+    }
+  }
+  function scheduleAutoVerify() {
+    savePrefs();
+    const current = lowerEmail(emailEl && emailEl.value);
+    if (!current || current !== lastVerifiedEmail) {
+      clearVerifiedState();
+    }
+    if (verifyTimer) clearTimeout(verifyTimer);
+    verifyTimer = setTimeout(() => {
+      autoVerifyEmail(true);
+    }, 700);
+  }
+  async function callElena(userText) {
+    sendBtn.disabled = true;
+    showTyping();
+    try {
+      savePrefs();
+      const currentEmail = lowerEmail(emailEl && emailEl.value);
+      const contextSummary = buildContextSummary(verifiedProfile);
+      const payload = {
+        message: userText,
+        email: currentEmail || undefined,
+        marketSlug: undefined,
+        verifiedProfile: verifiedProfile || undefined,
+        profileContext: contextSummary || undefined
+      };
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(() => ({}));
+      hideTyping();
+      if (!res.ok || !data || data.ok !== true) {
+        throw new Error((data && data.error) || "Request failed.");
+      }
+      const reply = String(data.reply || "I’m here. What would you like to explore?");
+      const ui = data.ui || {};
+      const speed = Number(ui.speed || 18);
+      const delay = Number(ui.startDelay || 120);
+      await pushMsg("assistant", reply, { typewriter: true, speed, delay });
+    } catch (err) {
+      hideTyping();
+      await pushMsg(
+        "assistant",
+        "Hmm… I hit a connection snag. Please make sure this widget is calling /.netlify/functions/ask-elena.",
+        { typewriter: true, speed: 16, delay: 80 }
+      );
+    } finally {
+      sendBtn.disabled = false;
+    }
+  }
+  async function trySend() {
+    const text = clean(inputEl.value);
+    if (!text) return;
+    const currentEmail = lowerEmail(emailEl && emailEl.value);
+    if (currentEmail && (!verifiedProfile || currentEmail !== lastVerifiedEmail)) {
+      if (verifyTimer) {
+        clearTimeout(verifyTimer);
+        verifyTimer = null;
+      }
+      await autoVerifyEmail(true);
+    }
+    await pushMsg("user", text);
+    inputEl.value = "";
+    await callElena(text);
+  }
+  if (sendBtn) sendBtn.addEventListener("click", trySend);
+  if (inputEl) {
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        trySend();
+      }
+    });
+  }
+  if (emailEl) {
+    emailEl.addEventListener("input", scheduleAutoVerify);
+    emailEl.addEventListener("change", () => autoVerifyEmail(true));
+    emailEl.addEventListener("blur", () => autoVerifyEmail(true));
+    emailEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        autoVerifyEmail(true);
+      }
+    });
+  }
+  loadPrefs();
+  loadVerifiedState();
+  const greeting =
+    "Hey — I’m Elena, your OrozcoRealty concierge. Ask me about Texas real estate, affordability, monthly payments, buyer or seller strategy, or a market like San Antonio or McAllen.";
+  pushMsg("assistant", greeting, { typewriter: true, speed: 18, delay: 220 });
+})();
+</script>
+</head>
+<body>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=691facbe35fbba00c096f2b7" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="js/webflow.js" type="text/javascript"></script>
+</body>
+</html>

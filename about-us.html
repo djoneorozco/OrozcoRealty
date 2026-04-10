@@ -1,15 +1,14 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Apr 08 2026 14:48:55 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Apr 10 2026 02:56:12 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="691facbf35fbba00c096f3f4" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>High-End Realty - Webflow Ecommerce Website Template</title>
-  <meta content="Explore luxury on High-End Realty&#x27;s sleek site. Customize our responsive real estate Webflow template effortlessly. Connect to our powerful CMS and E-commerce today." name="description">
-  <meta content="High-End Realty - Webflow Ecommerce Website Template" property="og:title">
-  <meta content="Explore luxury on High-End Realty&#x27;s sleek site. Customize our responsive real estate Webflow template effortlessly. Connect to our powerful CMS and E-commerce today." property="og:description">
-  <meta content="https://cdn.prod.website-files.com/6688dd0add61af9d990077eb/66def8f549c69f8ce8ca8210_SEO.jpg" property="og:image">
-  <meta content="High-End Realty - Webflow Ecommerce Website Template" property="twitter:title">
-  <meta content="Explore luxury on High-End Realty&#x27;s sleek site. Customize our responsive real estate Webflow template effortlessly. Connect to our powerful CMS and E-commerce today." property="twitter:description">
-  <meta content="https://cdn.prod.website-files.com/6688dd0add61af9d990077eb/66def8f549c69f8ce8ca8210_SEO.jpg" property="twitter:image">
+  <title>About Us | Orozco Realty - Veteran-Owned Real Estate</title>
+  <meta content="Founded in 1970s Mexico, Orozco Realty is a veteran-owned, AI-powered real estate company empowering the military community with innovative buying solutions." name="description">
+  <meta content="About Us | Orozco Realty - Veteran-Owned Real Estate" property="og:title">
+  <meta content="Founded in 1970s Mexico, Orozco Realty is a veteran-owned, AI-powered real estate company empowering the military community with innovative buying solutions." property="og:description">
+  <meta content="https://cdn.prod.website-files.com/691facbe35fbba00c096f2b7/69d8657f4333d50f08eebcfc_b5a8ea660d8f52d3c657211ccf8ee917_Wallpaper.jpg" property="og:image">
+  <meta content="About Us | Orozco Realty - Veteran-Owned Real Estate" property="twitter:title">
+  <meta content="Founded in 1970s Mexico, Orozco Realty is a veteran-owned, AI-powered real estate company empowering the military community with innovative buying solutions." property="twitter:description">
   <meta property="og:type" content="website">
   <meta content="summary_large_image" name="twitter:card">
   <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -25,249 +24,956 @@
   <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
   <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
   <link href="images/webclip.png" rel="apple-touch-icon"><!--  ============================================================
-  OROZCOREALTY • INTRO VIDEO + ASK-ELENA (Option A)
-  - Fixed: Ask-Elena is scrollable
-  - Added: Close button for Ask-Elena
+  OROZCOREALTY • INTRO VIDEO + ASK ELENA
+  Executive Theme Merge
+  v1.0.0
+  FEATURES
+  - Keeps small "Our Story" chip in bottom-right
+  - Opens video player when user clicks Play
+  - After video ends, reveals Executive Theme Ask Elena launcher
+  - Ask Elena uses new elena-agent endpoint
+  - Includes close button on video
+  - Includes close button on Ask Elena panel
 ===============================================================  -->
   <!--  ============================================================
-  INTRO VIDEO (UNCHANGED EXACT VERSION)
+  #1) INTRO VIDEO PANEL
 ===============================================================  -->
   <div id="about-video-wrap" style="
-  position:fixed; bottom:5.5rem; right:1rem; z-index:2147480000;
-  width:340px; height:460px; max-width:90vw; border-radius:12px; overflow:hidden;
-  background:rgba(0,0,0,.85); border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 24px 80px rgba(0,0,0,.6);
-  opacity:0; transform:translateY(20px) scale(.98); pointer-events:none;
-  transition:opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1);
+  position:fixed;
+  bottom:5.5rem;
+  right:1rem;
+  z-index:2147480000;
+  width:340px;
+  height:460px;
+  max-width:90vw;
+  border-radius:16px;
+  overflow:hidden;
+  background:rgba(5,8,17,.92);
+  border:1px solid rgba(163,190,255,.18);
+  box-shadow:0 24px 80px rgba(0,0,0,.62);
+  opacity:0;
+  transform:translateY(20px) scale(.98);
+  pointer-events:none;
+  transition:
+    opacity .4s cubic-bezier(.16,1,.3,1),
+    transform .4s cubic-bezier(.16,1,.3,1);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
 ">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:.5rem .75rem;">
-      <div style="color:#a8b0d6; font:600 .8rem/1 Inter,system-ui,sans-serif;">Listen to Our Story</div>
+    <div style="
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:.65rem .85rem;
+    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border-bottom:1px solid rgba(255,255,255,.08);
+  ">
+      <div style="
+      color:#eef4ff;
+      font:700 .8rem/1.2 Barlow,Inter,system-ui,sans-serif;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    ">Listen to Our Story</div>
       <button id="about-video-close" aria-label="Close video" style="
-      appearance:none; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06);
-      color:#fff; font:.8rem/1 Inter,system-ui,sans-serif; padding:.25rem .5rem; border-radius:.5rem; cursor:pointer;
+      appearance:none;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      font:.8rem/1 Barlow,Inter,system-ui,sans-serif;
+      padding:.35rem .55rem;
+      border-radius:.6rem;
+      cursor:pointer;
     ">✕</button>
     </div>
-    <video id="about-video" playsinline="" controls="" preload="auto" style="display:block; width:100%; height:calc(100% - 2rem); object-fit:cover; background:#000;">
+    <video id="about-video" playsinline="" controls="" preload="auto" style="
+      display:block;
+      width:100%;
+      height:calc(100% - 2.4rem);
+      object-fit:cover;
+      background:#000;
+    ">
       <source src="https://s3.amazonaws.com/webflow-prod-assets/68cecb820ec3dbdca3ef9099/691a6b9d794bab50e32a1b1c_About_2.mp4">
     </video>
   </div>
-  <!--  Concierge Trigger (Chip)  -->
+  <!--  ============================================================
+  #2) OUR STORY CHIP
+===============================================================  -->
   <div id="voice-trigger" style="
-  position:fixed; bottom:1rem; right:1rem; z-index:2147480000;
-  display:flex; align-items:center; gap:.75rem; min-width:220px;
-  background:rgba(11,14,26,0.6); border:1px solid rgba(255,255,255,.12); border-radius:1rem;
-  padding:.75rem 1rem; color:#fff; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  cursor:pointer; box-shadow:0 18px 48px rgba(0,0,0,.6); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-  opacity:0; transform:translateY(20px) scale(.98); pointer-events:none;
-  transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+  position:fixed;
+  bottom:1rem;
+  right:1rem;
+  z-index:2147480000;
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  min-width:220px;
+  background:rgba(8,13,24,.76);
+  border:1px solid rgba(163,190,255,.16);
+  border-radius:1rem;
+  padding:.75rem 1rem;
+  color:#fff;
+  font-family:Barlow,Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  cursor:pointer;
+  box-shadow:0 18px 48px rgba(0,0,0,.6);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  opacity:0;
+  transform:translateY(20px) scale(.98);
+  pointer-events:none;
+  transition:
+    opacity .6s cubic-bezier(.16,1,.3,1),
+    transform .6s cubic-bezier(.16,1,.3,1);
 ">
-    <img src="https://cdn.prod.website-files.com/68cecb820ec3dbdca3ef9099/68d22c4cdc731c120013c338_cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window.png" alt="Elena Concierge" style="width:60px; height:60px; border-radius:50%; object-fit:cover;
-       border:1px solid rgba(255,255,255,.3); box-shadow:0 10px 30px rgba(142,243,197,.4);">
+    <img src="https://cdn.prod.website-files.com/68cecb820ec3dbdca3ef9099/68d22c4cdc731c120013c338_cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window.png" alt="Elena Concierge" style="
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,.24);
+      box-shadow:0 10px 30px rgba(119,170,255,.25);
+    ">
     <div style="display:flex; flex-direction:column; line-height:1.2;">
-      <div style="font-size:.8rem; font-weight:600;">Our Story</div>
-      <div style="font-size:.7rem; color:#a8b0d6;">Elena • A.I. Concierge</div>
+      <div style="font-size:.82rem; font-weight:700; color:#eef4ff;">Our Story</div>
+      <div style="font-size:.7rem; color:rgba(220,230,255,.72); letter-spacing:.06em; text-transform:uppercase;">Elena • A.I. Concierge</div>
     </div>
     <div id="voice-status" style="
-    margin-left:auto; font-size:.7rem; font-weight:600; color:#8ef3c5;
-    border:1px solid rgba(142,243,197,.4); background:rgba(142,243,197,.08);
-    padding:.4rem .6rem; border-radius:.5rem; white-space:nowrap;">▶ Play</div>
+    margin-left:auto;
+    font-size:.72rem;
+    font-weight:800;
+    color:#8ee7d2;
+    border:1px solid rgba(142,231,210,.32);
+    background:rgba(142,231,210,.08);
+    padding:.42rem .62rem;
+    border-radius:.6rem;
+    white-space:nowrap;
+    letter-spacing:.04em;
+  ">▶ Play</div>
   </div>
+  <!--  ============================================================
+  #3) ASK ELENA LAUNCHER
+===============================================================  -->
+  <div id="ask-elena-launcher" style="
+  position:fixed;
+  bottom:1rem;
+  right:1rem;
+  z-index:2147480000;
+  padding:1rem 1.15rem;
+  border-radius:1rem;
+  cursor:pointer;
+  background:rgba(8,13,24,.82);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border:1px solid rgba(163,190,255,.16);
+  color:#fff;
+  font-family:Barlow,Inter,sans-serif;
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(20px);
+  transition:
+    opacity .4s ease,
+    transform .4s ease;
+  box-shadow:0 20px 50px rgba(0,0,0,.58);
+">
+    <img src="https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png" alt="Elena" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,.16);">
+    <div style="display:flex; flex-direction:column; line-height:1.15;">
+      <div style="font-size:.82rem; font-weight:700; color:#eef4ff;">Ask Elena</div>
+      <div style="font-size:.7rem; color:rgba(220,230,255,.72); letter-spacing:.06em; text-transform:uppercase;">Executive Concierge</div>
+    </div>
+  </div>
+  <!--  ============================================================
+  #4) EXECUTIVE THEME ASK ELENA PANEL
+===============================================================  -->
+  <div id="ask-elena-shell" data-endpoint="https://theorozcorealty.netlify.app/.netlify/functions/elena-agent" style="
+  position:fixed;
+  bottom:1rem;
+  right:1rem;
+  z-index:2147480000;
+  width:min(1180px, calc(100vw - 2rem));
+  height:min(760px, calc(100vh - 2rem));
+  display:none;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 28px 70px rgba(0,0,0,.58);
+">
+    <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+    #ask-elena-shell,
+    #ask-elena-shell * {
+      box-sizing:border-box;
+      font-family:Barlow, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    #ask-elena-shell{
+      --ae-bg:#050811;
+      --ae-bg2:#08101b;
+      --ae-bg3:#0b1526;
+      --ae-card:rgba(10,16,30,.84);
+      --ae-card2:rgba(8,13,24,.90);
+      --ae-card3:rgba(12,18,34,.82);
+      --ae-ink:#eef4ff;
+      --ae-muted:rgba(220,230,255,.72);
+      --ae-muted2:rgba(220,230,255,.54);
+      --ae-line:rgba(163,190,255,.14);
+      --ae-line2:rgba(163,190,255,.24);
+      --ae-blue:#77aaff;
+      --ae-blue2:#a9c8ff;
+      --ae-mint:#8ee7d2;
+      --ae-mint2:#baf6ea;
+      --ae-gold:#f4d28a;
+      --ae-gold2:#d8b46c;
+      --ae-danger:#ff8aa6;
+      --ae-warn:#f6d06d;
+      --ae-radius:20px;
+      --ae-radius-lg:24px;
+      --ae-shadow:0 22px 55px rgba(0,0,0,.52);
+      --ae-shadow-soft:0 14px 28px rgba(0,0,0,.32);
+      --ae-shadow-deep:0 28px 70px rgba(0,0,0,.58);
+      background:
+        radial-gradient(1200px 720px at 14% 8%, rgba(119,170,255,.16), transparent 52%),
+        radial-gradient(980px 580px at 86% 14%, rgba(142,231,210,.08), transparent 42%),
+        radial-gradient(900px 700px at 52% 100%, rgba(45,84,162,.16), transparent 58%),
+        linear-gradient(180deg, #050811 0%, #08101b 34%, #070c16 100%);
+      color:var(--ae-ink);
+    }
+    #ae-container {
+      width:100%;
+      height:100%;
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:24px;
+      padding:24px;
+      position:relative;
+    }
+    #ae-left {
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--ae-radius-lg);
+      padding:28px 24px;
+      background:
+        radial-gradient(700px 260px at 18% 10%, rgba(119,170,255,.12), transparent 60%),
+        radial-gradient(520px 200px at 82% 16%, rgba(142,231,210,.06), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      background-color:var(--ae-card);
+      border:1px solid var(--ae-line);
+      box-shadow:var(--ae-shadow);
+      backdrop-filter:blur(14px) saturate(145%);
+      -webkit-backdrop-filter:blur(14px) saturate(145%);
+    }
+    #ae-left::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(255,255,255,.05), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+      opacity:.72;
+    }
+    .ae-close-shell{
+      position:absolute;
+      top:14px;
+      right:14px;
+      z-index:5;
+      appearance:none;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:#fff;
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:14px;
+      line-height:1;
+      box-shadow:var(--ae-shadow-soft);
+    }
+    .ae-avatar-wrapper {
+      width:168px;
+      height:168px;
+      margin:0 auto 18px auto;
+      position:relative;
+      border-radius:50%;
+    }
+    .ae-avatar-wrapper::before {
+      content:"";
+      position:absolute;
+      inset:-30px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle, rgba(142,231,210,.34), rgba(119,170,255,.28), transparent 72%);
+      filter:blur(26px);
+      z-index:0;
+    }
+    .ae-avatar {
+      position:relative;
+      z-index:2;
+      width:168px;
+      height:168px;
+      border-radius:50%;
+      background-image:url("https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png");
+      background-size:cover;
+      background-position:center;
+      border:2px solid rgba(255,255,255,.16);
+      box-shadow:
+        0 0 0 8px rgba(255,255,255,.03),
+        0 18px 32px rgba(0,0,0,.32);
+    }
+    .ae-name {
+      text-align:center;
+      font-family:"Gilda Display", Georgia, serif;
+      font-size:28px;
+      line-height:1.05;
+      letter-spacing:.02em;
+      margin-top:10px;
+      color:#f8fbff;
+    }
+    .ae-sub {
+      text-align:center;
+      font-size:13px;
+      color:var(--ae-muted);
+      margin-top:6px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-weight:800;
+    }
+    .ae-links {
+      margin-top:26px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      position:relative;
+      z-index:1;
+    }
+    .ae-link-btn {
+      display:block;
+      text-decoration:none;
+      padding:11px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--ae-ink);
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--ae-line);
+      transition:.22s ease;
+      box-shadow:var(--ae-shadow-soft);
+    }
+    .ae-link-btn:hover {
+      transform:translateY(-1px);
+      border-color:var(--ae-line2);
+      background:rgba(255,255,255,.08);
+      color:#ffffff;
+    }
+    .ae-badge {
+      margin-top:28px;
+      text-align:center;
+      font-size:11px;
+      line-height:1.45;
+      color:var(--ae-gold);
+      opacity:.92;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-weight:800;
+      position:relative;
+      z-index:1;
+    }
+    #ae-right {
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--ae-radius-lg);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(119,170,255,.12), transparent 55%),
+        radial-gradient(800px 460px at 92% 12%, rgba(186,246,234,.06), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+      background-color:var(--ae-card);
+      border:1px solid var(--ae-line);
+      box-shadow:var(--ae-shadow);
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      backdrop-filter:blur(14px) saturate(145%);
+      -webkit-backdrop-filter:blur(14px) saturate(145%);
+    }
+    #ae-right::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+      opacity:.7;
+    }
+    .ae-topbar{
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      padding:20px 20px 12px 20px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+    }
+    .ae-topbar-copy h2{
+      margin:0;
+      font-family:"Gilda Display", Georgia, serif;
+      font-size:24px;
+      line-height:1.05;
+      color:#f8fbff;
+      letter-spacing:.02em;
+    }
+    .ae-topbar-copy p{
+      margin:6px 0 0 0;
+      font-size:13px;
+      line-height:1.4;
+      font-weight:700;
+      color:var(--ae-muted);
+      max-width:540px;
+    }
+    .ae-topbar-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--ae-line);
+      font-size:11px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:var(--ae-gold);
+      white-space:nowrap;
+      box-shadow:var(--ae-shadow-soft);
+    }
+    .ae-top-controls {
+      position:relative;
+      z-index:1;
+      padding:16px 18px 0 18px;
+      display:grid;
+      grid-template-columns:220px 1fr;
+      gap:10px;
+    }
+    .ae-control,
+    .ae-control-input {
+      width:100%;
+      padding:13px 14px;
+      font-size:13px;
+      font-weight:800;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--ae-line);
+      color:#ffffff !important;
+      border-radius:14px;
+      outline:none;
+      transition:.16s ease;
+      box-shadow:inset 0 14px 28px rgba(0,0,0,.20);
+    }
+    .ae-control:focus,
+    .ae-control-input:focus,
+    .ae-input:focus {
+      border-color:rgba(119,170,255,.55);
+      box-shadow:
+        inset 0 14px 28px rgba(0,0,0,.20),
+        0 0 0 4px rgba(119,170,255,.10);
+    }
+    .ae-control option {
+      color:#111;
+    }
+    .ae-chat {
+      position:relative;
+      z-index:1;
+      flex:1;
+      min-height:0;
+      overflow-y:auto;
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      scroll-behavior:smooth;
+    }
+    .ae-msg {
+      max-width:82%;
+      padding:13px 15px;
+      border-radius:16px;
+      font-size:14px;
+      line-height:1.55;
+      white-space:pre-wrap;
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      color:#ffffff !important;
+      box-shadow:var(--ae-shadow-soft);
+      border:1px solid rgba(255,255,255,.10);
+      word-break:break-word;
+    }
+    .ae-user {
+      align-self:flex-end;
+      background:
+        radial-gradient(220px 110px at 20% 25%, rgba(142,231,210,.16), transparent 65%),
+        rgba(142,231,210,.08);
+      border-color:rgba(142,231,210,.24);
+      color:#ffffff !important;
+    }
+    .ae-bot {
+      align-self:flex-start;
+      background:
+        radial-gradient(220px 110px at 20% 25%, rgba(119,170,255,.16), transparent 65%),
+        rgba(255,255,255,.05);
+      border-color:rgba(255,255,255,.12);
+      color:#ffffff !important;
+    }
+    .ae-typing {
+      opacity:.92;
+      font-size:12px !important;
+      color:#ffffff !important;
+    }
+    .ae-footer {
+      position:relative;
+      z-index:1;
+      padding:18px;
+      border-top:1px solid rgba(255,255,255,.08);
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      background:rgba(0,0,0,.12);
+    }
+    .ae-input {
+      width:100%;
+      padding:14px;
+      font-size:14px;
+      font-weight:800;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--ae-line);
+      color:#ffffff !important;
+      border-radius:14px;
+      outline:none;
+      transition:.16s ease;
+      box-shadow:inset 0 14px 28px rgba(0,0,0,.20);
+    }
+    .ae-input::placeholder,
+    .ae-control-input::placeholder {
+      color:rgba(255,255,255,.55);
+    }
+    .ae-btn {
+      padding:14px 20px;
+      background:linear-gradient(180deg, rgba(186,246,234,.98), rgba(119,170,255,.95));
+      color:#06112b;
+      border-radius:14px;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      cursor:pointer;
+      border:none;
+      transition:.22s ease;
+      box-shadow:0 16px 30px rgba(0,0,0,.36);
+    }
+    .ae-btn:hover {
+      filter:brightness(1.08);
+      transform:translateY(-1px);
+    }
+    .ae-btn[disabled] {
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+    }
+    .tw-caret {
+      display:inline-block;
+      width:1px;
+      height:1.2em;
+      background:currentColor;
+      margin-left:2px;
+      animation:tw-blink 1s steps(1,end) infinite;
+    }
+    @keyframes tw-blink { 50% { opacity:0; } }
+    @media (max-width: 980px){
+      #ask-elena-shell{
+        width:calc(100vw - 1rem);
+        height:calc(100vh - 1rem);
+        bottom:.5rem;
+        right:.5rem;
+      }
+      #ae-container{
+        grid-template-columns:1fr;
+        gap:16px;
+        padding:16px;
+      }
+      .ae-top-controls{
+        grid-template-columns:1fr;
+      }
+      .ae-topbar{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      #ae-left{
+        padding-top:52px;
+      }
+    }
+  </style>
+    <div id="ae-container">
+      <div id="ae-left">
+        <button id="ae-shell-close" class="ae-close-shell" aria-label="Close Ask Elena">✕</button>
+        <div class="ae-avatar-wrapper">
+          <div class="ae-avatar"></div>
+        </div>
+        <div class="ae-name">Elena</div>
+        <div class="ae-sub">A.I. Concierge • OrozcoRealty</div>
+        <div class="ae-links">
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/va-loan-process" target="_blank" rel="noopener">VA Loan Process</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/home-buying-steps" target="_blank" rel="noopener">Benefits & Risks</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/do-i-need-a-realtor" target="_blank" rel="noopener">Do I Need A Realtor</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/new-blog" target="_blank" rel="noopener">New Blog</a>
+          <a class="ae-link-btn" href="https://new-real-estate-purchase.webflow.io/blog-page/new-blog-2" target="_blank" rel="noopener">New Blog 2</a>
+        </div>
+        <div class="ae-badge">OrozcoRealty • A.I.-Powered Real Estate Intelligence</div>
+      </div>
+      <div id="ae-right">
+        <div class="ae-topbar">
+          <div class="ae-topbar-copy">
+            <h2>Ask Elena</h2>
+            <p>Executive-grade real estate guidance for OrozcoRealty clients. Ask about affordability, market pressure, buying strategy, or a specific Texas city.</p>
+          </div>
+          <div class="ae-topbar-pill">Command Center Live</div>
+        </div>
+        <div class="ae-top-controls">
+          <select id="ae-market" class="ae-control" aria-label="Market">
+            <option value="">Auto-detect market</option>
+            <option value="san-antonio">San Antonio</option>
+            <option value="mcallen">McAllen</option>
+            <option value="austin">Austin</option>
+            <option value="dallas">Dallas</option>
+            <option value="houston">Houston</option>
+            <option value="fort-worth">Fort Worth</option>
+            <option value="laredo">Laredo</option>
+            <option value="el-paso">El Paso</option>
+            <option value="new-braunfels">New Braunfels</option>
+            <option value="corpus-christi">Corpus Christi</option>
+          </select>
+          <input id="ae-email" class="ae-control-input" type="email" placeholder="Email (optional)">
+        </div>
+        <div class="ae-chat" id="ae-chat"></div>
+        <div class="ae-footer">
+          <input id="ae-input" class="ae-input" type="text" placeholder="Ask Elena anything…">
+          <button id="ae-send" class="ae-btn">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  ============================================================
+  #5) FULL JS
+===============================================================  -->
   <script>
-(function () {
-  const chip = document.getElementById('voice-trigger');
-  const statusEl = document.getElementById('voice-status');
-  const wrap = document.getElementById('about-video-wrap');
-  const video = document.getElementById('about-video');
-  const closeBtn = document.getElementById('about-video-close');
-  if (!chip || !statusEl || !wrap || !video || !closeBtn) return;
+(() => {
+  const chip = document.getElementById("voice-trigger");
+  const statusEl = document.getElementById("voice-status");
+  const wrap = document.getElementById("about-video-wrap");
+  const video = document.getElementById("about-video");
+  const closeVideoBtn = document.getElementById("about-video-close");
+  const launcher = document.getElementById("ask-elena-launcher");
+  const panel = document.getElementById("ask-elena-shell");
+  const panelCloseBtn = document.getElementById("ae-shell-close");
+  if (!chip || !statusEl || !wrap || !video || !closeVideoBtn || !launcher || !panel || !panelCloseBtn) return;
   let revealed = false;
+  let storyFinished = false;
   function revealChip() {
     if (!revealed && window.scrollY > 150) {
       revealed = true;
-      chip.style.opacity = '1';
-      chip.style.transform = 'translateY(0)';
-      chip.style.pointerEvents = 'auto';
+      chip.style.opacity = "1";
+      chip.style.transform = "translateY(0)";
+      chip.style.pointerEvents = "auto";
     }
   }
   revealChip();
-  window.addEventListener('scroll', revealChip, { passive: true });
+  window.addEventListener("scroll", revealChip, { passive:true });
   function showPlayer() {
-    wrap.style.opacity = '1';
-    wrap.style.pointerEvents = 'auto';
-    wrap.style.transform = 'translateY(0)';
+    wrap.style.opacity = "1";
+    wrap.style.pointerEvents = "auto";
+    wrap.style.transform = "translateY(0) scale(1)";
   }
   function hidePlayer() {
-    wrap.style.opacity = '0';
-    wrap.style.pointerEvents = 'none';
-    wrap.style.transform = 'translateY(20px)';
+    wrap.style.opacity = "0";
+    wrap.style.pointerEvents = "none";
+    wrap.style.transform = "translateY(20px) scale(.98)";
   }
-  chip.addEventListener('click', () => {
-    if (wrap.style.pointerEvents !== 'auto') showPlayer();
+  function showLauncher() {
+    launcher.style.opacity = "1";
+    launcher.style.pointerEvents = "auto";
+    launcher.style.transform = "translateY(0)";
+  }
+  function hideLauncher() {
+    launcher.style.opacity = "0";
+    launcher.style.pointerEvents = "none";
+    launcher.style.transform = "translateY(20px)";
+  }
+  function showPanel() {
+    panel.style.display = "block";
+    hideLauncher();
+  }
+  function hidePanel() {
+    panel.style.display = "none";
+    if (storyFinished) showLauncher();
+  }
+  chip.addEventListener("click", async () => {
+    if (wrap.style.pointerEvents !== "auto") showPlayer();
     if (!video.paused) {
       video.pause();
-      statusEl.textContent = '▶ Play';
-      statusEl.style.color = '#8ef3c5';
+      statusEl.textContent = "▶ Play";
+      statusEl.style.color = "#8ee7d2";
     } else {
-      video.play().then(() => {
-        statusEl.textContent = '● Playing';
-        statusEl.style.color = '#fff';
-      });
+      try {
+        await video.play();
+        statusEl.textContent = "● Playing";
+        statusEl.style.color = "#ffffff";
+      } catch (e) {}
     }
   });
-  closeBtn.addEventListener('click', hidePlayer);
-  video.addEventListener('ended', () => {
+  closeVideoBtn.addEventListener("click", () => {
+    video.pause();
+    statusEl.textContent = "▶ Play";
+    statusEl.style.color = "#8ee7d2";
     hidePlayer();
-    chip.style.opacity = '0';
-    chip.style.pointerEvents = 'none';
-    setTimeout(() => {
-      chip.remove();
-      wrap.remove();
-      const launcher = document.getElementById('ask-elena-launcher');
-      launcher.style.opacity = '1';
-      launcher.style.pointerEvents = 'auto';
-      launcher.style.transform = 'translateY(0)';
-    }, 600);
   });
-})();
-</script>
-  <!--  ============================================================
-   ASK-ELENA LAUNCHER BUTTON
-===============================================================  -->
-  <div id="ask-elena-launcher" style="
-  position:fixed; bottom:1rem; right:1rem; z-index:2147480000;
-  padding:1rem 1.2rem; border-radius:1rem; cursor:pointer;
-  background:rgba(14,18,30,0.7); backdrop-filter:blur(22px);
-  border:1px solid rgba(255,255,255,.12);
-  color:#fff; font-family:Inter,sans-serif; display:flex;
-  align-items:center; gap:.75rem;
-  opacity:0; pointer-events:none;
-  transform:translateY(20px); transition:.4s ease;
-">
-    <img src="https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png" style="width:42px;height:42px;border-radius:50%;object-fit:cover;">
-    <div style="display:flex;flex-direction:column;line-height:1.2;">
-      <div style="font-size:.8rem;font-weight:600;">Ask Elena</div>
-      <div style="font-size:.7rem;color:#a8b0d6;">Your A.I. Concierge</div>
-    </div>
-  </div>
-  <!--  ============================================================
-   ASK-ELENA COMMAND CENTER (WITH SCROLL + CLOSE)
-===============================================================  -->
-  <div id="ask-elena-shell" data-endpoint="https://theorozcorealty.netlify.app/.netlify/functions/ask-elena" style="
-  position:fixed; bottom:1rem; right:1rem; z-index:2147480000;
-  width:420px; height:620px; max-width:95vw;
-  background:linear-gradient(180deg,#101426,#0f1324);
-  border-radius:16px; box-shadow:0 24px 48px rgba(0,0,0,.8);
-  border:1px solid rgba(255,255,255,.08);
-  display:none; overflow:hidden;
-">
-    <style>
-  #ask-elena-shell, #ask-elena-shell * { 
-    box-sizing:border-box; 
-    font-family:Inter,sans-serif; 
+  video.addEventListener("ended", () => {
+    storyFinished = true;
+    hidePlayer();
+    chip.style.opacity = "0";
+    chip.style.pointerEvents = "none";
+    chip.style.transform = "translateY(20px) scale(.98)";
+    setTimeout(() => {
+      showLauncher();
+    }, 450);
+  });
+  launcher.addEventListener("click", showPanel);
+  panelCloseBtn.addEventListener("click", hidePanel);
+  /* ============================================================
+    ASK ELENA RUNTIME
+  ============================================================ */
+  const root = panel;
+  const RAW_ENDPOINT = root.getAttribute("data-endpoint") || "";
+  const chatEl = document.getElementById("ae-chat");
+  const inputEl = document.getElementById("ae-input");
+  const sendBtn = document.getElementById("ae-send");
+  const marketEl = document.getElementById("ae-market");
+  const emailEl = document.getElementById("ae-email");
+  if (!chatEl || !inputEl || !sendBtn || !marketEl || !emailEl) return;
+  const STORAGE_KEY = "orozco.ask_elena.v3";
+  function resolveEndpoint(raw) {
+    if (location.hostname && /webflow\.io$/i.test(location.hostname)) {
+      return "https://theorozcorealty.netlify.app/.netlify/functions/elena-agent";
+    }
+    if (!raw) return "/.netlify/functions/elena-agent";
+    return raw;
   }
-  /* SCROLL FIX — entire interior scrolls as needed */
-  #ae-wrapper-scroll {
-    width:100%; 
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    overflow-y:auto; /* <-- entire widget scrolls */
+  const ENDPOINT = resolveEndpoint(RAW_ENDPOINT);
+  const prefersReduced = () =>
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function scrollToBottom() {
+    chatEl.scrollTop = chatEl.scrollHeight;
   }
-  #ae-header {
-    padding:16px;
-    background:#0f1324;
-    display:flex;align-items:center;justify-content:space-between;
-    border-bottom:1px solid rgba(255,255,255,.08);
+  function fmtMoney(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+      }).format(n);
+    } catch {
+      return "$" + Math.round(n);
+    }
   }
-  #ae-header img { width:40px;height:40px;border-radius:50%; }
-  #ae-chat { 
-    flex:1; padding:18px; display:flex; flex-direction:column; 
-    gap:12px; overflow-y:auto; /* <-- chat scrolls naturally */
+  function fmtPct(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    return (n * 100).toFixed(1) + "%";
   }
-  .ae-msg {
-    max-width:80%; padding:12px; border-radius:14px;
-    white-space:pre-wrap; color:#fff; backdrop-filter:blur(6px);
+  function savePrefs() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        market: marketEl ? marketEl.value : "",
+        email: emailEl ? emailEl.value : ""
+      }));
+    } catch {}
   }
-  .ae-user { background:rgba(142,243,197,.08);border:1px solid rgba(142,243,197,.3);align-self:flex-end; }
-  .ae-bot { background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12); }
-  .ae-footer {
-    padding:14px; display:flex; gap:10px;
-    border-top:1px solid rgba(255,255,255,.08);
-    background:rgba(0,0,0,.25);
+  function loadPrefs() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (marketEl && data.market) marketEl.value = data.market;
+      if (emailEl && data.email) emailEl.value = data.email;
+    } catch {}
   }
-  #ae-input {
-    flex:1;padding:12px;background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.12); color:#fff;
-    border-radius:10px;
+  async function pushMsg(role, content, opts = {}) {
+    const { typewriter = false, speed = 18, delay = 120 } = opts;
+    const msg = document.createElement("div");
+    msg.className = "ae-msg " + (role === "user" ? "ae-user" : "ae-bot");
+    const textNode = document.createElement("span");
+    msg.appendChild(textNode);
+    chatEl.appendChild(msg);
+    scrollToBottom();
+    if (!typewriter || prefersReduced() || role === "user") {
+      textNode.textContent = content;
+      scrollToBottom();
+      return;
+    }
+    await typewriterInto(textNode, content, speed, delay);
+    scrollToBottom();
   }
-  #ae-send {
-    padding:12px 18px; border-radius:10px;
-    background:linear-gradient(90deg,#8ef3c5,#6aa7ff);
-    border:none; font-weight:700; cursor:pointer;
+  function showTyping() {
+    const t = document.createElement("div");
+    t.className = "ae-msg ae-bot ae-typing";
+    t.id = "ae-typing";
+    t.textContent = "Elena is reviewing your question…";
+    chatEl.appendChild(t);
+    scrollToBottom();
   }
-</style>
-    <div id="ae-wrapper-scroll">
-      <!--  HEADER with CLOSE BUTTON  -->
-      <div id="ae-header">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <img src="https://cdn.prod.website-files.com/68ab0c767e65bfdde9efba3b/68b6f1c7c6e9aa25891ff487_ElenaSultry%20E4EDF8CF.png">
-          <div>
-            <div style="font-weight:700;font-size:15px;">Elena</div>
-            <div style="font-size:12px;color:#a8b0d6;">Your Concierge</div>
-          </div>
-        </div>
-        <!--  CLOSE BUTTON  -->
-        <button id="ae-close" style="
-      background:none;border:1px solid rgba(255,255,255,.2);
-      color:white;font-size:14px;border-radius:6px;
-      padding:4px 8px;cursor:pointer;
-    ">✕</button>
-      </div>
-      <!--  CHAT  -->
-      <div id="ae-chat"></div>
-      <!--  FOOTER  -->
-      <div class="ae-footer">
-        <input id="ae-input" type="text" placeholder="Ask Elena…">
-        <button id="ae-send">Send</button>
-      </div>
-    </div>
-    <!--  JS — CHAT + CLOSE BUTTON  -->
-    <script>
-(function(){
-  const launcher = document.getElementById("ask-elena-launcher");
-  const panel = document.getElementById("ask-elena-shell");
-  const closeBtn = document.getElementById("ae-close");
-  launcher.onclick = () => { panel.style.display="block"; };
-  closeBtn.onclick = () => { panel.style.display="none"; };
-  const ENDPOINT = panel.getAttribute("data-endpoint");
-  const chat = document.getElementById("ae-chat");
-  const input = document.getElementById("ae-input");
-  const send = document.getElementById("ae-send");
-  function scroll(){ chat.scrollTop = chat.scrollHeight; }
-  function msg(role,text){
-    const el=document.createElement("div");
-    el.className="ae-msg "+(role==="user"?"ae-user":"ae-bot");
-    el.textContent=text;
-    chat.appendChild(el);
-    scroll();
+  function hideTyping() {
+    const t = document.getElementById("ae-typing");
+    if (t) t.remove();
   }
-  async function ask(q){
-    msg("user",q);
-    input.value="";
-    const res=await fetch(ENDPOINT,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({message:q})
+  function typewriterInto(el, text, speed = 18, startDelay = 120) {
+    return new Promise((resolve) => {
+      el.textContent = "";
+      const caret = document.createElement("span");
+      caret.className = "tw-caret";
+      el.appendChild(caret);
+      let i = 0;
+      const tick = () => {
+        if (i < text.length) {
+          caret.insertAdjacentText("beforebegin", text.charAt(i++));
+          scrollToBottom();
+          setTimeout(tick, speed);
+        } else {
+          caret.remove();
+          resolve();
+        }
+      };
+      setTimeout(tick, startDelay);
     });
-    const data=await res.json();
-    msg("assistant",data.reply||"I'm here with you.");
   }
-  send.onclick = ()=>{ if(input.value.trim()) ask(input.value); };
-  input.onkeydown = e=>{ if(e.key==="Enter") send.click(); };
- msg("assistant", "Hello, I'm Elena,\nYour A.I Concierge.\n\nHow may I help you today?");
+  function verdictLabel(status) {
+    const s = String(status || "").toUpperCase();
+    if (s === "GREEN") return "GREEN";
+    if (s === "CAUTION") return "CAUTION";
+    if (s === "NO-GO") return "NO-GO";
+    return "INSUFFICIENT";
+  }
+  function buildReplyFromAgent(data) {
+    const verdict = data && data.verdict ? data.verdict : {};
+    const market = data && data.market && data.market.summary ? data.market.summary : null;
+    const mortgage = data && data.mortgage ? data.mortgage : {};
+    const affordability = data && data.affordability ? data.affordability : {};
+    const nextAction = data && data.next_action ? data.next_action : {};
+    const answerPacket = data && data.answer_packet ? data.answer_packet : {};
+    const teachingPoints = Array.isArray(answerPacket.teaching_points) ? answerPacket.teaching_points : [];
+    const notes = Array.isArray(verdict.notes) ? verdict.notes : [];
+    const lines = [];
+    lines.push("Bottom Line: " + verdictLabel(verdict.status) + (verdict.grade ? " • " + verdict.grade : ""));
+    if (mortgage && Number.isFinite(Number(mortgage.all_in_monthly))) {
+      lines.push("Estimated Housing Cost: " + fmtMoney(mortgage.all_in_monthly));
+    } else if (
+      affordability &&
+      affordability.quick_max_price &&
+      Number.isFinite(Number(affordability.quick_max_price.price_5_down))
+    ) {
+      lines.push("Quick Buying Power: around " + fmtMoney(affordability.quick_max_price.price_5_down) + " using 5% down assumptions");
+    }
+    if (verdict && Number.isFinite(Number(verdict.residual))) {
+      lines.push("Residual Income: " + fmtMoney(verdict.residual));
+    }
+    if (verdict && verdict.ratios) {
+      const housingRatio = fmtPct(verdict.ratios.housing_ratio);
+      const fixedRatio = fmtPct(verdict.ratios.total_fixed_ratio);
+      if (housingRatio) lines.push("Housing Ratio: " + housingRatio);
+      if (fixedRatio) lines.push("Total Fixed Ratio: " + fixedRatio);
+    }
+    if (market && market.available && market.city) {
+      lines.push("Market Loaded: " + market.city);
+      if (market.metrics) {
+        if (Number.isFinite(Number(market.metrics.median_list_price))) {
+          lines.push("Median List Price: " + fmtMoney(market.metrics.median_list_price));
+        }
+        if (Number.isFinite(Number(market.metrics.days_on_market))) {
+          lines.push("Days on Market: " + String(market.metrics.days_on_market));
+        }
+      }
+    }
+    if (notes[0]) {
+      lines.push("");
+      lines.push("Why This Matters:");
+      lines.push(notes[0]);
+    }
+    if (nextAction && nextAction.why) {
+      lines.push("");
+      lines.push("Best Next Move:");
+      lines.push(nextAction.why);
+    }
+    if (teachingPoints.length) {
+      lines.push("");
+      lines.push("Teaching Points:");
+      teachingPoints.slice(0, 4).forEach((item) => {
+        lines.push("• " + item);
+      });
+    }
+    return lines.join("\n");
+  }
+  async function callElena(userText) {
+    sendBtn.disabled = true;
+    showTyping();
+    try {
+      savePrefs();
+      const payload = {
+        email: (emailEl && emailEl.value.trim()) || undefined,
+        question: userText,
+        overrides: {
+          marketSlug: (marketEl && marketEl.value.trim()) || undefined
+        }
+      };
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(() => ({}));
+      hideTyping();
+      if (!res.ok || !data || data.ok !== true) {
+        throw new Error((data && data.error) || "Request failed.");
+      }
+      const reply = buildReplyFromAgent(data);
+      await pushMsg("assistant", reply, { typewriter:true, speed:16, delay:120 });
+    } catch (err) {
+      hideTyping();
+      await pushMsg(
+        "assistant",
+        "Hmm… I hit a connection snag. If this keeps happening, make sure this widget is calling /.netlify/functions/elena-agent and not the old ask-elena endpoint.",
+        { typewriter:true, speed:16, delay:80 }
+      );
+    } finally {
+      sendBtn.disabled = false;
+    }
+  }
+  function trySend() {
+    const text = inputEl.value.trim();
+    if (!text) return;
+    pushMsg("user", text);
+    inputEl.value = "";
+    callElena(text);
+  }
+  sendBtn.addEventListener("click", trySend);
+  inputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") trySend();
+  });
+  marketEl.addEventListener("change", savePrefs);
+  emailEl.addEventListener("input", savePrefs);
+  loadPrefs();
+  const greeting =
+    "Hey — I’m Elena, your OrozcoRealty concierge. Ask me about Texas real estate, affordability, monthly payment pressure, or a specific market like San Antonio or McAllen.";
+  pushMsg("assistant", greeting, { typewriter:true, speed:18, delay:220 });
 })();
 </script>
-  </div>
 </head>
 <body>
   <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="orozconavbar style-three-header-container-copy w-nav">
@@ -425,7 +1131,7 @@
               <div class="hpme-faded-line-02"></div>
               <p class="max-width-450px">We Veteran Owned and Operated Company, a Military Real Estate Consumer Platform designed to enhance the home-buyer&#x27;s knowledge by providing systematic approach to home ownership.<br><br>Established in 1970&#x27;s in Mexico with a simple model &quot;Everyone is Entitled to a place to call home, Regardless of Financial Circumstance&quot;.  Today, we Empower by using A.I Powered Platforms that bring clear and unbiased results. <br><br>- We are the Future of Real Estate -</p>
             </div>
-            <div class="about-us-image"><img sizes="(max-width: 767px) 100vw, (max-width: 991px) 95vw, 940px" srcset="images/CasaMexico_p019-house-14feb17-pr_b-1-p-500.webp 500w, images/CasaMexico_p019-house-14feb17-pr_b-1-p-800.webp 800w, images/CasaMexico_p019-house-14feb17-pr_b-1-p-1080.webp 1080w, images/CasaMexico_p019-house-14feb17-pr_b-1.webp 1280w" alt="" src="images/CasaMexico_p019-house-14feb17-pr_b-1.webp" loading="lazy" class="about-features-image"></div>
+            <div class="about-us-image"><img sizes="(max-width: 767px) 100vw, (max-width: 991px) 728px, 940px" srcset="images/CasaMexico_p019-house-14feb17-pr_b-1-p-500.webp 500w, images/CasaMexico_p019-house-14feb17-pr_b-1-p-800.webp 800w, images/CasaMexico_p019-house-14feb17-pr_b-1-p-1080.webp 1080w, images/CasaMexico_p019-house-14feb17-pr_b-1.webp 1280w" alt="" src="images/CasaMexico_p019-house-14feb17-pr_b-1.webp" loading="lazy" class="about-features-image"></div>
           </div>
         </div>
       </div>
@@ -446,13 +1152,13 @@
               </div>
               <div class="slide w-slide">
                 <div class="testimonial-text-wrapper-2">
-                  <h6 class="heading-64">Our Present</h6><img sizes="(max-width: 767px) 100vw, (max-width: 909px) 95vw, 864px" srcset="images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-500.png 500w, images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-800.png 800w, images/a-modern-living-room-with-a-large-window.png 864w" alt="a modern living room with a large window" src="images/a-modern-living-room-with-a-large-window.png" loading="lazy" class="image-small-circle-4">
+                  <h6 class="heading-64">Our Present</h6><img sizes="(max-width: 767px) 100vw, (max-width: 991px) 728px, 864px" srcset="images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-500.png 500w, images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-800.png 800w, images/a-modern-living-room-with-a-large-window.png 864w" alt="a modern living room with a large window" src="images/a-modern-living-room-with-a-large-window.png" loading="lazy" class="image-small-circle-4">
                   <p class="max-width-36rem-5">OrozcoRealty is a veteran-owned, family-based business with a mission to Empower the Military Community. We are an A.I Powered Real Estate Intelligence Company designed to enhance the buying process through the use of Psychology, Data Science, and A.I Assisted Technology.</p>
                 </div>
               </div>
               <div class="w-slide">
                 <div class="testimonial-text-wrapper-2">
-                  <h6>Our Future</h6><img sizes="(max-width: 767px) 100vw, (max-width: 909px) 95vw, 864px" srcset="images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-500.png 500w, images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-800.png 800w, images/a-modern-living-room-with-a-large-window.png 864w" alt="a modern living room with a large window" src="images/a-modern-living-room-with-a-large-window.png" loading="lazy" class="image-small-circle-4">
+                  <h6>Our Future</h6><img sizes="(max-width: 767px) 100vw, (max-width: 991px) 728px, 864px" srcset="images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-500.png 500w, images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-800.png 800w, images/a-modern-living-room-with-a-large-window.png 864w" alt="a modern living room with a large window" src="images/a-modern-living-room-with-a-large-window.png" loading="lazy" class="image-small-circle-4">
                   <p class="max-width-36rem-5">Over the decades that founding philosophy remains at the heart of OrozcoRealty.  Now with over 20 years of managerial experience and Master’s degree from both Duke, and Johns Hopkins University, the company is perfectly aligned to Empower both Buyers and Realtors. <br><br>We are the Future of Real Estate!</p>
                 </div>
               </div>
@@ -730,7 +1436,7 @@
                 <div data-w-id="e66eb00b-960b-b338-5828-a3abd26e9eac" style="opacity:0" class="footer-flex-wrapper-2">
                   <div class="footer-content-wrapper">
                     <a href="#" class="footer-logo-link w-inline-block">
-                      <div class="logo-footer-wrapper"><img sizes="(max-width: 767px) 100vw, (max-width: 909px) 95vw, 864px" srcset="images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-500.png 500w, images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-800.png 800w, images/a-modern-living-room-with-a-large-window.png 864w" alt="a modern living room with a large window" src="images/a-modern-living-room-with-a-large-window.png" loading="lazy" class="logo-image half-size">
+                      <div class="logo-footer-wrapper"><img sizes="(max-width: 767px) 100vw, (max-width: 991px) 728px, 864px" srcset="images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-500.png 500w, images/cadde6b11c41871bcfcaa77aebe5fbb7_a-modern-living-room-with-a-large-window-p-800.png 800w, images/a-modern-living-room-with-a-large-window.png 864w" alt="a modern living room with a large window" src="images/a-modern-living-room-with-a-large-window.png" loading="lazy" class="logo-image half-size">
                         <div>
                           <h4 class="logo-text-3">Orozco</h4>
                           <h6 class="logo-text-small-5">Realty</h6>
@@ -742,7 +1448,7 @@
                     <div class="footer-social-links-wrapper invert">
                       <a href="https://www.instagram.com/" target="_blank" class="footer-social-link w-inline-block"><img loading="lazy" src="images/instagram-black_1instagram-black.webp" alt="Instagram Icon Image Black" class="footer-social-link-image-2"></a>
                       <a href="https://facebook.com/" target="_blank" class="footer-social-link w-inline-block"><img loading="lazy" src="images/facebook-black_1facebook-black.webp" alt="facebook icon black" class="footer-social-link-image-2"></a>
-                      <a href="https://www.twitter.com/" target="_blank" class="footer-social-link w-inline-block"><img sizes="(max-width: 512px) 100vw, 512px" srcset="images/twitter-p-500.png 500w, images/twitter.png 512w" alt="" src="images/twitter.png" loading="lazy" class="footer-social-link-image-2"></a>
+                      <a href="https://www.twitter.com/" target="_blank" class="footer-social-link w-inline-block"><img sizes="(max-width: 512px) 100vw, 512px, 100vw" srcset="images/twitter-p-500.png 500w, images/twitter.png 512w" alt="" src="images/twitter.png" loading="lazy" class="footer-social-link-image-2"></a>
                       <a href="https://www.youtube.com/" target="_blank" class="footer-social-link w-inline-block"><img loading="lazy" src="images/youtube-black_1youtube-black.webp" alt="YouTube White Icon Image Black" class="footer-social-link-image-2"></a>
                     </div>
                   </div>
