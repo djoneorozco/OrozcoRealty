@@ -1,0 +1,366 @@
+{
+  "slug": "san-antonio",
+  "name": "San Antonio",
+  "city": "San Antonio",
+  "submarket": "Lackland AFB",
+  "place": "San Antonio, TX",
+  "place_detail": "Lackland AFB, TX",
+  "state": "Texas",
+  "state_code": "TX",
+  "geo_id": "1600000US4840036",
+  "year": 2026,
+  "last_updated_data_from_sources": "March 2026",
+  "image_url": "https://cdn.prod.website-files.com/69b6b526f23748df9f189b16/69c0dc6d478fad1e706ff1f4_dc56ce56878bed382d61aab987ab76eb_San_Antonio.png",
+  "zip": "78236",
+  "market_label": "San Antonio Metro",
+  "profile": "Military-friendly major Texas metro with a strong affordability profile, anchored here by a Lackland AFB submarket snapshot.",
+
+  "avg_home_value": 275000,
+  "average_home_value": 275000,
+  "avgHome": 275000,
+  "city_avg_home": 275000,
+
+  "snapshot": {
+    "population_city": 5896,
+    "population_metro": 2750000,
+    "median_household_income": 73646,
+    "median_home_price": 275167,
+    "market_trend_yoy": -3.0,
+    "traffic_level": "High",
+    "employment_status": "Stable"
+  },
+
+  "market_metrics": {
+    "median_list_price": 282667,
+    "median_sold_price": 275167,
+    "median_sale_price": 275167,
+    "days_on_market": 69,
+    "inventory_months": null,
+    "price_per_sqft": 165,
+    "active_listings_total": 7450,
+    "market_type_summary": "Stable with healthy buyer inventory",
+    "zillow_average_home_value": 275000,
+    "zillow_one_year_change_percent": -3.0,
+    "as_of": "2026-03"
+  },
+
+  "metrics": {
+    "median_list_price": 282667,
+    "median_sold_price": 275167,
+    "median_sale_price": 275167,
+    "days_on_market": 69,
+    "inventory_months": null,
+    "price_per_sqft": 165,
+    "median_rent": 1825,
+    "active_listings_total": 7450,
+    "property_tax_rate": 0.0215,
+    "as_of": "2026-03"
+  },
+
+  "mortgage_assumptions": {
+    "apr_percent": 6.2,
+    "term_years": 30,
+    "down_payment_percent": 0,
+    "includes": "va_loan_all_in",
+    "defaults_note": "Based on March 2026 San Antonio VA loan rates."
+  },
+
+  "property_tax_rate": 0.0215,
+  "property_tax_rate_percent": 2.15,
+  "insurance_rate": 0.0085,
+  "insurance_rate_percent": 0.85,
+  "hoa_monthly": 25,
+
+  "ownership_costs": {
+    "property_tax_rate": 0.0215,
+    "property_tax_rate_percent": 2.15,
+    "insurance_rate_estimate": 0.0085,
+    "insurance_rate_percent": 0.85,
+    "insurance_annual_default": 2338,
+    "hoa_monthly_default": 25,
+    "notes": [
+      "Texas property taxes materially affect true monthly ownership cost.",
+      "Insurance and HOA should be included in all-in housing cost comparisons."
+    ]
+  },
+
+  "costs": {
+    "property_tax_rate": 0.0215,
+    "insurance_annual_default": 2338,
+    "hoa_monthly_default": 25
+  },
+
+  "avg_home_mortgage_monthly": {
+    "avg": 2150,
+    "as_of": "2026-03",
+    "notes": "VA loan estimate for San Antonio area"
+  },
+
+  "population": {
+    "estimate": 5896,
+    "median_age": 21.2,
+    "persons_per_household": 3.2
+  },
+
+  "households": {
+    "total_households": 1450
+  },
+
+  "income": {
+    "median_household_income": 73646,
+    "per_capita_income": 24500,
+    "poverty_rate_percent": 11.4
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 97.8,
+    "bachelors_degree_or_higher_percent": 41.1
+  },
+
+  "veterans": {
+    "veteran_population_percent": 12.4
+  },
+
+  "immigration": {
+    "foreign_born_percent": 6.4
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 18.5,
+    "unemployment_rate_percent": 4.8
+  },
+
+  "crime_status": {
+    "installation": "Extremely safe; gated military access with 24/7 security.",
+    "metro_san_antonio": "Property crime rates are moderate; focus on West Side safety awareness."
+  },
+
+  "school_quality": {
+    "on_base": "Highly rated Lackland ISD (On-base schools).",
+    "off_base": "Varies; Northside ISD is generally preferred for off-base residents."
+  },
+
+  "rental_vacancy": {
+    "rate_percent": 9.2,
+    "notes": "Healthy inventory for military renters in 2026."
+  },
+
+  "rental_metrics": {
+    "median_rent": 1825,
+    "vacancy_rate_percent": 9.2,
+    "notes": "Based on 3-bedroom average rent and healthy military-renter inventory."
+  },
+
+  "climate_weather": {
+    "spring": "Warm/Humid; 70–85°F",
+    "summer": "Hot/Humid; 95–105°F",
+    "fall": "Warm/Mild; 65–85°F",
+    "winter": "Cool/Mild; 45–65°F"
+  },
+
+  "special_events": [
+    "The Great Texas Airshow",
+    "Fiesta San Antonio",
+    "San Antonio Stock Show & Rodeo",
+    "Spurs NBA Games"
+  ],
+
+  "military_lifestyle_fit": {
+    "rating": "Exceptional",
+    "description": "Gateway to the Air Force; massive military infrastructure and local support."
+  },
+
+  "financial_brief": {
+    "bah_vs_buy_position": "Favorable",
+    "bah_vs_rent_position": "Strong",
+    "affordability_summary": "San Antonio remains one of the most affordable major military metros.",
+    "buyer_opportunity": "Strong equity potential in West/Southwest expansion areas.",
+    "renter_advantage": false
+  },
+
+  "market_bluf": {
+    "bluf_headline": "Affordable Entry-Level Haven",
+    "bluf_summary": "Lackland area offers some of the best military home-buying value in the US.",
+    "status": "Buyer-leaning",
+    "inventory_trend": "Increasing",
+    "buyer_leverage": "High",
+    "verdict": "STRONG BUY",
+    "verdict_color": "green",
+    "confidence_score": 88
+  },
+
+  "scorecard": {
+    "affordability_score": 92,
+    "growth_score": 75,
+    "stability_score": 85,
+    "military_fit_score": 98,
+    "overall_score": 87
+  },
+
+  "rules": {
+    "max_safe_housing_ratio": 0.3,
+    "warning_ratio": 0.35,
+    "danger_ratio": 0.4
+  },
+
+  "summary_points": [
+    "San Antonio remains one of the more affordable major Texas metros for buyers entering the market.",
+    "Current market posture is buyer-leaning, with increasing inventory and relatively healthy leverage.",
+    "The Lackland-linked submarket shows especially strong military-fit and entry-level value.",
+    "Property taxes and insurance still materially shape true monthly ownership cost in this market.",
+    "West and Southwest growth corridors appear to offer stronger buyer opportunity than more expensive Texas metros."
+  ],
+
+  "opportunities": [
+    "Buyer leverage appears stronger here than in many larger Texas metros.",
+    "Entry-level and mid-range inventory remains comparatively accessible.",
+    "Military-connected demand supports long-term housing relevance near the Lackland corridor.",
+    "West and Southwest expansion areas may offer stronger upside for budget-conscious buyers."
+  ],
+
+  "risks": [
+    "Texas property taxes can erode affordability if buyers only focus on purchase price.",
+    "Insurance and utilities can widen the gap between principal-and-interest and true all-in payment.",
+    "Neighborhood quality and school quality vary materially across the metro.",
+    "Property crime exposure is more moderate off-installation, especially on the West Side."
+  ],
+
+  "buyer_notes": [
+    "San Antonio is attractive for buyers who want a lower entry price than Austin or Dallas.",
+    "The real decision should be made on all-in monthly ownership cost, not just mortgage principal and interest.",
+    "School quality and neighborhood-level variation matter enough that citywide averages should not be the final filter.",
+    "This market is stronger for disciplined buyers who compare taxes, insurance, commute, and future resale flexibility together."
+  ],
+
+  "seller_notes": [
+    "Sellers should price realistically against rising inventory rather than assume aggressive premium pricing.",
+    "Move-in-ready presentation and sharper pricing discipline will matter more in a buyer-leaning setup.",
+    "Homes near stable military demand nodes may still attract resilient buyer pools."
+  ],
+
+  "investor_angles": [
+    "Healthy renter inventory and military turnover support rental relevance, but investors should stress-test taxes, insurance, and vacancy.",
+    "The submarket can work best for investors focused on durable occupancy rather than purely speculative appreciation.",
+    "Bedroom-specific rent bands make this market more useful for practical underwriting than broad city averages alone."
+  ],
+
+  "neighborhoods": [
+    "Lackland AFB / Southwest corridor",
+    "West Side",
+    "Southwest expansion areas",
+    "Northside ISD off-base pockets"
+  ],
+
+  "target_neighborhoods": [
+    "Lackland AFB / Southwest corridor",
+    "West Side",
+    "Southwest expansion areas",
+    "Northside ISD off-base pockets"
+  ],
+
+  "buyer_guidance": [
+    "Use all-in payment, not just list price, as the primary screen.",
+    "Compare taxes, insurance, commute, and school quality before locking a neighborhood.",
+    "This market rewards disciplined buyers more than emotional stretch buyers.",
+    "A slightly lower purchase price can materially improve monthly flexibility in Texas."
+  ],
+
+  "seller_guidance": [
+    "Price against current inventory and days on market, not older peak assumptions.",
+    "Condition and presentation matter more when buyers have leverage.",
+    "Military-adjacent demand can be a strength if framed correctly in listing positioning."
+  ],
+
+  "landlord_notes": [
+    "Military renter demand can improve occupancy durability near the Lackland area.",
+    "Investors should still model vacancy, tax drag, insurance, and maintenance conservatively.",
+    "A good rental here is about stable spread, not just headline affordability."
+  ],
+
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 1200, "high": 1500, "avg": 1350, "as_of": "2026-03" },
+      "home_price": { "low": 190000, "high": 230000, "avg": 210000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 1550, "high": 1850, "avg": 1700, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 140, "high": 210, "avg": 175 },
+        "water_sewer": { "low": 40, "high": 60, "avg": 50 },
+        "total": { "low": 180, "high": 270, "avg": 225 },
+        "as_of": "2026-03"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 1650, "high": 2000, "avg": 1825, "as_of": "2026-03" },
+      "home_price": { "low": 240000, "high": 310000, "avg": 275000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 1950, "high": 2400, "avg": 2150, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 180, "high": 260, "avg": 220 },
+        "water_sewer": { "low": 50, "high": 80, "avg": 65 },
+        "total": { "low": 230, "high": 340, "avg": 285 },
+        "as_of": "2026-03"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 2000, "high": 2600, "avg": 2300, "as_of": "2026-03" },
+      "home_price": { "low": 320000, "high": 420000, "avg": 370000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 2500, "high": 3200, "avg": 2850, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 220, "high": 330, "avg": 275 },
+        "water_sewer": { "low": 65, "high": 95, "avg": 80 },
+        "total": { "low": 285, "high": 425, "avg": 355 },
+        "as_of": "2026-03"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 2500, "high": 3300, "avg": 2900, "as_of": "2026-03" },
+      "home_price": { "low": 420000, "high": 550000, "avg": 485000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 3200, "high": 4200, "avg": 3700, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 270, "high": 400, "avg": 335 },
+        "water_sewer": { "low": 80, "high": 120, "avg": 100 },
+        "total": { "low": 350, "high": 520, "avg": 435 },
+        "as_of": "2026-03"
+      }
+    }
+  },
+
+  "housing": {
+    "housing_units": 1650,
+    "median_value_owner_occupied": 275000,
+    "market": {
+      "zillow_average_home_value": 275000,
+      "zillow_one_year_change_percent": -3.0,
+      "market_type_summary": "Stable with healthy buyer inventory",
+      "average_days_on_market": 69,
+      "median_sale_price_current": 275167,
+      "median_listing_price_realtor": 282667,
+      "median_listing_price_per_sqft": 165,
+      "active_listings_total": 7450,
+      "q1_2026": {
+        "median_sale_price": 275167
+      },
+      "sale_history_36_months": [
+        { "month": "2023-01", "median_sale_price": 265000 },
+        { "month": "2024-12", "median_sale_price": 285000 },
+        { "month": "2025-06", "median_sale_price": 282000 },
+        { "month": "2026-01", "median_sale_price": 275167 }
+      ]
+    }
+  },
+
+  "sources": {
+    "demographics": { "provider": "US Census Bureau / World Population Review", "as_of": "2026-03" },
+    "rent": { "provider": "Trulia / RentHop", "as_of": "2026-03" },
+    "home_price": { "provider": "Zillow / Redfin", "as_of": "2026-01" }
+  },
+
+  "compatibility": {
+    "orozco_realty_ready": true,
+    "intended_primary_slug": "san-antonio",
+    "parser_notes": [
+      "This file has been reshaped so elena-agent.js can read city, slug, market_metrics, ownership_costs, summary_points, risks, opportunities, buyer_notes, seller_notes, and investor_angles directly.",
+      "Citywide label is set to San Antonio, while Lackland AFB is preserved as the underlying submarket context.",
+      "property_tax_rate was normalized from percentage form to decimal form for compatibility with deterministic math."
+    ]
+  }
+}
