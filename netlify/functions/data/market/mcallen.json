@@ -1,0 +1,320 @@
+{
+  "slug": "mcallen",
+  "name": "McAllen",
+  "city": "McAllen",
+  "submarket": "North McAllen / Edinburg",
+  "place": "McAllen, TX",
+  "place_detail": "Hidalgo County, TX",
+  "state": "Texas",
+  "state_code": "TX",
+  "geo_id": "1600000US4845384",
+  "year": 2026,
+  "last_updated_data_from_sources": "April 2026",
+  "image_url": "https://website-files.com",
+  "zip": "78501",
+  "market_label": "McAllen Metro (RGV)",
+  "profile": "A rapidly growing, cost-effective hub in the Rio Grande Valley known for its strong international trade and retail sectors, offering high quality of life at a fraction of major metro costs.",
+
+  "avg_home_value": 240000,
+  "average_home_value": 240000,
+  "avgHome": 240000,
+  "city_avg_home": 240000,
+
+  "snapshot": {
+    "population_city": 151972,
+    "population_metro": 1131000,
+    "median_household_income": 61579,
+    "median_home_price": 237959,
+    "market_trend_yoy": 5.2,
+    "traffic_level": "Moderate",
+    "employment_status": "Growth-oriented"
+  },
+
+  "market_metrics": {
+    "median_list_price": 294990,
+    "median_sold_price": 237959,
+    "median_sale_price": 237959,
+    "days_on_market": 61,
+    "inventory_months": 10.2,
+    "price_per_sqft": 138,
+    "active_listings_total": 1273,
+    "market_type_summary": "Seller-leaning with high inventory but strong pricing power",
+    "zillow_average_home_value": 237959,
+    "zillow_one_year_change_percent": 5.2,
+    "as_of": "2026-03"
+  },
+
+  "metrics": {
+    "median_list_price": 294990,
+    "median_sold_price": 237959,
+    "median_sale_price": 237959,
+    "days_on_market": 61,
+    "inventory_months": 10.2,
+    "price_per_sqft": 138,
+    "median_rent": 1369,
+    "active_listings_total": 1273,
+    "property_tax_rate": 0.0210,
+    "as_of": "2026-03"
+  },
+
+  "mortgage_assumptions": {
+    "apr_percent": 6.4,
+    "term_years": 30,
+    "down_payment_percent": 3.5,
+    "includes": "fha_loan_estimate",
+    "defaults_note": "Based on April 2026 Rio Grande Valley mortgage averages."
+  },
+
+  "property_tax_rate": 0.0210,
+  "property_tax_rate_percent": 2.10,
+  "insurance_rate": 0.0090,
+  "insurance_rate_percent": 0.90,
+  "hoa_monthly": 15,
+
+  "ownership_costs": {
+    "property_tax_rate": 0.0210,
+    "property_tax_rate_percent": 2.10,
+    "insurance_rate_estimate": 0.0090,
+    "insurance_rate_percent": 0.90,
+    "insurance_annual_default": 2160,
+    "hoa_monthly_default": 15,
+    "notes": [
+      "Hidalgo County property taxes are among the highest in the RGV.",
+      "Lower HOA fees are common compared to North Texas metros.",
+      "Utility costs for cooling in summer significantly impact all-in cost.",
+      "Homestead exemptions can materially reduce the effective tax rate for residents."
+    ]
+  },
+
+  "costs": {
+    "property_tax_rate": 0.0210,
+    "insurance_annual_default": 2160,
+    "hoa_monthly_default": 15
+  },
+
+  "avg_home_mortgage_monthly": {
+    "avg": 1780,
+    "as_of": "2026-04",
+    "notes": "Estimated monthly PITI for McAllen median home"
+  },
+
+  "population": {
+    "estimate": 151972,
+    "median_age": 33.5,
+    "persons_per_household": 3.1
+  },
+
+  "households": {
+    "total_households": 48500
+  },
+
+  "income": {
+    "median_household_income": 61579,
+    "per_capita_income": 40492,
+    "poverty_rate_percent": 19.99
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 82.5,
+    "bachelors_degree_or_higher_percent": 30.2
+  },
+
+  "veterans": {
+    "veteran_population_percent": 2.8
+  },
+
+  "immigration": {
+    "foreign_born_percent": 26.2
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 21.9,
+    "unemployment_rate_percent": 6.4
+  },
+
+  "crime_status": {
+    "city_mcallen": "Consistently ranked as one of the safest cities of its size in Texas.",
+    "border_proximity": "High law enforcement presence due to CBP and state operations ensures safety.",
+    "neighborhood_safety": "Residential areas in North McAllen show very low incident rates.",
+    "commercial_safety": "Heavy security in retail zones due to cross-border shopping volume."
+  },
+
+  "school_quality": {
+    "mcallen_isd": "Highly rated (Niche A-), with several nationally recognized high schools.",
+    "off_base": "South Texas ISD offers top-tier magnet programs within the region.",
+    "higher_ed": "UTRGV provides a strong local academic anchor for the community.",
+    "elementary": "Public elementaries in the 78504 zip code are highly sought after."
+  },
+
+  "rental_vacancy": {
+    "rate_percent": 6.5,
+    "notes": "Relatively tight rental market despite steady construction."
+  },
+
+  "rental_metrics": {
+    "median_rent": 1369,
+    "vacancy_rate_percent": 6.5,
+    "notes": "Based on 3-bedroom average rent trends in Spring 2026."
+  },
+
+  "climate_weather": {
+    "spring": "Warm; 75–90°F",
+    "summer": "Very Hot; 95–105°F+",
+    "fall": "Warm/Humid; 70–90°F",
+    "winter": "Mild; 50–75°F"
+  },
+
+  "special_events": [
+    "Palm City Tattoo Expo",
+    "McAllen Holiday Parade",
+    "Texas State Arts & Crafts Fair",
+    "Fiesta de Palmas",
+    "UTRGV Athletics Events",
+    "South Texas Comic Con",
+    "McAllen Marathon Scott Crane Memorial Run",
+    "MXLAN Festival"
+  ],
+
+  "military_lifestyle_fit": {
+    "rating": "Moderate",
+    "description": "No major active duty base, but high presence of National Guard and Border Patrol."
+  },
+
+  "financial_brief": {
+    "bah_vs_buy_position": "Favorable",
+    "bah_vs_rent_position": "Stable",
+    "affordability_summary": "McAllen is one of the most affordable cities in the U.S. for homeownership.",
+    "buyer_opportunity": "Substantial inventory provides choice, though prices are rising.",
+    "renter_advantage": true
+  },
+
+  "market_bluf": {
+    "bluf_headline": "Affordable Retail & Logistics Hub",
+    "bluf_summary": "Strongest value proposition for buyers seeking sub-$300k homes with quality schools.",
+    "status": "Balanced to Seller-leaning",
+    "inventory_trend": "Increasing",
+    "buyer_leverage": "Moderate",
+    "verdict": "STRONG BUY",
+    "verdict_color": "green",
+    "confidence_score": 91
+  },
+
+  "scorecard": {
+    "affordability_score": 96,
+    "growth_score": 88,
+    "stability_score": 82,
+    "military_fit_score": 45,
+    "overall_score": 78
+  },
+
+  "rules": {
+    "max_safe_housing_ratio": 0.3,
+    "warning_ratio": 0.35,
+    "danger_ratio": 0.4
+  },
+
+  "summary_points": [
+    "McAllen offers one of the lowest costs of living for a mid-sized US city.",
+    "The 2026 market shows healthy appreciation (5.2% YoY) despite high national rates.",
+    "A 10-month inventory supply suggests plenty of choices for buyers, though prices remain firm.",
+    "International trade and proximity to the border drive the local economy and high security levels.",
+    "School quality is a major draw, with McAllen ISD consistently outperforming regional peers.",
+    "The city has invested heavily in infrastructure to support rapid northern expansion.",
+    "Commercial retail per capita is among the highest in Texas due to Mexican shopper volume.",
+    "Public safety remains a cornerstone of the city's marketing to families and retirees."
+  ],
+
+  "opportunities": [
+    "Excellent entry point for first-time buyers with many homes still under $250k.",
+    "High demand for rentals in the medical and education sectors (UTRGV).",
+    "Increasing cross-border trade activity supports long-term property value stability.",
+    "New developments in North McAllen/Edinburg corridor offer modern amenities.",
+    "Potential for property value gains as the region continues to urbanize.",
+    "Favorable environment for small business owners and entrepreneurs.",
+    "Strong short-term rental market for traveling medical professionals.",
+    "Availability of large residential lots in peripheral development areas."
+  ],
+
+  "risks": [
+    "Summer utility costs (A/C) can be significantly higher than other Texas regions.",
+    "Property tax appraisals are rising quickly due to the rapid population growth.",
+    "Economic reliance on cross-border retail can lead to volatility during international policy shifts.",
+    "Local wages often lag behind state averages, affecting local purchasing power.",
+    "Extreme heat events during summer months can limit outdoor lifestyle options.",
+    "Potential for periodic drainage issues in older, non-upgraded areas during heavy rains.",
+    "Limited public transportation makes car ownership a mandatory expense.",
+    "Competition from surrounding cities like Edinburg and Mission for talent and growth."
+  ],
+
+  "buyer_notes": [
+    "McAllen is ideal for remote workers or retirees seeking a high standard of living for less.",
+    "Focus on North McAllen for the best school district access and appreciation potential.",
+    "Always factor in the 'all-in' cost including property taxes, which are a primary monthly expense.",
+    "The market is less competitive than Austin or Dallas, allowing for more thorough due diligence.",
+    "Verify the age of the HVAC system as it will run almost year-round in this climate.",
+    "Consider proximity to Bentsen Road and Taylor Road for the newest housing stock.",
+    "Neighborhoods near 10th Street offer the best access to retail and dining amenities.",
+    "Look into South Texas ISD for specialized high school options if public ISD is not the fit."
+  ],
+
+  "seller_notes": [
+    "Inventory is rising, so homes must be priced correctly and in good condition to sell quickly.",
+    "Highlight school district and safety as primary selling points for family buyers.",
+    "Curb appeal and energy efficiency (solar, insulation) are major value-adds in this climate.",
+    "Sellers should be prepared for more negotiation as buyer leverage increases in 2026.",
+    "Professional staging can help differentiate properties in a high-inventory environment.",
+    "Homes near major medical facilities retain value better and sell faster.",
+    "Update older plumbing and electrical systems to satisfy increasingly thorough inspections.",
+    "Market the 'low maintenance' aspects of the home to appeal to the retiree demographic."
+  ],
+
+  "investor_angles": [
+    "Multi-family units near the medical district show low vacancy and consistent yields.",
+    "Short-term rentals for medical 'Winter Texans' provide a unique seasonal revenue stream.",
+    "Commercial real estate near the Pharr-Reynosa Bridge is a high-growth institutional play.",
+    "Targeting 3-bedroom single-family homes in North McAllen offers steady long-term appreciation.",
+    "Renovating older properties in the Heart of the City can yield high rental ROI.",
+    "Land banking on the northern outskirts is a viable strategy for long-horizon investors.",
+    "Focus on properties with low water-usage landscaping to minimize utility overhead.",
+    "Explore the student housing niche as UTRGV continues its expansion in the region."
+  ],
+
+  "neighborhoods": [
+    "North McAllen",
+    "Las Villitas",
+    "Sharyland",
+    "Tres Lagos",
+    "De Palmas Historic District",
+    "Uptown McAllen",
+    "Falcon's Crossing",
+    "Saddle Creek",
+    "Orange Heights",
+    "Greenwood Estates",
+    "Heart of the City",
+    "Shary Landing",
+    "Hunters Cove",
+    "Idela Park",
+    "La Paloma District",
+    "Las Villas",
+    "Lla Hacienda Estates",
+    "North Park Estates",
+    "Taylor Crossing",
+    "Cardona at Bentsen Lakes",
+    "Citrus Valley",
+    "Fairway Grande",
+    "Golden Acres Retirement",
+    "Oak Terrace Estates",
+    "Primrose Terrace",
+    "Saltillo at Bentsen Lake",
+    "Shadow Brook",
+    "Willow Ridge",
+    "Wood Hollow",
+    "Trenton Park",
+    "Villagio",
+    "The Gardens",
+    "Silverado",
+    "Cobblestone",
+    "Escondido",
+    "Spanish Oaks"
+  ]
+}
