@@ -1,0 +1,366 @@
+{
+  "slug": "dallas",
+  "name": "Dallas",
+  "city": "Dallas",
+  "submarket": "Uptown / North Dallas",
+  "place": "Dallas, TX",
+  "place_detail": "Dallas, TX",
+  "state": "Texas",
+  "state_code": "TX",
+  "geo_id": "1600000US4819000",
+  "year": 2026,
+  "last_updated_data_from_sources": "April 2026",
+  "image_url": "https://cdn.prod.website-files.com/691facbe35fbba00c096f2b7/69d9edf32324f477a3e21bbc_dallas.jpg",
+  "zip": "75201",
+  "market_label": "Dallas Metro Core",
+  "profile": "Major North Texas employment and lifestyle hub with stronger pricing than South Texas markets, broad neighborhood variation, and durable buyer demand anchored by jobs, amenities, and long-term metro relevance.",
+
+  "avg_home_value": 305523,
+  "average_home_value": 305523,
+  "avgHome": 305523,
+  "city_avg_home": 305523,
+
+  "snapshot": {
+    "population_city": 1326093,
+    "population_metro": 8344032,
+    "median_household_income": 70518,
+    "median_home_price": 410000,
+    "market_trend_yoy": -1.7,
+    "traffic_level": "High",
+    "employment_status": "Strong"
+  },
+
+  "market_metrics": {
+    "median_list_price": 420000,
+    "median_sold_price": 410000,
+    "median_sale_price": 410000,
+    "days_on_market": 75,
+    "inventory_months": null,
+    "price_per_sqft": 245,
+    "active_listings_total": 5200,
+    "market_type_summary": "Somewhat competitive, with broad inventory and neighborhood-by-neighborhood variation",
+    "zillow_average_home_value": 305523,
+    "zillow_one_year_change_percent": -3.8,
+    "as_of": "2026-03"
+  },
+
+  "metrics": {
+    "median_list_price": 420000,
+    "median_sold_price": 410000,
+    "median_sale_price": 410000,
+    "days_on_market": 75,
+    "inventory_months": null,
+    "price_per_sqft": 245,
+    "median_rent": 2362,
+    "active_listings_total": 5200,
+    "property_tax_rate": 0.0218,
+    "as_of": "2026-03"
+  },
+
+  "mortgage_assumptions": {
+    "apr_percent": 6.2,
+    "term_years": 30,
+    "down_payment_percent": 0,
+    "includes": "conventional_or_va_all_in",
+    "defaults_note": "Based on early-2026 Dallas mortgage assumptions."
+  },
+
+  "property_tax_rate": 0.0218,
+  "property_tax_rate_percent": 2.18,
+  "insurance_rate": 0.0085,
+  "insurance_rate_percent": 0.85,
+  "hoa_monthly": 35,
+
+  "ownership_costs": {
+    "property_tax_rate": 0.0218,
+    "property_tax_rate_percent": 2.18,
+    "insurance_rate_estimate": 0.0085,
+    "insurance_rate_percent": 0.85,
+    "insurance_annual_default": 2597,
+    "hoa_monthly_default": 35,
+    "notes": [
+      "Dallas ownership costs can rise quickly once taxes, insurance, HOA, and commute tradeoffs are included.",
+      "All-in monthly comparisons matter more than headline list price, especially in higher-demand Dallas neighborhoods."
+    ]
+  },
+
+  "costs": {
+    "property_tax_rate": 0.0218,
+    "insurance_annual_default": 2597,
+    "hoa_monthly_default": 35
+  },
+
+  "avg_home_mortgage_monthly": {
+    "avg": 2940,
+    "as_of": "2026-03",
+    "notes": "Estimated all-in monthly payment near Dallas median sale price."
+  },
+
+  "population": {
+    "estimate": 1326093,
+    "median_age": 33.2,
+    "persons_per_household": 2.4
+  },
+
+  "households": {
+    "total_households": 537317
+  },
+
+  "income": {
+    "median_household_income": 70518,
+    "per_capita_income": 45811,
+    "poverty_rate_percent": 16.7
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 81.1,
+    "bachelors_degree_or_higher_percent": 38.2
+  },
+
+  "veterans": {
+    "veteran_population_percent": 3.3
+  },
+
+  "immigration": {
+    "foreign_born_percent": 23.4
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 25.7,
+    "unemployment_rate_percent": 4.6
+  },
+
+  "crime_status": {
+    "installation": "Not military-installation anchored; neighborhood-level filtering matters significantly across Dallas.",
+    "metro_dallas": "Dallas has strong buyer demand and many highly desirable neighborhoods, but safety, schools, and block-by-block feel vary materially by area."
+  },
+
+  "school_quality": {
+    "on_base": "Not applicable.",
+    "off_base": "School quality varies widely. Buyers often pay a premium for stronger school-adjacent or highly rated suburban-border pockets."
+  },
+
+  "rental_vacancy": {
+    "rate_percent": 8.5,
+    "notes": "Dallas has broad rental inventory, but quality and pricing vary materially by submarket."
+  },
+
+  "rental_metrics": {
+    "median_rent": 2362,
+    "vacancy_rate_percent": 8.5,
+    "notes": "Based on current Dallas 3-bedroom apartment benchmarks and broad city rental inventory."
+  },
+
+  "climate_weather": {
+    "spring": "Warm/Mild; 65–82°F",
+    "summer": "Hot; 88–103°F",
+    "fall": "Warm/Mild; 60–85°F",
+    "winter": "Cool/Mild; 39–60°F"
+  },
+
+  "special_events": [
+    "State Fair of Texas",
+    "Deep Ellum Arts Festival",
+    "Dallas International Film Festival",
+    "Dallas Mavericks Games"
+  ],
+
+  "military_lifestyle_fit": {
+    "rating": "Moderate",
+    "description": "More corporate and civilian-market driven than military-centered, but strong for buyers prioritizing jobs, amenities, and long-term metro relevance."
+  },
+
+  "financial_brief": {
+    "bah_vs_buy_position": "Mixed",
+    "bah_vs_rent_position": "Competitive but tighter than South Texas markets",
+    "affordability_summary": "Dallas offers major-metro opportunity, but affordability is tighter and neighborhood selection matters much more than in lower-cost Texas cities.",
+    "buyer_opportunity": "Value appears strongest in practical family neighborhoods outside the most premium central-core pricing zones.",
+    "renter_advantage": true
+  },
+
+  "market_bluf": {
+    "bluf_headline": "Major-Metro Opportunity With Higher Cost Discipline Required",
+    "bluf_summary": "Dallas remains a high-opportunity Texas market, but buyers need sharper discipline around neighborhood choice, taxes, insurance, and monthly payment tolerance.",
+    "status": "Balanced to somewhat competitive",
+    "inventory_trend": "Increasing",
+    "buyer_leverage": "Moderate",
+    "verdict": "CAUTIOUS BUY",
+    "verdict_color": "green",
+    "confidence_score": 83
+  },
+
+  "scorecard": {
+    "affordability_score": 68,
+    "growth_score": 88,
+    "stability_score": 84,
+    "military_fit_score": 55,
+    "overall_score": 79
+  },
+
+  "rules": {
+    "max_safe_housing_ratio": 0.3,
+    "warning_ratio": 0.35,
+    "danger_ratio": 0.4
+  },
+
+  "summary_points": [
+    "Dallas offers strong long-term metro relevance, but affordability is materially tighter than lower-cost Texas cities.",
+    "Current market posture is balanced to somewhat competitive, with broad inventory and strong neighborhood variation.",
+    "Pricing, taxes, and insurance can push buyers out of comfortable monthly-payment ranges faster than expected.",
+    "Neighborhood quality, school appeal, commute, and resale liquidity matter more here than citywide averages.",
+    "Dallas rewards buyers who are disciplined about all-in monthly cost and realistic about tradeoffs."
+  ],
+
+  "opportunities": [
+    "Dallas still provides strong long-term relevance for buyers prioritizing jobs, amenities, and metro durability.",
+    "Broader inventory gives buyers more choice than ultra-tight seller markets.",
+    "Value can still be found outside the highest-premium central and prestige pockets.",
+    "3-bedroom inventory remains practical for family buyers who balance location and monthly payment carefully."
+  ],
+
+  "risks": [
+    "Dallas can become unaffordable quickly if buyers focus only on purchase price and ignore tax, insurance, and commute costs.",
+    "Neighborhood quality and school appeal vary materially across the city.",
+    "Premium neighborhoods can compress buyer flexibility and reduce cash-flow tolerance.",
+    "Insurance, HOA, and long-term maintenance can widen the gap between a 'doable' payment and a comfortable one."
+  ],
+
+  "buyer_notes": [
+    "Dallas works best for buyers who want major-metro upside and can stay disciplined on monthly cost.",
+    "The real decision should be based on all-in ownership cost, not just median price or neighborhood hype.",
+    "School-zone and neighborhood filtering matter enough that citywide averages should not be the final filter.",
+    "This market is strongest for buyers who compare taxes, commute, livability, and resale flexibility together."
+  ],
+
+  "seller_notes": [
+    "Sellers in good Dallas neighborhoods can still benefit from durable demand, but pricing discipline remains important.",
+    "Presentation and neighborhood positioning matter materially because buyers compare hard in this market.",
+    "Homes with strong school, commute, or lifestyle narratives should still attract resilient buyer interest."
+  ],
+
+  "investor_angles": [
+    "Dallas can work for investors focused on durable metro demand, but entry cost and taxes require tighter underwriting.",
+    "The best deals are usually practical rather than flashy, especially when targeting stable occupancy.",
+    "Neighborhood selection matters heavily because rent and resale performance vary widely across the city."
+  ],
+
+  "neighborhoods": [
+    "North Dallas",
+    "Lake Highlands",
+    "East Dallas",
+    "Far North / value-oriented family pockets outside the highest-premium core"
+  ],
+
+  "target_neighborhoods": [
+    "North Dallas",
+    "Lake Highlands",
+    "East Dallas",
+    "Far North / value-oriented family pockets outside the highest-premium core"
+  ],
+
+  "buyer_guidance": [
+    "Use all-in payment, not just list price, as the primary screen.",
+    "Compare taxes, insurance, school quality, commute, and neighborhood stability before locking an area.",
+    "This market rewards disciplined buyers more than emotional stretch buyers.",
+    "A slightly lower purchase price can materially improve monthly flexibility and long-term resilience in Dallas."
+  ],
+
+  "seller_guidance": [
+    "Price against current neighborhood-specific demand, not just citywide optimism.",
+    "Condition, presentation, and school/commute positioning matter more in Dallas than generic listing language.",
+    "Homes in practical, high-demand family corridors should be framed around value, convenience, and livability."
+  ],
+
+  "landlord_notes": [
+    "Dallas supports durable rental demand, especially for well-located 2- and 3-bedroom product.",
+    "Investors should model tax drag, HOA, insurance, and maintenance conservatively.",
+    "The strongest rentals here are about durable occupancy and location relevance, not just headline rent."
+  ],
+
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 1750, "high": 2200, "avg": 1861, "as_of": "2026-04" },
+      "home_price": { "low": 260000, "high": 360000, "avg": 310000, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 2150, "high": 2950, "avg": 2550, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 150, "high": 240, "avg": 195 },
+        "water_sewer": { "low": 45, "high": 75, "avg": 60 },
+        "total": { "low": 195, "high": 315, "avg": 255 },
+        "as_of": "2026-04"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 2100, "high": 2850, "avg": 2362, "as_of": "2026-04" },
+      "home_price": { "low": 340000, "high": 470000, "avg": 410000, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 2550, "high": 3400, "avg": 2940, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 190, "high": 310, "avg": 245 },
+        "water_sewer": { "low": 60, "high": 90, "avg": 75 },
+        "total": { "low": 250, "high": 400, "avg": 320 },
+        "as_of": "2026-04"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 2800, "high": 3800, "avg": 3250, "as_of": "2026-04" },
+      "home_price": { "low": 470000, "high": 650000, "avg": 560000, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 3500, "high": 4700, "avg": 4100, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 260, "high": 390, "avg": 325 },
+        "water_sewer": { "low": 75, "high": 110, "avg": 92 },
+        "total": { "low": 335, "high": 500, "avg": 417 },
+        "as_of": "2026-04"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 3800, "high": 5600, "avg": 4600, "as_of": "2026-04" },
+      "home_price": { "low": 700000, "high": 1050000, "avg": 860000, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 5200, "high": 7600, "avg": 6250, "as_of": "2026-03" },
+      "utilities": {
+        "electric_gas": { "low": 340, "high": 520, "avg": 430 },
+        "water_sewer": { "low": 95, "high": 135, "avg": 115 },
+        "total": { "low": 435, "high": 655, "avg": 545 },
+        "as_of": "2026-04"
+      }
+    }
+  },
+
+  "housing": {
+    "housing_units": 599962,
+    "median_value_owner_occupied": 320700,
+    "market": {
+      "zillow_average_home_value": 305523,
+      "zillow_one_year_change_percent": -3.8,
+      "market_type_summary": "Somewhat competitive with strong demand but meaningful neighborhood variation",
+      "average_days_on_market": 75,
+      "median_sale_price_current": 410000,
+      "median_listing_price_realtor": 420000,
+      "median_listing_price_per_sqft": 245,
+      "active_listings_total": 5200,
+      "q1_2026": {
+        "median_sale_price": 410000
+      },
+      "sale_history_36_months": [
+        { "month": "2023-01", "median_sale_price": 385000 },
+        { "month": "2024-12", "median_sale_price": 418000 },
+        { "month": "2025-06", "median_sale_price": 415000 },
+        { "month": "2026-02", "median_sale_price": 410000 }
+      ]
+    }
+  },
+
+  "sources": {
+    "demographics": { "provider": "US Census Bureau / Census Reporter", "as_of": "2026-04" },
+    "rent": { "provider": "Apartments.com", "as_of": "2026-04" },
+    "home_price": { "provider": "Zillow / Redfin / Realtor.com", "as_of": "2026-03" }
+  },
+
+  "compatibility": {
+    "orozco_realty_ready": true,
+    "intended_primary_slug": "dallas",
+    "parser_notes": [
+      "This file follows the same Orozco city-market schema as San Antonio, McAllen, and Laredo.",
+      "Dallas is modeled as a higher-cost major metro where neighborhood variation matters more than citywide averages alone.",
+      "Replace image_url with your final Dallas hero image asset before production publish."
+    ]
+  }
+}
