@@ -2,108 +2,108 @@
   "slug": "laredo",
   "name": "Laredo",
   "city": "Laredo",
-  "submarket": "North Laredo / Alexander",
+  "submarket": "North Laredo / Del Mar",
   "place": "Laredo, TX",
-  "place_detail": "Webb County, TX",
+  "place_detail": "North Laredo, TX",
   "state": "Texas",
   "state_code": "TX",
   "geo_id": "1600000US4841464",
   "year": 2026,
-  "last_updated_data_from_sources": "March 2026",
-  "image_url": "https://website-files.com",
-  "zip": "78045",
+  "last_updated_data_from_sources": "April 2026",
+  "image_url": "",
+  "zip": "78041",
   "market_label": "Laredo Metro",
-  "profile": "Major inland port city on the U.S.-Mexico border with exceptional affordability and a steady housing market supported by trade and logistics.",
+  "profile": "Cross-border logistics hub with comparatively affordable South Texas pricing, strong family-sized household demand, and a value-driven ownership profile anchored by North Laredo growth corridors.",
 
-  "avg_home_value": 249000,
-  "average_home_value": 249000,
-  "avgHome": 249000,
-  "city_avg_home": 249000,
+  "avg_home_value": 217648,
+  "average_home_value": 217648,
+  "avgHome": 217648,
+  "city_avg_home": 217648,
 
   "snapshot": {
-    "population_city": 264142,
-    "population_metro": 281224,
+    "population_city": 261408,
+    "population_metro": 272823,
     "median_household_income": 63915,
-    "median_home_price": 249067,
-    "market_trend_yoy": 0.55,
+    "median_home_price": 255475,
+    "market_trend_yoy": 2.5,
     "traffic_level": "Moderate",
     "employment_status": "Stable"
   },
 
   "market_metrics": {
-    "median_list_price": 254650,
-    "median_sold_price": 249067,
-    "median_sale_price": 249067,
-    "days_on_market": 78,
+    "median_list_price": 254000,
+    "median_sold_price": 255475,
+    "median_sale_price": 255475,
+    "days_on_market": 110,
     "inventory_months": null,
-    "price_per_sqft": 145,
-    "active_listings_total": 696,
-    "market_type_summary": "Stable seller-leaning market with steady growth",
-    "zillow_average_home_value": 249000,
-    "zillow_one_year_change_percent": 1.5,
-    "as_of": "2026-03"
+    "price_per_sqft": 158,
+    "active_listings_total": 987,
+    "market_type_summary": "Balanced with affordability support, though resale pace can be slower than larger Texas metros",
+    "zillow_average_home_value": 217648,
+    "zillow_one_year_change_percent": 2.5,
+    "as_of": "2026-02"
   },
 
   "metrics": {
-    "median_list_price": 254650,
-    "median_sold_price": 249067,
-    "median_sale_price": 249067,
-    "days_on_market": 78,
+    "median_list_price": 254000,
+    "median_sold_price": 255475,
+    "median_sale_price": 255475,
+    "days_on_market": 110,
     "inventory_months": null,
-    "price_per_sqft": 145,
-    "median_rent": 1750,
-    "active_listings_total": 696,
-    "property_tax_rate": 0.0051,
-    "as_of": "2026-03"
+    "price_per_sqft": 158,
+    "median_rent": 1450,
+    "active_listings_total": 987,
+    "property_tax_rate": 0.021,
+    "as_of": "2026-02"
   },
 
   "mortgage_assumptions": {
     "apr_percent": 6.2,
     "term_years": 30,
     "down_payment_percent": 0,
-    "includes": "fha_va_loan_options",
-    "defaults_note": "Based on March 2026 Laredo mortgage rates."
+    "includes": "conventional_or_va_all_in",
+    "defaults_note": "Based on early-2026 South Texas mortgage assumptions."
   },
 
-  "property_tax_rate": 0.0051,
-  "property_tax_rate_percent": 0.51,
-  "insurance_rate": 0.0075,
-  "insurance_rate_percent": 0.75,
-  "hoa_monthly": 15,
+  "property_tax_rate": 0.021,
+  "property_tax_rate_percent": 2.1,
+  "insurance_rate": 0.009,
+  "insurance_rate_percent": 0.9,
+  "hoa_monthly": 20,
 
   "ownership_costs": {
-    "property_tax_rate": 0.0051,
-    "property_tax_rate_percent": 0.51,
-    "insurance_rate_estimate": 0.0075,
-    "insurance_rate_percent": 0.75,
-    "insurance_annual_default": 1868,
-    "hoa_monthly_default": 15,
+    "property_tax_rate": 0.021,
+    "property_tax_rate_percent": 2.1,
+    "insurance_rate_estimate": 0.009,
+    "insurance_rate_percent": 0.9,
+    "insurance_annual_default": 1959,
+    "hoa_monthly_default": 20,
     "notes": [
-      "Laredo property tax rates are lower than major Texas metros like San Antonio or Austin.",
-      "Cost of living is consistently ranked among the most affordable in the US."
+      "Laredo remains comparatively affordable by Texas standards, but taxes, insurance, and utilities still materially shape the true monthly ownership cost.",
+      "All-in comparisons should include property tax, insurance, utilities, and any HOA exposure rather than only principal and interest."
     ]
   },
 
   "costs": {
-    "property_tax_rate": 0.0051,
-    "insurance_annual_default": 1868,
-    "hoa_monthly_default": 15
+    "property_tax_rate": 0.021,
+    "insurance_annual_default": 1959,
+    "hoa_monthly_default": 20
   },
 
   "avg_home_mortgage_monthly": {
-    "avg": 1850,
-    "as_of": "2026-03",
-    "notes": "Standard 30-year fixed estimate for Laredo area"
+    "avg": 1860,
+    "as_of": "2026-02",
+    "notes": "Estimated all-in monthly payment near Laredo's current median sale price."
   },
 
   "population": {
-    "estimate": 264142,
+    "estimate": 261408,
     "median_age": 30.3,
-    "persons_per_household": 3.26
+    "persons_per_household": 3.2
   },
 
   "households": {
-    "total_households": 78082
+    "total_households": 80968
   },
 
   "income": {
@@ -118,7 +118,7 @@
   },
 
   "veterans": {
-    "veteran_population_percent": 1.7
+    "veteran_population_percent": 2.0
   },
 
   "immigration": {
@@ -127,74 +127,74 @@
 
   "labor": {
     "mean_travel_time_to_work_minutes": 21.6,
-    "unemployment_rate_percent": 4.1
+    "unemployment_rate_percent": 5.2
   },
 
   "crime_status": {
-    "installation": "N/A; City is frequently ranked as one of the safest in Texas.",
-    "metro_laredo": "Low violent crime rates compared to national averages; very safe community feel."
+    "installation": "Not military-installation anchored; safety varies by corridor and neighborhood selection.",
+    "metro_laredo": "Buyer-preferred North Laredo areas tend to feel more stable, while citywide variation still matters for long-term livability and resale."
   },
 
   "school_quality": {
-    "on_base": "N/A",
-    "off_base": "United ISD is highly rated (A-rating); Laredo ISD provides strong specialized magnet programs."
+    "on_base": "Not applicable.",
+    "off_base": "North Laredo and selected UISD-aligned areas are often more attractive to family-focused buyers."
   },
 
   "rental_vacancy": {
-    "rate_percent": 8.5,
-    "notes": "Balanced rental inventory with a cooling trend in 2026."
+    "rate_percent": 7.5,
+    "notes": "Rental supply appears healthy relative to affordability, though good 3-bedroom product remains important for family demand."
   },
 
   "rental_metrics": {
-    "median_rent": 1750,
-    "vacancy_rate_percent": 8.5,
-    "notes": "Based on average 3-bedroom house rental rates."
+    "median_rent": 1450,
+    "vacancy_rate_percent": 7.5,
+    "notes": "Based on current Laredo rental benchmarks, with 3-bedroom apartments commonly around the mid-$1.4k range."
   },
 
   "climate_weather": {
-    "spring": "Warm; 75–90°F",
-    "summer": "Very Hot/Arid; 98–110°F",
-    "fall": "Warm/Dry; 70–90°F",
-    "winter": "Mild; 50–70°F"
+    "spring": "Warm/Dry; 72–90°F",
+    "summer": "Very Hot; 95–106°F",
+    "fall": "Warm; 70–92°F",
+    "winter": "Mild; 48–72°F"
   },
 
   "special_events": [
-    "Washington's Birthday Celebration (WBCA)",
+    "Washington's Birthday Celebration",
     "Jalapeño Festival",
-    "Laredo International Fair & Exposition",
-    "Sister Cities Festival"
+    "Laredo International Sister Cities Festival",
+    "Border Olympics"
   ],
 
   "military_lifestyle_fit": {
     "rating": "Moderate",
-    "description": "While no major active base is present, Laredo has a strong patriotic culture and veteran support."
+    "description": "More civilian and trade-centered than military-driven, but useful for buyers prioritizing affordability and South Texas positioning."
   },
 
   "financial_brief": {
-    "bah_vs_buy_position": "Strong",
-    "bah_vs_rent_position": "Favorable",
-    "affordability_summary": "Laredo is consistently one of the most affordable cities for homeownership in Texas.",
-    "buyer_opportunity": "High value in North Laredo growth corridors near highly-rated schools.",
+    "bah_vs_buy_position": "Favorable for value buyers",
+    "bah_vs_rent_position": "Strong",
+    "affordability_summary": "Laredo remains relatively affordable for Texas buyers, especially compared with larger metros.",
+    "buyer_opportunity": "North Laredo and practical 3-bedroom inventory provide some of the best value for family-focused buyers.",
     "renter_advantage": true
   },
 
   "market_bluf": {
-    "bluf_headline": "Affordability King of the Border",
-    "bluf_summary": "Laredo offers high quality of life for low entry prices, ideal for first-time buyers.",
-    "status": "Seller-leaning",
+    "bluf_headline": "Affordable Border-Metro Value",
+    "bluf_summary": "Laredo offers comparatively attainable entry pricing, practical family-sized housing, and durable economic relevance tied to trade and logistics.",
+    "status": "Balanced",
     "inventory_trend": "Stable",
     "buyer_leverage": "Moderate",
-    "verdict": "BUY",
+    "verdict": "GOOD BUY",
     "verdict_color": "green",
     "confidence_score": 82
   },
 
   "scorecard": {
-    "affordability_score": 96,
+    "affordability_score": 94,
     "growth_score": 72,
-    "stability_score": 88,
-    "military_fit_score": 60,
-    "overall_score": 79
+    "stability_score": 80,
+    "military_fit_score": 52,
+    "overall_score": 76
   },
 
   "rules": {
@@ -204,43 +204,163 @@
   },
 
   "summary_points": [
-    "Laredo remains the most affordable major city in Texas for median-income families.",
-    "The market is currently stable with a slight seller advantage due to low available inventory.",
-    "North Laredo (UISD area) continues to be the most desirable submarket for resale and safety.",
-    "Low property taxes (roughly 0.51%) significantly lower the all-in monthly ownership cost.",
-    "International trade expansion continues to drive long-term economic stability and labor demand."
+    "Laredo remains one of the more affordable Texas city markets for buyers seeking practical entry pricing.",
+    "Current market posture looks balanced, with value still available but a slower resale pace than hotter Texas metros.",
+    "North Laredo and family-oriented corridors appear to hold stronger buyer appeal than older or more mixed-quality pockets.",
+    "Property taxes, insurance, and high summer utility load still matter materially in all-in ownership cost analysis.",
+    "This market is strongest for disciplined buyers focused on monthly affordability, household space, and long-term utility."
   ],
 
   "opportunities": [
-    "Significantly lower property tax burden compared to San Antonio or Austin.",
-    "Consistent rental demand driven by the logistics and customs industry.",
-    "High appreciation potential in the northern expansion sectors (78045).",
-    "Top-tier public school options (United ISD) within affordable neighborhoods."
+    "Buyers can still access pricing below many larger Texas metros.",
+    "3-bedroom and family-sized housing remains especially relevant in this market.",
+    "Trade and logistics activity support long-term housing usefulness and regional economic relevance.",
+    "North Laredo growth corridors can offer better school appeal and stronger owner-occupant demand."
   ],
 
   "risks": [
-    "Extreme summer heat can lead to higher-than-average utility costs.",
-    "Economic reliance on international trade makes the market sensitive to border policy shifts.",
-    "Lower percentage of bachelor's degrees compared to tech-heavy Texas metros.",
-    "Higher poverty rate citywide requires localized neighborhood research for investment."
+    "Homes may take longer to sell here than in faster-moving Texas metros.",
+    "Neighborhood quality and school-zone desirability vary materially across the city.",
+    "Taxes, insurance, and utilities can materially widen the gap between list-price expectations and true monthly cost.",
+    "Buyers focused only on cheap entry pricing may underweight resale liquidity and neighborhood-level variation."
   ],
 
   "buyer_notes": [
-    "Focus on the 78045 zip code for the best balance of school quality and home value appreciation.",
-    "Laredo is a 'safe haven' market; prices rarely spike aggressively, but they also rarely crash.",
-    "Take advantage of the lower tax rate to build equity faster than in high-tax metros.",
-    "Inspect HVAC systems thoroughly due to the extreme South Texas summer climate."
+    "Laredo is strongest for buyers who care more about practicality and monthly value than headline prestige.",
+    "The real decision should still be based on all-in monthly ownership cost, not just sale price.",
+    "Neighborhood and school-zone filtering matter more here than broad city averages.",
+    "This market works best for disciplined buyers targeting stable corridors and sensible payment ranges."
   ],
 
   "seller_notes": [
-    "Pricing is key; homes priced correctly in the $200k-$300k range move quickly.",
-    "Highlight UISD school zoning and low tax rates as primary selling points.",
-    "Market remains resilient even when major Texas metros face softening prices."
+    "Sellers should be realistic about resale pace and not assume big-metro urgency.",
+    "Condition, cleanliness, and pricing discipline matter in a value-sensitive market like Laredo.",
+    "Homes in North Laredo and other family-preferred pockets should still attract durable demand."
   ],
 
   "investor_angles": [
-    "Strong cash flow potential due to the low purchase-price-to-rent ratio.",
-    "Target 3-bedroom single-family homes to capture the largest pool of stable local families.",
-    "Logistics growth near Port Laredo ensures a steady stream of contract-based professional renters."
-  ]
+    "Laredo can suit cash-flow-oriented investors who prioritize practical rent bands over speculative appreciation.",
+    "The city works better for durable occupancy and affordability-driven demand than for luxury upside narratives.",
+    "Bedroom-specific underwriting is useful because 3-bedroom product has strong family-renter relevance."
+  ],
+
+  "neighborhoods": [
+    "North Laredo / Del Mar",
+    "Alexander / Plantation",
+    "Winfield / Lakeside corridors",
+    "Established family neighborhoods near UISD-preferred pockets"
+  ],
+
+  "target_neighborhoods": [
+    "North Laredo / Del Mar",
+    "Alexander / Plantation",
+    "Winfield / Lakeside corridors",
+    "Established family neighborhoods near UISD-preferred pockets"
+  ],
+
+  "buyer_guidance": [
+    "Use all-in payment, not just list price, as the primary screen.",
+    "Compare taxes, insurance, utilities, school appeal, and commute before choosing a neighborhood.",
+    "This market rewards disciplined value buyers more than emotional stretch buyers.",
+    "A modestly lower purchase price can materially improve flexibility and resale resilience."
+  ],
+
+  "seller_guidance": [
+    "Price against realistic local demand and days-on-market expectations, not assumptions from faster Texas metros.",
+    "Presentation and condition matter because many Laredo buyers are highly payment-sensitive.",
+    "Homes in family-friendly North Laredo pockets should be framed around livability, space, and value."
+  ],
+
+  "landlord_notes": [
+    "Laredo supports practical rental demand, especially for 2- and 3-bedroom product.",
+    "Investors should still model tax drag, insurance, maintenance, and longer-lease assumptions conservatively.",
+    "The strongest rentals here are about steady occupancy and practical affordability, not premium pricing."
+  ],
+
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 950, "high": 1200, "avg": 1100, "as_of": "2026-04" },
+      "home_price": { "low": 150000, "high": 205000, "avg": 180000, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 1250, "high": 1600, "avg": 1425, "as_of": "2026-02" },
+      "utilities": {
+        "electric_gas": { "low": 130, "high": 210, "avg": 170 },
+        "water_sewer": { "low": 45, "high": 65, "avg": 55 },
+        "total": { "low": 175, "high": 275, "avg": 225 },
+        "as_of": "2026-04"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 1300, "high": 1700, "avg": 1450, "as_of": "2026-04" },
+      "home_price": { "low": 210000, "high": 295000, "avg": 255475, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 1600, "high": 2150, "avg": 1860, "as_of": "2026-02" },
+      "utilities": {
+        "electric_gas": { "low": 170, "high": 280, "avg": 225 },
+        "water_sewer": { "low": 55, "high": 80, "avg": 68 },
+        "total": { "low": 225, "high": 360, "avg": 293 },
+        "as_of": "2026-04"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 1750, "high": 2300, "avg": 2000, "as_of": "2026-04" },
+      "home_price": { "low": 290000, "high": 390000, "avg": 340000, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 2200, "high": 2900, "avg": 2525, "as_of": "2026-02" },
+      "utilities": {
+        "electric_gas": { "low": 220, "high": 340, "avg": 280 },
+        "water_sewer": { "low": 70, "high": 95, "avg": 82 },
+        "total": { "low": 290, "high": 435, "avg": 362 },
+        "as_of": "2026-04"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 2300, "high": 3100, "avg": 2700, "as_of": "2026-04" },
+      "home_price": { "low": 390000, "high": 520000, "avg": 455000, "as_of": "2026-02" },
+      "mortgage_monthly": { "low": 2950, "high": 3950, "avg": 3400, "as_of": "2026-02" },
+      "utilities": {
+        "electric_gas": { "low": 280, "high": 430, "avg": 350 },
+        "water_sewer": { "low": 85, "high": 120, "avg": 102 },
+        "total": { "low": 365, "high": 550, "avg": 452 },
+        "as_of": "2026-04"
+      }
+    }
+  },
+
+  "housing": {
+    "housing_units": 87698,
+    "median_value_owner_occupied": 193500,
+    "market": {
+      "zillow_average_home_value": 217648,
+      "zillow_one_year_change_percent": 2.5,
+      "market_type_summary": "Balanced, with comparatively affordable pricing but slower selling velocity",
+      "average_days_on_market": 110,
+      "median_sale_price_current": 255475,
+      "median_listing_price_realtor": 254000,
+      "median_listing_price_per_sqft": 158,
+      "active_listings_total": 987,
+      "q1_2026": {
+        "median_sale_price": 255475
+      },
+      "sale_history_36_months": [
+        { "month": "2023-01", "median_sale_price": 222000 },
+        { "month": "2024-12", "median_sale_price": 249000 },
+        { "month": "2025-06", "median_sale_price": 258000 },
+        { "month": "2026-02", "median_sale_price": 255475 }
+      ]
+    }
+  },
+
+  "sources": {
+    "demographics": { "provider": "US Census Bureau / Census Reporter", "as_of": "2026-04" },
+    "rent": { "provider": "Apartments.com / Zillow Rentals", "as_of": "2026-04" },
+    "home_price": { "provider": "Zillow / Redfin / Realtor.com", "as_of": "2026-02" }
+  },
+
+  "compatibility": {
+    "orozco_realty_ready": true,
+    "intended_primary_slug": "laredo",
+    "parser_notes": [
+      "This file follows the same Orozco city-market schema as San Antonio and McAllen.",
+      "Laredo is modeled as a civilian affordability/value market with stronger trade-logistics relevance than military anchoring.",
+      "Replace image_url with your final Laredo hero image asset before production publish."
+    ]
+  }
 }
