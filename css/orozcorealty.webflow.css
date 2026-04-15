@@ -1388,7 +1388,7 @@ figcaption {
   text-align: center;
   width: 100%;
   margin-top: 100px;
-  margin-bottom: 33px;
+  margin-bottom: 100px;
   margin-left: 0;
 }
 
@@ -3165,7 +3165,7 @@ figcaption {
   line-height: 1;
   transition: transform .4s, border-color .4s, background-color .4s;
   display: inline-block;
-  box-shadow: 0 2px 5px #0000002e;
+  box-shadow: 0 2px 5px #0000003b;
 }
 
 .agent-socials-absolute {
@@ -4688,7 +4688,6 @@ figcaption {
 .hero-flex.slide-up-animation {
   grid-column-gap: 22px;
   grid-row-gap: 22px;
-  margin-top: 0;
 }
 
 .testimonial-image-circle {
@@ -4821,7 +4820,7 @@ figcaption {
   align-items: flex-end;
   width: 100%;
   height: 100vh;
-  margin-top: 57px;
+  margin-top: -168px;
   margin-left: 0;
   margin-right: auto;
   padding-bottom: 0;
@@ -5689,12 +5688,13 @@ figcaption {
   width: 900px;
   min-width: 560px;
   max-width: 900px;
+  margin-top: 0;
 }
 
 .hero-overlay {
   z-index: 3;
   background-image: linear-gradient(180deg, #0006, #0000 13%, var(--transparent) 50%, #0006 60%);
-  margin-top: -12px;
+  margin-top: -36px;
   position: absolute;
   inset: 0%;
 }
@@ -7315,7 +7315,13 @@ figcaption {
   flex: none;
 }
 
-.section-copy, .section-copy-copy {
+.section-copy {
+  width: 100%;
+  margin-top: 0;
+  position: sticky;
+}
+
+.section-copy-copy {
   width: 100%;
   margin-top: 0;
 }
@@ -9124,6 +9130,7 @@ figcaption {
   align-items: center;
   width: 100%;
   display: flex;
+  position: static;
 }
 
 .nav-menu-wrapper-3 {
@@ -11972,8 +11979,8 @@ figcaption {
   background-color: #1a1614;
   border-radius: 0;
   max-width: 1200px;
-  margin-top: 42px;
-  margin-bottom: 140px;
+  margin-top: 0;
+  margin-bottom: 100px;
   padding: 20px 60px 40px;
   box-shadow: 0 2px 9px -6px #000000b5;
 }
@@ -12588,7 +12595,7 @@ figcaption {
   height: 125%;
   margin-top: 0;
   margin-bottom: 0;
-  margin-left: 8px;
+  margin-left: 0;
   padding-bottom: 4px;
   padding-right: 0;
   display: grid;
@@ -13781,107 +13788,32 @@ figcaption {
   margin-left: -1px;
 }
 
-.militry-three-videos {
-  max-width: 1440px;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: hidden;
-}
-
-.militry-three-videos.home-background {
-  background-image: linear-gradient(180deg, var(--transparent) 20%, #0c0c0c80 35%, #0e0e0e99 80%, var(--black) 95%), url('../images/Hero-Image-2.jpg');
-  background-position: 0 0, 50%;
-  background-size: auto, cover;
-  max-width: none;
-}
-
-.militry-three-videos.home-background.no-max-width {
+.code-embed-44 {
+  background-color: #000000f2;
   margin-top: 0;
+  padding-top: 40px;
 }
 
-.militry-three-videos.padding-216px {
-  grid-column-gap: 16px;
-  grid-row-gap: 16px;
-  text-align: center;
-  grid-template-rows: auto auto;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-columns: 1fr;
-  justify-content: center;
+.code-embed-45 {
+  background-color: #000;
+}
+
+.section-269 {
+  display: block;
+}
+
+.navbar-wrapper-2-copy {
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  flex: 1;
+  justify-content: space-between;
   align-items: center;
-  max-width: 100%;
-  margin-top: 60px;
-  padding-left: 0;
-  padding-right: 0;
+  margin-top: 9px;
+  margin-left: 17px;
+  margin-right: 14px;
+  padding-right: 100px;
+  font-size: 13px;
   display: flex;
-  position: static;
-}
-
-.militry-three-videos.padding-72px {
-  max-width: 113%;
-  padding-top: 0;
-  padding-left: 72px;
-  padding-right: 72px;
-}
-
-.militry-three-videos.padding-144px {
-  text-align: center;
-  background-color: #1a1614;
-  border-radius: 0;
-  max-width: 97%;
-  margin-top: 42px;
-  margin-bottom: 220px;
-  padding: 200px 60px 40px;
-  box-shadow: 0 2px 9px -6px #000000b5;
-}
-
-.militry-three-videos.reviews-image {
-  background-image: linear-gradient(#000000b3, #000000b3), url('../images/a-modern-living-room-with-a-large-window.jpg');
-  background-position: 0 0, 50%;
-  background-repeat: repeat, no-repeat;
-  background-size: auto, cover;
-  background-attachment: scroll, fixed;
-}
-
-.militry-three-videos.about-background-03 {
-  background-image: url('../images/a-chair-in-a-room-Square.jpg');
-  background-position: 50% 33%;
-  background-size: cover;
-  max-width: none;
-}
-
-.militry-three-videos.about-background {
-  background-image: url('../images/About-Image-Overlay.png'), url('../images/About-Image.jpg');
-  background-position: 50%, 50%;
-  background-repeat: no-repeat, repeat;
-  background-size: cover, cover;
-  max-width: none;
-}
-
-.militry-three-videos.no-max-width {
-  margin-top: 0;
-}
-
-.militry-three-videos.listings-01 {
-  text-align: center;
-  max-width: 100%;
-  margin-top: 39px;
-  padding-left: 0;
-  padding-right: 0;
-  overflow: visible;
-}
-
-.militry-three-videos.listings-02-03 {
-  margin-top: 200px;
-  padding-left: 120px;
-  padding-right: 120px;
-  overflow: visible;
-}
-
-.militry-three-videos.padding-72px {
-  background-color: #0000;
-  max-width: 1600px;
-  margin-top: -96px;
-  padding-right: 72px;
 }
 
 @media screen and (min-width: 1280px) {
@@ -16273,32 +16205,10 @@ figcaption {
     font-size: 55px;
   }
 
-  .militry-three-videos.home-background.no-max-width {
-    background-image: linear-gradient(180deg, var(--transparent) 16%, #0c0c0c80 60%, #0e0e0e99 80%, var(--black)), url('../images/Hero-Image-2.jpg');
-    background-position: 0 0, 50%;
-    background-size: auto, cover;
-    max-width: 100%;
-    height: 100%;
-    min-height: 100%;
-  }
-
-  .militry-three-videos.padding-144px {
-    background-color: #1a1614;
-    max-width: 97%;
-    margin-top: 20px;
-    margin-bottom: 0;
-    padding-bottom: 77px;
-  }
-
-  .militry-three-videos.no-max-width {
-    max-width: 100%;
-    min-height: 88%;
-    margin-top: -124px;
-  }
-
-  .militry-three-videos.padding-72px {
-    margin-top: -15px;
-    margin-bottom: 100px;
+  .navbar-wrapper-2-copy {
+    margin-right: 11px;
+    padding-bottom: 13px;
+    padding-right: 5px;
   }
 }
 
@@ -16365,7 +16275,7 @@ figcaption {
     max-width: 95%;
     margin-top: 0;
     margin-bottom: 100px;
-    padding: 200px 60px 40px;
+    padding: 58px 60px 40px;
     box-shadow: 0 2px 5px #000;
   }
 
@@ -16550,6 +16460,7 @@ figcaption {
 
   .values-stack {
     grid-row-gap: 32px;
+    margin-left: 0;
   }
 
   .cta-image {
@@ -17032,6 +16943,7 @@ figcaption {
     margin-left: 80px;
     padding-left: 30px;
     padding-right: 30px;
+    position: fixed;
     box-shadow: 0 2px 5px #00000087;
   }
 
@@ -17474,6 +17386,10 @@ figcaption {
     align-items: center;
   }
 
+  .footer-wrapper-4 {
+    text-align: left;
+  }
+
   .normal-title.none-margin.text-align-left {
     color: #774900;
   }
@@ -17612,6 +17528,7 @@ figcaption {
   }
 
   .navbar-wrapper-2 {
+    text-align: center;
     margin-left: 0;
     margin-right: 44px;
     padding-bottom: 0;
@@ -17621,7 +17538,6 @@ figcaption {
   .nav-menu-two {
     grid-column-gap: 0px;
     grid-row-gap: 0px;
-    margin-left: 0;
   }
 
   .navbar-wrapper {
@@ -17629,7 +17545,7 @@ figcaption {
     background-color: #fff;
     width: 110%;
     height: 90px;
-    margin-top: -7px;
+    margin-top: 0;
     margin-left: -50px;
     padding-bottom: 0;
     padding-left: 48px;
@@ -18084,6 +18000,7 @@ figcaption {
 
   .section-259 {
     width: 100%;
+    position: sticky;
   }
 
   .heading-68 {
@@ -18690,6 +18607,8 @@ figcaption {
     filter: sepia(32%);
     mix-blend-mode: normal;
     width: 100%;
+    min-width: 100%;
+    max-width: 100%;
     margin-top: 40px;
     margin-bottom: 60px;
     margin-left: 40px;
@@ -19169,6 +19088,7 @@ figcaption {
     padding-bottom: 0;
     padding-left: 48px;
     padding-right: 81px;
+    position: fixed;
     box-shadow: 0 2px 5px #000000c4;
   }
 
@@ -19635,37 +19555,12 @@ figcaption {
     padding-bottom: 20px;
   }
 
-  .militry-three-videos {
-    margin-top: 9px;
-  }
-
-  .militry-three-videos.padding-72px {
-    margin-top: 200px;
-  }
-
-  .militry-three-videos.padding-144px {
-    background-color: #1a1614;
-    max-width: 95%;
-    margin-top: 0;
-    margin-bottom: 100px;
-    padding: 200px 60px 40px;
-    box-shadow: 0 2px 5px #000;
-  }
-
-  .militry-three-videos.no-max-width {
-    max-width: none;
-    margin-top: 0;
-  }
-
-  .militry-three-videos.listings-01 {
-    margin-top: 60px;
-  }
-
-  .militry-three-videos.padding-72px {
-    background-color: #1110;
-    margin-top: -156px;
-    margin-bottom: 0;
-    padding-left: 87px;
+  .navbar-wrapper-2-copy {
+    text-align: center;
+    margin-left: 0;
+    margin-right: 44px;
+    padding-bottom: 0;
+    padding-right: 36px;
   }
 }
 
@@ -21200,28 +21095,10 @@ figcaption {
     margin-left: 0;
   }
 
-  .militry-three-videos.padding-72px {
-    max-width: 1900px;
-  }
-
-  .militry-three-videos.padding-144px {
-    aspect-ratio: auto;
-    justify-content: center;
-    align-items: center;
-    max-width: 100%;
-    margin-left: 200px;
-    display: flex;
-    position: static;
-  }
-
-  .militry-three-videos.no-max-width {
-    margin-top: -138px;
-  }
-
-  .militry-three-videos.padding-72px {
-    margin-top: -147px;
-    padding-left: 0;
-    padding-right: 0;
+  .navbar-wrapper-2-copy {
+    margin-top: 15px;
+    margin-left: -71px;
+    padding-bottom: 22px;
   }
 }
 
@@ -24356,39 +24233,10 @@ figcaption {
     margin-left: 38px;
   }
 
-  .militry-three-videos.home-background {
-    background-image: linear-gradient(180deg, var(--transparent), #0c0c0c99 30%, #0e0e0ea6 80%, var(--black) 95%), url('../images/Hero-Image-2.jpg');
-    background-position: 0 0, 50%;
-    background-size: auto, cover;
-  }
-
-  .militry-three-videos.padding-216px {
-    padding-left: 10%;
-    padding-right: 10%;
-  }
-
-  .militry-three-videos.padding-72px {
-    padding-left: 5%;
-    padding-right: 5%;
-  }
-
-  .militry-three-videos.padding-144px {
-    padding-left: 10%;
-    padding-right: 10%;
-  }
-
-  .militry-three-videos.listings-01, .militry-three-videos.listings-02-03 {
-    max-width: none;
-    padding-left: 10%;
-    padding-right: 10%;
-  }
-
-  .militry-three-videos.padding-72px {
-    background-color: #111;
-    margin-top: 24px;
-    padding-left: 5%;
-    padding-right: 5%;
-    box-shadow: 0 20px 5px 10px #02000033;
+  .navbar-wrapper-2-copy {
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 
@@ -29233,8 +29081,12 @@ figcaption {
     overflow: hidden;
   }
 
-  .militry-three-videos.no-max-width {
-    max-width: 100%;
+  .navbar-wrapper-2-copy {
+    margin-top: 0;
+    margin-right: 65px;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 0;
   }
 }
 

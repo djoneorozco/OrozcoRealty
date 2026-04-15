@@ -1,10 +1,10 @@
 <!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Apr 15 2026 07:23:15 GMT+0000 (Coordinated Universal Time)  -->
-<html data-wf-page="69d9ec48fd6292bdcd9d8dc5" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
+<html data-wf-page="69db70a0425baeebfbaeb342" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Dallas</title>
-  <meta content="Dallas" property="og:title">
-  <meta content="Dallas" property="twitter:title">
+  <title>San Antonio</title>
+  <meta content="San Antonio" property="og:title">
+  <meta content="San Antonio" property="twitter:title">
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <meta content="Webflow" name="generator">
   <link href="../css/normalize.css" rel="stylesheet" type="text/css">
@@ -19,17 +19,11 @@
   <link href="../images/webclip.png" rel="apple-touch-icon">
 </head>
 <body>
-  <div class="w-embed"><!--  =========================================================
-  OrozcoRealty • Cities Overview Shell
+  <div class="code-embed-44 w-embed w-script"><!--  =========================================================
+  OrozcoRealty • Cities Overview
+  HERO ONLY • COMBINED SHELL + JS
   Executive-Muted Gold
-  v2.0.0
-  PURPOSE
-  - Shell only
-  - JS runtime fills content from cities.json
-  - City slug is read from URL path, e.g. /market/san-antonio
-  REQUIRED
-  - Separate JS runtime code
-  - window.OROZCO_CITIES_JSON_URL optional override
+  HEADER REMOVED
 =========================================================  -->
     <div id="or-city-overview" style="all:initial;">
       <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,14 +39,11 @@
       --bg:#071018;
       --bg2:#0b1621;
       --panel:rgba(17,24,34,.78);
-      --panel2:rgba(12,18,28,.72);
       --stroke:rgba(216,184,122,.16);
       --ink:#f3efe7;
       --muted:#b8b0a4;
       --gold:#d8b87a;
       --blue:#6f8fb7;
-      --mint:#94c7b3;
-      --danger:#d98c8c;
       --shadow:0 24px 70px rgba(0,0,0,.42);
       --wrap:min(1380px, calc(100% - 32px));
       display:block;
@@ -62,72 +53,6 @@
         radial-gradient(circle at top left, rgba(216,184,122,.10), transparent 26%),
         radial-gradient(circle at top right, rgba(111,143,183,.10), transparent 26%),
         linear-gradient(180deg, var(--bg), var(--bg2));
-      min-height:100vh;
-    }
-    #or-city-overview a{ color:inherit; text-decoration:none; }
-    #or-city-overview .or-topbar{
-      position:sticky;
-      top:0;
-      z-index:30;
-      backdrop-filter:blur(16px);
-      background:rgba(8,12,18,.76);
-      border-bottom:1px solid rgba(216,184,122,.10);
-    }
-    #or-city-overview .or-topbar-inner{
-      width:var(--wrap);
-      margin:0 auto;
-      min-height:74px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
-    #or-city-overview .or-brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    #or-city-overview .or-brand-mark{
-      width:42px;
-      height:42px;
-      border-radius:14px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.15), transparent 35%),
-        linear-gradient(135deg, rgba(216,184,122,.20), rgba(111,143,183,.16));
-      border:1px solid rgba(216,184,122,.18);
-      box-shadow:var(--shadow);
-      flex:0 0 auto;
-    }
-    #or-city-overview .or-brand-copy strong{
-      display:block;
-      font-family:"Gilda Display",serif;
-      font-size:1.15rem;
-      color:#f8f0de;
-      letter-spacing:.01em;
-    }
-    #or-city-overview .or-brand-copy span{
-      display:block;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      font-size:.78rem;
-      margin-top:2px;
-    }
-    #or-city-overview .or-topmeta{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    #or-city-overview .or-pill{
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:.84rem;
-      line-height:1;
-      white-space:nowrap;
     }
     #or-city-overview .or-wrap{
       width:var(--wrap);
@@ -278,6 +203,249 @@
       color:#fff;
       font-weight:800;
     }
+    @media (max-width:1180px){
+      #or-city-overview .or-hero-inner{
+        grid-template-columns:1fr;
+      }
+    }
+    @media (max-width:760px){
+      #or-city-overview{ --wrap:min(100% - 20px, 1380px); }
+      #or-city-overview .or-wrap{
+        padding:16px 0 28px;
+      }
+      #or-city-overview .or-hero-inner{
+        padding:20px;
+        min-height:auto;
+      }
+      #or-city-overview .or-kpis,
+      #or-city-overview .or-score-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+      <div class="or-wrap">
+        <section class="or-hero">
+          <div class="or-hero-bg" id="orHeroBg"></div>
+          <div class="or-hero-inner">
+            <div>
+              <div class="or-eyebrow" id="orHeroEyebrow">City Intelligence</div>
+              <h1 class="or-title" id="orHeroTitle">Loading city...</h1>
+              <p class="or-subtitle" id="orHeroSubtitle">Preparing city intelligence.</p>
+              <div class="or-kpis">
+                <div class="or-kpi">
+                  <div class="or-kpi-label">Median Home Price</div>
+                  <div class="or-kpi-value" id="orKpiHomePrice">—</div>
+                </div>
+                <div class="or-kpi">
+                  <div class="or-kpi-label">Median Rent</div>
+                  <div class="or-kpi-value" id="orKpiRent">—</div>
+                </div>
+                <div class="or-kpi">
+                  <div class="or-kpi-label">All-In Mortgage</div>
+                  <div class="or-kpi-value" id="orKpiMortgage">—</div>
+                </div>
+                <div class="or-kpi">
+                  <div class="or-kpi-label">Days On Market</div>
+                  <div class="or-kpi-value" id="orKpiDom">—</div>
+                </div>
+              </div>
+            </div>
+            <div class="or-hero-side">
+              <div class="or-card">
+                <div class="or-status" id="orVerdictStatus">Market Verdict</div>
+                <div class="or-card-title" id="orVerdictTitle">—</div>
+                <div class="or-card-copy" id="orVerdictCopy">—</div>
+              </div>
+              <div class="or-card">
+                <div class="or-kpi-label">Market Scorecard</div>
+                <div class="or-score-grid">
+                  <div class="or-score-mini">
+                    <span>Affordability</span>
+                    <strong id="orScoreAffordability">—</strong>
+                  </div>
+                  <div class="or-score-mini">
+                    <span>Growth</span>
+                    <strong id="orScoreGrowth">—</strong>
+                  </div>
+                  <div class="or-score-mini">
+                    <span>Stability</span>
+                    <strong id="orScoreStability">—</strong>
+                  </div>
+                  <div class="or-score-mini">
+                    <span>Overall</span>
+                    <strong id="orScoreOverall">—</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <script>
+    (() => {
+      "use strict";
+      if (window.OROZCO_CITY_OVERVIEW_HERO_ONLY?.__mounted) return;
+      window.OROZCO_CITY_OVERVIEW_HERO_ONLY = { __mounted: true };
+      const root = document.getElementById("or-city-overview");
+      if (!root) return;
+      const CITY_JSON_URL =
+        window.OROZCO_CITY_JSON_URL ||
+        "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/data/market/san-antonio.json";
+      const $ = (sel, node = root) => node.querySelector(sel);
+      function fmtMoney(v){
+        const n = Number(v);
+        if (!Number.isFinite(n)) return "—";
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 0
+        }).format(n);
+      }
+      function fmtNum(v){
+        const n = Number(v);
+        if (!Number.isFinite(n)) return "—";
+        return new Intl.NumberFormat("en-US").format(n);
+      }
+      function setText(sel, value){
+        const el = $(sel);
+        if (el) el.textContent = value ?? "—";
+      }
+      function renderHero(data){
+        const bg = $("#orHeroBg");
+        if (bg && data.image_url){
+          bg.style.setProperty("--hero-image", `url("${data.image_url}")`);
+        }
+        setText(
+          "#orHeroEyebrow",
+          `${data.state || "State"} • ${data.market_label || "City Intelligence"}`
+        );
+        setText(
+          "#orHeroTitle",
+          `${data.city || data.name || "City"}${data.state_code ? `, ${data.state_code}` : ""}`
+        );
+        setText(
+          "#orHeroSubtitle",
+          data.profile || "City intelligence loaded."
+        );
+        setText(
+          "#orKpiHomePrice",
+          fmtMoney(data.metrics?.median_sale_price || data.avg_home_value)
+        );
+        setText(
+          "#orKpiRent",
+          fmtMoney(data.metrics?.median_rent || data.rental_metrics?.median_rent)
+        );
+        setText(
+          "#orKpiMortgage",
+          fmtMoney(data.avg_home_mortgage_monthly?.avg)
+        );
+        setText(
+          "#orKpiDom",
+          Number.isFinite(Number(data.metrics?.days_on_market))
+            ? `${fmtNum(data.metrics.days_on_market)} days`
+            : "—"
+        );
+        const status = data.market_bluf?.status || "Market Verdict";
+        const verdict = data.market_bluf?.verdict || data.market_bluf?.bluf_headline || "Market View";
+        const copyParts = [
+          data.market_bluf?.bluf_summary,
+          data.financial_brief?.affordability_summary,
+          data.market_bluf?.buyer_leverage ? `Buyer leverage: ${data.market_bluf.buyer_leverage}.` : "",
+          data.market_bluf?.inventory_trend ? `Inventory trend: ${data.market_bluf.inventory_trend}.` : ""
+        ].filter(Boolean);
+        setText("#orVerdictStatus", status);
+        setText("#orVerdictTitle", verdict);
+        setText("#orVerdictCopy", copyParts.join(" "));
+        setText("#orScoreAffordability", data.scorecard?.affordability_score ?? "—");
+        setText("#orScoreGrowth", data.scorecard?.growth_score ?? "—");
+        setText("#orScoreStability", data.scorecard?.stability_score ?? "—");
+        setText("#orScoreOverall", data.scorecard?.overall_score ?? "—");
+      }
+      async function loadCity(){
+        try{
+          const res = await fetch(CITY_JSON_URL, { cache: "no-store" });
+          if (!res.ok){
+            throw new Error(`HTTP ${res.status} while loading ${CITY_JSON_URL}`);
+          }
+          const data = await res.json();
+          renderHero(data);
+        }catch(err){
+          console.error("Cities Overview Hero load error:", err);
+          setText("#orHeroTitle", "City data could not load");
+          setText("#orHeroSubtitle", "Check the city JSON path.");
+          setText("#orVerdictTitle", "Load Error");
+          setText("#orVerdictCopy", "The shell loaded, but the city JSON did not.");
+        }
+      }
+      loadCity();
+    })();
+  </script>
+    </div>
+  </div>
+  <div class="code-embed-45 w-embed"><!--  =========================================================
+  OrozcoRealty • Cities Overview
+  MAIN PANEL ONLY
+  Executive-Muted Gold
+  SHELL ONLY
+=========================================================  -->
+    <div id="or-city-overview" style="all:initial;">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+      <style>
+    #or-city-overview, #or-city-overview *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+    #or-city-overview{
+      --bg:#071018;
+      --bg2:#0b1621;
+      --panel:rgba(17,24,34,.78);
+      --panel2:rgba(12,18,28,.72);
+      --stroke:rgba(216,184,122,.16);
+      --ink:#f3efe7;
+      --muted:#b8b0a4;
+      --gold:#d8b87a;
+      --blue:#6f8fb7;
+      --mint:#94c7b3;
+      --danger:#d98c8c;
+      --shadow:0 24px 70px rgba(0,0,0,.42);
+      --wrap:min(1380px, calc(100% - 32px));
+      display:block;
+      font-family:"Barlow",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(216,184,122,.10), transparent 26%),
+        radial-gradient(circle at top right, rgba(111,143,183,.10), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+    #or-city-overview a{
+      color:inherit;
+      text-decoration:none;
+    }
+    #or-city-overview .or-wrap{
+      width:var(--wrap);
+      margin:0 auto;
+      padding:0 0 40px;
+    }
+    #or-city-overview .or-pill{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1;
+      white-space:nowrap;
+    }
+    #or-city-overview .or-kpi-label{
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:.74rem;
+      margin-bottom:8px;
+    }
     #or-city-overview .or-tabs{
       display:flex;
       flex-wrap:wrap;
@@ -313,7 +481,9 @@
       backdrop-filter:blur(18px);
       margin-top:14px;
     }
-    #or-city-overview .or-panel.is-active{ display:block; }
+    #or-city-overview .or-panel.is-active{
+      display:block;
+    }
     #or-city-overview .or-section-title{
       font-family:"Gilda Display",serif;
       font-size:1.95rem;
@@ -331,9 +501,15 @@
       gap:16px;
       margin-top:18px;
     }
-    #or-city-overview .or-grid-4{ grid-template-columns:repeat(4,minmax(0,1fr)); }
-    #or-city-overview .or-grid-3{ grid-template-columns:repeat(3,minmax(0,1fr)); }
-    #or-city-overview .or-grid-2{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    #or-city-overview .or-grid-4{
+      grid-template-columns:repeat(4,minmax(0,1fr));
+    }
+    #or-city-overview .or-grid-3{
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    #or-city-overview .or-grid-2{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
     #or-city-overview .or-stat{
       border-radius:20px;
       padding:18px;
@@ -388,7 +564,9 @@
       color:#dcd3c4;
       line-height:1.75;
     }
-    #or-city-overview .or-list li + li{ margin-top:8px; }
+    #or-city-overview .or-list li + li{
+      margin-top:8px;
+    }
     #or-city-overview .or-quote{
       border-radius:20px;
       padding:20px;
@@ -500,7 +678,9 @@
       color:#f3d8d8;
       display:none;
     }
-    #or-city-overview .or-error.is-show{ display:block; }
+    #or-city-overview .or-error.is-show{
+      display:block;
+    }
     #or-city-overview .or-foot{
       padding:24px 2px 6px;
       color:var(--muted);
@@ -508,23 +688,23 @@
       line-height:1.75;
     }
     @media (max-width:1180px){
-      #or-city-overview .or-hero-inner,
       #or-city-overview .or-split{
         grid-template-columns:1fr;
       }
-      #or-city-overview .or-grid-4{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-      #or-city-overview .or-grid-3{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      #or-city-overview .or-grid-4{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      #or-city-overview .or-grid-3{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
     }
     @media (max-width:760px){
-      #or-city-overview{ --wrap:min(100% - 20px, 1380px); }
-      #or-city-overview .or-hero-inner{ padding:20px; min-height:auto; }
+      #or-city-overview{
+        --wrap:min(100% - 20px, 1380px);
+      }
       #or-city-overview .or-grid-4,
       #or-city-overview .or-grid-3,
-      #or-city-overview .or-grid-2,
-      #or-city-overview .or-score-grid{
-        grid-template-columns:1fr;
-      }
-      #or-city-overview .or-kpis{
+      #or-city-overview .or-grid-2{
         grid-template-columns:1fr;
       }
       #or-city-overview .or-bar-row{
@@ -535,78 +715,7 @@
       }
     }
   </style>
-      <div class="or-topbar">
-        <div class="or-topbar-inner">
-          <div class="or-brand">
-            <div class="or-brand-mark"></div>
-            <div class="or-brand-copy">
-              <strong>OrozcoRealty</strong>
-              <span>Cities Overview</span>
-            </div>
-          </div>
-          <div class="or-topmeta">
-            <div class="or-pill" id="orTopPlace">Texas Market Intelligence</div>
-            <div class="or-pill" id="orTopUpdated">Updated —</div>
-          </div>
-        </div>
-      </div>
       <div class="or-wrap">
-        <section class="or-hero">
-          <div class="or-hero-bg" id="orHeroBg"></div>
-          <div class="or-hero-inner">
-            <div>
-              <div class="or-eyebrow" id="orHeroEyebrow">City Intelligence</div>
-              <h1 class="or-title" id="orHeroTitle">Loading city...</h1>
-              <p class="or-subtitle" id="orHeroSubtitle">Preparing city intelligence.</p>
-              <div class="or-kpis">
-                <div class="or-kpi">
-                  <div class="or-kpi-label">Median Home Price</div>
-                  <div class="or-kpi-value" id="orKpiHomePrice">—</div>
-                </div>
-                <div class="or-kpi">
-                  <div class="or-kpi-label">Median Rent</div>
-                  <div class="or-kpi-value" id="orKpiRent">—</div>
-                </div>
-                <div class="or-kpi">
-                  <div class="or-kpi-label">All-In Mortgage</div>
-                  <div class="or-kpi-value" id="orKpiMortgage">—</div>
-                </div>
-                <div class="or-kpi">
-                  <div class="or-kpi-label">Days On Market</div>
-                  <div class="or-kpi-value" id="orKpiDom">—</div>
-                </div>
-              </div>
-            </div>
-            <div class="or-hero-side">
-              <div class="or-card">
-                <div class="or-status" id="orVerdictStatus">Market Verdict</div>
-                <div class="or-card-title" id="orVerdictTitle">—</div>
-                <div class="or-card-copy" id="orVerdictCopy">—</div>
-              </div>
-              <div class="or-card">
-                <div class="or-kpi-label">Market Scorecard</div>
-                <div class="or-score-grid">
-                  <div class="or-score-mini">
-                    <span>Affordability</span>
-                    <strong id="orScoreAffordability">—</strong>
-                  </div>
-                  <div class="or-score-mini">
-                    <span>Growth</span>
-                    <strong id="orScoreGrowth">—</strong>
-                  </div>
-                  <div class="or-score-mini">
-                    <span>Stability</span>
-                    <strong id="orScoreStability">—</strong>
-                  </div>
-                  <div class="or-score-mini">
-                    <span>Overall</span>
-                    <strong id="orScoreOverall">—</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
         <div class="or-tabs">
           <button class="or-tab is-active" data-or-tab="overview" type="button">Overview</button>
           <button class="or-tab" data-or-tab="real-estate" type="button">Real Estate</button>
@@ -819,13 +928,13 @@
     <script>
 (() => {
   "use strict";
-  if (window.OROZCO_CITY_OVERVIEW_SINGLE?.__mounted) return;
-  window.OROZCO_CITY_OVERVIEW_SINGLE = { __mounted: true };
+  if (window.OROZCO_CITY_OVERVIEW_MAIN_PANEL?.__mounted) return;
+  window.OROZCO_CITY_OVERVIEW_MAIN_PANEL = { __mounted: true };
   const root = document.getElementById("or-city-overview");
   if (!root) return;
   const CITY_JSON_URL =
     window.OROZCO_CITY_JSON_URL ||
-    "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/data/market/dallas.json";
+    "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/data/market/san-antonio.json";
   let CITY = null;
   let ACTIVE_BED = "3";
   const $ = (sel, node = root) => node.querySelector(sel);
@@ -958,44 +1067,11 @@
       renderBedroom(CITY, ACTIVE_BED);
     });
   }
-  function renderHero(data){
-    const bg = $("#orHeroBg");
-    if (bg && data.image_url){
-      bg.style.setProperty("--hero-image", `url("${data.image_url}")`);
-    }
-    setText("#orTopPlace", `${data.place || data.city || "City"} • ${data.market_label || "Market Intelligence"}`);
-    setText("#orTopUpdated", `Updated — ${data.last_updated_data_from_sources || data.market_metrics?.as_of || "N/A"}`);
-    setText("#orHeroEyebrow", `${data.state || "State"} • ${data.market_label || "City Intelligence"}`);
-    setText("#orHeroTitle", `${data.city || data.name || "City"}${data.state_code ? `, ${data.state_code}` : ""}`);
-    setText("#orHeroSubtitle", data.profile || "City intelligence loaded.");
-    setText("#orKpiHomePrice", fmtMoney(data.metrics?.median_sale_price || data.avg_home_value));
-    setText("#orKpiRent", fmtMoney(data.metrics?.median_rent || data.rental_metrics?.median_rent));
-    setText("#orKpiMortgage", fmtMoney(data.avg_home_mortgage_monthly?.avg));
-    setText("#orKpiDom",
-      Number.isFinite(Number(data.metrics?.days_on_market))
-        ? `${fmtNum(data.metrics.days_on_market)} days`
-        : "—"
-    );
-    const status = data.market_bluf?.status || "Market Verdict";
-    const verdict = data.market_bluf?.verdict || data.market_bluf?.bluf_headline || "Market View";
-    const copyParts = [
-      data.market_bluf?.bluf_summary,
-      data.financial_brief?.affordability_summary,
-      data.market_bluf?.buyer_leverage ? `Buyer leverage: ${data.market_bluf.buyer_leverage}.` : "",
-      data.market_bluf?.inventory_trend ? `Inventory trend: ${data.market_bluf.inventory_trend}.` : ""
-    ].filter(Boolean);
-    setText("#orVerdictStatus", status);
-    setText("#orVerdictTitle", verdict);
-    setText("#orVerdictCopy", copyParts.join(" "));
-    setText("#orScoreAffordability", data.scorecard?.affordability_score ?? "—");
-    setText("#orScoreGrowth", data.scorecard?.growth_score ?? "—");
-    setText("#orScoreStability", data.scorecard?.stability_score ?? "—");
-    setText("#orScoreOverall", data.scorecard?.overall_score ?? "—");
-  }
   function renderOverview(data){
     setText("#orOverviewIntro", data.profile || "City overview loaded.");
     setText("#orOvListPrice", fmtMoney(data.metrics?.median_list_price || data.market_metrics?.median_list_price));
-    setText("#orOvPpsf",
+    setText(
+      "#orOvPpsf",
       Number.isFinite(Number(data.metrics?.price_per_sqft || data.market_metrics?.price_per_sqft))
         ? fmtMoney(data.metrics?.price_per_sqft || data.market_metrics?.price_per_sqft)
         : "—"
@@ -1022,7 +1098,10 @@
       setText("#orBedUtilities", "—");
       return;
     }
-    setText("#orBedAsOf", `As of ${bed.home_price?.as_of || bed.rent_monthly?.as_of || data.metrics?.as_of || "N/A"}`);
+    setText(
+      "#orBedAsOf",
+      `As of ${bed.home_price?.as_of || bed.rent_monthly?.as_of || data.metrics?.as_of || "N/A"}`
+    );
     setText("#orBedHomePrice", fmtMoney(bed.home_price?.avg));
     setText("#orBedRent", fmtMoney(bed.rent_monthly?.avg));
     setText("#orBedMortgage", fmtMoney(bed.mortgage_monthly?.avg));
@@ -1087,7 +1166,6 @@
   function renderAll(data){
     CITY = data;
     hideError();
-    renderHero(data);
     renderOverview(data);
     renderRealEstate(data);
     renderDemographics(data);
@@ -1102,11 +1180,7 @@
       const data = await res.json();
       renderAll(data);
     }catch(err){
-      console.error("Cities Overview load error:", err);
-      setText("#orHeroTitle", "City data could not load");
-      setText("#orHeroSubtitle", "Check the city JSON path.");
-      setText("#orVerdictTitle", "Load Error");
-      setText("#orVerdictCopy", "The shell loaded, but the city JSON did not.");
+      console.error("Cities Overview Main Panel load error:", err);
       showError(String(err?.message || err));
     }
   }
