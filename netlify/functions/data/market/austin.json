@@ -1,0 +1,368 @@
+{
+  "slug": "austin",
+  "name": "Austin",
+  "city": "Austin",
+  "submarket": "Austin Citywide",
+  "place": "Austin, TX",
+  "place_detail": "Austin, TX",
+  "state": "Texas",
+  "state_code": "TX",
+  "geo_id": "1600000US4805000",
+  "year": 2026,
+  "last_updated_data_from_sources": "April 2026",
+  "image_url": "https://images.unsplash.com/photo-1531218150217-54595bc2b934?auto=format&fit=crop&w=1600&q=80",
+  "zip": "78701",
+  "market_label": "Austin Metro",
+  "profile": "High-demand Texas capital metro with a stronger income profile than many peer markets, but meaningfully higher home prices and tighter affordability than San Antonio.",
+
+  "avg_home_value": 508530,
+  "average_home_value": 508530,
+  "avgHome": 508530,
+  "city_avg_home": 508530,
+
+  "snapshot": {
+    "population_city": 993588,
+    "population_metro": 2620945,
+    "median_household_income": 93658,
+    "median_home_price": 530000,
+    "market_trend_yoy": -5.7,
+    "traffic_level": "High",
+    "employment_status": "Stable"
+  },
+
+  "market_metrics": {
+    "median_list_price": 556000,
+    "median_sold_price": 530000,
+    "median_sale_price": 530000,
+    "days_on_market": 57,
+    "inventory_months": null,
+    "price_per_sqft": 300,
+    "active_listings_total": 4194,
+    "market_type_summary": "Somewhat competitive with softer pricing than last year",
+    "zillow_average_home_value": 508530,
+    "zillow_one_year_change_percent": -5.7,
+    "as_of": "2026-03"
+  },
+
+  "metrics": {
+    "median_list_price": 556000,
+    "median_sold_price": 530000,
+    "median_sale_price": 530000,
+    "days_on_market": 57,
+    "inventory_months": null,
+    "price_per_sqft": 300,
+    "median_rent": 1729,
+    "active_listings_total": 4194,
+    "property_tax_rate": 0.0125,
+    "as_of": "2026-03"
+  },
+
+  "mortgage_assumptions": {
+    "apr_percent": 5.9,
+    "term_years": 30,
+    "down_payment_percent": 0,
+    "includes": "va_loan_all_in",
+    "defaults_note": "Based on mid-April 2026 national 30-year VA rate environment; local lender pricing will vary."
+  },
+
+  "property_tax_rate": 0.0125,
+  "property_tax_rate_percent": 1.25,
+  "insurance_rate": 0.00928,
+  "insurance_rate_percent": 0.93,
+  "hoa_monthly": 35,
+
+  "ownership_costs": {
+    "property_tax_rate": 0.0125,
+    "property_tax_rate_percent": 1.25,
+    "insurance_rate_estimate": 0.00928,
+    "insurance_rate_percent": 0.93,
+    "insurance_annual_default": 4719,
+    "hoa_monthly_default": 35,
+    "notes": [
+      "Austin pricing pressure is driven more by purchase price than by property tax alone.",
+      "Insurance, taxes, and HOA still materially widen the gap between principal-and-interest and true all-in monthly cost."
+    ]
+  },
+
+  "costs": {
+    "property_tax_rate": 0.0125,
+    "insurance_annual_default": 4719,
+    "hoa_monthly_default": 35
+  },
+
+  "avg_home_mortgage_monthly": {
+    "avg": 4141,
+    "as_of": "2026-04",
+    "notes": "Estimated citywide all-in VA-style payment using roughly $530k price point, 5.9% rate, Austin median effective tax rate, local insurance estimate, and nominal HOA."
+  },
+
+  "population": {
+    "estimate": 993588,
+    "median_age": 34.7,
+    "persons_per_household": 2.1
+  },
+
+  "households": {
+    "total_households": 456113
+  },
+
+  "income": {
+    "median_household_income": 93658,
+    "per_capita_income": 62862,
+    "poverty_rate_percent": 12.0
+  },
+
+  "education": {
+    "high_school_grad_or_higher_percent": 92.3,
+    "bachelors_degree_or_higher_percent": 59.6
+  },
+
+  "veterans": {
+    "veteran_population_percent": 3.1
+  },
+
+  "immigration": {
+    "foreign_born_percent": 18.7
+  },
+
+  "labor": {
+    "mean_travel_time_to_work_minutes": 23.7,
+    "unemployment_rate_percent": null
+  },
+
+  "crime_status": {
+    "installation": "No major active-duty installation anchor inside the city core; this file is citywide rather than base-specific.",
+    "metro_austin": "Varies by neighborhood; buyers should evaluate block-level crime, commute, and school tradeoffs rather than rely on citywide averages."
+  },
+
+  "school_quality": {
+    "on_base": "Not applicable for this citywide Austin file.",
+    "off_base": "School quality varies materially by district and feeder pattern; suburb-linked districts often screen stronger than many urban-core pockets."
+  },
+
+  "rental_vacancy": {
+    "rate_percent": 8.6,
+    "notes": "Metro-level Austin-Round Rock rental vacancy reference from Census Housing Vacancy Survey."
+  },
+
+  "rental_metrics": {
+    "median_rent": 1729,
+    "vacancy_rate_percent": 8.6,
+    "notes": "Median gross rent is citywide Census; vacancy reference is metro-level."
+  },
+
+  "climate_weather": {
+    "spring": "Warm/Mild; 65–85°F",
+    "summer": "Hot/Humid; 92–102°F",
+    "fall": "Warm/Mild; 65–88°F",
+    "winter": "Cool/Mild; 45–65°F"
+  },
+
+  "special_events": [
+    "SXSW",
+    "Austin City Limits Festival",
+    "Formula 1 United States Grand Prix",
+    "University of Texas football weekends"
+  ],
+
+  "military_lifestyle_fit": {
+    "rating": "Moderate",
+    "description": "Strong career and lifestyle market, but less of a classic military-housing value play than San Antonio or Killeen."
+  },
+
+  "financial_brief": {
+    "bah_vs_buy_position": "Mixed",
+    "bah_vs_rent_position": "Moderate",
+    "affordability_summary": "Austin remains attractive economically, but purchase affordability is materially tougher than many other Texas military-oriented markets.",
+    "buyer_opportunity": "Better opportunities tend to appear in softer submarkets, condos/townhomes, and outer-ring areas rather than premier central neighborhoods.",
+    "renter_advantage": true
+  },
+
+  "market_bluf": {
+    "bluf_headline": "High-Earning, Higher-Cost Texas Market",
+    "bluf_summary": "Austin offers strong long-term economic relevance, but buyers need sharper discipline because citywide pricing still sits well above many other Texas options.",
+    "status": "Balanced to buyer-leaning",
+    "inventory_trend": "Available inventory remains meaningful",
+    "buyer_leverage": "Moderate",
+    "verdict": "CAUTIOUS BUY",
+    "verdict_color": "gold",
+    "confidence_score": 83
+  },
+
+  "scorecard": {
+    "affordability_score": 58,
+    "growth_score": 87,
+    "stability_score": 82,
+    "military_fit_score": 64,
+    "overall_score": 73
+  },
+
+  "rules": {
+    "max_safe_housing_ratio": 0.3,
+    "warning_ratio": 0.35,
+    "danger_ratio": 0.4
+  },
+
+  "summary_points": [
+    "Austin remains one of Texas’s strongest economic magnets, but homebuying affordability is much tighter than in San Antonio.",
+    "Recent housing data shows softer year-over-year pricing and more room for buyers than peak-frenzy periods.",
+    "Median home values and sale prices still sit high enough that monthly payment discipline matters more than list-price psychology.",
+    "Austin can work well for higher-income buyers, dual-income households, and buyers prioritizing long-term market depth over low entry price.",
+    "Renting often remains the more flexible near-term option for households with thin savings, higher debt, or short timelines."
+  ],
+
+  "opportunities": [
+    "Austin’s economic depth and population scale support long-term housing relevance.",
+    "Recent cooling in prices creates a more rational entry environment than prior boom years.",
+    "Outer-ring and value-pocket neighborhoods may create better buy math than central prestige submarkets.",
+    "Townhome, condo, and smaller-home segments may offer more realistic ownership entry points."
+  ],
+
+  "risks": [
+    "Austin’s purchase prices can quickly overwhelm buyers who focus only on income and ignore total payment.",
+    "All-in ownership cost can rise sharply once taxes, insurance, and HOA are layered in.",
+    "Neighborhood-level pricing and quality vary enough that city averages can be misleading.",
+    "For short-hold buyers, a softer price environment reduces margin for error."
+  ],
+
+  "buyer_notes": [
+    "Austin is better for disciplined buyers with stronger income, better reserves, or a longer hold horizon.",
+    "This market should be screened with all-in payment first, not with list price alone.",
+    "Central-neighborhood prestige often comes with a major affordability penalty.",
+    "Outer-ring flexibility can matter more than chasing a headline Austin address."
+  ],
+
+  "seller_notes": [
+    "Sellers should respect current buyer sensitivity to payment, not just sticker price.",
+    "Presentation, pricing discipline, and realistic comps matter more in a cooled market.",
+    "Premium submarkets can still attract demand, but overpricing has less room to hide than in prior years."
+  ],
+
+  "investor_angles": [
+    "Austin still has long-term demand drivers, but investors need tighter underwriting than in lower-cost Texas metros.",
+    "Cash flow is harder to force at citywide median prices, especially once taxes and insurance are included.",
+    "Value-add or niche-location strategies may work better than broad appreciation assumptions."
+  ],
+
+  "neighborhoods": [
+    "Central Austin",
+    "South Austin",
+    "Mueller / East Austin",
+    "North Austin / Tech corridor",
+    "Outer-ring suburban access pockets"
+  ],
+
+  "target_neighborhoods": [
+    "South Austin",
+    "North Austin / Tech corridor",
+    "Mueller / East Austin",
+    "Outer-ring suburban access pockets"
+  ],
+
+  "buyer_guidance": [
+    "Run the payment first and let the monthly number govern the search.",
+    "Compare central prestige versus outer-ring flexibility honestly.",
+    "Use reserves, debt load, and timeline as hard decision filters in Austin.",
+    "Do not assume Austin appreciation alone will fix a stretched purchase."
+  ],
+
+  "seller_guidance": [
+    "Price against current competition, not legacy peak-market expectations.",
+    "Sharper presentation and stronger marketing matter when buyers have more alternatives.",
+    "Highlight commute, school access, and lifestyle utility rather than relying only on city brand."
+  ],
+
+  "landlord_notes": [
+    "Austin has durable renter demand, but citywide acquisition math can still be thin.",
+    "Investors should stress-test taxes, insurance, repairs, and lease-up assumptions conservatively.",
+    "This market often rewards quality location and long-hold discipline more than quick spread chasing."
+  ],
+
+  "by_bedroom": {
+    "2": {
+      "rent_monthly": { "low": 1550, "high": 2050, "avg": 1800, "as_of": "2026-03" },
+      "home_price": { "low": 320000, "high": 430000, "avg": 375000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 2600, "high": 3450, "avg": 3000, "as_of": "2026-04" },
+      "utilities": {
+        "electric_gas": { "low": 150, "high": 230, "avg": 190 },
+        "water_sewer": { "low": 45, "high": 70, "avg": 58 },
+        "total": { "low": 195, "high": 300, "avg": 248 },
+        "as_of": "2026-03"
+      }
+    },
+    "3": {
+      "rent_monthly": { "low": 1850, "high": 2400, "avg": 2150, "as_of": "2026-03" },
+      "home_price": { "low": 430000, "high": 575000, "avg": 508530, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 3400, "high": 4500, "avg": 3980, "as_of": "2026-04" },
+      "utilities": {
+        "electric_gas": { "low": 190, "high": 290, "avg": 240 },
+        "water_sewer": { "low": 55, "high": 85, "avg": 70 },
+        "total": { "low": 245, "high": 375, "avg": 310 },
+        "as_of": "2026-03"
+      }
+    },
+    "4": {
+      "rent_monthly": { "low": 2400, "high": 3200, "avg": 2800, "as_of": "2026-03" },
+      "home_price": { "low": 560000, "high": 760000, "avg": 660000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 4400, "high": 5950, "avg": 5150, "as_of": "2026-04" },
+      "utilities": {
+        "electric_gas": { "low": 235, "high": 355, "avg": 295 },
+        "water_sewer": { "low": 70, "high": 100, "avg": 85 },
+        "total": { "low": 305, "high": 455, "avg": 380 },
+        "as_of": "2026-03"
+      }
+    },
+    "5": {
+      "rent_monthly": { "low": 3000, "high": 4200, "avg": 3600, "as_of": "2026-03" },
+      "home_price": { "low": 760000, "high": 1050000, "avg": 905000, "as_of": "2026-03" },
+      "mortgage_monthly": { "low": 5950, "high": 8150, "avg": 7050, "as_of": "2026-04" },
+      "utilities": {
+        "electric_gas": { "low": 290, "high": 430, "avg": 360 },
+        "water_sewer": { "low": 85, "high": 125, "avg": 105 },
+        "total": { "low": 375, "high": 555, "avg": 465 },
+        "as_of": "2026-03"
+      }
+    }
+  },
+
+  "housing": {
+    "housing_units": null,
+    "median_value_owner_occupied": 555300,
+    "market": {
+      "zillow_average_home_value": 508530,
+      "zillow_one_year_change_percent": -5.7,
+      "market_type_summary": "Somewhat competitive with softer pricing than last year",
+      "average_days_on_market": 57,
+      "median_sale_price_current": 530000,
+      "median_listing_price_realtor": 556000,
+      "median_listing_price_per_sqft": 300,
+      "active_listings_total": 4194,
+      "q1_2026": {
+        "median_sale_price": 530000
+      },
+      "sale_history_36_months": [
+        { "month": "2023-01", "median_sale_price": 525000 },
+        { "month": "2024-12", "median_sale_price": 545000 },
+        { "month": "2025-06", "median_sale_price": 538000 },
+        { "month": "2026-03", "median_sale_price": 530000 }
+      ]
+    }
+  },
+
+  "sources": {
+    "demographics": { "provider": "U.S. Census Bureau QuickFacts / Census metro estimates", "as_of": "2026-04" },
+    "rent": { "provider": "U.S. Census Bureau QuickFacts / Housing Vacancy Survey", "as_of": "2026-04" },
+    "home_price": { "provider": "Zillow / Redfin", "as_of": "2026-03" },
+    "tax_and_insurance": { "provider": "Ownwell / Insurify", "as_of": "2026-04" }
+  },
+
+  "compatibility": {
+    "orozco_realty_ready": true,
+    "intended_primary_slug": "austin",
+    "parser_notes": [
+      "This file is citywide Austin rather than base-linked.",
+      "property_tax_rate is normalized to decimal form for deterministic mortgage math.",
+      "Some lifestyle and neighborhood fields are editorial guidance fields, while market and demographic fields are source-anchored."
+    ]
+  }
+}
