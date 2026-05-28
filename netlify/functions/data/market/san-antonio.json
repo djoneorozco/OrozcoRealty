@@ -348,17 +348,1380 @@
     }
   },
 
+  "regions": {
+    "stone-oak": {
+      "slug": "stone-oak",
+      "name": "Stone Oak / Far North",
+      "region_label": "Far North San Antonio",
+      "market_label": "Premium Move-Up Corridor",
+      "profile": "A polished far-north market known for larger homes, strong schools, gated communities, and move-up buyer demand.",
+      "typical_price": 475000,
+      "price_display": "$475K",
+      "entry_price": 350000,
+      "premium_price": 700000,
+      "estimated_payment_range": "$3.1K–$3.7K",
+      "buyer_fit": "Move-Up",
+      "market_pace": "Moderate",
+      "market_grade": "A-",
+      "inventory_feel": "Balanced",
+      "negotiation_power": "Medium",
+      "household_profile": "Family",
+      "income_signal": "Upper-Mid",
+      "education_signal": "Strong",
+      "commute_pattern": "North-Side",
+      "lifestyle_fit": "Suburban",
+      "growth_pressure": "Medium",
+      "overview_bluf": "Stone Oak and the Far North are best understood as polished family-oriented markets where schools, neighborhood feel, and long-term comfort often matter more than the lowest possible payment.",
+      "summary_points": [
+        "Strong family appeal with larger homes and established neighborhood identity.",
+        "School-driven demand helps support long-term desirability.",
+        "Best fit for move-up buyers, professional households, and buyers prioritizing stability.",
+        "Higher price points require careful review of taxes, insurance, HOA, and commute.",
+        "Competition can remain firm in the most desirable pockets even when the broader market softens."
+      ],
+      "scorecard": {
+        "affordability_score": 78,
+        "growth_score": 84,
+        "stability_score": 88,
+        "military_fit_score": 80,
+        "overall_score": 86
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Property taxes and HOA fees can materially affect payment comfort.",
+          "Larger homes may create higher insurance, utilities, and maintenance exposure.",
+          "School zones, subdivision quality, and commute routes should be checked before offering."
+        ],
+        "opportunities": [
+          "Strong resale appeal in polished north-side pockets.",
+          "Good long-term fit for buyers wanting space, schools, and neighborhood consistency.",
+          "Move-up homes may provide stronger lifestyle value than ultra-premium central corridors."
+        ],
+        "risks": [
+          "Affordability can compress quickly at higher price points.",
+          "Buyer competition may stay firm near top schools and desirable subdivisions.",
+          "Loop 1604 and US-281 congestion can affect daily quality of life."
+        ],
+        "buyer_strategy": "Use this region when the buyer values school reputation, newer homes, suburban comfort, and north-side access. Keep the offer strategy disciplined because desirable pockets can still command firm pricing.",
+        "price_positioning": {
+          "entry": 350000,
+          "typical": 475000,
+          "premium": 700000
+        }
+      },
+      "demographics": {
+        "household_profile": "Family-oriented households and professional buyers",
+        "income_signal": "Upper-middle purchasing power",
+        "education_signal": "Strong school-driven demand",
+        "commute_pattern": "North-side commuter routes",
+        "lifestyle_fit": "Suburban, polished, family-focused",
+        "growth_pressure": "Medium",
+        "education_bars": {
+          "schools": 88,
+          "demand": 84,
+          "stability": 86
+        },
+        "lifestyle_signals": [
+          "Family-oriented suburban living.",
+          "North-side shopping, dining, and school access.",
+          "Good fit for buyers wanting space and neighborhood consistency."
+        ],
+        "buyer_psychology": "Buyers in this region usually value confidence, school quality, neighborhood feel, and long-term comfort more than the absolute lowest payment."
+      },
+      "neighborhoods": [
+        {
+          "name": "Stone Oak",
+          "description": "Popular far-north master-planned area with family appeal, school-driven demand, and larger-home options."
+        },
+        {
+          "name": "Bulverde Village",
+          "description": "Suburban pocket with newer construction feel and access to north-side amenities."
+        },
+        {
+          "name": "Encino Park",
+          "description": "Established north-side area with mature neighborhoods and practical commute access."
+        }
+      ],
+      "commute_notes": [
+        "Strong north-side access, but rush-hour patterns matter.",
+        "Loop 1604 and US-281 congestion can affect daily lifestyle.",
+        "Test commute times before making final location decisions."
+      ],
+      "tags": [
+        "Family Appeal",
+        "Schools",
+        "Move-Up",
+        "North Side"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Compare monthly payment, taxes, insurance, and HOA before stretching into premium pockets.",
+          "Confirm school zones and commute patterns before falling in love with the house.",
+          "Use days-on-market and recent comps to avoid overpaying in strong-demand areas."
+        ],
+        "seller_guidance": [
+          "Lead with neighborhood value, schools, condition, and lifestyle positioning.",
+          "Premium presentation matters because buyers compare against newer subdivisions.",
+          "Pricing should respect current competition, not just past peak expectations."
+        ],
+        "investor_guidance": [
+          "Evaluate rent demand by school zone, commute corridor, and property condition.",
+          "Do not assume every premium neighborhood produces strong cash flow.",
+          "Long-term resale stability may matter more than short-term yield in this region."
+        ],
+        "best_for": [
+          "Move-up buyers.",
+          "Families prioritizing schools and space.",
+          "Professionals who want north-side amenities."
+        ],
+        "watchouts": [
+          "Higher price floors.",
+          "Potential congestion near major north-side corridors.",
+          "Payment shock if taxes, insurance, and HOA are underestimated."
+        ]
+      }
+    },
+
+    "medical-center": {
+      "slug": "medical-center",
+      "name": "Northwest / Medical Center",
+      "region_label": "Northwest San Antonio",
+      "market_label": "Practical Access Corridor",
+      "profile": "A practical northwest market with access to hospitals, USAA, UTSA, rentals, and broad price diversity.",
+      "typical_price": 325000,
+      "price_display": "$325K",
+      "entry_price": 240000,
+      "premium_price": 500000,
+      "estimated_payment_range": "$2.3K–$2.9K",
+      "buyer_fit": "Practical",
+      "market_pace": "Steady",
+      "market_grade": "B+",
+      "inventory_feel": "Mixed",
+      "negotiation_power": "Medium",
+      "household_profile": "Mixed",
+      "income_signal": "Middle",
+      "education_signal": "Moderate",
+      "commute_pattern": "Medical / UTSA / USAA",
+      "lifestyle_fit": "Practical Access",
+      "growth_pressure": "Medium",
+      "overview_bluf": "Northwest and Medical Center areas are practical, access-driven markets where commute, rental demand, and price diversity create useful flexibility for buyers.",
+      "summary_points": [
+        "Strong access to hospitals, UTSA, USAA, and major northwest employment nodes.",
+        "Wider housing mix than more uniform suburban markets.",
+        "Good fit for practical buyers who need location flexibility.",
+        "Rental demand can be stronger due to students, medical workers, and professionals.",
+        "Micro-market quality varies block by block."
+      ],
+      "scorecard": {
+        "affordability_score": 84,
+        "growth_score": 78,
+        "stability_score": 82,
+        "military_fit_score": 82,
+        "overall_score": 81
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Property condition and exact neighborhood pocket matter more here than citywide averages.",
+          "Condo, townhome, older-home, and single-family inventory can produce different payment profiles.",
+          "Rental demand should be evaluated by proximity to medical, university, and employment anchors."
+        ],
+        "opportunities": [
+          "Good balance of affordability and access.",
+          "Potential rental demand from medical, student, and professional populations.",
+          "Useful location for buyers who need north-central flexibility."
+        ],
+        "risks": [
+          "Housing quality and resale strength can vary sharply by pocket.",
+          "Traffic near major medical and university nodes can be frustrating.",
+          "Older homes may require maintenance budgeting."
+        ],
+        "buyer_strategy": "Use this region when the buyer values access, flexibility, and practical pricing. Focus on exact pocket, property condition, commute path, and resale demand.",
+        "price_positioning": {
+          "entry": 240000,
+          "typical": 325000,
+          "premium": 500000
+        }
+      },
+      "demographics": {
+        "household_profile": "Students, medical workers, professionals, and mixed households",
+        "income_signal": "Middle-income to upper-middle pockets",
+        "education_signal": "Moderate to strong near UTSA and employment corridors",
+        "commute_pattern": "Medical Center, UTSA, USAA, I-10, Loop 410",
+        "lifestyle_fit": "Convenient, practical, access-oriented",
+        "growth_pressure": "Medium",
+        "education_bars": {
+          "schools": 74,
+          "demand": 82,
+          "stability": 80
+        },
+        "lifestyle_signals": [
+          "Strong access to hospitals, university areas, and northwest employers.",
+          "Useful for renters and buyers needing flexible commute routes.",
+          "More practical than prestige-driven."
+        ],
+        "buyer_psychology": "Buyers here often want a smart location that balances price, commute, and flexibility rather than a pure luxury or school-driven decision."
+      },
+      "neighborhoods": [
+        {
+          "name": "Medical Center",
+          "description": "Employment-anchored area with rentals, condos, townhomes, and practical commute value."
+        },
+        {
+          "name": "Oak Hills",
+          "description": "Established northwest pocket with central access and mature neighborhood character."
+        },
+        {
+          "name": "UTSA / Babcock Corridor",
+          "description": "Student, professional, and rental-friendly corridor with broad price diversity."
+        }
+      ],
+      "commute_notes": [
+        "Good access to Loop 410, I-10, and northwest employment nodes.",
+        "Medical Center traffic can be dense during peak hours.",
+        "Location value depends heavily on the exact daily destination."
+      ],
+      "tags": [
+        "Medical Center",
+        "UTSA",
+        "Rental Demand",
+        "Practical"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Prioritize condition, commute, and micro-location over broad neighborhood labels.",
+          "Compare older-home maintenance costs against newer suburban alternatives.",
+          "Check parking, HOA, and rental restrictions for condos or townhomes."
+        ],
+        "seller_guidance": [
+          "Position listings around access to medical, university, and employment anchors.",
+          "Clean presentation matters in mixed-inventory markets.",
+          "Price against competing property type, not just ZIP code."
+        ],
+        "investor_guidance": [
+          "Stress-test rental demand near hospitals, UTSA, and employment corridors.",
+          "Review HOA restrictions carefully before buying for rental use.",
+          "Older inventory can work if maintenance assumptions are conservative."
+        ],
+        "best_for": [
+          "Practical buyers.",
+          "Medical and university-adjacent households.",
+          "Investors seeking rental demand nodes."
+        ],
+        "watchouts": [
+          "Older housing stock.",
+          "Micro-market variation.",
+          "Traffic near major employment corridors."
+        ]
+      }
+    },
+
+    "alamo-heights": {
+      "slug": "alamo-heights",
+      "name": "Alamo Heights / Terrell Hills",
+      "region_label": "Central Prestige Corridor",
+      "market_label": "Luxury Stability Corridor",
+      "profile": "An established prestige corridor with historic homes, premium schools, and strong long-term desirability.",
+      "typical_price": 725000,
+      "price_display": "$725K+",
+      "entry_price": 500000,
+      "premium_price": 1200000,
+      "estimated_payment_range": "$5.0K–$7.8K+",
+      "buyer_fit": "Luxury",
+      "market_pace": "Competitive",
+      "market_grade": "A",
+      "inventory_feel": "Limited",
+      "negotiation_power": "Low",
+      "household_profile": "Affluent",
+      "income_signal": "High",
+      "education_signal": "Elite",
+      "commute_pattern": "Central / Airport / Downtown",
+      "lifestyle_fit": "Prestige",
+      "growth_pressure": "Low-Medium",
+      "overview_bluf": "Alamo Heights and Terrell Hills are prestige-driven markets where location, schools, scarcity, and long-term equity protection dominate the buyer story.",
+      "summary_points": [
+        "Premium location with established long-term desirability.",
+        "Limited inventory can protect resale strength.",
+        "School reputation and central access support buyer demand.",
+        "Entry price is high compared with most San Antonio regions.",
+        "Best for buyers prioritizing prestige, stability, and lifestyle over affordability."
+      ],
+      "scorecard": {
+        "affordability_score": 58,
+        "growth_score": 82,
+        "stability_score": 94,
+        "military_fit_score": 70,
+        "overall_score": 90
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Historic and older homes may require significant maintenance reserves.",
+          "Premium school zones and scarcity can keep pricing firm.",
+          "Luxury buyers should review tax load, renovation needs, and insurance carefully."
+        ],
+        "opportunities": [
+          "Strong long-term desirability and equity protection.",
+          "Limited inventory can benefit sellers and patient owners.",
+          "Central access supports lifestyle appeal."
+        ],
+        "risks": [
+          "High entry price limits affordability.",
+          "Renovation and maintenance costs can be material.",
+          "Competition can remain strong for well-positioned homes."
+        ],
+        "buyer_strategy": "Use this region when the buyer values location, schools, scarcity, and prestige. Be prepared for higher acquisition costs and careful inspection review.",
+        "price_positioning": {
+          "entry": 500000,
+          "typical": 725000,
+          "premium": 1200000
+        }
+      },
+      "demographics": {
+        "household_profile": "Affluent established households",
+        "income_signal": "High purchasing power",
+        "education_signal": "Elite school-driven demand",
+        "commute_pattern": "Central San Antonio access",
+        "lifestyle_fit": "Prestige, historic, central",
+        "growth_pressure": "Low to medium due to limited land",
+        "education_bars": {
+          "schools": 94,
+          "demand": 90,
+          "stability": 94
+        },
+        "lifestyle_signals": [
+          "Historic charm and prestige positioning.",
+          "Central access to downtown, airport, museums, and established neighborhoods.",
+          "Strong fit for buyers seeking long-term neighborhood identity."
+        ],
+        "buyer_psychology": "Buyers here are usually buying certainty, status, school reputation, and long-term desirability more than simple price efficiency."
+      },
+      "neighborhoods": [
+        {
+          "name": "Alamo Heights",
+          "description": "Prestige corridor with historic appeal, strong school reputation, and central access."
+        },
+        {
+          "name": "Terrell Hills",
+          "description": "Highly desirable residential enclave with luxury homes and long-term stability."
+        },
+        {
+          "name": "Olmos Park",
+          "description": "Premium central-area pocket with exclusivity, charm, and high price floors."
+        }
+      ],
+      "commute_notes": [
+        "Strong central positioning for downtown, airport, and north-central work nodes.",
+        "Local street patterns and school traffic should be tested.",
+        "Central convenience is one of the region's major advantages."
+      ],
+      "tags": [
+        "Luxury",
+        "Prestige",
+        "Schools",
+        "Central"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Review renovation and maintenance risk carefully on older homes.",
+          "Do not rely only on neighborhood name; compare exact property condition and lot value.",
+          "Prepare for limited inventory and firm pricing on desirable homes."
+        ],
+        "seller_guidance": [
+          "Lead with scarcity, school reputation, architecture, and lifestyle.",
+          "Presentation should match premium buyer expectations.",
+          "Pricing can be confident but still needs support from current comps."
+        ],
+        "investor_guidance": [
+          "This is usually stronger for long-term appreciation and stability than cash flow.",
+          "Renovation plays require careful budgeting.",
+          "Short-term rental assumptions should be treated cautiously."
+        ],
+        "best_for": [
+          "Luxury buyers.",
+          "School-driven households.",
+          "Buyers prioritizing central prestige."
+        ],
+        "watchouts": [
+          "High entry cost.",
+          "Older-home maintenance.",
+          "Limited negotiation room on prime homes."
+        ]
+      }
+    },
+
+    "downtown": {
+      "slug": "downtown",
+      "name": "Downtown / Urban Core",
+      "region_label": "Urban Core",
+      "market_label": "Lifestyle and Culture Corridor",
+      "profile": "The urban lifestyle zone with condos, historic neighborhoods, walkability, and short commute appeal.",
+      "typical_price": 350000,
+      "price_display": "$350K",
+      "entry_price": 250000,
+      "premium_price": 650000,
+      "estimated_payment_range": "$2.4K–$4.4K",
+      "buyer_fit": "Urban",
+      "market_pace": "Mixed",
+      "market_grade": "B+",
+      "inventory_feel": "Mixed",
+      "negotiation_power": "Medium",
+      "household_profile": "Urban Mixed",
+      "income_signal": "Mixed",
+      "education_signal": "Mixed",
+      "commute_pattern": "Downtown / Central",
+      "lifestyle_fit": "Urban",
+      "growth_pressure": "Medium-High",
+      "overview_bluf": "Downtown and the urban core work best for buyers who value culture, short commutes, restaurants, events, and central access over suburban space.",
+      "summary_points": [
+        "Urban lifestyle appeal with access to restaurants, events, and downtown jobs.",
+        "Housing mix can include condos, historic homes, townhomes, and redevelopment pockets.",
+        "Investor potential depends heavily on block-by-block fundamentals.",
+        "Parking, HOA, noise, and walkability should be reviewed carefully.",
+        "Best fit for lifestyle-driven buyers."
+      ],
+      "scorecard": {
+        "affordability_score": 76,
+        "growth_score": 86,
+        "stability_score": 74,
+        "military_fit_score": 72,
+        "overall_score": 80
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Condos may include HOA costs that change payment math.",
+          "Historic homes may require maintenance and renovation reserves.",
+          "Parking and walkability can materially influence resale appeal."
+        ],
+        "opportunities": [
+          "Lifestyle appeal and central location can support demand.",
+          "Redevelopment pockets may provide upside.",
+          "Shorter commutes can improve quality of life."
+        ],
+        "risks": [
+          "Block-by-block safety and demand can vary.",
+          "Parking, noise, and HOA costs can surprise buyers.",
+          "Not every urban pocket has the same resale strength."
+        ],
+        "buyer_strategy": "Use this region when lifestyle and central access matter. Evaluate the exact block, parking, HOA, noise, and resale demand before committing.",
+        "price_positioning": {
+          "entry": 250000,
+          "typical": 350000,
+          "premium": 650000
+        }
+      },
+      "demographics": {
+        "household_profile": "Young professionals, urban buyers, renters, and mixed households",
+        "income_signal": "Mixed",
+        "education_signal": "Mixed to strong in select pockets",
+        "commute_pattern": "Downtown and central job centers",
+        "lifestyle_fit": "Walkable, cultural, urban",
+        "growth_pressure": "Medium to high",
+        "education_bars": {
+          "schools": 68,
+          "demand": 82,
+          "stability": 72
+        },
+        "lifestyle_signals": [
+          "Restaurants, events, museums, and downtown entertainment.",
+          "Condo, townhome, and historic-home appeal.",
+          "Better for lifestyle buyers than maximum-square-foot buyers."
+        ],
+        "buyer_psychology": "Buyers here are usually prioritizing experience, convenience, character, and central access more than traditional suburban value."
+      },
+      "neighborhoods": [
+        {
+          "name": "Downtown",
+          "description": "Core urban area with entertainment, employment, condos, and cultural attractions."
+        },
+        {
+          "name": "King William",
+          "description": "Historic neighborhood with character homes and strong cultural identity."
+        },
+        {
+          "name": "Tobin Hill / Pearl Area",
+          "description": "Lifestyle-driven central pocket with restaurants, redevelopment, and urban appeal."
+        }
+      ],
+      "commute_notes": [
+        "Strong access to downtown and central San Antonio employment.",
+        "Parking availability can matter more than raw commute distance.",
+        "Events and tourism can affect traffic patterns."
+      ],
+      "tags": [
+        "Urban",
+        "Culture",
+        "Condos",
+        "Historic"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Walk the block at different times before making a final decision.",
+          "Review parking, HOA, insurance, and noise exposure.",
+          "Use lifestyle value and resale appeal together, not one alone."
+        ],
+        "seller_guidance": [
+          "Market the lifestyle, walkability, and central access clearly.",
+          "Professional visuals matter for urban and historic listings.",
+          "Be transparent about parking, HOA, and property condition."
+        ],
+        "investor_guidance": [
+          "Analyze rent demand by exact block and property type.",
+          "Do not assume all urban properties qualify for the same rental strategy.",
+          "Short-term rental rules and HOA restrictions must be reviewed."
+        ],
+        "best_for": [
+          "Urban lifestyle buyers.",
+          "Professionals wanting short commutes.",
+          "Buyers who value culture and walkability."
+        ],
+        "watchouts": [
+          "Parking limitations.",
+          "HOA fees.",
+          "Block-by-block variation."
+        ]
+      }
+    },
+
+    "helotes": {
+      "slug": "helotes",
+      "name": "Helotes / Far West",
+      "region_label": "Far West San Antonio",
+      "market_label": "Hill-Country Family Corridor",
+      "profile": "A scenic west-side market with hill-country feel, newer subdivisions, and family-oriented space.",
+      "typical_price": 425000,
+      "price_display": "$425K",
+      "entry_price": 315000,
+      "premium_price": 650000,
+      "estimated_payment_range": "$2.9K–$3.6K",
+      "buyer_fit": "Family",
+      "market_pace": "Moderate",
+      "market_grade": "A-",
+      "inventory_feel": "Balanced",
+      "negotiation_power": "Medium",
+      "household_profile": "Family",
+      "income_signal": "Upper-Mid",
+      "education_signal": "Strong",
+      "commute_pattern": "Far West / Lackland / Northwest",
+      "lifestyle_fit": "Hill-Country Suburban",
+      "growth_pressure": "Medium",
+      "overview_bluf": "Helotes and the Far West offer a strong family-oriented alternative for buyers wanting space, hill-country feel, and access toward Lackland or northwest San Antonio.",
+      "summary_points": [
+        "Strong fit for families wanting more space and suburban comfort.",
+        "Hill-country feel creates lifestyle appeal.",
+        "Access can work well for Lackland, northwest San Antonio, and far-west households.",
+        "Commute patterns vary materially by exact location.",
+        "Newer subdivisions can offer practical move-up options."
+      ],
+      "scorecard": {
+        "affordability_score": 79,
+        "growth_score": 84,
+        "stability_score": 86,
+        "military_fit_score": 88,
+        "overall_score": 85
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "HOA, MUD-style costs, and utility assumptions should be checked in newer subdivisions.",
+          "Commute time can vary sharply depending on the exact route.",
+          "Larger homes can create higher energy and maintenance costs."
+        ],
+        "opportunities": [
+          "Good blend of lifestyle, space, and family appeal.",
+          "Useful for military families who want west-side access.",
+          "Newer home options can reduce renovation risk."
+        ],
+        "risks": [
+          "Commute to central or north-central jobs can be longer.",
+          "Premium subdivisions may narrow affordability.",
+          "Rapid growth can create congestion pressure."
+        ],
+        "buyer_strategy": "Use this region for buyers who want space, family comfort, and a hill-country feel while still staying connected to San Antonio employment and military corridors.",
+        "price_positioning": {
+          "entry": 315000,
+          "typical": 425000,
+          "premium": 650000
+        }
+      },
+      "demographics": {
+        "household_profile": "Family-oriented suburban households",
+        "income_signal": "Upper-middle",
+        "education_signal": "Strong",
+        "commute_pattern": "Far west, Lackland, northwest routes",
+        "lifestyle_fit": "Hill-country suburban",
+        "growth_pressure": "Medium",
+        "education_bars": {
+          "schools": 86,
+          "demand": 84,
+          "stability": 84
+        },
+        "lifestyle_signals": [
+          "Scenic feel with suburban convenience.",
+          "Strong fit for family space and neighborhood lifestyle.",
+          "Practical alternative to more expensive north-side prestige corridors."
+        ],
+        "buyer_psychology": "Buyers here often want room to breathe, a family-friendly environment, and a softer hill-country lifestyle without completely disconnecting from San Antonio."
+      },
+      "neighborhoods": [
+        {
+          "name": "Helotes",
+          "description": "Scenic far-west community with hill-country feel, family appeal, and suburban access."
+        },
+        {
+          "name": "Alamo Ranch",
+          "description": "Large far-west master-planned area with newer homes, retail, and family demand."
+        },
+        {
+          "name": "Guilbeau / Braun Area",
+          "description": "Established west-northwest pocket with access to schools, retail, and commute routes."
+        }
+      ],
+      "commute_notes": [
+        "Good west-side access, but daily route testing is important.",
+        "Loop 1604 and Culebra traffic can be significant.",
+        "Lackland access may be attractive for military-connected buyers."
+      ],
+      "tags": [
+        "Family",
+        "Hill Country",
+        "Far West",
+        "Space"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Test commute times during actual work hours.",
+          "Compare HOA, taxes, utilities, and insurance across subdivisions.",
+          "Prioritize neighborhood fit and school zones before stretching budget."
+        ],
+        "seller_guidance": [
+          "Lead with space, family lifestyle, and hill-country feel.",
+          "Highlight newer-home features and outdoor living where applicable.",
+          "Price against nearby subdivision competition."
+        ],
+        "investor_guidance": [
+          "Rental strategy works best when tied to schools, commute, and family demand.",
+          "Watch tax and HOA drag on rental margins.",
+          "Newer homes may reduce maintenance exposure but cost more upfront."
+        ],
+        "best_for": [
+          "Families wanting space.",
+          "Military buyers wanting west-side access.",
+          "Move-up buyers seeking suburban comfort."
+        ],
+        "watchouts": [
+          "Traffic on far-west corridors.",
+          "HOA and subdivision costs.",
+          "Longer commute to central jobs."
+        ]
+      }
+    },
+
+    "lackland-west": {
+      "slug": "lackland-west",
+      "name": "Lackland / West San Antonio",
+      "region_label": "West San Antonio",
+      "market_label": "Military Value Corridor",
+      "profile": "A military-relevant west-side market with affordability, rental demand, and direct Lackland proximity.",
+      "typical_price": 255000,
+      "price_display": "$255K",
+      "entry_price": 185000,
+      "premium_price": 360000,
+      "estimated_payment_range": "$1.8K–$2.4K",
+      "buyer_fit": "Military",
+      "market_pace": "Active",
+      "market_grade": "B",
+      "inventory_feel": "Active",
+      "negotiation_power": "Medium-High",
+      "household_profile": "Military / First-Time",
+      "income_signal": "Middle",
+      "education_signal": "Variable",
+      "commute_pattern": "Lackland / West Side",
+      "lifestyle_fit": "Military Practical",
+      "growth_pressure": "Medium",
+      "overview_bluf": "Lackland and West San Antonio are value-driven military-relevant areas where affordability, rental demand, and base proximity create a strong practical buyer story.",
+      "summary_points": [
+        "One of the strongest affordability stories in the San Antonio metro.",
+        "Direct Lackland proximity supports military relevance.",
+        "Good fit for first-time buyers, VA buyers, and practical investors.",
+        "Neighborhood quality and school quality vary significantly by pocket.",
+        "Due diligence matters more here than in more uniform premium markets."
+      ],
+      "scorecard": {
+        "affordability_score": 91,
+        "growth_score": 74,
+        "stability_score": 72,
+        "military_fit_score": 96,
+        "overall_score": 78
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Affordability is attractive, but buyers should inspect condition carefully.",
+          "Base proximity can support rental demand, but not every pocket performs the same.",
+          "Taxes, insurance, and older-home repairs still need conservative underwriting."
+        ],
+        "opportunities": [
+          "Strong entry-level pricing for VA and first-time buyers.",
+          "Military proximity supports practical housing demand.",
+          "Investor-friendly pockets may exist for disciplined buyers."
+        ],
+        "risks": [
+          "Neighborhood quality varies block by block.",
+          "Some homes may require repairs or updates.",
+          "School quality and safety perceptions can affect resale."
+        ],
+        "buyer_strategy": "Use this region when affordability and Lackland proximity matter. The winning move is disciplined due diligence: condition, safety, school zone, commute, and all-in payment.",
+        "price_positioning": {
+          "entry": 185000,
+          "typical": 255000,
+          "premium": 360000
+        }
+      },
+      "demographics": {
+        "household_profile": "Military, first-time buyers, renters, and working households",
+        "income_signal": "Middle",
+        "education_signal": "Variable",
+        "commute_pattern": "Lackland and west-side corridors",
+        "lifestyle_fit": "Practical, military-oriented, value-driven",
+        "growth_pressure": "Medium",
+        "education_bars": {
+          "schools": 66,
+          "demand": 84,
+          "stability": 72
+        },
+        "lifestyle_signals": [
+          "Military-connected demand near Lackland.",
+          "Affordable entry compared with north-side and prestige corridors.",
+          "Practical fit for buyers who need payment control."
+        ],
+        "buyer_psychology": "Buyers here usually want financial breathing room, base proximity, and practical ownership more than luxury presentation."
+      },
+      "neighborhoods": [
+        {
+          "name": "Lackland AFB Area",
+          "description": "Military-adjacent area with base proximity, entry-level pricing, and rental relevance."
+        },
+        {
+          "name": "Valley Hi",
+          "description": "West-side residential pocket with practical price points near Lackland."
+        },
+        {
+          "name": "Westwood Village",
+          "description": "Affordable west-side area that requires property-level and block-level review."
+        }
+      ],
+      "commute_notes": [
+        "Strong access to Lackland AFB.",
+        "Commute to north-side jobs can be longer.",
+        "Traffic and road quality should be evaluated by exact pocket."
+      ],
+      "tags": [
+        "Military",
+        "Value",
+        "Lackland",
+        "First-Time Buyer"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Do not skip inspection or repair budgeting just because the price looks attractive.",
+          "Compare school zones and safety perceptions before choosing a pocket.",
+          "Use VA loan strength carefully and avoid overpaying for outdated homes."
+        ],
+        "seller_guidance": [
+          "Market clearly to military buyers, VA buyers, and practical first-time buyers.",
+          "Condition upgrades can create major separation from competing homes.",
+          "Price realistically because buyers in this region are payment-sensitive."
+        ],
+        "investor_guidance": [
+          "Model military renter demand, vacancy, repair costs, taxes, and insurance.",
+          "Focus on durable rental demand rather than speculative appreciation alone.",
+          "Block-by-block underwriting is essential."
+        ],
+        "best_for": [
+          "Military buyers.",
+          "First-time buyers.",
+          "Value-focused investors."
+        ],
+        "watchouts": [
+          "Block-by-block variation.",
+          "Older-home repairs.",
+          "School and safety perception."
+        ]
+      }
+    },
+
+    "southside": {
+      "slug": "southside",
+      "name": "Southside",
+      "region_label": "South San Antonio",
+      "market_label": "Value and Growth Corridor",
+      "profile": "An affordability-led market with growth potential, newer builds in pockets, and value-oriented buyers.",
+      "typical_price": 240000,
+      "price_display": "$240K",
+      "entry_price": 175000,
+      "premium_price": 350000,
+      "estimated_payment_range": "$1.7K–$2.3K",
+      "buyer_fit": "Value",
+      "market_pace": "Emerging",
+      "market_grade": "B",
+      "inventory_feel": "Emerging",
+      "negotiation_power": "Medium-High",
+      "household_profile": "Value-Oriented",
+      "income_signal": "Middle",
+      "education_signal": "Variable",
+      "commute_pattern": "South / Downtown / Military",
+      "lifestyle_fit": "Affordable Growth",
+      "growth_pressure": "Medium-High",
+      "overview_bluf": "The Southside is an affordability-led growth market where payment control, newer inventory pockets, and long-term upside matter more than polished prestige.",
+      "summary_points": [
+        "Strong affordability compared with many San Antonio regions.",
+        "New-build and growth pockets can create buyer opportunity.",
+        "Good fit for payment-conscious buyers.",
+        "Commutes north can be longer.",
+        "Growth story is still developing and should be evaluated carefully."
+      ],
+      "scorecard": {
+        "affordability_score": 93,
+        "growth_score": 76,
+        "stability_score": 68,
+        "military_fit_score": 78,
+        "overall_score": 75
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Newer inventory may reduce repair risk but still requires tax and insurance review.",
+          "Affordability can be strong when buyers control payment and commute tradeoffs.",
+          "Resale strength varies by subdivision and nearby development."
+        ],
+        "opportunities": [
+          "Affordable entry into ownership.",
+          "New-build pockets can be attractive to first-time buyers.",
+          "Long-term growth may improve neighborhood perception over time."
+        ],
+        "risks": [
+          "Longer commutes to north-side employment.",
+          "Growth may be uneven across pockets.",
+          "Resale timing could matter if buyer horizon is short."
+        ],
+        "buyer_strategy": "Use this region when payment control is the priority. Compare commute, subdivision quality, taxes, and long-term growth before choosing the cheapest option.",
+        "price_positioning": {
+          "entry": 175000,
+          "typical": 240000,
+          "premium": 350000
+        }
+      },
+      "demographics": {
+        "household_profile": "Working households, first-time buyers, and value-focused families",
+        "income_signal": "Middle",
+        "education_signal": "Variable",
+        "commute_pattern": "Southside, downtown, and military corridors",
+        "lifestyle_fit": "Affordable, practical, growth-oriented",
+        "growth_pressure": "Medium to high",
+        "education_bars": {
+          "schools": 62,
+          "demand": 76,
+          "stability": 68
+        },
+        "lifestyle_signals": [
+          "Payment-friendly ownership potential.",
+          "Newer subdivisions in select pockets.",
+          "Best for buyers willing to trade prestige for affordability."
+        ],
+        "buyer_psychology": "Buyers here often want ownership access, breathing room, and long-term upside without taking on a premium-market payment."
+      },
+      "neighborhoods": [
+        {
+          "name": "Southside",
+          "description": "Broad affordability-led area with growth pockets and practical buyer appeal."
+        },
+        {
+          "name": "Mission Del Lago",
+          "description": "Known for newer-home options and south-side growth positioning."
+        },
+        {
+          "name": "Brooks Area",
+          "description": "Redevelopment-oriented area with commercial growth and improving visibility."
+        }
+      ],
+      "commute_notes": [
+        "Commute to downtown can be manageable from many pockets.",
+        "North-side employment commutes may be long.",
+        "Buyers should test weekday drive times before finalizing."
+      ],
+      "tags": [
+        "Affordable",
+        "Emerging",
+        "New Builds",
+        "Value"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Compare commute savings against home-price savings.",
+          "Review subdivision taxes, HOA, and build quality carefully.",
+          "Do not assume every growth pocket has the same resale strength."
+        ],
+        "seller_guidance": [
+          "Lead with affordability, newer features, and payment control.",
+          "Buyers in this region are likely to compare monthly costs closely.",
+          "Presentation can help overcome outdated perceptions."
+        ],
+        "investor_guidance": [
+          "Focus on rental demand, new employment nodes, and long-term growth corridors.",
+          "Be conservative with appreciation assumptions.",
+          "Stress-test vacancy and maintenance."
+        ],
+        "best_for": [
+          "First-time buyers.",
+          "Payment-sensitive families.",
+          "Buyers seeking newer homes at lower price points."
+        ],
+        "watchouts": [
+          "Longer north-side commutes.",
+          "Uneven growth.",
+          "Subdivision-level tax and HOA differences."
+        ]
+      }
+    },
+
+    "eastside": {
+      "slug": "eastside",
+      "name": "Eastside",
+      "region_label": "East San Antonio",
+      "market_label": "Redevelopment and Investor Corridor",
+      "profile": "A changing market with redevelopment energy, affordability, and proximity to downtown.",
+      "typical_price": 285000,
+      "price_display": "$285K",
+      "entry_price": 190000,
+      "premium_price": 450000,
+      "estimated_payment_range": "$2.0K–$3.0K",
+      "buyer_fit": "Investor",
+      "market_pace": "Variable",
+      "market_grade": "B-",
+      "inventory_feel": "Variable",
+      "negotiation_power": "Medium",
+      "household_profile": "Mixed / Transitional",
+      "income_signal": "Mixed",
+      "education_signal": "Variable",
+      "commute_pattern": "East / Downtown",
+      "lifestyle_fit": "Redevelopment",
+      "growth_pressure": "High",
+      "overview_bluf": "The Eastside is a transition-sensitive market where redevelopment potential, downtown proximity, and affordability can create upside, but due diligence matters more than hype.",
+      "summary_points": [
+        "Downtown proximity creates strategic appeal.",
+        "Redevelopment energy can support long-term upside.",
+        "Micro-market sensitivity is high.",
+        "Best for buyers comfortable evaluating block-by-block risk.",
+        "Renovation and investor strategies need conservative math."
+      ],
+      "scorecard": {
+        "affordability_score": 88,
+        "growth_score": 82,
+        "stability_score": 64,
+        "military_fit_score": 70,
+        "overall_score": 74
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Exact block, condition, and renovation cost matter significantly.",
+          "Downtown proximity does not automatically equal strong resale.",
+          "Insurance, repairs, and appraisal gaps should be considered."
+        ],
+        "opportunities": [
+          "Redevelopment potential near central San Antonio.",
+          "More accessible pricing than many central neighborhoods.",
+          "Potential for renovation and value-add strategies."
+        ],
+        "risks": [
+          "High micro-market variation.",
+          "Renovation budgets can expand quickly.",
+          "Resale and rental demand vary sharply by exact location."
+        ],
+        "buyer_strategy": "Use this region for buyers who understand transition markets. Prioritize block-level research, property condition, renovation math, and exit strategy.",
+        "price_positioning": {
+          "entry": 190000,
+          "typical": 285000,
+          "premium": 450000
+        }
+      },
+      "demographics": {
+        "household_profile": "Mixed households, renters, investors, and redevelopment buyers",
+        "income_signal": "Mixed",
+        "education_signal": "Variable",
+        "commute_pattern": "Downtown and east-side corridors",
+        "lifestyle_fit": "Changing, urban-adjacent, redevelopment-oriented",
+        "growth_pressure": "High",
+        "education_bars": {
+          "schools": 58,
+          "demand": 78,
+          "stability": 62
+        },
+        "lifestyle_signals": [
+          "Close to downtown and central employment.",
+          "Redevelopment momentum in select pockets.",
+          "Best for buyers comfortable with transition risk."
+        ],
+        "buyer_psychology": "Buyers here are usually looking for upside, affordability, and proximity, but they need confidence in the exact block and property plan."
+      },
+      "neighborhoods": [
+        {
+          "name": "Dignowity Hill",
+          "description": "Historic east-side area with redevelopment interest and proximity to downtown."
+        },
+        {
+          "name": "Denver Heights",
+          "description": "Transitioning pocket with investor attention and renovation activity."
+        },
+        {
+          "name": "Government Hill",
+          "description": "Urban-adjacent area with central access and changing demand patterns."
+        }
+      ],
+      "commute_notes": [
+        "Downtown access can be strong.",
+        "Neighborhood street conditions and safety perceptions vary.",
+        "Buyers should visit at different times of day."
+      ],
+      "tags": [
+        "Investor",
+        "Redevelopment",
+        "Downtown Access",
+        "Value-Add"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Walk the exact block and review nearby condition before offering.",
+          "Budget conservatively for repairs and renovations.",
+          "Evaluate resale and rental demand by pocket, not region name."
+        ],
+        "seller_guidance": [
+          "Position around downtown proximity, updates, and lifestyle access.",
+          "Buyers will scrutinize condition and neighborhood context.",
+          "Clean renovation documentation can improve confidence."
+        ],
+        "investor_guidance": [
+          "Run conservative value-add math.",
+          "Do not assume appreciation alone will carry the deal.",
+          "Review permits, repair scope, comps, and rental demand carefully."
+        ],
+        "best_for": [
+          "Investors.",
+          "Renovation buyers.",
+          "Buyers seeking central proximity at lower prices."
+        ],
+        "watchouts": [
+          "Micro-market risk.",
+          "Renovation cost overruns.",
+          "Block-by-block perception."
+        ]
+      }
+    },
+
+    "boerne": {
+      "slug": "boerne",
+      "name": "Boerne / I-10 Corridor",
+      "region_label": "Hill Country Corridor",
+      "market_label": "Premium Lifestyle Corridor",
+      "profile": "A premium hill-country corridor with lifestyle appeal, larger homes, and higher-income buyer demand.",
+      "typical_price": 550000,
+      "price_display": "$550K+",
+      "entry_price": 400000,
+      "premium_price": 900000,
+      "estimated_payment_range": "$3.8K–$6.2K+",
+      "buyer_fit": "Premium",
+      "market_pace": "Moderate",
+      "market_grade": "A-",
+      "inventory_feel": "Balanced",
+      "negotiation_power": "Medium-Low",
+      "household_profile": "Affluent Family",
+      "income_signal": "High",
+      "education_signal": "Strong",
+      "commute_pattern": "I-10 / Hill Country / Northwest",
+      "lifestyle_fit": "Hill Country Premium",
+      "growth_pressure": "Medium-High",
+      "overview_bluf": "Boerne and the I-10 Corridor are premium lifestyle markets where space, schools, hill-country identity, and relocation demand drive the buyer story.",
+      "summary_points": [
+        "Premium hill-country lifestyle appeal.",
+        "Strong relocation and family demand.",
+        "Higher price floor than most San Antonio regions.",
+        "Commute to San Antonio should be tested.",
+        "Best for buyers who want space, schools, and lifestyle identity."
+      ],
+      "scorecard": {
+        "affordability_score": 66,
+        "growth_score": 88,
+        "stability_score": 90,
+        "military_fit_score": 76,
+        "overall_score": 87
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Larger lots and homes can increase maintenance and insurance costs.",
+          "Commute costs should be considered with monthly payment.",
+          "Premium school and lifestyle demand can support resale strength."
+        ],
+        "opportunities": [
+          "Strong long-term lifestyle appeal.",
+          "High relocation desirability.",
+          "Good fit for buyers seeking space and higher-end suburban positioning."
+        ],
+        "risks": [
+          "Higher price floor limits affordability.",
+          "Commute into San Antonio can become a quality-of-life issue.",
+          "Premium homes require stronger financial reserves."
+        ],
+        "buyer_strategy": "Use this region for buyers who want hill-country lifestyle, schools, space, and prestige. Confirm commute tolerance and total ownership cost before stretching.",
+        "price_positioning": {
+          "entry": 400000,
+          "typical": 550000,
+          "premium": 900000
+        }
+      },
+      "demographics": {
+        "household_profile": "Affluent families and relocation buyers",
+        "income_signal": "High",
+        "education_signal": "Strong",
+        "commute_pattern": "I-10 and northwest corridors",
+        "lifestyle_fit": "Hill-country premium",
+        "growth_pressure": "Medium to high",
+        "education_bars": {
+          "schools": 90,
+          "demand": 88,
+          "stability": 90
+        },
+        "lifestyle_signals": [
+          "Premium lifestyle identity with hill-country appeal.",
+          "Strong fit for families seeking space and schools.",
+          "More separated from urban San Antonio than inner-ring neighborhoods."
+        ],
+        "buyer_psychology": "Buyers here often value identity, scenery, schools, space, and lifestyle status more than pure commute efficiency."
+      },
+      "neighborhoods": [
+        {
+          "name": "Boerne",
+          "description": "Premium hill-country community with strong schools, lifestyle appeal, and relocation demand."
+        },
+        {
+          "name": "Fair Oaks Ranch",
+          "description": "Established upscale area with larger homes, golf/community appeal, and suburban prestige."
+        },
+        {
+          "name": "Leon Springs",
+          "description": "I-10 corridor pocket with access to San Antonio and hill-country amenities."
+        }
+      ],
+      "commute_notes": [
+        "I-10 access is key, but peak commute should be tested.",
+        "Distance from central San Antonio can affect daily lifestyle.",
+        "Buyers should consider fuel, time, and school/work routines."
+      ],
+      "tags": [
+        "Premium",
+        "Hill Country",
+        "Schools",
+        "Relocation"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Test commute before committing to lifestyle distance.",
+          "Budget for larger-home utilities, insurance, and maintenance.",
+          "Compare school zones and neighborhood identity carefully."
+        ],
+        "seller_guidance": [
+          "Lead with lifestyle, space, schools, and relocation appeal.",
+          "High-quality visuals are important for premium buyers.",
+          "Price against competing hill-country and northwest luxury inventory."
+        ],
+        "investor_guidance": [
+          "This is usually stronger for appreciation and executive rental demand than high-yield cash flow.",
+          "Larger homes need conservative maintenance assumptions.",
+          "Relocation demand can support long-term desirability."
+        ],
+        "best_for": [
+          "Premium relocation buyers.",
+          "Families wanting schools and space.",
+          "Buyers seeking hill-country lifestyle."
+        ],
+        "watchouts": [
+          "Higher price floor.",
+          "Commute distance.",
+          "Larger-home carrying costs."
+        ]
+      }
+    },
+
+    "new-braunfels": {
+      "slug": "new-braunfels",
+      "name": "New Braunfels / Northeast Corridor",
+      "region_label": "Northeast Growth Corridor",
+      "market_label": "Regional Growth Corridor",
+      "profile": "A fast-growing corridor with lifestyle appeal, commuter access, and strong regional demand.",
+      "typical_price": 385000,
+      "price_display": "$385K",
+      "entry_price": 285000,
+      "premium_price": 600000,
+      "estimated_payment_range": "$2.7K–$3.5K",
+      "buyer_fit": "Growth",
+      "market_pace": "Active",
+      "market_grade": "A-",
+      "inventory_feel": "Active",
+      "negotiation_power": "Medium",
+      "household_profile": "Growth-Oriented",
+      "income_signal": "Middle-Upper",
+      "education_signal": "Moderate-Strong",
+      "commute_pattern": "San Antonio / Austin Corridor",
+      "lifestyle_fit": "Growth Lifestyle",
+      "growth_pressure": "High",
+      "overview_bluf": "New Braunfels and the Northeast Corridor are growth-driven lifestyle markets where regional demand, commuter access, and quality-of-life appeal create strong buyer interest.",
+      "summary_points": [
+        "Strong growth corridor between San Antonio and Austin.",
+        "Lifestyle appeal supports relocation and family demand.",
+        "Inventory can move quickly in desirable pockets.",
+        "Commuter strategy matters depending on work location.",
+        "Best for buyers wanting growth-market energy and lifestyle upside."
+      ],
+      "scorecard": {
+        "affordability_score": 80,
+        "growth_score": 92,
+        "stability_score": 82,
+        "military_fit_score": 74,
+        "overall_score": 86
+      },
+      "real_estate": {
+        "ownership_notes": [
+          "Rapid growth can create both upside and congestion.",
+          "New-build competition should be reviewed against resale homes.",
+          "Taxes, HOA, and commute costs need full payment modeling."
+        ],
+        "opportunities": [
+          "Strong population and lifestyle demand.",
+          "Appeal to both San Antonio and Austin-oriented buyers.",
+          "Newer communities can provide family-friendly options."
+        ],
+        "risks": [
+          "Growth can create traffic and infrastructure pressure.",
+          "New-build incentives can affect resale competition.",
+          "Commute assumptions should be verified carefully."
+        ],
+        "buyer_strategy": "Use this region when buyers want growth, lifestyle, and regional access. Compare resale vs. new-build competition and test commute routes before deciding.",
+        "price_positioning": {
+          "entry": 285000,
+          "typical": 385000,
+          "premium": 600000
+        }
+      },
+      "demographics": {
+        "household_profile": "Growth-oriented families, commuters, and relocation buyers",
+        "income_signal": "Middle to upper-middle",
+        "education_signal": "Moderate to strong",
+        "commute_pattern": "I-35 corridor between San Antonio and Austin",
+        "lifestyle_fit": "River, recreation, family, regional growth",
+        "growth_pressure": "High",
+        "education_bars": {
+          "schools": 80,
+          "demand": 92,
+          "stability": 82
+        },
+        "lifestyle_signals": [
+          "Strong lifestyle destination appeal.",
+          "Attractive to families and regional commuters.",
+          "Growth energy is a major part of the market identity."
+        ],
+        "buyer_psychology": "Buyers here often want a blend of lifestyle, growth, and regional opportunity without feeling fully tied to one metro."
+      },
+      "neighborhoods": [
+        {
+          "name": "New Braunfels",
+          "description": "Fast-growing lifestyle market with river appeal, family demand, and regional commuter access."
+        },
+        {
+          "name": "Cibolo",
+          "description": "Growth-oriented community with family appeal and access toward Randolph and northeast San Antonio."
+        },
+        {
+          "name": "Schertz",
+          "description": "Established northeast corridor market with military relevance and suburban convenience."
+        }
+      ],
+      "commute_notes": [
+        "I-35 corridor traffic should be tested carefully.",
+        "Works well for some San Antonio and northeast military commutes.",
+        "Austin-oriented commutes can be long and variable."
+      ],
+      "tags": [
+        "Growth",
+        "Lifestyle",
+        "I-35",
+        "Family"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Compare new-build incentives against resale pricing.",
+          "Test commute assumptions before choosing based on map distance.",
+          "Review taxes, HOA, and infrastructure growth in newer communities."
+        ],
+        "seller_guidance": [
+          "Market lifestyle, growth, and regional access.",
+          "Compete carefully against new-build inventory.",
+          "Presentation and pricing should reflect active buyer choice."
+        ],
+        "investor_guidance": [
+          "Growth supports demand, but underwriting should account for new-build competition.",
+          "Rental strength depends on commute, schools, and neighborhood amenities.",
+          "Avoid assuming all growth automatically equals cash flow."
+        ],
+        "best_for": [
+          "Growth-market buyers.",
+          "Families wanting lifestyle appeal.",
+          "Regional commuters."
+        ],
+        "watchouts": [
+          "I-35 traffic.",
+          "New-build competition.",
+          "Infrastructure pressure."
+        ]
+      }
+    }
+  },
+
   "sources": {
-    "demographics": { "provider": "US Census Bureau / World Population Review", "as_of": "2026-03" },
-    "rent": { "provider": "Trulia / RentHop", "as_of": "2026-03" },
-    "home_price": { "provider": "Zillow / Redfin", "as_of": "2026-01" }
+    "demographics": {
+      "provider": "US Census Bureau / World Population Review",
+      "as_of": "2026-03"
+    },
+    "rent": {
+      "provider": "Trulia / RentHop",
+      "as_of": "2026-03"
+    },
+    "home_price": {
+      "provider": "Zillow / Redfin",
+      "as_of": "2026-01"
+    },
+    "regional_notes": {
+      "provider": "The Orozco Realty internal market-intelligence framework",
+      "as_of": "2026-03",
+      "note": "Region-level data is intended for buyer education and positioning. It should be paired with current MLS data before client-facing recommendations."
+    }
   },
 
   "compatibility": {
     "orozco_realty_ready": true,
+    "tor_regions_ready": true,
     "intended_primary_slug": "san-antonio",
+    "primary_region_key": "lackland-west",
+    "default_region_key": "stone-oak",
+    "supported_region_keys": [
+      "stone-oak",
+      "medical-center",
+      "alamo-heights",
+      "downtown",
+      "helotes",
+      "lackland-west",
+      "southside",
+      "eastside",
+      "boerne",
+      "new-braunfels"
+    ],
     "parser_notes": [
-      "This file has been reshaped so elena-agent.js can read city, slug, market_metrics, ownership_costs, summary_points, risks, opportunities, buyer_notes, seller_notes, and investor_angles directly.",
+      "This file preserves the original citywide San Antonio structure while adding top-level region intelligence under regions.",
+      "The regions object is keyed to match the TOR Header Map UX region keys.",
+      "Code 3 should read CITY.regions[selectedRegionKey] first, then fall back to citywide fields if a region value is unavailable.",
       "Citywide label is set to San Antonio, while Lackland AFB is preserved as the underlying submarket context.",
       "property_tax_rate was normalized from percentage form to decimal form for compatibility with deterministic math."
     ]
