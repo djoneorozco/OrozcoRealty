@@ -348,6 +348,657 @@
     }
   },
 
+  "regions": {
+    "north-laredo": {
+      "slug": "north-laredo",
+      "name": "North Laredo / Del Mar",
+      "region_label": "North Laredo",
+      "market_label": "Premium Family Corridor",
+      "profile": "Laredo's strongest family-oriented buyer corridor, anchored by Del Mar, North Laredo, stronger school appeal, and newer residential growth.",
+      "overview_bluf": "North Laredo is the premium practical play: higher than city-average pricing, but stronger buyer confidence, school appeal, and owner-occupant demand.",
+      "price_display": "$315K",
+      "typical_price": 315000,
+      "entry_price": 240000,
+      "premium_price": 475000,
+      "estimated_payment_range": "$2,250–$3,250",
+      "buyer_fit": "Family",
+      "market_pace": "Steady",
+      "market_grade": "A-",
+      "inventory_feel": "Selective",
+      "negotiation_power": "Moderate",
+      "household_profile": "Family-sized households seeking schools, space, and north-side convenience.",
+      "income_signal": "Above-city-average buyer pool compared with older central and south-side areas.",
+      "education_signal": "Stronger school-driven appeal than the citywide average.",
+      "commute_pattern": "Good access to north-side employment, retail, medical, and airport corridors.",
+      "lifestyle_fit": "Best for buyers wanting suburban comfort, family services, and newer housing options.",
+      "growth_pressure": "Moderate to strong; demand follows schools, retail, and north-side development.",
+      "summary_points": [
+        "North Laredo is the most polished family-buyer corridor in the city.",
+        "Pricing is higher than the Laredo average but supported by stronger livability signals.",
+        "This region is best for owner-occupants who care about schools, safety perception, and resale stability.",
+        "Buyers should still compare tax, insurance, and utility load before stretching into premium homes."
+      ],
+      "scorecard": {
+        "affordability_score": 82,
+        "growth_score": 84,
+        "stability_score": 88,
+        "military_fit_score": 50,
+        "overall_score": 84
+      },
+      "real_estate": {
+        "price_positioning": {
+          "entry": 240000,
+          "typical": 315000,
+          "premium": 475000
+        },
+        "ownership_notes": [
+          "Higher pricing can be justified when school appeal, condition, and location quality are strong.",
+          "Best-value homes are usually not the cheapest homes; they are the homes with stronger resale confidence.",
+          "All-in cost discipline still matters because taxes and summer utilities can stretch the payment."
+        ],
+        "opportunities": [
+          "Strong owner-occupant demand supports better long-term resale positioning.",
+          "Family-sized homes in strong pockets can outperform broad city averages.",
+          "Well-presented homes can hold buyer attention even in a slower resale market."
+        ],
+        "risks": [
+          "Premium pricing can reduce affordability if buyers ignore taxes and insurance.",
+          "Competition for better-positioned homes may be stronger than citywide averages.",
+          "Overpaying for location without condition can weaken future resale flexibility."
+        ],
+        "buyer_strategy": "Use North Laredo when the client values stability, school appeal, and resale confidence more than the absolute lowest payment."
+      },
+      "demographics": {
+        "household_profile": "Family-focused, owner-occupant leaning, with stronger household stability than more transitional areas.",
+        "income_signal": "Higher practical purchasing power than many older Laredo corridors.",
+        "education_signal": "Better education/school-perception signal than citywide averages.",
+        "commute_pattern": "Convenient for north-side work, retail, schools, airport access, and medical corridors.",
+        "lifestyle_fit": "Suburban family comfort.",
+        "growth_pressure": "Growth follows schools, retail, and newer subdivisions.",
+        "education_bars": {
+          "schools": 86,
+          "demand": 84,
+          "stability": 88
+        },
+        "lifestyle_signals": [
+          "Family-oriented shopping and services.",
+          "Better fit for buyers who want newer or more polished neighborhoods.",
+          "Strong candidate region for long-term owner-occupants."
+        ],
+        "buyer_psychology": "North Laredo buyers are usually not just buying a house; they are buying confidence, school appeal, and a more stable household environment."
+      },
+      "neighborhoods": [
+        {
+          "name": "Del Mar",
+          "description": "Established and desirable north-side area with strong family-buyer recognition."
+        },
+        {
+          "name": "Plantation / Alexander area",
+          "description": "Higher-confidence family corridor with stronger owner-occupant appeal."
+        },
+        {
+          "name": "Winfield / Lakeside pockets",
+          "description": "Lifestyle and family-oriented pockets with stronger long-term desirability."
+        }
+      ],
+      "commute_notes": [
+        "Good north-side access to retail, schools, and medical corridors.",
+        "Commute can be more convenient for buyers working in North Laredo or near airport/business corridors.",
+        "South-side or border-adjacent work trips may require longer cross-city movement."
+      ],
+      "tags": [
+        "Family",
+        "Schools",
+        "Owner-Occupant",
+        "Resale Stability"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Use this region when the buyer values schools, resale confidence, and family comfort.",
+          "Avoid stretching into a premium home unless the all-in payment still protects monthly flexibility.",
+          "Compare condition carefully because the strongest homes may command a premium."
+        ],
+        "seller_guidance": [
+          "Lead with family appeal, condition, schools, and north-side convenience.",
+          "Do not overprice simply because the home is in North Laredo; buyers still care about payment.",
+          "Clean presentation and maintenance history matter."
+        ],
+        "investor_guidance": [
+          "Best for stability-focused rentals rather than deep-discount cash-flow hunting.",
+          "Family-oriented rentals may hold occupancy better if priced realistically.",
+          "Underwrite taxes and maintenance conservatively."
+        ],
+        "best_for": [
+          "Family buyers",
+          "Move-up buyers",
+          "Owner-occupants prioritizing stability",
+          "Buyers who want stronger resale confidence"
+        ],
+        "watchouts": [
+          "Higher price floor",
+          "Payment stretch risk",
+          "Condition must justify premium"
+        ]
+      }
+    },
+
+    "central-laredo": {
+      "slug": "central-laredo",
+      "name": "Central Laredo",
+      "region_label": "Central Laredo",
+      "market_label": "Established Core",
+      "profile": "Established central-market area with older housing stock, practical access, and mixed resale dynamics depending heavily on condition and block-level quality.",
+      "overview_bluf": "Central Laredo works best for buyers who want access and affordability, but it requires careful condition review and neighborhood-level due diligence.",
+      "price_display": "$205K",
+      "typical_price": 205000,
+      "entry_price": 145000,
+      "premium_price": 290000,
+      "estimated_payment_range": "$1,550–$2,250",
+      "buyer_fit": "Practical",
+      "market_pace": "Mixed",
+      "market_grade": "B",
+      "inventory_feel": "Varied",
+      "negotiation_power": "Moderate",
+      "household_profile": "Value-driven buyers, local households, and buyers willing to trade newer finishes for location/access.",
+      "income_signal": "More payment-sensitive than North Laredo.",
+      "education_signal": "Varies materially by exact school zone.",
+      "commute_pattern": "Central access is strong, but neighborhood quality varies block by block.",
+      "lifestyle_fit": "Best for practical buyers comfortable with older homes and local-city access.",
+      "growth_pressure": "Stable but not as growth-led as North Laredo.",
+      "summary_points": [
+        "Central Laredo provides practical access and lower pricing than northern premium corridors.",
+        "The biggest decision factor is property condition and exact neighborhood quality.",
+        "This region can work for disciplined buyers who avoid emotional fixer-upper mistakes.",
+        "Resale confidence depends more on block, condition, and pricing discipline than broad city averages."
+      ],
+      "scorecard": {
+        "affordability_score": 92,
+        "growth_score": 66,
+        "stability_score": 72,
+        "military_fit_score": 48,
+        "overall_score": 73
+      },
+      "real_estate": {
+        "price_positioning": {
+          "entry": 145000,
+          "typical": 205000,
+          "premium": 290000
+        },
+        "ownership_notes": [
+          "Older homes can carry repair and maintenance risk even when list price looks attractive.",
+          "Inspection discipline matters more here than in newer-subdivision corridors.",
+          "A lower price is only a win if condition, safety, and resale liquidity make sense."
+        ],
+        "opportunities": [
+          "Lower entry pricing can protect monthly affordability.",
+          "Renovated homes in stable pockets can offer practical value.",
+          "Central access can appeal to local buyers who want convenience."
+        ],
+        "risks": [
+          "Older housing stock can create repair-cost surprises.",
+          "Block-level variation can materially affect resale confidence.",
+          "Cheap homes can become expensive if maintenance is ignored."
+        ],
+        "buyer_strategy": "Use Central Laredo when the buyer needs value and access, but require stricter inspection and resale discipline."
+      },
+      "demographics": {
+        "household_profile": "Payment-sensitive local households and practical buyers.",
+        "income_signal": "Moderate purchasing power with stronger affordability needs.",
+        "education_signal": "Mixed; exact school and neighborhood checks matter.",
+        "commute_pattern": "Convenient central access, but quality varies by micro-location.",
+        "lifestyle_fit": "Practical city access.",
+        "growth_pressure": "Stable, with pockets of reinvestment.",
+        "education_bars": {
+          "schools": 64,
+          "demand": 68,
+          "stability": 72
+        },
+        "lifestyle_signals": [
+          "Established neighborhoods.",
+          "Older housing stock.",
+          "Good access but more due diligence required."
+        ],
+        "buyer_psychology": "Central Laredo buyers are often looking for payment control and convenience, but they need confidence that the home will not become a repair trap."
+      },
+      "neighborhoods": [
+        {
+          "name": "Heights / Central pockets",
+          "description": "Established central neighborhoods with varying condition and resale profiles."
+        },
+        {
+          "name": "Older family neighborhoods",
+          "description": "Can work when condition and block quality are strong."
+        }
+      ],
+      "commute_notes": [
+        "Central positioning can reduce cross-city driving for many local needs.",
+        "Exact route and neighborhood should be checked during commute windows.",
+        "Access is a strength, but livability varies by pocket."
+      ],
+      "tags": [
+        "Value",
+        "Established",
+        "Inspection Needed",
+        "Payment Control"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Do not buy only because the price is lower.",
+          "Use inspection, roof/HVAC/plumbing age, and block quality as primary filters.",
+          "Compare renovated homes against repair-heavy cheaper alternatives."
+        ],
+        "seller_guidance": [
+          "Condition and clean presentation matter heavily.",
+          "Price realistically against older-home competition.",
+          "Highlight central access and practical ownership value."
+        ],
+        "investor_guidance": [
+          "Can work for cash-flow investors if repair costs are controlled.",
+          "Avoid properties where capex risk destroys the spread.",
+          "Tenant demand should be evaluated by exact location."
+        ],
+        "best_for": [
+          "Value buyers",
+          "Local buyers",
+          "Renovation-aware buyers",
+          "Payment-sensitive households"
+        ],
+        "watchouts": [
+          "Older home repairs",
+          "Block-level variation",
+          "Potential resale friction"
+        ]
+      }
+    },
+
+    "south-laredo": {
+      "slug": "south-laredo",
+      "name": "South Laredo",
+      "region_label": "South Laredo",
+      "market_label": "Affordable Entry Zone",
+      "profile": "Affordability-led southern market with lower entry pricing, practical households, and value-oriented buyer demand.",
+      "overview_bluf": "South Laredo is the payment-control region: attractive for affordability, but buyers must evaluate neighborhood quality, commute, and resale liquidity carefully.",
+      "price_display": "$185K",
+      "typical_price": 185000,
+      "entry_price": 125000,
+      "premium_price": 260000,
+      "estimated_payment_range": "$1,350–$2,050",
+      "buyer_fit": "Entry",
+      "market_pace": "Variable",
+      "market_grade": "B-",
+      "inventory_feel": "Affordable",
+      "negotiation_power": "Moderate-High",
+      "household_profile": "Entry-level buyers, local households, and payment-sensitive families.",
+      "income_signal": "Lower price points align with more payment-sensitive buyers.",
+      "education_signal": "Varies significantly by school and neighborhood.",
+      "commute_pattern": "Useful for south-side and industrial/logistics access; less convenient for north-side lifestyle corridors.",
+      "lifestyle_fit": "Best for buyers prioritizing affordability over prestige.",
+      "growth_pressure": "Selective; long-term value depends on exact pocket and infrastructure growth.",
+      "summary_points": [
+        "South Laredo offers some of the lowest entry pricing in the city.",
+        "The region works best for buyers who need payment control and practical housing.",
+        "Neighborhood due diligence is essential before assuming all affordability is good value.",
+        "The right property can work, but broad-region averages are not enough."
+      ],
+      "scorecard": {
+        "affordability_score": 96,
+        "growth_score": 62,
+        "stability_score": 64,
+        "military_fit_score": 45,
+        "overall_score": 69
+      },
+      "real_estate": {
+        "price_positioning": {
+          "entry": 125000,
+          "typical": 185000,
+          "premium": 260000
+        },
+        "ownership_notes": [
+          "Lower prices help payment control, but repair and resale risk must be checked.",
+          "Do not confuse cheapest home with safest long-term value.",
+          "Buyers should prioritize structurally sound homes over cosmetic appeal alone."
+        ],
+        "opportunities": [
+          "Lower entry pricing can make ownership more accessible.",
+          "Good fit for disciplined first-time buyers.",
+          "Potential value exists in stable pockets with practical commute access."
+        ],
+        "risks": [
+          "Resale liquidity can be more limited than stronger north-side corridors.",
+          "Neighborhood variation can be significant.",
+          "Older or lower-cost homes may require more maintenance."
+        ],
+        "buyer_strategy": "Use South Laredo when payment control is the primary goal, but pair affordability with strict neighborhood and condition screening."
+      },
+      "demographics": {
+        "household_profile": "Working households and entry-level buyers focused on affordability.",
+        "income_signal": "Payment-sensitive buyer base.",
+        "education_signal": "Mixed; school and pocket checks required.",
+        "commute_pattern": "Better for south-side employment and industrial/logistics access.",
+        "lifestyle_fit": "Affordable and practical.",
+        "growth_pressure": "Selective, not uniform.",
+        "education_bars": {
+          "schools": 58,
+          "demand": 62,
+          "stability": 64
+        },
+        "lifestyle_signals": [
+          "Lower purchase prices.",
+          "Practical housing demand.",
+          "More due diligence required before buying."
+        ],
+        "buyer_psychology": "South Laredo buyers are usually protecting monthly payment first; confidence comes from knowing the home is safe, functional, and not a resale trap."
+      },
+      "neighborhoods": [
+        {
+          "name": "South Laredo residential pockets",
+          "description": "Affordable areas that require closer review of condition, schools, and block quality."
+        },
+        {
+          "name": "Industrial/logistics access areas",
+          "description": "Can support practical commuting for certain households."
+        }
+      ],
+      "commute_notes": [
+        "Useful for south-side and logistics-related commutes.",
+        "North Laredo commutes can be less convenient.",
+        "Drive routes should be tested during peak heat and workday traffic."
+      ],
+      "tags": [
+        "Affordable",
+        "Entry Buyer",
+        "Payment Control",
+        "Due Diligence"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Prioritize structural condition and safe monthly payment.",
+          "Compare neighborhood quality before choosing the lowest price.",
+          "Avoid homes that require major repairs immediately after closing."
+        ],
+        "seller_guidance": [
+          "Price competitively and make condition easy to understand.",
+          "Highlight affordability, space, and practical ownership.",
+          "Payment-sensitive buyers need confidence quickly."
+        ],
+        "investor_guidance": [
+          "Can work for cash-flow investors with strict repair budgets.",
+          "Tenant demand should be tested by exact location.",
+          "Avoid assuming low purchase price equals good yield."
+        ],
+        "best_for": [
+          "First-time buyers",
+          "Payment-sensitive households",
+          "Value buyers",
+          "Practical local buyers"
+        ],
+        "watchouts": [
+          "Resale liquidity",
+          "Repair risk",
+          "Neighborhood variation"
+        ]
+      }
+    },
+
+    "east-laredo": {
+      "slug": "east-laredo",
+      "name": "East Laredo",
+      "region_label": "East Laredo",
+      "market_label": "Growth / Logistics Edge",
+      "profile": "Emerging east-side market shaped by transportation, industrial access, newer growth pockets, and practical affordability.",
+      "overview_bluf": "East Laredo is a growth-and-logistics play: useful for buyers tied to trade corridors, but quality and resale strength vary by pocket.",
+      "price_display": "$230K",
+      "typical_price": 230000,
+      "entry_price": 170000,
+      "premium_price": 330000,
+      "estimated_payment_range": "$1,700–$2,550",
+      "buyer_fit": "Growth",
+      "market_pace": "Developing",
+      "market_grade": "B",
+      "inventory_feel": "Selective",
+      "negotiation_power": "Moderate",
+      "household_profile": "Practical households, trade/logistics-connected workers, and buyers seeking newer growth at less premium pricing than North Laredo.",
+      "income_signal": "Moderate, tied to practical employment and trade/logistics activity.",
+      "education_signal": "Mixed, depends on school pocket.",
+      "commute_pattern": "Can be useful for logistics, highway, and industrial access.",
+      "lifestyle_fit": "Best for buyers connected to growth corridors and practical access.",
+      "growth_pressure": "Moderate; tied to trade, logistics, and development patterns.",
+      "summary_points": [
+        "East Laredo can work for buyers tied to logistics, transportation, and practical growth corridors.",
+        "Pricing remains more accessible than the most premium north-side pockets.",
+        "The region needs exact-location review because not every pocket has the same resale confidence.",
+        "Best suited for practical buyers who understand commute and infrastructure patterns."
+      ],
+      "scorecard": {
+        "affordability_score": 88,
+        "growth_score": 78,
+        "stability_score": 70,
+        "military_fit_score": 46,
+        "overall_score": 74
+      },
+      "real_estate": {
+        "price_positioning": {
+          "entry": 170000,
+          "typical": 230000,
+          "premium": 330000
+        },
+        "ownership_notes": [
+          "Growth potential exists but should be evaluated by infrastructure and neighborhood quality.",
+          "Newer or better-positioned pockets may offer stronger long-term utility.",
+          "Buyers should avoid assuming all east-side growth is equal."
+        ],
+        "opportunities": [
+          "Useful for buyers connected to logistics and trade employment.",
+          "Some newer or emerging pockets may offer value.",
+          "Potential growth upside if infrastructure and demand continue improving."
+        ],
+        "risks": [
+          "Development quality can vary.",
+          "Resale strength may be less proven than North Laredo.",
+          "Commute and lifestyle fit should be confirmed before purchase."
+        ],
+        "buyer_strategy": "Use East Laredo when the buyer wants practical growth exposure and logistics access without paying the full North Laredo premium."
+      },
+      "demographics": {
+        "household_profile": "Practical households connected to trade, logistics, and growth corridors.",
+        "income_signal": "Moderate purchasing power.",
+        "education_signal": "Mixed; pocket-specific school checks matter.",
+        "commute_pattern": "Useful for highway, trade, and industrial access.",
+        "lifestyle_fit": "Growth-oriented and practical.",
+        "growth_pressure": "Moderate, tied to logistics and development corridors.",
+        "education_bars": {
+          "schools": 66,
+          "demand": 78,
+          "stability": 70
+        },
+        "lifestyle_signals": [
+          "Logistics and transportation relevance.",
+          "Potential emerging growth pockets.",
+          "Practical affordability relative to premium corridors."
+        ],
+        "buyer_psychology": "East Laredo buyers are often betting on practical growth and access; confidence comes from knowing the specific pocket has durable demand."
+      },
+      "neighborhoods": [
+        {
+          "name": "East-side growth pockets",
+          "description": "Areas influenced by highway access, newer development, and practical employment routes."
+        },
+        {
+          "name": "Logistics-access corridors",
+          "description": "Useful for buyers tied to trade, transportation, and industrial employment."
+        }
+      ],
+      "commute_notes": [
+        "Good for certain logistics and industrial work patterns.",
+        "North-side lifestyle access may be less convenient.",
+        "Exact commute routes matter because Laredo travel patterns can vary materially."
+      ],
+      "tags": [
+        "Growth",
+        "Logistics",
+        "Practical",
+        "Emerging"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Buy the pocket, not the broad east-side label.",
+          "Confirm commute patterns and future resale demand.",
+          "Look for homes where price, condition, and access all support the decision."
+        ],
+        "seller_guidance": [
+          "Position around access, practicality, and value.",
+          "Make the growth story clear but grounded.",
+          "Pricing still needs to respect buyer payment sensitivity."
+        ],
+        "investor_guidance": [
+          "Useful for logistics-connected renter demand if the exact location supports it.",
+          "Avoid overpaying on speculative growth alone.",
+          "Stress-test vacancy and maintenance."
+        ],
+        "best_for": [
+          "Growth-oriented buyers",
+          "Logistics-connected households",
+          "Practical buyers",
+          "Value-conscious owner-occupants"
+        ],
+        "watchouts": [
+          "Uneven growth",
+          "Pocket-level resale risk",
+          "Commute fit"
+        ]
+      }
+    },
+
+    "west-laredo": {
+      "slug": "west-laredo",
+      "name": "West Laredo / Mines Road",
+      "region_label": "West Laredo",
+      "market_label": "Trade Corridor",
+      "profile": "Trade-corridor influenced west-side area shaped by border commerce, industrial access, practical housing, and route-specific demand.",
+      "overview_bluf": "West Laredo is a trade-corridor market: strong economic relevance, but residential decisions require careful separation of livability, traffic, and industrial influence.",
+      "price_display": "$220K",
+      "typical_price": 220000,
+      "entry_price": 155000,
+      "premium_price": 320000,
+      "estimated_payment_range": "$1,650–$2,500",
+      "buyer_fit": "Trade",
+      "market_pace": "Mixed",
+      "market_grade": "B-",
+      "inventory_feel": "Corridor-Specific",
+      "negotiation_power": "Moderate",
+      "household_profile": "Practical buyers connected to trade, border commerce, and west-side access.",
+      "income_signal": "Trade/logistics connected, but residential desirability varies by exact pocket.",
+      "education_signal": "Mixed; buyer should verify schools and livability.",
+      "commute_pattern": "Strong for trade and west-side industrial access; traffic and route quality matter.",
+      "lifestyle_fit": "Best for buyers whose life/work pattern makes west-side access valuable.",
+      "growth_pressure": "Economically relevant, but residential upside is location-specific.",
+      "summary_points": [
+        "West Laredo has strong trade-corridor relevance but not every area is equally residentially desirable.",
+        "Buyers should separate economic activity from livability before choosing a home.",
+        "This region works best when commute, work access, and payment all align.",
+        "Industrial influence and traffic patterns should be part of the buying decision."
+      ],
+      "scorecard": {
+        "affordability_score": 86,
+        "growth_score": 70,
+        "stability_score": 66,
+        "military_fit_score": 44,
+        "overall_score": 70
+      },
+      "real_estate": {
+        "price_positioning": {
+          "entry": 155000,
+          "typical": 220000,
+          "premium": 320000
+        },
+        "ownership_notes": [
+          "Trade-corridor relevance does not automatically equal residential resale strength.",
+          "Traffic, industrial proximity, and route desirability should be checked carefully.",
+          "The best homes here need practical access without sacrificing livability."
+        ],
+        "opportunities": [
+          "Good fit for buyers whose work patterns benefit from west-side access.",
+          "Practical pricing can support affordability.",
+          "Trade corridor importance supports long-term regional relevance."
+        ],
+        "risks": [
+          "Traffic and industrial influence can affect livability.",
+          "Some areas may have weaker residential resale appeal.",
+          "Buyers may overvalue economic activity and undervalue home livability."
+        ],
+        "buyer_strategy": "Use West Laredo when work access and payment control matter, but screen hard for livability and resale quality."
+      },
+      "demographics": {
+        "household_profile": "Trade-connected practical households.",
+        "income_signal": "Employment relevance tied to commerce and logistics.",
+        "education_signal": "Mixed and location-specific.",
+        "commute_pattern": "Strong for trade corridor access, but traffic can matter.",
+        "lifestyle_fit": "Work-access focused.",
+        "growth_pressure": "Economic activity remains relevant, but residential upside is uneven.",
+        "education_bars": {
+          "schools": 60,
+          "demand": 70,
+          "stability": 66
+        },
+        "lifestyle_signals": [
+          "Border trade relevance.",
+          "Industrial and logistics access.",
+          "Livability varies by exact location."
+        ],
+        "buyer_psychology": "West Laredo buyers often value access and practicality, but they need to know the home still supports family life and future resale."
+      },
+      "neighborhoods": [
+        {
+          "name": "Mines Road corridor",
+          "description": "Trade and industrial-access corridor where residential fit should be carefully reviewed."
+        },
+        {
+          "name": "West-side residential pockets",
+          "description": "Can work when homes are insulated from traffic and industrial downsides."
+        }
+      ],
+      "commute_notes": [
+        "Strong for west-side trade and logistics access.",
+        "Traffic and truck routes should be checked.",
+        "Residential quality varies by exact street and proximity to industrial activity."
+      ],
+      "tags": [
+        "Trade",
+        "Logistics",
+        "Practical",
+        "Corridor"
+      ],
+      "guidance": {
+        "buyer_guidance": [
+          "Confirm work-route value before choosing this region.",
+          "Avoid homes too exposed to traffic or industrial downsides.",
+          "Use livability and resale quality as filters, not just access."
+        ],
+        "seller_guidance": [
+          "Highlight access and practical affordability.",
+          "Address livability concerns clearly.",
+          "Price based on residential appeal, not only corridor relevance."
+        ],
+        "investor_guidance": [
+          "Can work for workforce rental demand if location supports it.",
+          "Avoid properties with major noise, traffic, or maintenance risk.",
+          "Underwrite tenant quality and vacancy realistically."
+        ],
+        "best_for": [
+          "Trade/logistics workers",
+          "Practical buyers",
+          "Work-access focused households",
+          "Payment-sensitive buyers"
+        ],
+        "watchouts": [
+          "Traffic",
+          "Industrial proximity",
+          "Uneven residential appeal"
+        ]
+      }
+    }
+  },
+
   "sources": {
     "demographics": { "provider": "US Census Bureau / Census Reporter", "as_of": "2026-04" },
     "rent": { "provider": "Apartments.com / Zillow Rentals", "as_of": "2026-04" },
@@ -357,9 +1008,18 @@
   "compatibility": {
     "orozco_realty_ready": true,
     "intended_primary_slug": "laredo",
+    "default_region_key": "north-laredo",
+    "region_keys": [
+      "north-laredo",
+      "central-laredo",
+      "south-laredo",
+      "east-laredo",
+      "west-laredo"
+    ],
     "parser_notes": [
       "This file follows the same Orozco city-market schema as San Antonio and McAllen.",
       "Laredo is modeled as a civilian affordability/value market with stronger trade-logistics relevance than military anchoring.",
+      "Regional intelligence has been added under the regions object for TOR map/header and demographic panel compatibility.",
       "Replace image_url with your final Laredo hero image asset before production publish."
     ]
   }
