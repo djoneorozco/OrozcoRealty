@@ -1,10 +1,10 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Thu Apr 16 2026 13:11:59 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Sat May 30 2026 01:53:12 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="69d8a922fb2c6562c20ee5c6" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
 <head>
   <meta charset="utf-8">
   <title>Laredo</title>
   <meta content="Laredo" property="og:title">
-  <meta content="Laredo" property="twitter:title">
+  <meta content="Laredo" name="twitter:title">
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <meta content="Webflow" name="generator">
   <link href="../css/normalize.css" rel="stylesheet" type="text/css">
@@ -19,844 +19,1796 @@
   <link href="../images/webclip.png" rel="apple-touch-icon">
 </head>
 <body>
-  <div class="w-embed"><!--  =========================================================
-  OrozcoRealty • Cities Overview Shell
-  Executive-Muted Gold
-  v2.0.0
-  PURPOSE
-  - Shell only
-  - JS runtime fills content from cities.json
-  - City slug is read from URL path, e.g. /market/san-antonio
-  REQUIRED
-  - Separate JS runtime code
-  - window.OROZCO_CITIES_JSON_URL optional override
+  <div class="w-embed w-script"><!--  =========================================================
+  The Orozco Realty • Texas Demographics
+  HEADER SHELL + MAP UX
+  v1.0.1-LAREDO • Hero Map Selector Only / Clean Map Chrome
+  UPDATE
+  - Laredo market version
+  - Removed bottom legend
+  - Removed Leaflet attribution link bottom-right
+  - Uses Laredo region keys from laredo.json:
+    north-laredo, central-laredo, south-laredo, east-laredo, west-laredo
+  - Keeps tor:region-selected dispatch intact
 =========================================================  -->
-    <div id="or-city-overview" style="all:initial;">
+    <div id="tor-texas-header" style="all:initial;">
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
       <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
       <style>
-    #or-city-overview, #or-city-overview *{
+    #tor-texas-header,
+    #tor-texas-header *{
       box-sizing:border-box;
       margin:0;
       padding:0;
+      font-family:"Barlow",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     }
-    #or-city-overview{
+    #tor-texas-header{
       --bg:#071018;
       --bg2:#0b1621;
-      --panel:rgba(17,24,34,.78);
-      --panel2:rgba(12,18,28,.72);
-      --stroke:rgba(216,184,122,.16);
+      --bg3:#050912;
       --ink:#f3efe7;
       --muted:#b8b0a4;
       --gold:#d8b87a;
+      --gold2:#f6d06d;
       --blue:#6f8fb7;
-      --mint:#94c7b3;
+      --sapphire:#6aa7ff;
+      --mint:#8ef3c5;
       --danger:#d98c8c;
+      --panel:rgba(17,24,34,.78);
+      --panel2:rgba(12,18,28,.72);
+      --stroke:rgba(216,184,122,.16);
+      --stroke2:rgba(255,255,255,.08);
       --shadow:0 24px 70px rgba(0,0,0,.42);
+      --shadow2:0 34px 90px rgba(0,0,0,.62);
       --wrap:min(1380px, calc(100% - 32px));
       display:block;
-      font-family:"Barlow",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      width:100%;
       color:var(--ink);
-      background:
-        radial-gradient(circle at top left, rgba(216,184,122,.10), transparent 26%),
-        radial-gradient(circle at top right, rgba(111,143,183,.10), transparent 26%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-      min-height:100vh;
     }
-    #or-city-overview a{ color:inherit; text-decoration:none; }
-    #or-city-overview .or-topbar{
-      position:sticky;
-      top:0;
-      z-index:30;
-      backdrop-filter:blur(16px);
-      background:rgba(8,12,18,.76);
-      border-bottom:1px solid rgba(216,184,122,.10);
+    #tor-texas-header a{
+      color:inherit;
+      text-decoration:none;
     }
-    #or-city-overview .or-topbar-inner{
+    #tor-texas-header .torh-wrap{
       width:var(--wrap);
       margin:0 auto;
-      min-height:74px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
+      padding:24px 0 20px;
     }
-    #or-city-overview .or-brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    #or-city-overview .or-brand-mark{
-      width:42px;
-      height:42px;
-      border-radius:14px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.15), transparent 35%),
-        linear-gradient(135deg, rgba(216,184,122,.20), rgba(111,143,183,.16));
-      border:1px solid rgba(216,184,122,.18);
-      box-shadow:var(--shadow);
-      flex:0 0 auto;
-    }
-    #or-city-overview .or-brand-copy strong{
-      display:block;
-      font-family:"Gilda Display",serif;
-      font-size:1.15rem;
-      color:#f8f0de;
-      letter-spacing:.01em;
-    }
-    #or-city-overview .or-brand-copy span{
-      display:block;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      font-size:.78rem;
-      margin-top:2px;
-    }
-    #or-city-overview .or-topmeta{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    #or-city-overview .or-pill{
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:.84rem;
-      line-height:1;
-      white-space:nowrap;
-    }
-    #or-city-overview .or-wrap{
-      width:var(--wrap);
-      margin:0 auto;
-      padding:24px 0 40px;
-    }
-    #or-city-overview .or-hero{
+    #tor-texas-header .torh-hero{
       position:relative;
       overflow:hidden;
-      min-height:430px;
-      border-radius:32px;
-      border:1px solid rgba(216,184,122,.12);
-      box-shadow:var(--shadow);
+      min-height:520px;
+      border-radius:34px;
+      border:1px solid rgba(216,184,122,.16);
+      box-shadow:var(--shadow2);
       background:#0c131c;
+      isolation:isolate;
     }
-    #or-city-overview .or-hero-bg{
+    #tor-texas-header .torh-hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 22%),
+        radial-gradient(circle at 20% 20%, rgba(216,184,122,.13), transparent 28%),
+        radial-gradient(circle at 88% 16%, rgba(106,167,255,.10), transparent 26%);
+      mix-blend-mode:screen;
+    }
+    #tor-texas-header .torh-hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.44), rgba(0,0,0,.22) 42%, rgba(0,0,0,.38)),
+        linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.38) 74%, rgba(0,0,0,.62));
+    }
+    #tor-texas-header .torh-bg{
       position:absolute;
       inset:0;
       background:
-        linear-gradient(90deg, rgba(5,8,13,.88) 0%, rgba(8,12,18,.82) 28%, rgba(8,12,18,.48) 63%, rgba(8,12,18,.28) 100%),
-        var(--hero-image, linear-gradient(135deg, #1a2430, #0b1218));
+        linear-gradient(90deg, rgba(5,8,13,.94) 0%, rgba(8,12,18,.82) 30%, rgba(8,12,18,.50) 62%, rgba(8,12,18,.34) 100%),
+        url("https://cdn.prod.website-files.com/691facbe35fbba00c096f2b7/69d9e88f17dd62eb316deddb_Laredo.jpg");
       background-size:cover;
       background-position:center;
-      transform:scale(1.02);
+      transform:scale(1.025);
+      filter:saturate(1.03) contrast(1.04) brightness(.78);
     }
-    #or-city-overview .or-hero-inner{
+    #tor-texas-header .torh-inner{
       position:relative;
-      z-index:1;
-      min-height:430px;
+      z-index:2;
+      min-height:520px;
       display:grid;
-      grid-template-columns:minmax(0,1.22fr) minmax(320px,.88fr);
-      gap:20px;
+      grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr);
+      gap:26px;
       align-items:end;
-      padding:30px;
+      padding:34px;
     }
-    #or-city-overview .or-eyebrow{
+    #tor-texas-header .torh-left{
+      max-width:780px;
+    }
+    #tor-texas-header .torh-eyebrow{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:9px 12px;
+      padding:9px 13px;
       border-radius:999px;
-      border:1px solid rgba(216,184,122,.18);
-      background:rgba(216,184,122,.07);
-      color:var(--gold);
+      border:1px solid rgba(216,184,122,.22);
+      background:linear-gradient(135deg, rgba(216,184,122,.11), rgba(111,143,183,.06));
+      color:var(--gold2);
       text-transform:uppercase;
-      letter-spacing:.14em;
-      font-size:.77rem;
+      letter-spacing:.15em;
+      font-size:.76rem;
+      font-weight:900;
       margin-bottom:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.22);
     }
-    #or-city-overview .or-title{
+    #tor-texas-header .torh-title{
       font-family:"Gilda Display",serif;
-      font-size:clamp(2.2rem, 4vw, 4rem);
-      line-height:1.02;
+      font-size:clamp(2.65rem, 4.8vw, 5rem);
+      line-height:.96;
       color:#fbf4e7;
-      margin-bottom:12px;
+      margin-bottom:15px;
+      text-shadow:0 14px 40px rgba(0,0,0,.55);
+      letter-spacing:-.03em;
     }
-    #or-city-overview .or-subtitle{
+    #tor-texas-header .torh-subtitle{
       max-width:760px;
-      color:#ddd4c7;
-      font-size:1.02rem;
-      line-height:1.7;
-      margin-bottom:20px;
+      color:#e4dccf;
+      font-size:1.04rem;
+      line-height:1.72;
+      margin-bottom:24px;
     }
-    #or-city-overview .or-kpis{
+    #tor-texas-header .torh-kpis{
       display:grid;
-      grid-template-columns:repeat(4, minmax(0,1fr));
+      grid-template-columns:repeat(4,minmax(0,1fr));
       gap:14px;
     }
-    #or-city-overview .or-kpi{
-      border-radius:18px;
-      padding:16px;
-      background:rgba(10,16,24,.56);
-      border:1px solid rgba(255,255,255,.08);
-      backdrop-filter:blur(12px);
+    #tor-texas-header .torh-kpi{
+      position:relative;
+      overflow:hidden;
+      border-radius:20px;
+      padding:17px;
+      background:linear-gradient(180deg, rgba(10,16,24,.68), rgba(8,12,18,.56));
+      border:1px solid rgba(255,255,255,.09);
+      backdrop-filter:blur(16px) saturate(140%);
+      box-shadow:0 18px 42px rgba(0,0,0,.28);
     }
-    #or-city-overview .or-kpi-label{
+    #tor-texas-header .torh-kpi::before{
+      content:"";
+      position:absolute;
+      inset:0 0 auto 0;
+      height:1px;
+      background:linear-gradient(90deg, rgba(216,184,122,.34), rgba(106,167,255,.16), transparent);
+      pointer-events:none;
+    }
+    #tor-texas-header .torh-kpi-label{
       color:var(--muted);
       text-transform:uppercase;
       letter-spacing:.14em;
-      font-size:.74rem;
+      font-size:.70rem;
+      font-weight:900;
       margin-bottom:8px;
+      line-height:1.25;
     }
-    #or-city-overview .or-kpi-value{
-      font-size:1.45rem;
-      font-weight:800;
+    #tor-texas-header .torh-kpi-value{
+      font-size:1.48rem;
+      font-weight:900;
       color:#fff;
+      letter-spacing:-.02em;
+      line-height:1.1;
     }
-    #or-city-overview .or-hero-side{
+    #tor-texas-header .torh-right{
       display:grid;
       gap:14px;
+      align-self:center;
     }
-    #or-city-overview .or-card{
-      border-radius:24px;
+    #tor-texas-header .torh-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:26px;
+      padding:18px;
+      background:linear-gradient(180deg, rgba(18,24,34,.84), rgba(8,12,18,.88));
+      border:1px solid rgba(216,184,122,.13);
+      backdrop-filter:blur(18px) saturate(145%);
+      box-shadow:0 22px 60px rgba(0,0,0,.38);
+    }
+    #tor-texas-header .torh-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at top left, rgba(216,184,122,.10), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,.045), transparent 24%);
+    }
+    #tor-texas-header .torh-card > *{
+      position:relative;
+      z-index:1;
+    }
+    #tor-texas-header .torh-map-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:12px;
+    }
+    #tor-texas-header .torh-map-title{
+      color:#fbf2e2;
+      font-size:.72rem;
+      font-weight:900;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+    #tor-texas-header .torh-map-hint{
+      color:var(--muted);
+      font-size:.72rem;
+      font-weight:700;
+      line-height:1.4;
+      text-align:right;
+    }
+    #tor-sa-map{
+      width:100%;
+      height:255px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      background:#071018;
+      position:relative;
+      box-shadow:0 18px 42px rgba(0,0,0,.32);
+    }
+    #tor-texas-header .torh-map-loading{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      color:#f6d06d;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(216,184,122,.10), transparent 36%),
+        linear-gradient(180deg,#071018,#050912);
+      z-index:4;
+    }
+    #tor-texas-header .leaflet-container{
+      background:#071018;
+      font-family:"Barlow",system-ui,sans-serif;
+    }
+    #tor-texas-header .leaflet-control-attribution{
+      display:none !important;
+    }
+    #tor-texas-header .leaflet-control-container .leaflet-bottom.leaflet-right{
+      display:none !important;
+    }
+    #tor-texas-header .leaflet-control-zoom{
+      border:none;
+      box-shadow:0 12px 28px rgba(0,0,0,.32);
+    }
+    #tor-texas-header .leaflet-control-zoom a{
+      background:rgba(7,16,24,.82);
+      color:#f6d06d;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    #tor-texas-header .leaflet-control-zoom a:hover{
+      background:rgba(216,184,122,.16);
+      color:#fff6e7;
+    }
+    #tor-texas-header .leaflet-tooltip{
+      background:#101822;
+      color:#f3efe7;
+      border:1px solid rgba(216,184,122,.24);
+      border-radius:12px;
+      box-shadow:0 12px 26px rgba(0,0,0,.35);
+      font-weight:900;
+      letter-spacing:.03em;
+    }
+    #tor-texas-header .torh-score-card{
+      padding:20px;
+    }
+    #tor-texas-header .torh-score-title-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:14px;
+    }
+    #tor-texas-header .torh-score-title{
+      color:#fbf2e2;
+      font-size:.78rem;
+      font-weight:900;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+    #tor-texas-header .torh-region-pill{
+      max-width:210px;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+      padding:8px 11px;
+      border-radius:999px;
+      background:rgba(216,184,122,.09);
+      border:1px solid rgba(216,184,122,.18);
+      color:#f6d06d;
+      font-size:.68rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+    }
+    #tor-texas-header .torh-score-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+    }
+    #tor-texas-header .torh-score-mini{
+      position:relative;
+      overflow:hidden;
+      border-radius:17px;
+      padding:14px;
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.07);
+    }
+    #tor-texas-header .torh-score-mini::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      height:2px;
+      background:linear-gradient(90deg, rgba(216,184,122,.65), rgba(106,167,255,.30), transparent);
+    }
+    #tor-texas-header .torh-score-mini span{
+      display:block;
+      font-size:.70rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:900;
+    }
+    #tor-texas-header .torh-score-mini strong{
+      display:block;
+      font-size:1.48rem;
+      color:#fff;
+      font-weight:900;
+      line-height:1.1;
+    }
+    @media(max-width:1120px){
+      #tor-texas-header .torh-inner{
+        grid-template-columns:1fr;
+        align-items:end;
+      }
+      #tor-texas-header .torh-left{
+        max-width:100%;
+      }
+      #tor-sa-map{
+        height:330px;
+      }
+    }
+    @media(max-width:760px){
+      #tor-texas-header{
+        --wrap:min(100% - 20px, 1380px);
+      }
+      #tor-texas-header .torh-wrap{
+        padding:16px 0;
+      }
+      #tor-texas-header .torh-hero{
+        border-radius:26px;
+        min-height:auto;
+      }
+      #tor-texas-header .torh-inner{
+        padding:20px;
+        min-height:auto;
+      }
+      #tor-texas-header .torh-kpis,
+      #tor-texas-header .torh-score-grid{
+        grid-template-columns:1fr;
+      }
+      #tor-sa-map{
+        height:300px;
+      }
+      #tor-texas-header .torh-map-top,
+      #tor-texas-header .torh-score-title-row{
+        flex-direction:column;
+      }
+      #tor-texas-header .torh-map-hint{
+        text-align:left;
+      }
+      #tor-texas-header .torh-region-pill{
+        max-width:100%;
+      }
+    }
+  </style>
+      <div class="torh-wrap">
+        <section class="torh-hero">
+          <div class="torh-bg" id="torHeroBg"></div>
+          <div class="torh-inner">
+            <div class="torh-left">
+              <div class="torh-eyebrow" id="torHeroEyebrow">
+                Texas • Laredo Metro
+              </div>
+              <h1 class="torh-title" id="torHeroTitle">
+                Laredo Market Intelligence
+              </h1>
+              <p class="torh-subtitle" id="torHeroSubtitle">
+                Explore Laredo by region with housing, logistics, affordability, and buyer-positioning signals built for smarter South Texas real estate decisions.
+              </p>
+              <div class="torh-kpis">
+                <div class="torh-kpi">
+                  <div class="torh-kpi-label">Typical Buy Price</div>
+                  <div class="torh-kpi-value" id="torKpiPrice">$315K</div>
+                </div>
+                <div class="torh-kpi">
+                  <div class="torh-kpi-label">Buyer Fit</div>
+                  <div class="torh-kpi-value" id="torKpiFit">Family</div>
+                </div>
+                <div class="torh-kpi">
+                  <div class="torh-kpi-label">Market Pace</div>
+                  <div class="torh-kpi-value" id="torKpiPace">Steady</div>
+                </div>
+                <div class="torh-kpi">
+                  <div class="torh-kpi-label">Market Grade</div>
+                  <div class="torh-kpi-value" id="torKpiGrade">A-</div>
+                </div>
+              </div>
+            </div>
+            <div class="torh-right">
+              <div class="torh-card">
+                <div class="torh-map-top">
+                  <div class="torh-map-title">Laredo Region Map</div>
+                  <div class="torh-map-hint">Click a highlighted region</div>
+                </div>
+                <div id="tor-sa-map">
+                  <div class="torh-map-loading" id="torMapLoading">Loading Market Map</div>
+                </div>
+              </div>
+              <div class="torh-card torh-score-card">
+                <div class="torh-score-title-row">
+                  <div class="torh-score-title">Market Scorecard</div>
+                  <div class="torh-region-pill" id="torSelectedRegionPill">North Laredo / Del Mar</div>
+                </div>
+                <div class="torh-score-grid">
+                  <div class="torh-score-mini">
+                    <span>Affordability</span>
+                    <strong id="torScoreAffordability">82</strong>
+                  </div>
+                  <div class="torh-score-mini">
+                    <span>Growth</span>
+                    <strong id="torScoreGrowth">84</strong>
+                  </div>
+                  <div class="torh-score-mini">
+                    <span>Stability</span>
+                    <strong id="torScoreStability">88</strong>
+                  </div>
+                  <div class="torh-score-mini">
+                    <span>Overall</span>
+                    <strong id="torScoreOverall">84</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <script>
+    (() => {
+      "use strict";
+      if (window.TOR_TEXAS_HEADER_MAP?.__mounted_laredo_v101) return;
+      window.TOR_TEXAS_HEADER_MAP = { __mounted_laredo_v101:true };
+      const LEAFLET_CSS_ID = "tor-leaflet-css-v194";
+      const LEAFLET_JS_ID = "tor-leaflet-js-v194";
+      const REGIONS = {
+        "north-laredo": {
+          key:"north-laredo",
+          name:"North Laredo / Del Mar",
+          eyebrow:"Texas • North Laredo",
+          title:"North Laredo / Del Mar",
+          subtitle:"Laredo's strongest family-oriented buyer corridor, anchored by Del Mar, North Laredo, stronger school appeal, and newer residential growth.",
+          price:"$315K",
+          fit:"Family",
+          pace:"Steady",
+          grade:"A-",
+          scores:{ affordability:82, growth:84, stability:88, overall:84 },
+          color:"#d8b87a",
+          category:"Premium Family Corridor",
+          points:[
+            [27.675,-99.560],
+            [27.675,-99.420],
+            [27.595,-99.390],
+            [27.545,-99.465],
+            [27.575,-99.570]
+          ]
+        },
+        "central-laredo": {
+          key:"central-laredo",
+          name:"Central Laredo",
+          eyebrow:"Texas • Central Laredo",
+          title:"Central Laredo",
+          subtitle:"Established central-market area with older housing stock, practical access, and mixed resale dynamics depending heavily on condition and block-level quality.",
+          price:"$205K",
+          fit:"Practical",
+          pace:"Mixed",
+          grade:"B",
+          scores:{ affordability:92, growth:66, stability:72, overall:73 },
+          color:"#6aa7ff",
+          category:"Established Core",
+          points:[
+            [27.565,-99.555],
+            [27.555,-99.455],
+            [27.505,-99.420],
+            [27.455,-99.470],
+            [27.470,-99.555],
+            [27.520,-99.590]
+          ]
+        },
+        "south-laredo": {
+          key:"south-laredo",
+          name:"South Laredo",
+          eyebrow:"Texas • South Laredo",
+          title:"South Laredo",
+          subtitle:"Affordability-led southern market with lower entry pricing, practical households, and value-oriented buyer demand.",
+          price:"$185K",
+          fit:"Entry",
+          pace:"Variable",
+          grade:"B-",
+          scores:{ affordability:96, growth:62, stability:64, overall:69 },
+          color:"#d98c8c",
+          category:"Affordable Entry Zone",
+          points:[
+            [27.470,-99.560],
+            [27.455,-99.455],
+            [27.345,-99.430],
+            [27.270,-99.535],
+            [27.330,-99.650],
+            [27.420,-99.635]
+          ]
+        },
+        "east-laredo": {
+          key:"east-laredo",
+          name:"East Laredo",
+          eyebrow:"Texas • East Laredo",
+          title:"East Laredo",
+          subtitle:"Emerging east-side market shaped by transportation, industrial access, newer growth pockets, and practical affordability.",
+          price:"$230K",
+          fit:"Growth",
+          pace:"Developing",
+          grade:"B",
+          scores:{ affordability:88, growth:78, stability:70, overall:74 },
+          color:"#8ef3c5",
+          category:"Growth / Logistics Edge",
+          points:[
+            [27.590,-99.420],
+            [27.555,-99.310],
+            [27.450,-99.275],
+            [27.360,-99.365],
+            [27.410,-99.455],
+            [27.505,-99.430]
+          ]
+        },
+        "west-laredo": {
+          key:"west-laredo",
+          name:"West Laredo / Mines Road",
+          eyebrow:"Texas • West Laredo Trade Corridor",
+          title:"West Laredo / Mines Road",
+          subtitle:"Trade-corridor influenced west-side area shaped by border commerce, industrial access, practical housing, and route-specific demand.",
+          price:"$220K",
+          fit:"Trade",
+          pace:"Mixed",
+          grade:"B-",
+          scores:{ affordability:86, growth:70, stability:66, overall:70 },
+          color:"#f6d06d",
+          category:"Trade Corridor",
+          points:[
+            [27.650,-99.720],
+            [27.625,-99.575],
+            [27.520,-99.590],
+            [27.420,-99.635],
+            [27.380,-99.740],
+            [27.505,-99.820]
+          ]
+        }
+      };
+      const root = document.getElementById("tor-texas-header");
+      if (!root) return;
+      const $ = (sel) => root.querySelector(sel);
+      function setText(sel, value){
+        const el = $(sel);
+        if (el) el.textContent = value ?? "—";
+      }
+      function loadCss(){
+        if (document.getElementById(LEAFLET_CSS_ID)) return;
+        const link = document.createElement("link");
+        link.id = LEAFLET_CSS_ID;
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(link);
+      }
+      function loadLeaflet(){
+        return new Promise((resolve, reject) => {
+          if (window.L) {
+            resolve(window.L);
+            return;
+          }
+          const existing = document.getElementById(LEAFLET_JS_ID);
+          if (existing) {
+            existing.addEventListener("load", () => resolve(window.L));
+            existing.addEventListener("error", reject);
+            return;
+          }
+          const script = document.createElement("script");
+          script.id = LEAFLET_JS_ID;
+          script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+          script.async = true;
+          script.onload = () => resolve(window.L);
+          script.onerror = reject;
+          document.body.appendChild(script);
+        });
+      }
+      function boot(){
+        const mapEl = document.getElementById("tor-sa-map");
+        const loading = $("#torMapLoading");
+        if (!mapEl || !window.L) return;
+        let activeRegion = "north-laredo";
+        const layers = {};
+        const map = L.map("tor-sa-map", {
+          center:[27.5306,-99.4803],
+          zoom:10,
+          scrollWheelZoom:false,
+          zoomControl:true,
+          attributionControl:false
+        });
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom:18,
+          attribution:""
+        }).addTo(map);
+        function styleRegion(key){
+          const region = REGIONS[key];
+          return {
+            color:"rgba(251,242,226,.92)",
+            weight:key === activeRegion ? 3.5 : 1.4,
+            fillColor:region.color,
+            fillOpacity:key === activeRegion ? .52 : .24,
+            opacity:.95
+          };
+        }
+        function renderRegion(key, options = {}){
+          const region = REGIONS[key];
+          if (!region) return;
+          activeRegion = key;
+          Object.keys(layers).forEach(layerKey => {
+            layers[layerKey].setStyle(styleRegion(layerKey));
+          });
+          setText("#torHeroEyebrow", region.eyebrow);
+          setText("#torHeroTitle", region.title);
+          setText("#torHeroSubtitle", region.subtitle);
+          setText("#torKpiPrice", region.price);
+          setText("#torKpiFit", region.fit);
+          setText("#torKpiPace", region.pace);
+          setText("#torKpiGrade", region.grade);
+          setText("#torSelectedRegionPill", region.name);
+          setText("#torScoreAffordability", region.scores.affordability);
+          setText("#torScoreGrowth", region.scores.growth);
+          setText("#torScoreStability", region.scores.stability);
+          setText("#torScoreOverall", region.scores.overall);
+          if (layers[key]) {
+            layers[key].bringToFront();
+            if (options.fitBounds === true) {
+              map.fitBounds(layers[key].getBounds(), {
+                padding:[18,18],
+                maxZoom:11
+              });
+            }
+          }
+          window.TOR_SELECTED_REGION = {
+            key,
+            region
+          };
+          window.dispatchEvent(new CustomEvent("tor:region-selected", {
+            detail:{
+              key,
+              region
+            }
+          }));
+        }
+        Object.entries(REGIONS).forEach(([key, region]) => {
+          const layer = L.polygon(region.points, styleRegion(key)).addTo(map);
+          layers[key] = layer;
+          layer.bindTooltip(region.name, {
+            sticky:true,
+            direction:"top"
+          });
+          layer.on("click", () => {
+            renderRegion(key, { fitBounds:false });
+          });
+          layer.on("mouseover", () => {
+            layer.setStyle({
+              fillOpacity:.58,
+              weight:3.5
+            });
+          });
+          layer.on("mouseout", () => {
+            layer.setStyle(styleRegion(key));
+          });
+        });
+        const allBounds = L.latLngBounds(
+          Object.values(REGIONS)
+            .flatMap(region => region.points)
+            .map(point => L.latLng(point[0], point[1]))
+        );
+        map.fitBounds(allBounds, {
+          padding:[18,18],
+          maxZoom:10
+        });
+        renderRegion(activeRegion);
+        if (loading) {
+          loading.style.display = "none";
+        }
+        window.TOR_TEXAS_HEADER_MAP.selectRegion = function(key){
+          renderRegion(key, { fitBounds:true });
+        };
+        window.TOR_TEXAS_HEADER_MAP.getRegions = function(){
+          return REGIONS;
+        };
+        setTimeout(() => map.invalidateSize(), 250);
+        setTimeout(() => map.invalidateSize(), 750);
+        setTimeout(() => map.invalidateSize(), 1500);
+        window.addEventListener("resize", () => {
+          setTimeout(() => map.invalidateSize(), 150);
+        });
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) {
+            setTimeout(() => map.invalidateSize(), 150);
+          }
+        });
+      }
+      loadCss();
+      loadLeaflet()
+        .then(() => {
+          boot();
+        })
+        .catch(() => {
+          const loading = $("#torMapLoading");
+          if (loading) {
+            loading.textContent = "Map temporarily unavailable";
+          }
+        });
+    })();
+  </script>
+    </div>
+  </div>
+  <div class="w-embed w-script"><!--  =========================================================
+  The Orozco Realty • Texas Demographics
+  DEMOGRAPHIC / REAL ESTATE SHELL
+  v1.0.0-LAREDO • Region Intelligence Panels
+  PURPOSE
+  - Works under Laredo Header Shell + Map UX
+  - Uses same TOR luxury styling
+  - Tabs for Overview, Real Estate, Demographics, Neighborhoods, Guidance
+  - Preserves clean IDs for JS Runtime
+  - Updates from tor:region-selected event
+=========================================================  -->
+    <div id="tor-region-intel" style="all:initial;">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+      <style>
+    #tor-region-intel,
+    #tor-region-intel *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:"Barlow",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    #tor-region-intel{
+      --bg:#071018;
+      --bg2:#0b1621;
+      --bg3:#050912;
+      --panel:rgba(17,24,34,.78);
+      --panel2:rgba(12,18,28,.72);
+      --panel3:rgba(7,12,19,.86);
+      --stroke:rgba(216,184,122,.16);
+      --stroke2:rgba(255,255,255,.08);
+      --ink:#f3efe7;
+      --muted:#b8b0a4;
+      --gold:#d8b87a;
+      --gold2:#f6d06d;
+      --blue:#6f8fb7;
+      --sapphire:#6aa7ff;
+      --mint:#94c7b3;
+      --mint2:#8ef3c5;
+      --danger:#d98c8c;
+      --shadow:0 24px 70px rgba(0,0,0,.42);
+      --shadow2:0 34px 90px rgba(0,0,0,.62);
+      --wrap:min(1380px, calc(100% - 32px));
+      display:block;
+      width:100%;
+      color:var(--ink);
+    }
+    #tor-region-intel a{
+      color:inherit;
+      text-decoration:none;
+    }
+    #tor-region-intel .tori-wrap{
+      width:var(--wrap);
+      margin:0 auto;
+      padding:0 0 42px;
+    }
+    #tor-region-intel .tori-command{
+      position:relative;
+      overflow:hidden;
+      border-radius:30px;
       padding:22px;
-      background:linear-gradient(180deg, rgba(18,24,34,.78), rgba(11,16,24,.84));
-      border:1px solid rgba(216,184,122,.10);
-      backdrop-filter:blur(16px);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(216,184,122,.10), transparent 28%),
+        radial-gradient(circle at 92% 0%, rgba(106,167,255,.08), transparent 28%),
+        linear-gradient(180deg, rgba(17,24,34,.82), rgba(8,13,20,.78));
+      border:1px solid rgba(216,184,122,.13);
       box-shadow:var(--shadow);
+      backdrop-filter:blur(20px) saturate(145%);
     }
-    #or-city-overview .or-status{
+    #tor-region-intel .tori-command::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 22%),
+        radial-gradient(circle at 24% 18%, rgba(216,184,122,.09), transparent 30%);
+      mix-blend-mode:screen;
+    }
+    #tor-region-intel .tori-command > *{
+      position:relative;
+      z-index:1;
+    }
+    #tor-region-intel .tori-topline{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:18px;
+      align-items:end;
+      margin-bottom:18px;
+    }
+    #tor-region-intel .tori-eyebrow{
       display:inline-flex;
       align-items:center;
       gap:8px;
       padding:8px 12px;
       border-radius:999px;
+      border:1px solid rgba(216,184,122,.22);
+      background:linear-gradient(135deg, rgba(216,184,122,.11), rgba(111,143,183,.06));
+      color:var(--gold2);
       text-transform:uppercase;
-      letter-spacing:.12em;
-      font-size:.78rem;
-      font-weight:800;
-      color:var(--gold);
-      background:rgba(216,184,122,.08);
-      border:1px solid rgba(216,184,122,.18);
-      margin-bottom:14px;
+      letter-spacing:.15em;
+      font-size:.72rem;
+      font-weight:900;
+      margin-bottom:12px;
     }
-    #or-city-overview .or-card-title{
+    #tor-region-intel .tori-title{
       font-family:"Gilda Display",serif;
-      font-size:1.7rem;
-      color:#fbf2e2;
-      margin-bottom:8px;
+      font-size:clamp(2.05rem, 3vw, 3.25rem);
+      line-height:1;
+      color:#fbf4e7;
+      letter-spacing:-.02em;
+      margin-bottom:9px;
     }
-    #or-city-overview .or-card-copy{
-      color:#d7cfbf;
-      line-height:1.7;
+    #tor-region-intel .tori-subtitle{
+      color:#e4dccf;
+      font-size:1rem;
+      line-height:1.72;
+      max-width:860px;
     }
-    #or-city-overview .or-score-grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
-      margin-top:12px;
+    #tor-region-intel .tori-selected{
+      min-width:260px;
+      border-radius:22px;
+      padding:16px;
+      background:linear-gradient(180deg, rgba(10,16,24,.68), rgba(8,12,18,.56));
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:0 18px 42px rgba(0,0,0,.24);
     }
-    #or-city-overview .or-score-mini{
-      border-radius:16px;
-      padding:14px;
-      background:rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.06);
-    }
-    #or-city-overview .or-score-mini span{
-      display:block;
-      font-size:.74rem;
-      text-transform:uppercase;
-      letter-spacing:.12em;
+    #tor-region-intel .tori-selected-label{
       color:var(--muted);
-      margin-bottom:6px;
+      text-transform:uppercase;
+      letter-spacing:.13em;
+      font-size:.70rem;
+      font-weight:900;
+      margin-bottom:7px;
     }
-    #or-city-overview .or-score-mini strong{
-      display:block;
-      font-size:1.5rem;
-      color:#fff;
-      font-weight:800;
+    #tor-region-intel .tori-selected-value{
+      color:#fff6e7;
+      font-size:1.16rem;
+      font-weight:900;
+      line-height:1.2;
     }
-    #or-city-overview .or-tabs{
+    #tor-region-intel .tori-tabs{
       display:flex;
       flex-wrap:wrap;
       gap:10px;
-      padding:18px 0 10px;
+      margin:18px 0 16px;
     }
-    #or-city-overview .or-tab{
-      border:1px solid rgba(216,184,122,.12);
-      background:rgba(255,255,255,.03);
+    #tor-region-intel .tori-tab{
+      appearance:none;
+      border:1px solid rgba(216,184,122,.13);
+      background:rgba(255,255,255,.035);
       color:var(--muted);
-      padding:12px 16px;
+      padding:12px 17px;
       border-radius:999px;
       cursor:pointer;
-      font-size:.80rem;
-      font-weight:800;
+      font-size:.78rem;
+      font-weight:900;
       letter-spacing:.10em;
       text-transform:uppercase;
       transition:.18s ease;
+      box-shadow:0 12px 30px rgba(0,0,0,.12);
     }
-    #or-city-overview .or-tab.is-active{
-      background:linear-gradient(135deg, rgba(216,184,122,.16), rgba(111,143,183,.12));
-      color:#fff3dd;
+    #tor-region-intel .tori-tab:hover{
+      transform:translateY(-1px);
       border-color:rgba(216,184,122,.26);
-      box-shadow:0 10px 30px rgba(0,0,0,.22);
+      color:#fff3dd;
+      background:rgba(255,255,255,.055);
     }
-    #or-city-overview .or-panel{
+    #tor-region-intel .tori-tab.is-active{
+      background:linear-gradient(135deg, rgba(216,184,122,.22), rgba(111,143,183,.15));
+      color:#fff3dd;
+      border-color:rgba(216,184,122,.30);
+      box-shadow:0 14px 36px rgba(0,0,0,.25);
+    }
+    #tor-region-intel .tori-panel{
       display:none;
-      border-radius:28px;
-      padding:22px;
-      background:var(--panel);
-      border:1px solid rgba(216,184,122,.12);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(18px);
-      margin-top:14px;
+      border-radius:26px;
+      padding:24px;
+      background:
+        radial-gradient(circle at top left, rgba(216,184,122,.055), transparent 28%),
+        linear-gradient(180deg, rgba(12,18,28,.78), rgba(7,12,19,.74));
+      border:1px solid rgba(216,184,122,.11);
+      box-shadow:0 20px 58px rgba(0,0,0,.28);
     }
-    #or-city-overview .or-panel.is-active{ display:block; }
-    #or-city-overview .or-section-title{
+    #tor-region-intel .tori-panel.is-active{
+      display:block;
+    }
+    #tor-region-intel .tori-section-head{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:18px;
+      align-items:end;
+      margin-bottom:18px;
+    }
+    #tor-region-intel .tori-section-title{
       font-family:"Gilda Display",serif;
-      font-size:1.95rem;
+      font-size:2.05rem;
+      line-height:1.12;
       color:#fbf2e2;
       margin-bottom:8px;
+      letter-spacing:-.01em;
     }
-    #or-city-overview .or-section-sub{
+    #tor-region-intel .tori-section-sub{
       color:var(--muted);
-      line-height:1.7;
+      line-height:1.72;
+      font-size:1rem;
+      max-width:880px;
     }
-    #or-city-overview .or-grid-4,
-    #or-city-overview .or-grid-3,
-    #or-city-overview .or-grid-2{
+    #tor-region-intel .tori-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      border-radius:999px;
+      padding:9px 13px;
+      color:#fff3dd;
+      background:rgba(216,184,122,.08);
+      border:1px solid rgba(216,184,122,.17);
+      font-size:.76rem;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    #tor-region-intel .tori-grid-4,
+    #tor-region-intel .tori-grid-3,
+    #tor-region-intel .tori-grid-2{
       display:grid;
       gap:16px;
       margin-top:18px;
     }
-    #or-city-overview .or-grid-4{ grid-template-columns:repeat(4,minmax(0,1fr)); }
-    #or-city-overview .or-grid-3{ grid-template-columns:repeat(3,minmax(0,1fr)); }
-    #or-city-overview .or-grid-2{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-    #or-city-overview .or-stat{
-      border-radius:20px;
-      padding:18px;
-      background:var(--panel2);
-      border:1px solid rgba(255,255,255,.06);
+    #tor-region-intel .tori-grid-4{
+      grid-template-columns:repeat(4,minmax(0,1fr));
     }
-    #or-city-overview .or-stat-label{
+    #tor-region-intel .tori-grid-3{
+      grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+    #tor-region-intel .tori-grid-2{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    #tor-region-intel .tori-stat,
+    #tor-region-intel .tori-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:22px;
+      padding:19px;
+      background:linear-gradient(180deg, rgba(12,18,28,.78), rgba(7,12,19,.72));
+      border:1px solid rgba(255,255,255,.065);
+      box-shadow:0 18px 44px rgba(0,0,0,.18);
+    }
+    #tor-region-intel .tori-stat::before,
+    #tor-region-intel .tori-card::before{
+      content:"";
+      position:absolute;
+      inset:0 0 auto 0;
+      height:1px;
+      background:linear-gradient(90deg, rgba(216,184,122,.28), rgba(111,143,183,.16), transparent);
+      pointer-events:none;
+    }
+    #tor-region-intel .tori-stat-label{
       color:var(--muted);
       text-transform:uppercase;
       letter-spacing:.12em;
-      font-size:.74rem;
+      font-size:.72rem;
+      font-weight:900;
       margin-bottom:8px;
     }
-    #or-city-overview .or-stat-value{
-      font-size:1.65rem;
-      font-weight:800;
+    #tor-region-intel .tori-stat-value{
+      font-size:1.68rem;
+      font-weight:900;
       color:#fff;
       margin-bottom:8px;
+      letter-spacing:-.02em;
+      line-height:1.1;
     }
-    #or-city-overview .or-stat-hint{
+    #tor-region-intel .tori-stat-hint{
       color:#d7cfbf;
       line-height:1.58;
-      font-size:.95rem;
+      font-size:.94rem;
     }
-    #or-city-overview .or-split{
+    #tor-region-intel .tori-split{
       display:grid;
       grid-template-columns:minmax(0,1.18fr) minmax(320px,.82fr);
       gap:18px;
       margin-top:18px;
       align-items:start;
     }
-    #or-city-overview .or-stack{
+    #tor-region-intel .tori-stack{
       display:grid;
       gap:16px;
     }
-    #or-city-overview .or-list-card{
-      border-radius:20px;
-      padding:18px;
-      background:var(--panel2);
-      border:1px solid rgba(255,255,255,.06);
-    }
-    #or-city-overview .or-list-title{
-      font-size:.98rem;
+    #tor-region-intel .tori-card-title{
+      position:relative;
+      z-index:1;
+      font-size:.94rem;
       text-transform:uppercase;
-      letter-spacing:.12em;
+      letter-spacing:.13em;
       color:#fbf2e2;
       margin-bottom:12px;
-      font-weight:800;
+      font-weight:900;
     }
-    #or-city-overview .or-list{
+    #tor-region-intel .tori-copy{
+      position:relative;
+      z-index:1;
+      color:#ebe3d5;
+      line-height:1.74;
+      font-size:1rem;
+    }
+    #tor-region-intel .tori-list{
+      position:relative;
+      z-index:1;
       padding-left:18px;
       color:#dcd3c4;
       line-height:1.75;
     }
-    #or-city-overview .or-list li + li{ margin-top:8px; }
-    #or-city-overview .or-quote{
-      border-radius:20px;
-      padding:20px;
-      background:linear-gradient(180deg, rgba(216,184,122,.06), rgba(255,255,255,.03));
-      border:1px solid rgba(216,184,122,.14);
+    #tor-region-intel .tori-list li + li{
+      margin-top:8px;
+    }
+    #tor-region-intel .tori-quote{
+      position:relative;
+      overflow:hidden;
+      border-radius:22px;
+      padding:21px;
+      background:linear-gradient(180deg, rgba(216,184,122,.075), rgba(255,255,255,.035));
+      border:1px solid rgba(216,184,122,.16);
       color:#ebe3d5;
       line-height:1.75;
       font-size:1rem;
+      box-shadow:0 18px 44px rgba(0,0,0,.16);
     }
-    #or-city-overview .or-bar-list{
+    #tor-region-intel .tori-quote::before{
+      content:"";
+      position:absolute;
+      inset:0 0 auto 0;
+      height:1px;
+      background:linear-gradient(90deg, rgba(246,208,109,.42), rgba(106,167,255,.20), transparent);
+    }
+    #tor-region-intel .tori-bar-list{
       display:grid;
       gap:14px;
       margin-top:6px;
     }
-    #or-city-overview .or-bar-row{
+    #tor-region-intel .tori-bar-row{
       display:grid;
-      grid-template-columns:180px 1fr 72px;
+      grid-template-columns:170px 1fr 70px;
       gap:12px;
       align-items:center;
     }
-    #or-city-overview .or-bar-name{
-      font-weight:700;
+    #tor-region-intel .tori-bar-name{
+      font-weight:800;
       color:#eadfcb;
     }
-    #or-city-overview .or-bar-track{
+    #tor-region-intel .tori-bar-track{
       height:10px;
       border-radius:999px;
       background:rgba(255,255,255,.07);
       overflow:hidden;
       border:1px solid rgba(255,255,255,.06);
     }
-    #or-city-overview .or-bar-fill{
+    #tor-region-intel .tori-bar-fill{
       height:100%;
       width:0;
       border-radius:999px;
-      background:linear-gradient(90deg, var(--gold), var(--blue));
+      background:linear-gradient(90deg, var(--gold2), var(--sapphire));
+      box-shadow:0 0 18px rgba(216,184,122,.18);
     }
-    #or-city-overview .or-bar-val{
+    #tor-region-intel .tori-bar-val{
       text-align:right;
-      font-weight:800;
+      font-weight:900;
       color:#fff;
     }
-    #or-city-overview .or-bed-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap;
-      margin-top:18px;
-    }
-    #or-city-overview .or-bed-buttons{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    #or-city-overview .or-bed-btn{
-      border:1px solid rgba(216,184,122,.12);
-      background:rgba(255,255,255,.03);
-      color:var(--muted);
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    #or-city-overview .or-bed-btn.is-active{
-      background:linear-gradient(135deg, rgba(216,184,122,.16), rgba(111,143,183,.12));
-      border-color:rgba(216,184,122,.24);
-      color:#fff3dd;
-    }
-    #or-city-overview .or-mini-bars{
+    #tor-region-intel .tori-mini-bars{
       display:grid;
       gap:12px;
       margin-top:12px;
     }
-    #or-city-overview .or-mini-row{
+    #tor-region-intel .tori-mini-row{
       display:grid;
-      grid-template-columns:130px 1fr 60px;
+      grid-template-columns:130px 1fr 64px;
       gap:10px;
       align-items:center;
     }
-    #or-city-overview .or-mini-row span{
+    #tor-region-intel .tori-mini-row span{
       color:#e2d8c8;
       font-size:.92rem;
+      font-weight:700;
     }
-    #or-city-overview .or-mini-track{
+    #tor-region-intel .tori-mini-track{
       height:9px;
       border-radius:999px;
       overflow:hidden;
       background:rgba(255,255,255,.07);
       border:1px solid rgba(255,255,255,.05);
     }
-    #or-city-overview .or-mini-fill{
+    #tor-region-intel .tori-mini-fill{
       height:100%;
       width:0;
       border-radius:999px;
-      background:linear-gradient(90deg, var(--gold), var(--mint));
+      background:linear-gradient(90deg, var(--gold2), var(--mint2));
     }
-    #or-city-overview .or-mini-row strong{
+    #tor-region-intel .tori-mini-row strong{
       text-align:right;
       color:#fff;
       font-size:.92rem;
+      font-weight:900;
     }
-    #or-city-overview .or-error{
+    #tor-region-intel .tori-neighborhood-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);
+      gap:18px;
       margin-top:18px;
-      border-radius:18px;
-      padding:16px;
-      background:rgba(217,140,140,.10);
-      border:1px solid rgba(217,140,140,.20);
-      color:#f3d8d8;
-      display:none;
     }
-    #or-city-overview .or-error.is-show{ display:block; }
-    #or-city-overview .or-foot{
-      padding:24px 2px 6px;
-      color:var(--muted);
-      font-size:.92rem;
-      line-height:1.75;
+    #tor-region-intel .tori-neighborhood-list{
+      display:grid;
+      gap:12px;
     }
-    @media (max-width:1180px){
-      #or-city-overview .or-hero-inner,
-      #or-city-overview .or-split{
-        grid-template-columns:1fr;
-      }
-      #or-city-overview .or-grid-4{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-      #or-city-overview .or-grid-3{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    #tor-region-intel .tori-neighborhood-item{
+      border-radius:17px;
+      padding:15px;
+      background:rgba(255,255,255,.035);
+      border:1px solid rgba(255,255,255,.07);
     }
-    @media (max-width:760px){
-      #or-city-overview{ --wrap:min(100% - 20px, 1380px); }
-      #or-city-overview .or-hero-inner{ padding:20px; min-height:auto; }
-      #or-city-overview .or-grid-4,
-      #or-city-overview .or-grid-3,
-      #or-city-overview .or-grid-2,
-      #or-city-overview .or-score-grid{
+    #tor-region-intel .tori-neighborhood-item strong{
+      display:block;
+      color:#fff6e7;
+      font-size:1.05rem;
+      line-height:1.25;
+      margin-bottom:6px;
+    }
+    #tor-region-intel .tori-neighborhood-item span{
+      display:block;
+      color:#d7cfbf;
+      line-height:1.55;
+      font-size:.94rem;
+    }
+    #tor-region-intel .tori-tag-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+    #tor-region-intel .tori-tag{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:.72rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      border:1px solid rgba(216,184,122,.20);
+      background:rgba(216,184,122,.08);
+      color:#f4dfb6;
+    }
+    #tor-region-intel .tori-cta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:20px;
+    }
+    #tor-region-intel .tori-btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:999px;
+      padding:13px 18px;
+      background:linear-gradient(135deg, rgba(216,184,122,.95), rgba(246,208,109,.95));
+      color:#111827;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      transition:.18s ease;
+      box-shadow:0 14px 34px rgba(0,0,0,.24);
+    }
+    #tor-region-intel .tori-btn:hover{
+      transform:translateY(-1px);
+      filter:brightness(1.05);
+    }
+    #tor-region-intel .tori-btn-secondary{
+      background:rgba(255,255,255,.045);
+      color:#fff3dd;
+      border:1px solid rgba(216,184,122,.18);
+    }
+    #tor-region-intel .tori-foot{
+      padding:18px 2px 0;
+      color:rgba(184,176,164,.82);
+      font-size:.90rem;
+      line-height:1.7;
+    }
+    @media(max-width:1180px){
+      #tor-region-intel .tori-topline,
+      #tor-region-intel .tori-section-head,
+      #tor-region-intel .tori-split,
+      #tor-region-intel .tori-neighborhood-grid{
         grid-template-columns:1fr;
       }
-      #or-city-overview .or-kpis{
+      #tor-region-intel .tori-grid-4{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      #tor-region-intel .tori-grid-3{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+      #tor-region-intel .tori-selected{
+        min-width:0;
+      }
+    }
+    @media(max-width:760px){
+      #tor-region-intel{
+        --wrap:min(100% - 20px, 1380px);
+      }
+      #tor-region-intel .tori-command{
+        border-radius:24px;
+        padding:18px;
+      }
+      #tor-region-intel .tori-panel{
+        padding:18px;
+        border-radius:22px;
+      }
+      #tor-region-intel .tori-grid-4,
+      #tor-region-intel .tori-grid-3,
+      #tor-region-intel .tori-grid-2{
         grid-template-columns:1fr;
       }
-      #or-city-overview .or-bar-row{
+      #tor-region-intel .tori-bar-row{
         grid-template-columns:1fr;
       }
-      #or-city-overview .or-mini-row{
-        grid-template-columns:100px 1fr 50px;
+      #tor-region-intel .tori-bar-val{
+        text-align:left;
+      }
+      #tor-region-intel .tori-mini-row{
+        grid-template-columns:100px 1fr 54px;
+      }
+      #tor-region-intel .tori-btn{
+        width:100%;
       }
     }
   </style>
-      <div class="or-topbar">
-        <div class="or-topbar-inner">
-          <div class="or-brand">
-            <div class="or-brand-mark"></div>
-            <div class="or-brand-copy">
-              <strong>OrozcoRealty</strong>
-              <span>Cities Overview</span>
-            </div>
-          </div>
-          <div class="or-topmeta">
-            <div class="or-pill" id="orTopPlace">Texas Market Intelligence</div>
-            <div class="or-pill" id="orTopUpdated">Updated —</div>
-          </div>
-        </div>
-      </div>
-      <div class="or-wrap">
-        <section class="or-hero">
-          <div class="or-hero-bg" id="orHeroBg"></div>
-          <div class="or-hero-inner">
+      <div class="tori-wrap">
+        <section class="tori-command">
+          <div class="tori-topline">
             <div>
-              <div class="or-eyebrow" id="orHeroEyebrow">City Intelligence</div>
-              <h1 class="or-title" id="orHeroTitle">Loading city...</h1>
-              <p class="or-subtitle" id="orHeroSubtitle">Preparing city intelligence.</p>
-              <div class="or-kpis">
-                <div class="or-kpi">
-                  <div class="or-kpi-label">Median Home Price</div>
-                  <div class="or-kpi-value" id="orKpiHomePrice">—</div>
+              <div class="tori-eyebrow">The Orozco Realty • Region Intelligence</div>
+              <h2 class="tori-title" id="torIntelTitle">
+                Laredo Regional Buyer Intelligence
+              </h2>
+              <p class="tori-subtitle" id="torIntelSubtitle">
+                Use the map above to select a Laredo region. This section turns that selection into buyer guidance, housing context, demographics, neighborhood signals, and real estate strategy.
+              </p>
+            </div>
+            <div class="tori-selected">
+              <div class="tori-selected-label">Selected Region</div>
+              <div class="tori-selected-value" id="torIntelSelectedRegion">
+                North Laredo / Del Mar
+              </div>
+            </div>
+          </div>
+          <div class="tori-tabs" role="tablist" aria-label="Region intelligence tabs">
+            <button class="tori-tab is-active" data-tor-tab="overview" type="button">Overview</button>
+            <button class="tori-tab" data-tor-tab="real-estate" type="button">Real Estate</button>
+            <button class="tori-tab" data-tor-tab="demographics" type="button">Demographics</button>
+            <button class="tori-tab" data-tor-tab="neighborhoods" type="button">Neighborhoods</button>
+            <button class="tori-tab" data-tor-tab="guidance" type="button">Guidance</button>
+          </div>
+          <section class="tori-panel is-active" data-tor-panel="overview">
+            <div class="tori-section-head">
+              <div>
+                <h3 class="tori-section-title">Regional Overview</h3>
+                <p class="tori-section-sub" id="torOverviewIntro">
+                  A quick read on how this Laredo region behaves from a buyer, lifestyle, logistics, and affordability perspective.
+                </p>
+              </div>
+              <div class="tori-pill" id="torOverviewStatus">Premium Family Corridor</div>
+            </div>
+            <div class="tori-grid-4">
+              <div class="tori-stat">
+                <div class="tori-stat-label">Typical Buy Price</div>
+                <div class="tori-stat-value" id="torOverviewPrice">$315K</div>
+                <div class="tori-stat-hint" id="torOverviewPriceHint">Typical regional pricing anchor.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Buyer Fit</div>
+                <div class="tori-stat-value" id="torOverviewBuyerFit">Family</div>
+                <div class="tori-stat-hint" id="torOverviewBuyerFitHint">Primary buyer profile for this region.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Market Pace</div>
+                <div class="tori-stat-value" id="torOverviewPace">Steady</div>
+                <div class="tori-stat-hint" id="torOverviewPaceHint">How quickly well-positioned homes may move.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Market Grade</div>
+                <div class="tori-stat-value" id="torOverviewGrade">A-</div>
+                <div class="tori-stat-hint" id="torOverviewGradeHint">TOR decision score for the region.</div>
+              </div>
+            </div>
+            <div class="tori-split">
+              <div class="tori-stack">
+                <div class="tori-quote" id="torOverviewBluf">
+                  North Laredo is the premium practical play: higher than city-average pricing, but stronger buyer confidence, school appeal, and owner-occupant demand.
                 </div>
-                <div class="or-kpi">
-                  <div class="or-kpi-label">Median Rent</div>
-                  <div class="or-kpi-value" id="orKpiRent">—</div>
+                <div class="tori-card">
+                  <div class="tori-card-title">Summary Points</div>
+                  <ul class="tori-list" id="torOverviewSummaryList">
+                    <li>North Laredo is the most polished family-buyer corridor in the city.</li>
+                    <li>Pricing is higher than the Laredo average but supported by stronger livability signals.</li>
+                    <li>This region is best for owner-occupants who care about schools, safety perception, and resale stability.</li>
+                  </ul>
                 </div>
-                <div class="or-kpi">
-                  <div class="or-kpi-label">All-In Mortgage</div>
-                  <div class="or-kpi-value" id="orKpiMortgage">—</div>
-                </div>
-                <div class="or-kpi">
-                  <div class="or-kpi-label">Days On Market</div>
-                  <div class="or-kpi-value" id="orKpiDom">—</div>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Regional Score Breakdown</div>
+                <div class="tori-bar-list" id="torOverviewScoreBars">
+                  <div class="tori-bar-row">
+                    <div class="tori-bar-name">Affordability</div>
+                    <div class="tori-bar-track">
+                      <div class="tori-bar-fill" style="width:82%"></div>
+                    </div>
+                    <div class="tori-bar-val">82</div>
+                  </div>
+                  <div class="tori-bar-row">
+                    <div class="tori-bar-name">Growth</div>
+                    <div class="tori-bar-track">
+                      <div class="tori-bar-fill" style="width:84%"></div>
+                    </div>
+                    <div class="tori-bar-val">84</div>
+                  </div>
+                  <div class="tori-bar-row">
+                    <div class="tori-bar-name">Stability</div>
+                    <div class="tori-bar-track">
+                      <div class="tori-bar-fill" style="width:88%"></div>
+                    </div>
+                    <div class="tori-bar-val">88</div>
+                  </div>
+                  <div class="tori-bar-row">
+                    <div class="tori-bar-name">Overall</div>
+                    <div class="tori-bar-track">
+                      <div class="tori-bar-fill" style="width:84%"></div>
+                    </div>
+                    <div class="tori-bar-val">84</div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="or-hero-side">
-              <div class="or-card">
-                <div class="or-status" id="orVerdictStatus">Market Verdict</div>
-                <div class="or-card-title" id="orVerdictTitle">—</div>
-                <div class="or-card-copy" id="orVerdictCopy">—</div>
+          </section>
+          <section class="tori-panel" data-tor-panel="real-estate">
+            <div class="tori-section-head">
+              <div>
+                <h3 class="tori-section-title">Real Estate Snapshot</h3>
+                <p class="tori-section-sub" id="torRealEstateIntro">
+                  Pricing, ownership cost posture, inventory behavior, and buyer leverage for the selected Laredo region.
+                </p>
               </div>
-              <div class="or-card">
-                <div class="or-kpi-label">Market Scorecard</div>
-                <div class="or-score-grid">
-                  <div class="or-score-mini">
-                    <span>Affordability</span>
-                    <strong id="orScoreAffordability">—</strong>
+              <div class="tori-pill" id="torRealEstateStatus">Housing Context</div>
+            </div>
+            <div class="tori-grid-4">
+              <div class="tori-stat">
+                <div class="tori-stat-label">Typical Home Price</div>
+                <div class="tori-stat-value" id="torREHomePrice">$315K</div>
+                <div class="tori-stat-hint">Estimated region-level buyer anchor.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Est. Payment Range</div>
+                <div class="tori-stat-value" id="torREPayment">$2.25K–$3.25K</div>
+                <div class="tori-stat-hint">Placeholder all-in ownership range.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Inventory Feel</div>
+                <div class="tori-stat-value" id="torREInventory">Selective</div>
+                <div class="tori-stat-hint">How the market may feel to buyers.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Negotiation Power</div>
+                <div class="tori-stat-value" id="torRELeverage">Moderate</div>
+                <div class="tori-stat-hint">Estimated buyer leverage posture.</div>
+              </div>
+            </div>
+            <div class="tori-grid-3">
+              <div class="tori-card">
+                <div class="tori-card-title">Ownership Cost Notes</div>
+                <ul class="tori-list" id="torREOwnershipNotes">
+                  <li>Higher pricing can be justified when school appeal, condition, and location quality are strong.</li>
+                  <li>All-in cost discipline still matters because taxes and summer utilities can stretch the payment.</li>
+                  <li>Best-value homes are usually not the cheapest homes; they are the homes with stronger resale confidence.</li>
+                </ul>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Opportunities</div>
+                <ul class="tori-list" id="torREOpportunities">
+                  <li>Strong owner-occupant demand supports better long-term resale positioning.</li>
+                  <li>Family-sized homes in strong pockets can outperform broad city averages.</li>
+                  <li>Well-presented homes can hold buyer attention even in a slower resale market.</li>
+                </ul>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Risks</div>
+                <ul class="tori-list" id="torRERisks">
+                  <li>Premium pricing can reduce affordability if buyers ignore taxes and insurance.</li>
+                  <li>Competition for better-positioned homes may be stronger than citywide averages.</li>
+                  <li>Overpaying for location without condition can weaken future resale flexibility.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="tori-grid-2">
+              <div class="tori-card">
+                <div class="tori-card-title">Price Positioning</div>
+                <div class="tori-mini-bars" id="torREPriceBars">
+                  <div class="tori-mini-row">
+                    <span>Entry</span>
+                    <div class="tori-mini-track">
+                      <div class="tori-mini-fill" style="width:51%"></div>
+                    </div>
+                    <strong>$240K</strong>
                   </div>
-                  <div class="or-score-mini">
-                    <span>Growth</span>
-                    <strong id="orScoreGrowth">—</strong>
+                  <div class="tori-mini-row">
+                    <span>Typical</span>
+                    <div class="tori-mini-track">
+                      <div class="tori-mini-fill" style="width:66%"></div>
+                    </div>
+                    <strong>$315K</strong>
                   </div>
-                  <div class="or-score-mini">
+                  <div class="tori-mini-row">
+                    <span>Premium</span>
+                    <div class="tori-mini-track">
+                      <div class="tori-mini-fill" style="width:100%"></div>
+                    </div>
+                    <strong>$475K+</strong>
+                  </div>
+                </div>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Buyer Strategy</div>
+                <p class="tori-copy" id="torREBuyerStrategy">
+                  Use North Laredo when the client values stability, school appeal, and resale confidence more than the absolute lowest payment.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section class="tori-panel" data-tor-panel="demographics">
+            <div class="tori-section-head">
+              <div>
+                <h3 class="tori-section-title">Demographic Context</h3>
+                <p class="tori-section-sub" id="torDemographicsIntro">
+                  Population, income, education, family profile, trade access, and lifestyle signals for the selected Laredo region.
+                </p>
+              </div>
+              <div class="tori-pill" id="torDemographicsStatus">Demographic Read</div>
+            </div>
+            <div class="tori-grid-3">
+              <div class="tori-stat">
+                <div class="tori-stat-label">Household Profile</div>
+                <div class="tori-stat-value" id="torDemoHouseholdProfile">Family</div>
+                <div class="tori-stat-hint">Likely household pattern in this region.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Income Signal</div>
+                <div class="tori-stat-value" id="torDemoIncomeSignal">Above-City</div>
+                <div class="tori-stat-hint">General purchasing-power signal.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Education Signal</div>
+                <div class="tori-stat-value" id="torDemoEducationSignal">Stronger</div>
+                <div class="tori-stat-hint">School and education-driven demand context.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Commute Pattern</div>
+                <div class="tori-stat-value" id="torDemoCommute">North-Side</div>
+                <div class="tori-stat-hint">Common commute orientation.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Lifestyle Fit</div>
+                <div class="tori-stat-value" id="torDemoLifestyle">Suburban</div>
+                <div class="tori-stat-hint">Lifestyle identity for the region.</div>
+              </div>
+              <div class="tori-stat">
+                <div class="tori-stat-label">Growth Pressure</div>
+                <div class="tori-stat-value" id="torDemoGrowthPressure">Moderate</div>
+                <div class="tori-stat-hint">Development and demand pressure.</div>
+              </div>
+            </div>
+            <div class="tori-grid-3">
+              <div class="tori-card">
+                <div class="tori-card-title">Education / Schools</div>
+                <div class="tori-mini-bars" id="torDemoEducationBars">
+                  <div class="tori-mini-row">
+                    <span>Schools</span>
+                    <div class="tori-mini-track">
+                      <div class="tori-mini-fill" style="width:86%"></div>
+                    </div>
+                    <strong>86</strong>
+                  </div>
+                  <div class="tori-mini-row">
+                    <span>Demand</span>
+                    <div class="tori-mini-track">
+                      <div class="tori-mini-fill" style="width:84%"></div>
+                    </div>
+                    <strong>84</strong>
+                  </div>
+                  <div class="tori-mini-row">
                     <span>Stability</span>
-                    <strong id="orScoreStability">—</strong>
+                    <div class="tori-mini-track">
+                      <div class="tori-mini-fill" style="width:88%"></div>
+                    </div>
+                    <strong>88</strong>
                   </div>
-                  <div class="or-score-mini">
-                    <span>Overall</span>
-                    <strong id="orScoreOverall">—</strong>
+                </div>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Lifestyle Signals</div>
+                <ul class="tori-list" id="torDemoLifestyleSignals">
+                  <li>Family-oriented shopping and services.</li>
+                  <li>Better fit for buyers who want newer or more polished neighborhoods.</li>
+                  <li>Strong candidate region for long-term owner-occupants.</li>
+                </ul>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Buyer Psychology</div>
+                <p class="tori-copy" id="torDemoBuyerPsychology">
+                  North Laredo buyers are usually not just buying a house; they are buying confidence, school appeal, and a more stable household environment.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section class="tori-panel" data-tor-panel="neighborhoods">
+            <div class="tori-section-head">
+              <div>
+                <h3 class="tori-section-title">Neighborhood Intelligence</h3>
+                <p class="tori-section-sub" id="torNeighborhoodIntro">
+                  Key Laredo neighborhood patterns, local buyer considerations, commute notes, and micro-market watchouts.
+                </p>
+              </div>
+              <div class="tori-pill" id="torNeighborhoodStatus">Micro-Market View</div>
+            </div>
+            <div class="tori-neighborhood-grid">
+              <div class="tori-card">
+                <div class="tori-card-title">Target Neighborhood Signals</div>
+                <div class="tori-neighborhood-list" id="torNeighborhoodList">
+                  <div class="tori-neighborhood-item">
+                    <strong>Del Mar</strong>
+                    <span>Established and desirable north-side area with strong family-buyer recognition.</span>
+                  </div>
+                  <div class="tori-neighborhood-item">
+                    <strong>Plantation / Alexander area</strong>
+                    <span>Higher-confidence family corridor with stronger owner-occupant appeal.</span>
+                  </div>
+                  <div class="tori-neighborhood-item">
+                    <strong>Winfield / Lakeside pockets</strong>
+                    <span>Lifestyle and family-oriented pockets with stronger long-term desirability.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tori-stack">
+                <div class="tori-card">
+                  <div class="tori-card-title">Commute + Access Notes</div>
+                  <ul class="tori-list" id="torNeighborhoodCommuteNotes">
+                    <li>Good north-side access to retail, schools, and medical corridors.</li>
+                    <li>Commute can be more convenient for buyers working in North Laredo or near airport/business corridors.</li>
+                    <li>South-side or border-adjacent work trips may require longer cross-city movement.</li>
+                  </ul>
+                </div>
+                <div class="tori-card">
+                  <div class="tori-card-title">Micro-Market Tags</div>
+                  <div class="tori-tag-row" id="torNeighborhoodTags">
+                    <span class="tori-tag">Family</span>
+                    <span class="tori-tag">Schools</span>
+                    <span class="tori-tag">Owner-Occupant</span>
+                    <span class="tori-tag">Resale Stability</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-        <div class="or-tabs">
-          <button class="or-tab is-active" data-or-tab="overview" type="button">Overview</button>
-          <button class="or-tab" data-or-tab="real-estate" type="button">Real Estate</button>
-          <button class="or-tab" data-or-tab="demographics" type="button">Demographics</button>
-          <button class="or-tab" data-or-tab="guidance" type="button">Guidance</button>
-        </div>
-        <section class="or-panel is-active" data-or-panel="overview">
-          <h2 class="or-section-title">City Overview</h2>
-          <p class="or-section-sub" id="orOverviewIntro">City overview loaded from JSON.</p>
-          <div class="or-grid-4">
-            <div class="or-stat">
-              <div class="or-stat-label">Median List Price</div>
-              <div class="or-stat-value" id="orOvListPrice">—</div>
-              <div class="or-stat-hint">Current pricing posture across the city.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Price Per Sq Ft</div>
-              <div class="or-stat-value" id="orOvPpsf">—</div>
-              <div class="or-stat-hint">Useful for fast area comparisons.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Active Listings</div>
-              <div class="or-stat-value" id="orOvListings">—</div>
-              <div class="or-stat-hint">Helps frame current buyer leverage.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Property Tax Rate</div>
-              <div class="or-stat-value" id="orOvTaxRate">—</div>
-              <div class="or-stat-hint">Texas ownership cost needs this, not just list price.</div>
-            </div>
-          </div>
-          <div class="or-split">
-            <div class="or-stack">
-              <div class="or-list-card">
-                <div class="or-list-title">Summary Points</div>
-                <ul class="or-list" id="orSummaryPoints"></ul>
+          </section>
+          <section class="tori-panel" data-tor-panel="guidance">
+            <div class="tori-section-head">
+              <div>
+                <h3 class="tori-section-title">Buyer, Seller, and Investor Guidance</h3>
+                <p class="tori-section-sub" id="torGuidanceIntro">
+                  Practical strategy for evaluating the selected Laredo region before touring, offering, listing, or investing.
+                </p>
               </div>
-              <div class="or-quote" id="orFinancialBrief">Loading financial brief...</div>
+              <div class="tori-pill" id="torGuidanceStatus">Strategy Layer</div>
             </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Market Score Breakdown</div>
-              <div class="or-bar-list" id="orScoreBars"></div>
-            </div>
-          </div>
-        </section>
-        <section class="or-panel" data-or-panel="real-estate">
-          <h2 class="or-section-title">Real Estate</h2>
-          <p class="or-section-sub" id="orRealEstateIntro">
-            Home values, rent ranges, ownership costs, and neighborhood positioning.
-          </p>
-          <div class="or-bed-top">
-            <div>
-              <div class="or-kpi-label">Bedroom Filter</div>
-              <div class="or-bed-buttons" id="orBedButtons">
-                <button class="or-bed-btn is-active" data-or-bed="3" type="button">3 Bed</button>
-                <button class="or-bed-btn" data-or-bed="2" type="button">2 Bed</button>
-                <button class="or-bed-btn" data-or-bed="4" type="button">4 Bed</button>
-                <button class="or-bed-btn" data-or-bed="5" type="button">5 Bed</button>
+            <div class="tori-grid-3">
+              <div class="tori-card">
+                <div class="tori-card-title">Buyer Guidance</div>
+                <ul class="tori-list" id="torBuyerGuidance">
+                  <li>Use this region when the buyer values schools, resale confidence, and family comfort.</li>
+                  <li>Avoid stretching into a premium home unless the all-in payment still protects monthly flexibility.</li>
+                  <li>Compare condition carefully because the strongest homes may command a premium.</li>
+                </ul>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Seller Guidance</div>
+                <ul class="tori-list" id="torSellerGuidance">
+                  <li>Lead with family appeal, condition, schools, and north-side convenience.</li>
+                  <li>Do not overprice simply because the home is in North Laredo; buyers still care about payment.</li>
+                  <li>Clean presentation and maintenance history matter.</li>
+                </ul>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Investor Notes</div>
+                <ul class="tori-list" id="torInvestorGuidance">
+                  <li>Best for stability-focused rentals rather than deep-discount cash-flow hunting.</li>
+                  <li>Family-oriented rentals may hold occupancy better if priced realistically.</li>
+                  <li>Underwrite taxes and maintenance conservatively.</li>
+                </ul>
               </div>
             </div>
-            <div class="or-pill" id="orBedAsOf">As of —</div>
-          </div>
-          <div class="or-grid-4">
-            <div class="or-stat">
-              <div class="or-stat-label">Avg Home Price</div>
-              <div class="or-stat-value" id="orBedHomePrice">—</div>
-              <div class="or-stat-hint">Average target price for selected bedroom count.</div>
+            <div class="tori-grid-2">
+              <div class="tori-card">
+                <div class="tori-card-title">Best For</div>
+                <ul class="tori-list" id="torGuidanceBestFor">
+                  <li>Family buyers.</li>
+                  <li>Move-up buyers.</li>
+                  <li>Owner-occupants prioritizing stability.</li>
+                  <li>Buyers who want stronger resale confidence.</li>
+                </ul>
+              </div>
+              <div class="tori-card">
+                <div class="tori-card-title">Watchouts</div>
+                <ul class="tori-list" id="torGuidanceWatchouts">
+                  <li>Higher price floor.</li>
+                  <li>Payment stretch risk.</li>
+                  <li>Condition must justify premium.</li>
+                </ul>
+              </div>
             </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Avg Rent</div>
-              <div class="or-stat-value" id="orBedRent">—</div>
-              <div class="or-stat-hint">Average monthly rent for selected bedroom count.</div>
+            <div class="tori-cta-row">
+              <button class="tori-btn" type="button" id="torRequestBuyerBrief">
+                Request Region Buyer Brief
+              </button>
+              <button class="tori-btn tori-btn-secondary" type="button" id="torCompareRegions">
+                Compare Regions
+              </button>
             </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Avg Mortgage</div>
-              <div class="or-stat-value" id="orBedMortgage">—</div>
-              <div class="or-stat-hint">Estimated all-in monthly payment anchor.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Avg Utilities</div>
-              <div class="or-stat-value" id="orBedUtilities">—</div>
-              <div class="or-stat-hint">Electric, gas, water, and sewer estimate.</div>
-            </div>
-          </div>
-          <div class="or-grid-2">
-            <div class="or-list-card">
-              <div class="or-list-title">Ownership Cost Notes</div>
-              <ul class="or-list" id="orOwnershipNotes"></ul>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Target Neighborhoods</div>
-              <ul class="or-list" id="orTargetNeighborhoods"></ul>
-            </div>
-          </div>
-          <div class="or-grid-3">
-            <div class="or-list-card">
-              <div class="or-list-title">Opportunities</div>
-              <ul class="or-list" id="orOpportunities"></ul>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Risks</div>
-              <ul class="or-list" id="orRisks"></ul>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Investor Angle</div>
-              <ul class="or-list" id="orInvestorAngles"></ul>
-            </div>
+          </section>
+          <div class="tori-foot">
+            Regional guidance is designed for buyer education and should be paired with current MLS data, lender numbers,
+            school research, commute testing, insurance estimates, property tax review, and official local sources.
           </div>
         </section>
-        <section class="or-panel" data-or-panel="demographics">
-          <h2 class="or-section-title">Demographics</h2>
-          <p class="or-section-sub">
-            Population, income, education, workforce, and housing context.
-          </p>
-          <div class="or-grid-3">
-            <div class="or-stat">
-              <div class="or-stat-label">Population</div>
-              <div class="or-stat-value" id="orDemoPopulation">—</div>
-              <div class="or-stat-hint">Current estimate from the city intelligence file.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Median Age</div>
-              <div class="or-stat-value" id="orDemoAge">—</div>
-              <div class="or-stat-hint">Signal for life stage and housing demand.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Persons / Household</div>
-              <div class="or-stat-value" id="orDemoHouseholdSize">—</div>
-              <div class="or-stat-hint">Useful indicator for bedroom demand.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Median Household Income</div>
-              <div class="or-stat-value" id="orDemoIncome">—</div>
-              <div class="or-stat-hint">Core measure of city purchasing power.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Per Capita Income</div>
-              <div class="or-stat-value" id="orDemoPerCapita">—</div>
-              <div class="or-stat-hint">Broad individual earning context.</div>
-            </div>
-            <div class="or-stat">
-              <div class="or-stat-label">Poverty Rate</div>
-              <div class="or-stat-value" id="orDemoPoverty">—</div>
-              <div class="or-stat-hint">Signals economic strain across the city.</div>
-            </div>
-          </div>
-          <div class="or-grid-3">
-            <div class="or-list-card">
-              <div class="or-list-title">Education</div>
-              <div class="or-mini-bars" id="orEducationBars"></div>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Workforce & Mobility</div>
-              <div class="or-mini-bars" id="orLaborBars"></div>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Housing / Rental Snapshot</div>
-              <div class="or-mini-bars" id="orHousingBars"></div>
-            </div>
-          </div>
-          <div class="or-grid-2">
-            <div class="or-list-card">
-              <div class="or-list-title">Schools & Safety</div>
-              <ul class="or-list" id="orQualityNotes"></ul>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Climate & Lifestyle</div>
-              <ul class="or-list" id="orClimateList"></ul>
-            </div>
-          </div>
-        </section>
-        <section class="or-panel" data-or-panel="guidance">
-          <h2 class="or-section-title">Buyer, Seller, and Landlord Guidance</h2>
-          <p class="or-section-sub">
-            Decision notes built directly from your city JSON.
-          </p>
-          <div class="or-grid-3">
-            <div class="or-list-card">
-              <div class="or-list-title">Buyer Guidance</div>
-              <ul class="or-list" id="orBuyerGuidance"></ul>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Seller Guidance</div>
-              <ul class="or-list" id="orSellerGuidance"></ul>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Landlord Notes</div>
-              <ul class="or-list" id="orLandlordNotes"></ul>
-            </div>
-          </div>
-          <div class="or-grid-2">
-            <div class="or-list-card">
-              <div class="or-list-title">Buyer Notes</div>
-              <ul class="or-list" id="orBuyerNotes"></ul>
-            </div>
-            <div class="or-list-card">
-              <div class="or-list-title">Seller Notes</div>
-              <ul class="or-list" id="orSellerNotes"></ul>
-            </div>
-          </div>
-        </section>
-        <div class="or-error" id="orCityError"></div>
-        <div class="or-foot">
-          Cities Overview is powered by Orozco-compatible cities JSON data.
-        </div>
       </div>
+      <script>
+    (() => {
+      "use strict";
+      if (window.TOR_REGION_INTEL_SHELL?.__mounted_laredo) return;
+      window.TOR_REGION_INTEL_SHELL = { __mounted_laredo:true };
+      const root = document.getElementById("tor-region-intel");
+      if (!root) return;
+      const $$ = (sel, node = root) => Array.from(node.querySelectorAll(sel));
+      function bindTabs(){
+        $$("[data-tor-tab]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const tab = btn.getAttribute("data-tor-tab");
+            if (!tab) return;
+            $$("[data-tor-tab]").forEach(node => node.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            $$("[data-tor-panel]").forEach(panel => {
+              panel.classList.toggle(
+                "is-active",
+                panel.getAttribute("data-tor-panel") === tab
+              );
+            });
+          });
+        });
+      }
+      function bindButtons(){
+        const buyerBrief = root.querySelector("#torRequestBuyerBrief");
+        const compare = root.querySelector("#torCompareRegions");
+        if (buyerBrief) {
+          buyerBrief.addEventListener("click", () => {
+            const selected = window.TOR_SELECTED_REGION?.key || "north-laredo";
+            const url = new URL(window.location.href);
+            url.searchParams.set("region", selected);
+            url.searchParams.set("intent", "buyer-brief");
+            window.location.href = url.toString();
+          });
+        }
+        if (compare) {
+          compare.addEventListener("click", () => {
+            const selected = window.TOR_SELECTED_REGION?.key || "north-laredo";
+            const url = new URL(window.location.href);
+            url.searchParams.set("region", selected);
+            url.searchParams.set("intent", "compare-regions");
+            window.location.href = url.toString();
+          });
+        }
+      }
+      bindTabs();
+      bindButtons();
+    })();
+  </script>
     </div>
   </div>
-  <div class="w-embed w-script">
+  <div class="w-embed w-script"><!--  =========================================================
+  The Orozco Realty • Texas Demographics
+  JS RUNTIME
+  v1.2.0-LAREDO • Market Data API + Census-Enriched Region Calls
+  REQUIRED:
+  1) Laredo Header Shell + Map UX already on page
+  2) Laredo Demographic / Real Estate Shell already on page
+  3) Netlify Function:
+     netlify/functions/market-data.js
+  JSON SOURCE:
+  netlify/functions/data/market/laredo.json
+  BROWSER API:
+  /api/market-data?city=laredo
+  /api/market-data?city=laredo&region=north-laredo
+  PURPOSE:
+  - Loads Laredo market JSON through Netlify Function
+  - Uses Census-enriched market-data API
+  - Calls region-specific API when map region changes
+  - Updates Demographic / Real Estate Shell
+  - Has Header Shell fallback if API fails
+=========================================================  -->
     <script>
 (() => {
   "use strict";
-  if (window.OROZCO_CITY_OVERVIEW_SINGLE?.__mounted) return;
-  window.OROZCO_CITY_OVERVIEW_SINGLE = { __mounted: true };
-  const root = document.getElementById("or-city-overview");
+  if (window.TOR_REGION_INTEL_RUNTIME?.__mounted_laredo_v120) return;
+  window.TOR_REGION_INTEL_RUNTIME = { __mounted_laredo_v120:true };
+  const CITY_SLUG = "laredo";
+  const DEFAULT_REGION_KEY = "north-laredo";
+  const root = document.getElementById("tor-region-intel");
   if (!root) return;
-  const CITY_JSON_URL =
-    window.OROZCO_CITY_JSON_URL ||
-    "https://raw.githubusercontent.com/djoneorozco/OrozcoRealty/main/netlify/functions/data/market/laredo.json";
   let CITY = null;
-  let ACTIVE_BED = "3";
+  let ACTIVE_REGION_KEY = DEFAULT_REGION_KEY;
+  let REGION_REQUEST_ID = 0;
+  const REGION_CACHE = new Map();
   const $ = (sel, node = root) => node.querySelector(sel);
-  const $$ = (sel, node = root) => Array.from(node.querySelectorAll(sel));
-  function fmtMoney(v){
-    const n = Number(v);
-    if (!Number.isFinite(n)) return "—";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0
-    }).format(n);
-  }
-  function fmtNum(v){
-    const n = Number(v);
-    if (!Number.isFinite(n)) return "—";
-    return new Intl.NumberFormat("en-US").format(n);
-  }
-  function fmtPct(v, digits = 1){
-    const n = Number(v);
-    if (!Number.isFinite(n)) return "—";
-    return `${n.toFixed(digits)}%`;
-  }
-  function fmtPctFromDecimal(v, digits = 2){
-    const n = Number(v);
-    if (!Number.isFinite(n)) return "—";
-    return `${(n * 100).toFixed(digits)}%`;
-  }
-  function arr(v){
-    return Array.isArray(v) ? v : [];
-  }
   function esc(str){
     return String(str ?? "")
       .replaceAll("&","&amp;")
@@ -867,254 +1819,631 @@
   }
   function setText(sel, value){
     const el = $(sel);
-    if (el) el.textContent = value ?? "—";
+    if (!el) return;
+    el.textContent = value === undefined || value === null || value === "" ? "—" : String(value);
   }
-  function setHtml(sel, html){
-    const el = $(sel);
-    if (el) el.innerHTML = html || "";
-  }
-  function renderList(sel, items){
+  function setHTML(sel, html){
     const el = $(sel);
     if (!el) return;
-    const safe = arr(items).filter(Boolean);
-    el.innerHTML = safe.length
-      ? safe.map(item => `<li>${esc(item)}</li>`).join("")
-      : `<li>No data available yet.</li>`;
+    el.innerHTML = html || "";
   }
-  function renderScoreBars(scorecard = {}){
-    const rows = [
-      ["Affordability", scorecard.affordability_score],
-      ["Growth", scorecard.growth_score],
-      ["Stability", scorecard.stability_score],
-      ["Military Fit", scorecard.military_fit_score],
-      ["Overall", scorecard.overall_score]
-    ];
-    return rows.map(([label, value]) => {
-      const n = Number(value);
-      const width = Number.isFinite(n) ? Math.max(0, Math.min(n, 100)) : 0;
-      return `
-        <div class="or-bar-row">
-          <div class="or-bar-name">${esc(label)}</div>
-          <div class="or-bar-track">
-            <div class="or-bar-fill" style="width:${width}%"></div>
-          </div>
-          <div class="or-bar-val">${Number.isFinite(n) ? n : "—"}</div>
-        </div>
-      `;
-    }).join("");
+  function arr(value){
+    return Array.isArray(value) ? value : [];
   }
-  function miniBar(label, value, max, displayText){
+  function fmtMoney(value){
     const n = Number(value);
-    const width = Number.isFinite(n) && max > 0
-      ? Math.max(0, Math.min((n / max) * 100, 100))
-      : 0;
+    if (!Number.isFinite(n)) return "—";
+    return new Intl.NumberFormat("en-US", {
+      style:"currency",
+      currency:"USD",
+      maximumFractionDigits:0
+    }).format(n);
+  }
+  function fmtShortMoney(value){
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "—";
+    if (Math.abs(n) >= 1000000) return `$${(n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1)}M`;
+    if (Math.abs(n) >= 1000) return `$${Math.round(n / 1000)}K`;
+    return fmtMoney(n);
+  }
+  function firstDefined(...values){
+    for (const value of values){
+      if (value !== undefined && value !== null && value !== "") return value;
+    }
+    return null;
+  }
+  function renderList(sel, items){
+    const safe = arr(items).filter(Boolean);
+    setHTML(
+      sel,
+      safe.length
+        ? safe.map(item => `<li>${esc(item)}</li>`).join("")
+        : `<li>No data available yet.</li>`
+    );
+  }
+  function renderTags(sel, tags){
+    const safe = arr(tags).filter(Boolean);
+    setHTML(
+      sel,
+      safe.length
+        ? safe.map(tag => `<span class="tori-tag">${esc(tag)}</span>`).join("")
+        : `<span class="tori-tag">No Tags Yet</span>`
+    );
+  }
+  function renderNeighborhoodItems(sel, neighborhoods){
+    const safe = arr(neighborhoods).filter(Boolean);
+    setHTML(
+      sel,
+      safe.length
+        ? safe.map(item => {
+            const name = typeof item === "string" ? item : item.name;
+            const desc = typeof item === "string"
+              ? "Neighborhood signal for this region."
+              : item.description;
+            return `
+              <div class="tori-neighborhood-item">
+                <strong>${esc(name)}</strong>
+                <span>${esc(desc)}</span>
+              </div>
+            `;
+          }).join("")
+        : `
+          <div class="tori-neighborhood-item">
+            <strong>No neighborhood data yet</strong>
+            <span>Add neighborhood objects to this region in the Laredo JSON file.</span>
+          </div>
+        `
+    );
+  }
+  function scoreBar(label, value){
+    const n = Number(value);
+    const width = Number.isFinite(n) ? Math.max(0, Math.min(n, 100)) : 0;
     return `
-      <div class="or-mini-row">
-        <span>${esc(label)}</span>
-        <div class="or-mini-track">
-          <div class="or-mini-fill" style="width:${width}%"></div>
+      <div class="tori-bar-row">
+        <div class="tori-bar-name">${esc(label)}</div>
+        <div class="tori-bar-track">
+          <div class="tori-bar-fill" style="width:${width}%"></div>
         </div>
-        <strong>${esc(displayText)}</strong>
+        <div class="tori-bar-val">${Number.isFinite(n) ? n : "—"}</div>
       </div>
     `;
   }
-  function showError(message){
-    const box = $("#orCityError");
-    if (!box) return;
-    box.textContent = message;
-    box.classList.add("is-show");
+  function miniBar(label, value, max, display){
+    const n = Number(value);
+    const m = Number(max);
+    const width = Number.isFinite(n) && Number.isFinite(m) && m > 0
+      ? Math.max(0, Math.min((n / m) * 100, 100))
+      : 0;
+    return `
+      <div class="tori-mini-row">
+        <span>${esc(label)}</span>
+        <div class="tori-mini-track">
+          <div class="tori-mini-fill" style="width:${width}%"></div>
+        </div>
+        <strong>${esc(display)}</strong>
+      </div>
+    `;
   }
-  function hideError(){
-    const box = $("#orCityError");
-    if (!box) return;
-    box.textContent = "";
-    box.classList.remove("is-show");
-  }
-  function bindTabs(){
-    $$("[data-or-tab]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const tab = btn.getAttribute("data-or-tab");
-        if (!tab) return;
-        $$("[data-or-tab]").forEach(node => node.classList.remove("is-active"));
-        btn.classList.add("is-active");
-        $$("[data-or-panel]").forEach(panel => {
-          panel.classList.toggle(
-            "is-active",
-            panel.getAttribute("data-or-panel") === tab
-          );
-        });
-      });
-    });
-  }
-  function bindBedrooms(){
-    const wrap = $("#orBedButtons");
-    if (!wrap) return;
-    wrap.addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-or-bed]");
-      if (!btn || !CITY) return;
-      ACTIVE_BED = btn.getAttribute("data-or-bed") || "3";
-      $$("[data-or-bed]", wrap).forEach(node => node.classList.remove("is-active"));
-      btn.classList.add("is-active");
-      renderBedroom(CITY, ACTIVE_BED);
-    });
-  }
-  function renderHero(data){
-    const bg = $("#orHeroBg");
-    if (bg && data.image_url){
-      bg.style.setProperty("--hero-image", `url("${data.image_url}")`);
+  function makeApiUrl(regionKey = ""){
+    const query = new URLSearchParams();
+    query.set("city", CITY_SLUG);
+    query.set("census", "true");
+    if (regionKey) {
+      query.set("region", regionKey);
     }
-    setText("#orTopPlace", `${data.place || data.city || "City"} • ${data.market_label || "Market Intelligence"}`);
-    setText("#orTopUpdated", `Updated — ${data.last_updated_data_from_sources || data.market_metrics?.as_of || "N/A"}`);
-    setText("#orHeroEyebrow", `${data.state || "State"} • ${data.market_label || "City Intelligence"}`);
-    setText("#orHeroTitle", `${data.city || data.name || "City"}${data.state_code ? `, ${data.state_code}` : ""}`);
-    setText("#orHeroSubtitle", data.profile || "City intelligence loaded.");
-    setText("#orKpiHomePrice", fmtMoney(data.metrics?.median_sale_price || data.avg_home_value));
-    setText("#orKpiRent", fmtMoney(data.metrics?.median_rent || data.rental_metrics?.median_rent));
-    setText("#orKpiMortgage", fmtMoney(data.avg_home_mortgage_monthly?.avg));
-    setText("#orKpiDom",
-      Number.isFinite(Number(data.metrics?.days_on_market))
-        ? `${fmtNum(data.metrics.days_on_market)} days`
-        : "—"
-    );
-    const status = data.market_bluf?.status || "Market Verdict";
-    const verdict = data.market_bluf?.verdict || data.market_bluf?.bluf_headline || "Market View";
-    const copyParts = [
-      data.market_bluf?.bluf_summary,
-      data.financial_brief?.affordability_summary,
-      data.market_bluf?.buyer_leverage ? `Buyer leverage: ${data.market_bluf.buyer_leverage}.` : "",
-      data.market_bluf?.inventory_trend ? `Inventory trend: ${data.market_bluf.inventory_trend}.` : ""
-    ].filter(Boolean);
-    setText("#orVerdictStatus", status);
-    setText("#orVerdictTitle", verdict);
-    setText("#orVerdictCopy", copyParts.join(" "));
-    setText("#orScoreAffordability", data.scorecard?.affordability_score ?? "—");
-    setText("#orScoreGrowth", data.scorecard?.growth_score ?? "—");
-    setText("#orScoreStability", data.scorecard?.stability_score ?? "—");
-    setText("#orScoreOverall", data.scorecard?.overall_score ?? "—");
+    return `/api/market-data?${query.toString()}`;
+  }
+  function makeAbsoluteApiUrl(regionKey = ""){
+    const query = new URLSearchParams();
+    query.set("city", CITY_SLUG);
+    query.set("census", "true");
+    if (regionKey) {
+      query.set("region", regionKey);
+    }
+    return `https://theorozcorealty.netlify.app/api/market-data?${query.toString()}`;
+  }
+  async function fetchMarketPayload(regionKey = ""){
+    const urls = [
+      makeApiUrl(regionKey),
+      makeAbsoluteApiUrl(regionKey)
+    ];
+    let lastError = null;
+    for (const url of urls){
+      try{
+        const res = await fetch(url, { cache:"no-store" });
+        if (!res.ok){
+          lastError = new Error(`HTTP ${res.status} from ${url}`);
+          continue;
+        }
+        const payload = await res.json();
+        if (payload?.ok && payload?.data){
+          window.TOR_REGION_INTEL_RUNTIME.loadedFrom = url;
+          window.TOR_REGION_INTEL_RUNTIME.lastPayload = payload;
+          return payload;
+        }
+        if (payload?.regions){
+          window.TOR_REGION_INTEL_RUNTIME.loadedFrom = url;
+          window.TOR_REGION_INTEL_RUNTIME.lastPayload = {
+            ok:true,
+            data:payload
+          };
+          return {
+            ok:true,
+            data:payload
+          };
+        }
+        lastError = new Error(`Unexpected payload from ${url}`);
+      }catch(err){
+        lastError = err;
+      }
+    }
+    throw lastError || new Error("Market data could not load.");
+  }
+  function fallbackRegionFromHeader(headerRegion){
+    const r = headerRegion || {};
+    return {
+      slug: r.key || ACTIVE_REGION_KEY,
+      name: r.name || r.title || "Selected Region",
+      region_label: r.eyebrow || "Laredo Region",
+      market_label: r.category || "Market View",
+      profile: r.subtitle || "Regional intelligence loaded from the map selection.",
+      typical_price: null,
+      price_display: r.price || "—",
+      entry_price: null,
+      premium_price: null,
+      estimated_payment_range: "$—",
+      buyer_fit: r.fit || "—",
+      market_pace: r.pace || "—",
+      market_grade: r.grade || "—",
+      inventory_feel: "—",
+      negotiation_power: "—",
+      household_profile: r.fit || "—",
+      income_signal: "—",
+      education_signal: "—",
+      commute_pattern: r.eyebrow || "—",
+      lifestyle_fit: r.category || "—",
+      growth_pressure: "—",
+      overview_bluf: r.subtitle || "Regional intelligence loaded from the map selection.",
+      summary_points: [
+        r.subtitle || "Regional profile loaded from the map selector.",
+        "The Header Map and Demographics Panel are connected.",
+        "Full JSON and Census-powered detail appears once /api/market-data is live."
+      ],
+      scorecard: {
+        affordability_score: r.scores?.affordability ?? 0,
+        growth_score: r.scores?.growth ?? 0,
+        stability_score: r.scores?.stability ?? 0,
+        military_fit_score: r.scores?.militaryFit ?? r.scores?.military_fit ?? 0,
+        overall_score: r.scores?.overall ?? 0
+      },
+      real_estate: {
+        ownership_notes: [
+          "Panel is currently using Header Map fallback data.",
+          "Once /api/market-data works, ownership notes will come from laredo.json."
+        ],
+        opportunities: [
+          "Header-to-panel region switching is active.",
+          "Region-specific JSON can control this panel once the API loads."
+        ],
+        risks: [
+          "If JSON fails, check the Netlify Function route /api/market-data?city=laredo.",
+          "Confirm the Laredo JSON file is included in Netlify function bundled files."
+        ],
+        buyer_strategy: r.subtitle || "Use the region selection to guide buyer strategy.",
+        price_positioning: {
+          entry: null,
+          typical: null,
+          premium: null
+        }
+      },
+      demographics: {
+        household_profile: r.fit || "—",
+        income_signal: "—",
+        education_signal: "—",
+        commute_pattern: r.eyebrow || "—",
+        lifestyle_fit: r.category || "—",
+        growth_pressure: "—",
+        education_bars: {
+          schools: r.scores?.stability ?? 0,
+          demand: r.scores?.growth ?? 0,
+          stability: r.scores?.stability ?? 0
+        },
+        lifestyle_signals: [
+          r.subtitle || "Lifestyle profile loaded from map selection."
+        ],
+        buyer_psychology: "This fallback updates from the Header Map. The full copy comes from laredo.json and official Census enrichment once the API loads."
+      },
+      neighborhoods: [],
+      commute_notes: [
+        "Commute notes will come from laredo.json once available."
+      ],
+      tags: [
+        r.fit || "Region",
+        r.pace || "Market",
+        r.grade || "Grade"
+      ],
+      guidance: {
+        buyer_guidance: [
+          "Use the selected region as the buyer conversation anchor.",
+          "Confirm payment, taxes, insurance, commute, school data, and exact neighborhood fit before making final decisions."
+        ],
+        seller_guidance: [
+          "Position the property around the selected region's strongest buyer appeal."
+        ],
+        investor_guidance: [
+          "Use region selection as the first filter, then underwrite by exact neighborhood and property."
+        ],
+        best_for: [
+          r.fit || "Selected buyer profile"
+        ],
+        watchouts: [
+          "Full watchouts will load from laredo.json once API access is fixed."
+        ]
+      }
+    };
+  }
+  function getRegion(key, headerRegion){
+    if (CITY?.regions?.[key]) return CITY.regions[key];
+    const defaultKey =
+      CITY?.compatibility?.default_region_key ||
+      DEFAULT_REGION_KEY;
+    if (CITY?.regions?.[defaultKey]) return CITY.regions[defaultKey];
+    return fallbackRegionFromHeader(headerRegion);
+  }
+  function getOfficialDemographics(region){
+    const d = region?.demographics || {};
+    const city = CITY?.official_census_profile || {};
+    return {
+      population: firstDefined(
+        d.official_population,
+        city.population?.total,
+        CITY?.population?.estimate
+      ),
+      medianAge: firstDefined(
+        d.official_median_age,
+        city.population?.median_age,
+        CITY?.population?.median_age
+      ),
+      households: firstDefined(
+        d.official_households,
+        city.households?.total,
+        CITY?.households?.total_households
+      ),
+      averageHouseholdSize: firstDefined(
+        d.official_average_household_size,
+        city.households?.average_household_size,
+        CITY?.population?.persons_per_household
+      ),
+      medianIncome: firstDefined(
+        d.official_median_household_income,
+        city.economy?.median_household_income,
+        CITY?.income?.median_household_income
+      ),
+      perCapitaIncome: firstDefined(
+        d.official_per_capita_income,
+        city.economy?.per_capita_income,
+        CITY?.income?.per_capita_income
+      ),
+      povertyPct: firstDefined(
+        d.official_poverty_pct,
+        city.economy?.poverty_pct,
+        CITY?.income?.poverty_rate_percent
+      ),
+      unemploymentPct: firstDefined(
+        d.official_unemployment_rate_pct,
+        city.economy?.unemployment_rate_pct,
+        CITY?.labor?.unemployment_rate_percent
+      ),
+      commuteMinutes: firstDefined(
+        d.official_mean_travel_time_minutes,
+        city.commute?.mean_travel_time_minutes,
+        CITY?.labor?.mean_travel_time_to_work_minutes
+      ),
+      highSchoolPct: firstDefined(
+        d.official_high_school_or_higher_pct,
+        city.education?.high_school_or_higher_pct,
+        CITY?.education?.high_school_grad_or_higher_percent
+      ),
+      bachelorsPct: firstDefined(
+        d.official_bachelors_or_higher_pct,
+        city.education?.bachelors_or_higher_pct,
+        CITY?.education?.bachelors_degree_or_higher_percent
+      ),
+      veteransPct: firstDefined(
+        d.official_veterans_pct,
+        city.military_veterans?.veterans_pct,
+        CITY?.veterans?.veteran_population_percent
+      ),
+      medianHomeValue: firstDefined(
+        d.official_median_home_value,
+        city.housing?.median_home_value,
+        CITY?.housing?.median_value_owner_occupied
+      ),
+      medianGrossRent: firstDefined(
+        d.official_median_gross_rent,
+        city.housing?.median_gross_rent,
+        CITY?.rental_metrics?.median_rent
+      )
+    };
+  }
+  function normalizeRegionPayload(region){
+    const scorecard = region.scorecard || {};
+    const realEstate = region.real_estate || {};
+    const demographics = region.demographics || {};
+    const guidance = region.guidance || {};
+    const pricePositioning = realEstate.price_positioning || {};
+    const official = getOfficialDemographics(region);
+    return {
+      key: region.slug || ACTIVE_REGION_KEY,
+      name: firstDefined(region.name, "Selected Region"),
+      subtitle: firstDefined(region.profile, CITY?.profile, "Regional intelligence loaded."),
+      overviewStatus: firstDefined(region.market_label, "Market View"),
+      price: firstDefined(region.price_display, fmtShortMoney(region.typical_price), fmtShortMoney(CITY?.avg_home_value)),
+      priceNumber: firstDefined(region.typical_price, CITY?.avg_home_value),
+      buyerFit: firstDefined(region.buyer_fit, "Buyer"),
+      pace: firstDefined(region.market_pace, "Market"),
+      grade: firstDefined(region.market_grade, "—"),
+      overviewBluf: firstDefined(region.overview_bluf, region.profile, CITY?.market_bluf?.bluf_summary),
+      summaryPoints: arr(region.summary_points).length ? region.summary_points : CITY?.summary_points,
+      affordability: firstDefined(scorecard.affordability_score, CITY?.scorecard?.affordability_score),
+      growth: firstDefined(scorecard.growth_score, CITY?.scorecard?.growth_score),
+      stability: firstDefined(scorecard.stability_score, CITY?.scorecard?.stability_score),
+      militaryFit: firstDefined(scorecard.military_fit_score, CITY?.scorecard?.military_fit_score),
+      overall: firstDefined(scorecard.overall_score, CITY?.scorecard?.overall_score),
+      estimatedPaymentRange: firstDefined(region.estimated_payment_range, "$—"),
+      inventoryFeel: firstDefined(region.inventory_feel, "—"),
+      negotiationPower: firstDefined(region.negotiation_power, "—"),
+      ownershipNotes: arr(realEstate.ownership_notes).length ? realEstate.ownership_notes : CITY?.ownership_costs?.notes,
+      opportunities: arr(realEstate.opportunities).length ? realEstate.opportunities : CITY?.opportunities,
+      risks: arr(realEstate.risks).length ? realEstate.risks : CITY?.risks,
+      buyerStrategy: firstDefined(realEstate.buyer_strategy, CITY?.financial_brief?.affordability_summary, "No buyer strategy available yet."),
+      entryPrice: firstDefined(pricePositioning.entry, region.entry_price),
+      typicalPrice: firstDefined(pricePositioning.typical, region.typical_price),
+      premiumPrice: firstDefined(pricePositioning.premium, region.premium_price),
+      householdProfile: firstDefined(region.household_profile, demographics.household_profile, "—"),
+      incomeSignal: firstDefined(region.income_signal, demographics.income_signal, "—"),
+      educationSignal: firstDefined(region.education_signal, demographics.education_signal, "—"),
+      commutePattern: firstDefined(region.commute_pattern, demographics.commute_pattern, "—"),
+      lifestyleFit: firstDefined(region.lifestyle_fit, demographics.lifestyle_fit, "—"),
+      growthPressure: firstDefined(region.growth_pressure, demographics.growth_pressure, "—"),
+      educationBars: demographics.education_bars || {},
+      lifestyleSignals: arr(demographics.lifestyle_signals),
+      buyerPsychology: firstDefined(demographics.buyer_psychology, "No buyer psychology summary available yet."),
+      official,
+      neighborhoods: arr(region.neighborhoods).length ? region.neighborhoods : CITY?.target_neighborhoods,
+      commuteNotes: arr(region.commute_notes),
+      tags: arr(region.tags),
+      buyerGuidance: arr(guidance.buyer_guidance).length ? guidance.buyer_guidance : CITY?.buyer_guidance,
+      sellerGuidance: arr(guidance.seller_guidance).length ? guidance.seller_guidance : CITY?.seller_guidance,
+      investorGuidance: arr(guidance.investor_guidance).length ? guidance.investor_guidance : CITY?.investor_angles,
+      bestFor: arr(guidance.best_for),
+      watchouts: arr(guidance.watchouts),
+      censusName: firstDefined(
+        region.official_census_profile?.name,
+        CITY?.official_census_profile?.name,
+        "Official Census profile"
+      )
+    };
   }
   function renderOverview(data){
-    setText("#orOverviewIntro", data.profile || "City overview loaded.");
-    setText("#orOvListPrice", fmtMoney(data.metrics?.median_list_price || data.market_metrics?.median_list_price));
-    setText("#orOvPpsf",
-      Number.isFinite(Number(data.metrics?.price_per_sqft || data.market_metrics?.price_per_sqft))
-        ? fmtMoney(data.metrics?.price_per_sqft || data.market_metrics?.price_per_sqft)
-        : "—"
-    );
-    setText("#orOvListings", fmtNum(data.metrics?.active_listings_total || data.market_metrics?.active_listings_total));
-    setText("#orOvTaxRate", fmtPctFromDecimal(data.property_tax_rate ?? data.ownership_costs?.property_tax_rate));
-    renderList("#orSummaryPoints", data.summary_points);
-    const briefParts = [
-      data.financial_brief?.affordability_summary,
-      data.financial_brief?.buyer_opportunity ? `Buyer opportunity: ${data.financial_brief.buyer_opportunity}.` : "",
-      data.financial_brief?.bah_vs_buy_position ? `Buy position: ${data.financial_brief.bah_vs_buy_position}.` : "",
-      data.financial_brief?.bah_vs_rent_position ? `Rent comparison: ${data.financial_brief.bah_vs_rent_position}.` : ""
-    ].filter(Boolean);
-    setText("#orFinancialBrief", briefParts.join(" ") || "No financial brief available.");
-    setHtml("#orScoreBars", renderScoreBars(data.scorecard || {}));
-  }
-  function renderBedroom(data, bedKey){
-    const bed = data.by_bedroom?.[bedKey];
-    if (!bed){
-      setText("#orBedAsOf", "As of —");
-      setText("#orBedHomePrice", "—");
-      setText("#orBedRent", "—");
-      setText("#orBedMortgage", "—");
-      setText("#orBedUtilities", "—");
-      return;
-    }
-    setText("#orBedAsOf", `As of ${bed.home_price?.as_of || bed.rent_monthly?.as_of || data.metrics?.as_of || "N/A"}`);
-    setText("#orBedHomePrice", fmtMoney(bed.home_price?.avg));
-    setText("#orBedRent", fmtMoney(bed.rent_monthly?.avg));
-    setText("#orBedMortgage", fmtMoney(bed.mortgage_monthly?.avg));
-    setText("#orBedUtilities", fmtMoney(bed.utilities?.total?.avg));
+    setText("#torIntelTitle", `${data.name} Buyer Intelligence`);
+    setText("#torIntelSubtitle", data.subtitle);
+    setText("#torIntelSelectedRegion", data.name);
+    setText("#torOverviewIntro", data.subtitle);
+    setText("#torOverviewStatus", data.overviewStatus);
+    setText("#torOverviewPrice", data.price);
+    setText("#torOverviewBuyerFit", data.buyerFit);
+    setText("#torOverviewPace", data.pace);
+    setText("#torOverviewGrade", data.grade);
+    setText("#torOverviewPriceHint", "Typical regional pricing anchor.");
+    setText("#torOverviewBuyerFitHint", "Primary buyer profile for this region.");
+    setText("#torOverviewPaceHint", "How quickly well-positioned homes may move.");
+    setText("#torOverviewGradeHint", "TOR decision score for this region.");
+    setText("#torOverviewBluf", data.overviewBluf);
+    renderList("#torOverviewSummaryList", data.summaryPoints);
+    setHTML("#torOverviewScoreBars", [
+      scoreBar("Affordability", data.affordability),
+      scoreBar("Growth", data.growth),
+      scoreBar("Stability", data.stability),
+      scoreBar("Military Fit", data.militaryFit),
+      scoreBar("Overall", data.overall)
+    ].join(""));
   }
   function renderRealEstate(data){
-    setText(
-      "#orRealEstateIntro",
-      `${data.city || data.name || "City"} pricing and cost structure, including taxes, insurance, HOA assumptions, and bedroom-level ranges.`
+    setText("#torRealEstateIntro", `Pricing, ownership cost posture, inventory behavior, and buyer leverage for ${data.name}.`);
+    setText("#torRealEstateStatus", "Housing Context");
+    setText("#torREHomePrice", data.price);
+    setText("#torREPayment", data.estimatedPaymentRange);
+    setText("#torREInventory", data.inventoryFeel);
+    setText("#torRELeverage", data.negotiationPower);
+    renderList("#torREOwnershipNotes", data.ownershipNotes);
+    renderList("#torREOpportunities", data.opportunities);
+    renderList("#torRERisks", data.risks);
+    const maxPrice = Math.max(
+      Number(data.entryPrice) || 0,
+      Number(data.typicalPrice) || 0,
+      Number(data.premiumPrice) || 0,
+      1
     );
-    renderBedroom(data, ACTIVE_BED);
-    renderList("#orOwnershipNotes", data.ownership_costs?.notes);
-    renderList("#orTargetNeighborhoods", data.target_neighborhoods || data.neighborhoods);
-    renderList("#orOpportunities", data.opportunities);
-    renderList("#orRisks", data.risks);
-    renderList("#orInvestorAngles", data.investor_angles);
+    setHTML("#torREPriceBars", [
+      miniBar("Entry", data.entryPrice, maxPrice, fmtShortMoney(data.entryPrice)),
+      miniBar("Typical", data.typicalPrice, maxPrice, fmtShortMoney(data.typicalPrice)),
+      miniBar("Premium", data.premiumPrice, maxPrice, `${fmtShortMoney(data.premiumPrice)}+`)
+    ].join(""));
+    setText("#torREBuyerStrategy", data.buyerStrategy);
   }
   function renderDemographics(data){
-    setText("#orDemoPopulation", fmtNum(data.population?.estimate || data.snapshot?.population_city));
-    setText("#orDemoAge", Number.isFinite(Number(data.population?.median_age)) ? String(data.population.median_age) : "—");
-    setText("#orDemoHouseholdSize", Number.isFinite(Number(data.population?.persons_per_household)) ? String(data.population.persons_per_household) : "—");
-    setText("#orDemoIncome", fmtMoney(data.income?.median_household_income || data.snapshot?.median_household_income));
-    setText("#orDemoPerCapita", fmtMoney(data.income?.per_capita_income));
-    setText("#orDemoPoverty", fmtPct(data.income?.poverty_rate_percent));
-    setHtml("#orEducationBars", [
-      miniBar("HS+", data.education?.high_school_grad_or_higher_percent || 0, 100, fmtPct(data.education?.high_school_grad_or_higher_percent || 0)),
-      miniBar("Bachelor's+", data.education?.bachelors_degree_or_higher_percent || 0, 100, fmtPct(data.education?.bachelors_degree_or_higher_percent || 0)),
-      miniBar("Veteran Pop.", data.veterans?.veteran_population_percent || 0, 100, fmtPct(data.veterans?.veteran_population_percent || 0)),
-      miniBar("Foreign Born", data.immigration?.foreign_born_percent || 0, 100, fmtPct(data.immigration?.foreign_born_percent || 0))
+    const official = data.official || {};
+    setText(
+      "#torDemographicsIntro",
+      `Official Census-enriched demographic signals for ${data.name}. Source profile: ${data.censusName}.`
+    );
+    setText("#torDemographicsStatus", "Official Census + TOR Read");
+    setText("#torDemoHouseholdProfile", data.householdProfile);
+    setText("#torDemoIncomeSignal", official.medianIncome ? fmtShortMoney(official.medianIncome) : data.incomeSignal);
+    setText("#torDemoEducationSignal", official.bachelorsPct !== null && official.bachelorsPct !== undefined ? `${official.bachelorsPct}% BA+` : data.educationSignal);
+    setText("#torDemoCommute", official.commuteMinutes ? `${official.commuteMinutes} min` : data.commutePattern);
+    setText("#torDemoLifestyle", data.lifestyleFit);
+    setText("#torDemoGrowthPressure", data.growthPressure);
+    const bars = data.educationBars || {};
+    const schoolsScore = Number(firstDefined(bars.schools, official.highSchoolPct, 0));
+    const demandScore = Number(firstDefined(bars.demand, data.growth, 0));
+    const stabilityScore = Number(firstDefined(bars.stability, data.stability, 0));
+    setHTML("#torDemoEducationBars", [
+      miniBar("HS+", official.highSchoolPct ?? schoolsScore, 100, official.highSchoolPct !== null && official.highSchoolPct !== undefined ? `${official.highSchoolPct}%` : String(schoolsScore || "—")),
+      miniBar("BA+", official.bachelorsPct ?? demandScore, 100, official.bachelorsPct !== null && official.bachelorsPct !== undefined ? `${official.bachelorsPct}%` : String(demandScore || "—")),
+      miniBar("Veterans", official.veteransPct ?? stabilityScore, 100, official.veteransPct !== null && official.veteransPct !== undefined ? `${official.veteransPct}%` : String(stabilityScore || "—"))
     ].join(""));
-    setHtml("#orLaborBars", [
-      miniBar("Unemployment", data.labor?.unemployment_rate_percent || 0, 15, fmtPct(data.labor?.unemployment_rate_percent || 0)),
-      miniBar("Commute", data.labor?.mean_travel_time_to_work_minutes || 0, 60, `${Number(data.labor?.mean_travel_time_to_work_minutes || 0).toFixed(1)}m`),
-      miniBar("Households", data.households?.total_households || 0, Math.max(1, Number(data.households?.total_households || 1)), fmtNum(data.households?.total_households || 0))
-    ].join(""));
-    setHtml("#orHousingBars", [
-      miniBar("Median Rent", data.rental_metrics?.median_rent || 0, 4000, fmtMoney(data.rental_metrics?.median_rent || 0)),
-      miniBar("Vacancy", data.rental_metrics?.vacancy_rate_percent || data.rental_vacancy?.rate_percent || 0, 20, fmtPct(data.rental_metrics?.vacancy_rate_percent || data.rental_vacancy?.rate_percent || 0)),
-      miniBar("Housing Units", data.housing?.housing_units || 0, Math.max(1, Number(data.housing?.housing_units || 1)), fmtNum(data.housing?.housing_units || 0))
-    ].join(""));
-    renderList("#orQualityNotes", [
-      data.school_quality?.on_base,
-      data.school_quality?.off_base,
-      data.crime_status?.installation,
-      data.crime_status?.metro_laredo,
-      data.crime_status?.metro_mcallen,
-      data.crime_status?.metro_san_antonio
-    ]);
-    renderList("#orClimateList", [
-      data.climate_weather?.spring ? `Spring: ${data.climate_weather.spring}` : null,
-      data.climate_weather?.summer ? `Summer: ${data.climate_weather.summer}` : null,
-      data.climate_weather?.fall ? `Fall: ${data.climate_weather.fall}` : null,
-      data.climate_weather?.winter ? `Winter: ${data.climate_weather.winter}` : null,
-      ...arr(data.special_events).map(x => `Local event: ${x}`)
-    ]);
+    const censusSignals = [
+      official.population ? `Official population profile: ${Number(official.population).toLocaleString()} residents.` : null,
+      official.medianAge ? `Median age: ${official.medianAge}.` : null,
+      official.medianIncome ? `Median household income: ${fmtMoney(official.medianIncome)}.` : null,
+      official.medianGrossRent ? `Median gross rent: ${fmtMoney(official.medianGrossRent)}.` : null
+    ].filter(Boolean);
+    const lifestyleSignals = censusSignals.length
+      ? [...censusSignals, ...arr(data.lifestyleSignals)]
+      : data.lifestyleSignals;
+    renderList("#torDemoLifestyleSignals", lifestyleSignals);
+    setText("#torDemoBuyerPsychology", data.buyerPsychology);
+  }
+  function renderNeighborhoodsPanel(data){
+    setText("#torNeighborhoodIntro", `Key neighborhood patterns, commute notes, and micro-market watchouts for ${data.name}.`);
+    setText("#torNeighborhoodStatus", "Micro-Market View");
+    renderNeighborhoodItems("#torNeighborhoodList", data.neighborhoods);
+    renderList("#torNeighborhoodCommuteNotes", data.commuteNotes);
+    renderTags("#torNeighborhoodTags", data.tags);
   }
   function renderGuidance(data){
-    renderList("#orBuyerGuidance", data.buyer_guidance);
-    renderList("#orSellerGuidance", data.seller_guidance);
-    renderList("#orLandlordNotes", data.landlord_notes);
-    renderList("#orBuyerNotes", data.buyer_notes);
-    renderList("#orSellerNotes", data.seller_notes);
+    setText("#torGuidanceIntro", `Practical strategy for evaluating ${data.name} before touring, offering, listing, or investing.`);
+    setText("#torGuidanceStatus", "Strategy Layer");
+    renderList("#torBuyerGuidance", data.buyerGuidance);
+    renderList("#torSellerGuidance", data.sellerGuidance);
+    renderList("#torInvestorGuidance", data.investorGuidance);
+    renderList("#torGuidanceBestFor", data.bestFor);
+    renderList("#torGuidanceWatchouts", data.watchouts);
   }
-  function renderAll(data){
-    CITY = data;
-    hideError();
-    renderHero(data);
-    renderOverview(data);
-    renderRealEstate(data);
-    renderDemographics(data);
-    renderGuidance(data);
-  }
-  async function loadCity(){
-    try{
-      const res = await fetch(CITY_JSON_URL, { cache: "no-store" });
-      if (!res.ok){
-        throw new Error(`HTTP ${res.status} while loading ${CITY_JSON_URL}`);
-      }
-      const data = await res.json();
-      renderAll(data);
-    }catch(err){
-      console.error("Cities Overview load error:", err);
-      setText("#orHeroTitle", "City data could not load");
-      setText("#orHeroSubtitle", "Check the city JSON path.");
-      setText("#orVerdictTitle", "Load Error");
-      setText("#orVerdictCopy", "The shell loaded, but the city JSON did not.");
-      showError(String(err?.message || err));
+  function updateButtons(key){
+    const briefBtn = $("#torRequestBuyerBrief");
+    const compareBtn = $("#torCompareRegions");
+    if (briefBtn) {
+      briefBtn.textContent = "Request Region Buyer Brief";
+      briefBtn.setAttribute("data-region", key);
+    }
+    if (compareBtn) {
+      compareBtn.textContent = "Compare Regions";
+      compareBtn.setAttribute("data-region", key);
     }
   }
-  bindTabs();
-  bindBedrooms();
-  loadCity();
+  function renderRegion(key, headerRegion){
+    ACTIVE_REGION_KEY = key || ACTIVE_REGION_KEY || DEFAULT_REGION_KEY;
+    const region = getRegion(ACTIVE_REGION_KEY, headerRegion);
+    if (!region) return;
+    const normalized = normalizeRegionPayload(region);
+    renderOverview(normalized);
+    renderRealEstate(normalized);
+    renderDemographics(normalized);
+    renderNeighborhoodsPanel(normalized);
+    renderGuidance(normalized);
+    updateButtons(ACTIVE_REGION_KEY);
+    window.TOR_REGION_INTEL_RUNTIME.activeRegion = {
+      key: ACTIVE_REGION_KEY,
+      region,
+      normalized,
+      city: CITY
+    };
+  }
+  async function hydrateRegionFromApi(key, headerRegion){
+    const requestId = ++REGION_REQUEST_ID;
+    const cacheKey = key || DEFAULT_REGION_KEY;
+    renderRegion(cacheKey, headerRegion);
+    if (REGION_CACHE.has(cacheKey)) {
+      const cached = REGION_CACHE.get(cacheKey);
+      CITY = cached;
+      renderRegion(cacheKey, headerRegion);
+      return;
+    }
+    try{
+      const payload = await fetchMarketPayload(cacheKey);
+      if (requestId !== REGION_REQUEST_ID) return;
+      CITY = payload.data;
+      REGION_CACHE.set(cacheKey, CITY);
+      window.TOR_LAREDO_JSON = CITY;
+      window.TOR_MARKET_JSON = CITY;
+      renderRegion(cacheKey, headerRegion);
+    }catch(err){
+      console.warn(`TOR Laredo region API failed for ${cacheKey}. Using current data or header fallback.`, err);
+      renderRegion(cacheKey, headerRegion);
+    }
+  }
+  function bindRegionEvents(){
+    window.addEventListener("tor:region-selected", (event) => {
+      const key = event?.detail?.key || DEFAULT_REGION_KEY;
+      const headerRegion = event?.detail?.region || null;
+      hydrateRegionFromApi(key, headerRegion);
+    });
+  }
+  function bindButtonOverrides(){
+    const briefBtn = $("#torRequestBuyerBrief");
+    const compareBtn = $("#torCompareRegions");
+    if (briefBtn) {
+      briefBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const key = ACTIVE_REGION_KEY || DEFAULT_REGION_KEY;
+        const url = new URL(window.location.href);
+        url.searchParams.set("region", key);
+        url.searchParams.set("intent", "buyer-brief");
+        window.location.href = url.toString();
+      });
+    }
+    if (compareBtn) {
+      compareBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        const key = ACTIVE_REGION_KEY || DEFAULT_REGION_KEY;
+        const url = new URL(window.location.href);
+        url.searchParams.set("region", key);
+        url.searchParams.set("intent", "compare-regions");
+        window.location.href = url.toString();
+      });
+    }
+  }
+  async function init(){
+    bindRegionEvents();
+    bindButtonOverrides();
+    const initialKey =
+      new URLSearchParams(window.location.search).get("region") ||
+      window.TOR_SELECTED_REGION?.key ||
+      DEFAULT_REGION_KEY;
+    try{
+      const payload = await fetchMarketPayload(initialKey);
+      CITY = payload.data;
+      REGION_CACHE.set(initialKey, CITY);
+      window.TOR_LAREDO_JSON = CITY;
+      window.TOR_MARKET_JSON = CITY;
+      const defaultKey =
+        initialKey ||
+        CITY?.compatibility?.default_region_key ||
+        DEFAULT_REGION_KEY;
+      renderRegion(defaultKey, window.TOR_SELECTED_REGION?.region || null);
+      if (window.TOR_TEXAS_HEADER_MAP?.selectRegion) {
+        window.TOR_TEXAS_HEADER_MAP.selectRegion(defaultKey);
+      }
+    }catch(err){
+      console.warn("TOR Laredo market API did not load. Using header fallback only.", err);
+      const fallbackKey = window.TOR_SELECTED_REGION?.key || initialKey || DEFAULT_REGION_KEY;
+      const fallbackRegion = window.TOR_SELECTED_REGION?.region || null;
+      renderRegion(fallbackKey, fallbackRegion);
+      setText(
+        "#torIntelSubtitle",
+        "The map is connected, but /api/market-data is not loading yet. Check market-data.js, CENSUS_API_KEY, laredo.json, and included_files in Netlify."
+      );
+    }
+  }
+  window.TOR_REGION_INTEL_RUNTIME.renderRegion = renderRegion;
+  window.TOR_REGION_INTEL_RUNTIME.hydrateRegionFromApi = hydrateRegionFromApi;
+  window.TOR_REGION_INTEL_RUNTIME.getCity = () => CITY;
+  window.TOR_REGION_INTEL_RUNTIME.getActiveRegionKey = () => ACTIVE_REGION_KEY;
+  window.TOR_REGION_INTEL_RUNTIME.clearCache = () => REGION_CACHE.clear();
+  init();
 })();
 </script>
   </div>

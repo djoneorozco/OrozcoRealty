@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Thu Apr 16 2026 13:11:59 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Sat May 30 2026 01:53:12 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="691facbf35fbba00c096f3f2" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
 <head>
   <meta charset="utf-8">
@@ -7,8 +7,8 @@
   <meta content="Military Realty Services | VA Home Loans | Orozco Realty" property="og:title">
   <meta content="Supporting military families with VA home loans. $0 down, no PMI, lower closing costs. Free financial dashboard for active duty, veterans &amp; families." property="og:description">
   <meta content="https://cdn.prod.website-files.com/691facbe35fbba00c096f2b7/69ccaa9f002272ce39a556cd_ffdcab38d6a982d23413fb95c1452762_us.jpg" property="og:image">
-  <meta content="Military Realty Services | VA Home Loans | Orozco Realty" property="twitter:title">
-  <meta content="Supporting military families with VA home loans. $0 down, no PMI, lower closing costs. Free financial dashboard for active duty, veterans &amp; families." property="twitter:description">
+  <meta content="Military Realty Services | VA Home Loans | Orozco Realty" name="twitter:title">
+  <meta content="Supporting military families with VA home loans. $0 down, no PMI, lower closing costs. Free financial dashboard for active duty, veterans &amp; families." name="twitter:description">
   <meta property="og:type" content="website">
   <meta content="summary_large_image" name="twitter:card">
   <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -93,27 +93,316 @@
   <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" data-doc-height="1" role="banner" class="navbar w-nav">
     <a href="index.html" class="link-block-7 w-inline-block"><img src="images/TOR.png" loading="lazy" width="162" sizes="162px" alt="" srcset="images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, images/TOR.png 2851w" class="image-100"></a>
     <div class="container-nav w-container">
+      <div class="w-embed w-script"><!--  =========================================================
+  TOR • EXECUTIVE FINANCIAL HEADER
+  v1.0.0 • THEWING MORTGAGE FLOW
+  SHOWS:
+  - Income
+  - Mortgage
+  - Remaining
+  - Buying Power
+  STORAGE:
+  - tor.intelligence.v1
+  - tor.mortgage.v1
+  - tor.bridge.v1
+  EVENTS:
+  - tor:intelligence-updated
+  - tor:mortgage-updated
+=========================================================  -->
+        <div id="tor-header-financial" style="all:initial;">
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+          <style>
+#tor-header-financial,
+#tor-header-financial *{
+  box-sizing:border-box;
+  font-family:Inter,sans-serif;
+}
+#tor-header-financial{
+  display:block;
+  width:100%;
+}
+#tor-header-financial .tor-fin-wrap{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+#tor-header-financial .tor-fin-grid{
+  width:min(430px,100%);
+  display:grid;
+  grid-template-columns:repeat(4,minmax(92px,1fr));
+  gap:8px;
+}
+#tor-header-financial .tor-fin-tile{
+  position:relative;
+  min-height:34px;
+  padding:7px 13px 8px;
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.14),
+      rgba(255,255,255,.06)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 8px 20px rgba(0,0,0,.26);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+#tor-header-financial .tor-fin-tile::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(183,139,71,.42),
+      transparent
+    );
+}
+#tor-header-financial .tor-fin-label{
+  margin-bottom:2px;
+  color:rgba(255,255,255,.52);
+  font-size:8px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+#tor-header-financial .tor-fin-value{
+  color:#fff;
+  font-size:13px;
+  line-height:1.05;
+  font-weight:900;
+  letter-spacing:-.03em;
+}
+#tor-header-financial .tor-fin-value.is-gold{
+  color:#d3aa67;
+}
+#tor-header-financial .tor-fin-tile.is-loading .tor-fin-value{
+  opacity:.55;
+}
+@media(max-width:760px){
+  #tor-header-financial .tor-fin-grid{
+    grid-template-columns:repeat(2,minmax(110px,1fr));
+    width:100%;
+  }
+  #tor-header-financial .tor-fin-tile{
+    border-radius:14px;
+    min-height:44px;
+  }
+  #tor-header-financial .tor-fin-label{
+    font-size:9px;
+  }
+  #tor-header-financial .tor-fin-value{
+    font-size:15px;
+  }
+}
+</style>
+          <div class="tor-fin-wrap">
+            <div class="tor-fin-grid">
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Income</span>
+                <span class="tor-fin-value" id="tor-header-income">$0</span>
+              </div>
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Mortgage</span>
+                <span class="tor-fin-value" id="tor-header-mortgage">$0</span>
+              </div>
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Remaining</span>
+                <span class="tor-fin-value is-gold" id="tor-header-remaining">$0</span>
+              </div>
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Buying Power</span>
+                <span class="tor-fin-value" id="tor-header-grade">---</span>
+              </div>
+            </div>
+          </div>
+          <script>
+(function(){
+"use strict";
+const STORAGE = {
+  intelligence : "tor.intelligence.v1",
+  mortgage     : "tor.mortgage.v1",
+  bridge       : "tor.bridge.v1"
+};
+const root =
+  document.getElementById(
+    "tor-header-financial"
+  );
+if(!root) return;
+const els = {
+  income:
+    root.querySelector("#tor-header-income"),
+  mortgage:
+    root.querySelector("#tor-header-mortgage"),
+  remaining:
+    root.querySelector("#tor-header-remaining"),
+  grade:
+    root.querySelector("#tor-header-grade")
+};
+const tiles =
+  Array.from(
+    root.querySelectorAll(".tor-fin-tile")
+  );
+function readJson(key,fallback){
+  try{
+    const raw =
+      localStorage.getItem(key);
+    return raw
+      ? JSON.parse(raw)
+      : fallback;
+  }catch(e){
+    return fallback;
+  }
+}
+function num(v){
+  return Number(
+    String(v || "")
+      .replace(/[$,]/g,"")
+  ) || 0;
+}
+function money(v){
+  return "$" +
+    num(v).toLocaleString(
+      "en-US",
+      {
+        maximumFractionDigits:0
+      }
+    );
+}
+function setLoading(state){
+  tiles.forEach(function(tile){
+    tile.classList.toggle(
+      "is-loading",
+      !!state
+    );
+  });
+}
+function getGrade(income,mortgage){
+  if(!income || !mortgage)
+    return "---";
+  const ratio =
+    mortgage / income;
+  if(ratio <= .25)
+    return "Strong";
+  if(ratio <= .35)
+    return "Good";
+  if(ratio <= .45)
+    return "Risk";
+  return "High";
+}
+function paint(data){
+  const income =
+    num(
+      data.monthly_income
+    );
+  const mortgage =
+    num(
+      data.estimated_mortgage
+    );
+  const remaining =
+    num(
+      data.remaining_cashflow
+    );
+  els.income.textContent =
+    money(income);
+  els.mortgage.textContent =
+    money(mortgage);
+  els.remaining.textContent =
+    money(remaining);
+  els.grade.textContent =
+    getGrade(
+      income,
+      mortgage
+    );
+  setLoading(false);
+}
+function refresh(){
+  const intelligence =
+    readJson(
+      STORAGE.intelligence,
+      {}
+    );
+  const mortgage =
+    readJson(
+      STORAGE.mortgage,
+      {}
+    );
+  const bridge =
+    readJson(
+      STORAGE.bridge,
+      {}
+    );
+  const merged = {
+    ...bridge,
+    ...mortgage,
+    ...intelligence
+  };
+  paint(merged);
+}
+refresh();
+window.addEventListener(
+  "tor:intelligence-updated",
+  refresh
+);
+window.addEventListener(
+  "tor:mortgage-updated",
+  refresh
+);
+window.addEventListener(
+  "storage",
+  function(e){
+    if(
+      e.key === STORAGE.intelligence ||
+      e.key === STORAGE.mortgage ||
+      e.key === STORAGE.bridge
+    ){
+      refresh();
+    }
+  }
+);
+window.TOR_FINANCIAL_HEADER = {
+  refresh
+};
+})();
+</script>
+        </div>
+      </div>
       <nav role="navigation" class="nav-menu w-nav-menu">
         <div class="nav-grid">
           <div class="nav-block">
             <a href="index.html" class="nav-link w-nav-link">Home 1</a>
-            <a href="home/home-2.html" class="nav-link w-nav-link">Home 2</a>
+            <a href="#" class="nav-link w-nav-link">Home 2</a>
             <a href="military-realty.html" aria-current="page" class="nav-link w-nav-link w--current">SEx</a>
           </div>
           <div class="nav-block">
-            <a href="realty-resources.html" class="nav-link w-nav-link">About 1</a>
+            <a href="#" class="nav-link w-nav-link">About 1</a>
             <a href="about-us.html" class="nav-link w-nav-link">About 2</a>
             <a href="#" class="nav-link w-nav-link">SEXy</a>
           </div>
           <div class="nav-block">
             <a href="listings/listings.html" class="nav-link w-nav-link">Listing 1</a>
-            <a href="listings/listings-2.html" class="nav-link w-nav-link">Listing 2</a>
+            <a href="#" class="nav-link w-nav-link">Listing 2</a>
             <a href="#" class="nav-link w-nav-link">Listing 3</a>
           </div>
           <div class="nav-block">
             <a href="#" class="nav-link w-nav-link">Agents 1</a>
             <a href="#" class="nav-link w-nav-link">Agents 2</a>
-            <a href="teams/team-3.html" class="nav-link w-nav-link">Agents 3</a>
+            <a href="#" class="nav-link w-nav-link">Agents 3</a>
           </div>
         </div>
         <div class="nav-grid-03-col">
@@ -135,7 +424,7 @@
         </div>
       </nav>
     </div>
-    <a href="realty-resources.html" role="button" data-w-id="1975ff8a-da21-5818-78f4-c54ff88a2cc8" class="hero-button-3 nav-button w-inline-block">
+    <a href="#" role="button" data-w-id="1975ff8a-da21-5818-78f4-c54ff88a2cc8" class="hero-button-3 nav-button w-inline-block">
       <div class="button-mask">
         <div class="link-text-wrp">
           <div class="text-block-24">Log in</div>
@@ -147,27 +436,316 @@
   <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" data-doc-height="1" role="banner" class="navbar w-nav">
     <a href="index.html" class="link-block-7 w-inline-block"><img src="images/TOR.png" loading="lazy" width="162" sizes="162px" alt="" srcset="images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-500.png 500w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-800.png 800w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1080.png 1080w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-1600.png 1600w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2000.png 2000w, images/1394a00d76ce9dd861ade690dfb1a058_TOR-p-2600.png 2600w, images/TOR.png 2851w" class="image-100"></a>
     <div class="container-nav w-container">
+      <div class="w-embed w-script"><!--  =========================================================
+  TOR • EXECUTIVE FINANCIAL HEADER
+  v1.0.0 • THEWING MORTGAGE FLOW
+  SHOWS:
+  - Income
+  - Mortgage
+  - Remaining
+  - Buying Power
+  STORAGE:
+  - tor.intelligence.v1
+  - tor.mortgage.v1
+  - tor.bridge.v1
+  EVENTS:
+  - tor:intelligence-updated
+  - tor:mortgage-updated
+=========================================================  -->
+        <div id="tor-header-financial" style="all:initial;">
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+          <style>
+#tor-header-financial,
+#tor-header-financial *{
+  box-sizing:border-box;
+  font-family:Inter,sans-serif;
+}
+#tor-header-financial{
+  display:block;
+  width:100%;
+}
+#tor-header-financial .tor-fin-wrap{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+#tor-header-financial .tor-fin-grid{
+  width:min(430px,100%);
+  display:grid;
+  grid-template-columns:repeat(4,minmax(92px,1fr));
+  gap:8px;
+}
+#tor-header-financial .tor-fin-tile{
+  position:relative;
+  min-height:34px;
+  padding:7px 13px 8px;
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.14),
+      rgba(255,255,255,.06)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 8px 20px rgba(0,0,0,.26);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+#tor-header-financial .tor-fin-tile::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(183,139,71,.42),
+      transparent
+    );
+}
+#tor-header-financial .tor-fin-label{
+  margin-bottom:2px;
+  color:rgba(255,255,255,.52);
+  font-size:8px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+#tor-header-financial .tor-fin-value{
+  color:#fff;
+  font-size:13px;
+  line-height:1.05;
+  font-weight:900;
+  letter-spacing:-.03em;
+}
+#tor-header-financial .tor-fin-value.is-gold{
+  color:#d3aa67;
+}
+#tor-header-financial .tor-fin-tile.is-loading .tor-fin-value{
+  opacity:.55;
+}
+@media(max-width:760px){
+  #tor-header-financial .tor-fin-grid{
+    grid-template-columns:repeat(2,minmax(110px,1fr));
+    width:100%;
+  }
+  #tor-header-financial .tor-fin-tile{
+    border-radius:14px;
+    min-height:44px;
+  }
+  #tor-header-financial .tor-fin-label{
+    font-size:9px;
+  }
+  #tor-header-financial .tor-fin-value{
+    font-size:15px;
+  }
+}
+</style>
+          <div class="tor-fin-wrap">
+            <div class="tor-fin-grid">
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Income</span>
+                <span class="tor-fin-value" id="tor-header-income">$0</span>
+              </div>
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Mortgage</span>
+                <span class="tor-fin-value" id="tor-header-mortgage">$0</span>
+              </div>
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Remaining</span>
+                <span class="tor-fin-value is-gold" id="tor-header-remaining">$0</span>
+              </div>
+              <div class="tor-fin-tile is-loading">
+                <span class="tor-fin-label">Buying Power</span>
+                <span class="tor-fin-value" id="tor-header-grade">---</span>
+              </div>
+            </div>
+          </div>
+          <script>
+(function(){
+"use strict";
+const STORAGE = {
+  intelligence : "tor.intelligence.v1",
+  mortgage     : "tor.mortgage.v1",
+  bridge       : "tor.bridge.v1"
+};
+const root =
+  document.getElementById(
+    "tor-header-financial"
+  );
+if(!root) return;
+const els = {
+  income:
+    root.querySelector("#tor-header-income"),
+  mortgage:
+    root.querySelector("#tor-header-mortgage"),
+  remaining:
+    root.querySelector("#tor-header-remaining"),
+  grade:
+    root.querySelector("#tor-header-grade")
+};
+const tiles =
+  Array.from(
+    root.querySelectorAll(".tor-fin-tile")
+  );
+function readJson(key,fallback){
+  try{
+    const raw =
+      localStorage.getItem(key);
+    return raw
+      ? JSON.parse(raw)
+      : fallback;
+  }catch(e){
+    return fallback;
+  }
+}
+function num(v){
+  return Number(
+    String(v || "")
+      .replace(/[$,]/g,"")
+  ) || 0;
+}
+function money(v){
+  return "$" +
+    num(v).toLocaleString(
+      "en-US",
+      {
+        maximumFractionDigits:0
+      }
+    );
+}
+function setLoading(state){
+  tiles.forEach(function(tile){
+    tile.classList.toggle(
+      "is-loading",
+      !!state
+    );
+  });
+}
+function getGrade(income,mortgage){
+  if(!income || !mortgage)
+    return "---";
+  const ratio =
+    mortgage / income;
+  if(ratio <= .25)
+    return "Strong";
+  if(ratio <= .35)
+    return "Good";
+  if(ratio <= .45)
+    return "Risk";
+  return "High";
+}
+function paint(data){
+  const income =
+    num(
+      data.monthly_income
+    );
+  const mortgage =
+    num(
+      data.estimated_mortgage
+    );
+  const remaining =
+    num(
+      data.remaining_cashflow
+    );
+  els.income.textContent =
+    money(income);
+  els.mortgage.textContent =
+    money(mortgage);
+  els.remaining.textContent =
+    money(remaining);
+  els.grade.textContent =
+    getGrade(
+      income,
+      mortgage
+    );
+  setLoading(false);
+}
+function refresh(){
+  const intelligence =
+    readJson(
+      STORAGE.intelligence,
+      {}
+    );
+  const mortgage =
+    readJson(
+      STORAGE.mortgage,
+      {}
+    );
+  const bridge =
+    readJson(
+      STORAGE.bridge,
+      {}
+    );
+  const merged = {
+    ...bridge,
+    ...mortgage,
+    ...intelligence
+  };
+  paint(merged);
+}
+refresh();
+window.addEventListener(
+  "tor:intelligence-updated",
+  refresh
+);
+window.addEventListener(
+  "tor:mortgage-updated",
+  refresh
+);
+window.addEventListener(
+  "storage",
+  function(e){
+    if(
+      e.key === STORAGE.intelligence ||
+      e.key === STORAGE.mortgage ||
+      e.key === STORAGE.bridge
+    ){
+      refresh();
+    }
+  }
+);
+window.TOR_FINANCIAL_HEADER = {
+  refresh
+};
+})();
+</script>
+        </div>
+      </div>
       <nav role="navigation" class="nav-menu w-nav-menu">
         <div class="nav-grid">
           <div class="nav-block">
             <a href="index.html" class="nav-link w-nav-link">Home 1</a>
-            <a href="home/home-2.html" class="nav-link w-nav-link">Home 2</a>
+            <a href="#" class="nav-link w-nav-link">Home 2</a>
             <a href="military-realty.html" aria-current="page" class="nav-link w-nav-link w--current">SEx</a>
           </div>
           <div class="nav-block">
-            <a href="realty-resources.html" class="nav-link w-nav-link">About 1</a>
+            <a href="#" class="nav-link w-nav-link">About 1</a>
             <a href="about-us.html" class="nav-link w-nav-link">About 2</a>
             <a href="#" class="nav-link w-nav-link">SEXy</a>
           </div>
           <div class="nav-block">
             <a href="listings/listings.html" class="nav-link w-nav-link">Listing 1</a>
-            <a href="listings/listings-2.html" class="nav-link w-nav-link">Listing 2</a>
+            <a href="#" class="nav-link w-nav-link">Listing 2</a>
             <a href="#" class="nav-link w-nav-link">Listing 3</a>
           </div>
           <div class="nav-block">
             <a href="#" class="nav-link w-nav-link">Agents 1</a>
             <a href="#" class="nav-link w-nav-link">Agents 2</a>
-            <a href="teams/team-3.html" class="nav-link w-nav-link">Agents 3</a>
+            <a href="#" class="nav-link w-nav-link">Agents 3</a>
           </div>
         </div>
         <div class="nav-grid-03-col">
@@ -189,7 +767,7 @@
         </div>
       </nav>
     </div>
-    <a href="realty-resources.html" role="button" data-w-id="1975ff8a-da21-5818-78f4-c54ff88a2cc8" class="hero-button-3 nav-button w-inline-block">
+    <a href="#" role="button" data-w-id="1975ff8a-da21-5818-78f4-c54ff88a2cc8" class="hero-button-3 nav-button w-inline-block">
       <div class="button-mask">
         <div class="link-text-wrp">
           <div class="text-block-24">Log in</div>
@@ -212,12 +790,12 @@
         <div class="hero-overlay"></div>
         <div class="hero-wrapper">
           <div class="home-hero-03">
-            <h6 class="slide-in-from-right-animation">Supporting our</h6>
+            <h6 class="slide-in-from-right-animation">Exclusive For Our</h6>
             <h1 class="slide-in-from-right-animation">Military Community</h1>
-            <h5 class="home-hero-description-03 slide-in-from-right-animation">Our portfolio includes exquisite properties nestled in prime locations and prestigious neighborhoods renowned for their desirability.</h5>
+            <h5 class="home-hero-description-03 slide-in-from-right-animation">Re-Designed with Service Members in Mind. OrozcoRealty transforms into a BasePay, BAH, and PCS Specialist. <br>Finally a Website the Military Community Deserves. .</h5>
             <div class="space-text"></div>
             <div class="button-wrapper">
-              <a href="realty-resources.html" data-w-id="60c7bd8b-8cdc-75c3-eb77-19a2c27ec214" target="_blank" class="button w-inline-block">
+              <a href="/listings" data-w-id="60c7bd8b-8cdc-75c3-eb77-19a2c27ec214" class="button w-inline-block">
                 <div class="button-text-with-overlay">Sign In</div>
                 <div class="button-overlay"></div>
               </a>
@@ -227,7 +805,7 @@
       </div>
     </div>
   </section>
-  <h6 class="heading-72">Benefits for the military community</h6>
+  <h6 class="heading-72">Unique Benefits for Military community</h6>
   <div class="snapshot-and-va-cab">
     <div class="w-layout-blockcontainer container-full-copy listings-01 w-container">
       <div class="title-wrapper align-left slide-in-from-left-animation">
@@ -907,7 +1485,7 @@
         <h6 class="centered-on-mobile-small">Obtain The benefits you deserve</h6>
         <h2 class="heading-80">Create Your Military Account Today</h2>
         <p class="features-description-copy">VA Home Loan offers unique financial benefits, designed only for the Military Community. Before you Apply, lets talk about the Why, How and Should You, when it come to the VA Loan.<br></p>
-        <a href="military/create-account.html" data-w-id="8b4173d1-c16d-c532-eb70-8cfbe7843fe8" class="button-white w-inline-block">
+        <a href="create-account.html" data-w-id="8b4173d1-c16d-c532-eb70-8cfbe7843fe8" target="_blank" class="button-white w-inline-block">
           <div class="button-black-text-with-overlay">Create Military Account</div>
           <div class="button-primary-overlay"></div>
         </a>
@@ -915,7 +1493,7 @@
       <div class="features-image-wrapper">
         <div class="w-layout-hflex flex-features-image reverse-images-on-tab">
           <div class="features-image-wrapper-03"><img src="images/Backdropaboutus.jpg" loading="lazy" sizes="(max-width: 1680px) 100vw, 1680px" srcset="images/Backdropaboutus-p-500.jpg 500w, images/Backdropaboutus-p-800.jpg 800w, images/Backdropaboutus-p-1080.jpg 1080w, images/Backdropaboutus-p-1600.jpg 1600w, images/Backdropaboutus.jpg 1680w" alt="" class="features-image"></div>
-          <div class="features-image-wrapper-04"><img src="images/us_1.jpg" loading="lazy" sizes="100vw" srcset="images/us_1-p-500.jpg 500w, images/us_1-p-800.jpg 800w, images/us_1-p-1080.jpg 1080w, images/us_1-p-1600.jpg 1600w, images/us_1-p-2000.jpg 2000w, images/us_1.jpg 2475w" alt="" class="features-image"></div>
+          <div class="features-image-wrapper-04"><img src="images/us_1.jpg" loading="lazy" sizes="(max-width: 2475px) 100vw, 2475px" srcset="images/us_1-p-500.jpg 500w, images/us_1-p-800.jpg 800w, images/us_1-p-1080.jpg 1080w, images/us_1-p-1600.jpg 1600w, images/us_1-p-2000.jpg 2000w, images/us_1.jpg 2475w" alt="" class="features-image"></div>
         </div>
         <div class="gradient-overlay"></div>
       </div>
@@ -974,21 +1552,21 @@
                 <div class="footer-links-title">Explore</div>
                 <a href="listings/listings.html" class="footer-link">Listings</a><img src="images/instagram-black_1instagram-black.webp" loading="lazy" width="10" alt="Instagram Icon Image Black">
                 <a href="#" class="footer-link">Agents</a>
-                <a href="realty-resources.html" class="footer-link">About</a>
+                <a href="#" class="footer-link">About</a>
                 <a href="blogs-and-more.html" class="footer-link">Blog</a>
                 <a href="contact-us/contact-us.html" class="footer-link">Contact</a>
               </div>
               <div class="footer-links-text">
                 <div class="footer-links-title">Utilities</div>
                 <a href="#" class="footer-link">Home Sales</a>
-                <a href="utilities/style-guide.html" class="footer-link">Style Guide</a>
+                <a href="utilities/information.html" class="footer-link">Style Guide</a>
                 <a href="#" class="footer-link">Instructions</a>
                 <a href="utilities/licenses.html" class="footer-link">Licenses</a>
                 <a href="utilities/licenses.html" class="footer-link">Changelog</a>
               </div>
               <div class="footer-links-text">
                 <div class="footer-links-title">Contact</div>
-                <p class="footer-text">3506 Lara Laredo Tx, 78046 United State<br></p>
+                <p class="footer-text">PCS 180 Box 12666, <br>APO AP United State<br></p>
                 <div class="flex-footer"><img src="images/call_1call.webp" loading="lazy" alt="phone white icon" class="footer-icon">
                   <div class="footer-text">(555) 337-9087</div>
                 </div>
@@ -997,7 +1575,7 @@
                   <div class="footer-social-links-wrapper-copy invert">
                     <a href="https://www.instagram.com/" target="_blank" class="footer-social-link w-inline-block"><img src="images/instagram-black_1instagram-black.webp" loading="lazy" alt="Instagram Icon Image Black" class="footer-social-link-image"></a>
                     <a href="https://facebook.com/" target="_blank" class="footer-social-link w-inline-block"><img src="images/facebook-black_1facebook-black.webp" loading="lazy" alt="facebook icon black" class="footer-social-link-image"></a>
-                    <a href="https://www.twitter.com/" target="_blank" class="footer-social-link w-inline-block"><img src="images/twitter.png" loading="lazy" sizes="(max-width: 512px) 100vw, 512px" srcset="images/twitter-p-500.png 500w, images/twitter.png 512w" alt="" class="footer-social-link-image"></a>
+                    <a href="https://www.twitter.com/" target="_blank" class="footer-social-link w-inline-block"><img src="images/twitter.png" loading="lazy" sizes="100vw" srcset="images/twitter-p-500.png 500w, images/twitter.png 512w" alt="" class="footer-social-link-image"></a>
                     <a href="https://www.youtube.com/" target="_blank" class="footer-social-link w-inline-block"><img src="images/youtube-black_1youtube-black.webp" loading="lazy" alt="YouTube White Icon Image Black" class="footer-social-link-image"></a>
                   </div>
                 </div>
