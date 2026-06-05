@@ -1,0 +1,2089 @@
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Jun 05 2026 06:24:43 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="6a226abb1ebd72967e751acf" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Realtor Calculator</title>
+  <meta content="Realtor Calculator" property="og:title">
+  <meta content="Realtor Calculator" name="twitter:title">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="Webflow" name="generator">
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/orozcorealty.webflow.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script type="text/javascript">WebFont.load({  google: {    families: ["PT Serif:400,400italic,700,700italic","Droid Serif:400,400italic,700,700italic","Varela:400","Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Inconsolata:400,700","Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Barlow:300,400,500,600,700","Barlow Condensed:300,400,500,600,700","Gilda Display:300,400,500,600,700","Material Icons Outlined:300,400,500,600,700","Material Icons Two Tone:300,400,500,600,700","Material Symbols Outlined:300,400,500,600,700"]  }});</script>
+  <script type="text/javascript">!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);</script>
+  <link href="images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="images/webclip.png" rel="apple-touch-icon">
+</head>
+<body>
+  <div class="w-embed w-script"><!--  ============================================================
+  RealtySaSS • Financial Calculator (SHELL ONLY)
+  v1.3.0 — Split Embeds
+  EMBED #1 of 4: SHELL (HTML + CSS only)
+  ✅ Notes footer replaced with Ask-Elena dock input
+  ✅ Adds in-card Ask-Elena full panel (hidden until opened)
+  ❗No JS in this embed
+============================================================  -->
+    <div id="rs-fin-calc" style="all: initial;">
+      <!--  =========================
+    #1) FONTS + CHART.JS (needed for viz embed)
+  ==========================  -->
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+      <!--  =========================
+    #2) STYLES — SNAPSHOT MATCH + TOGGLE + AI PANE
+  ==========================  -->
+      <style>
+    /* --- scope reset --- */
+    #rs-fin-calc, #rs-fin-calc *{
+      box-sizing:border-box;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    #rs-fin-calc{ width:100%; color:#F2F7FF; }
+    /* --- tokens --- */
+    #rs-fin-calc{
+      --stroke:rgba(180,210,255,.16);
+      --stroke2:rgba(180,210,255,.28);
+      --ink:#F2F7FF;
+      --muted:rgba(242,247,255,.72);
+      --muted2:rgba(242,247,255,.52);
+      --ok:#46E6B3;
+      --warn:#FFD166;
+      --bad:#FF5C7A;
+      --accent:#66B2FF;
+      --accent2:#B9F3FF;
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --shadow: 0 18px 55px rgba(0,0,0,.60);
+      --shadow2: 0 10px 26px rgba(0,0,0,.38);
+    }
+    .rs-wrap{ width:min(1040px, 100%); margin:0 auto; padding:18px 14px 22px; }
+    .rs-card{
+      border-radius:var(--r20);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(102,178,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 92% 12%, rgba(185,243,255,.10), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    /* --- header --- */
+    .rs-head{
+      padding:16px 18px 14px;
+      border-bottom:1px solid rgba(180,210,255,.12);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .rs-title{ display:flex; flex-direction:column; gap:4px; min-width:0; }
+    .rs-title h1{ margin:0; font-size:22px; letter-spacing:.2px; font-weight:950; line-height:1.05; }
+    .rs-title p{ margin:0; color:var(--muted); font-size:13px; line-height:1.35; font-weight:600; }
+    /* --- Visualization pill (CLICKABLE) --- */
+    .rs-visPill{
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:rgba(0,0,0,.28);
+      border:1px solid var(--stroke);
+      color:var(--muted);
+      font-size:12.5px;
+      font-weight:900;
+      white-space:nowrap;
+      user-select:none;
+      cursor:pointer;
+      transition:.14s ease;
+    }
+    .rs-visPill:hover{
+      border-color:var(--stroke2);
+      transform:translateY(-1px);
+      color:var(--ink);
+    }
+    .rs-visDot{
+      width:10px; height:10px;
+      border-radius:50%;
+      background:linear-gradient(180deg, rgba(102,178,255,.95), rgba(102,178,255,.55));
+      box-shadow:0 0 0 3px rgba(102,178,255,.12);
+    }
+    /* ACTIVE (green) */
+    .rs-visPill.is-on{
+      border-color:rgba(70,230,179,.55);
+      background:
+        radial-gradient(160px 80px at 20% 30%, rgba(70,230,179,.22), transparent 70%),
+        rgba(0,0,0,.26);
+      color:rgba(242,247,255,.92);
+      box-shadow:0 12px 30px rgba(70,230,179,.10);
+      transform:none;
+    }
+    .rs-visPill.is-on .rs-visDot{
+      background:linear-gradient(180deg, rgba(70,230,179,.95), rgba(70,230,179,.55));
+      box-shadow:0 0 0 3px rgba(70,230,179,.12);
+    }
+    /* --- tabs --- */
+    .rs-tabs{
+      display:flex;
+      gap:10px;
+      padding:12px 14px 0;
+      flex-wrap:wrap;
+    }
+    .rs-tab{
+      appearance:none;
+      border:1px solid rgba(180,210,255,.16);
+      background:rgba(0,0,0,.30);
+      color:rgba(242,247,255,.78);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12.5px;
+      cursor:pointer;
+      transition:.15s ease;
+      user-select:none;
+    }
+    .rs-tab:hover{ border-color:rgba(180,210,255,.28); color:var(--ink); transform:translateY(-1px); }
+    .rs-tab[aria-selected="true"]{
+      background:
+        radial-gradient(140px 70px at 25% 30%, rgba(102,178,255,.38), transparent 70%),
+        linear-gradient(180deg, rgba(102,178,255,.22), rgba(0,0,0,.25));
+      border-color:rgba(102,178,255,.70);
+      color:var(--ink);
+      box-shadow:0 10px 28px rgba(102,178,255,.12);
+    }
+    /* --- view switch --- */
+    .rs-view{ display:none; }
+    .rs-view.is-active{ display:block; }
+    /* --- calculator grid --- */
+    .rs-body{
+      display:grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap:14px;
+      padding:14px;
+    }
+    @media (max-width: 920px){ .rs-body{ grid-template-columns:1fr; } }
+    .rs-panel{
+      border-radius:var(--r16);
+      border:1px solid rgba(180,210,255,.14);
+      background:rgba(0,0,0,.26);
+      box-shadow:var(--shadow2);
+      overflow:hidden;
+    }
+    .rs-panel .rs-panel-h{
+      padding:12px 12px 10px;
+      border-bottom:1px solid rgba(180,210,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .rs-panel .rs-panel-h h2{ margin:0; font-size:13px; font-weight:950; letter-spacing:.2px; }
+    .rs-panel .rs-panel-h span{ color:rgba(242,247,255,.60); font-size:12px; font-weight:800; white-space:nowrap; }
+    .rs-panel .rs-panel-b{ padding:12px; }
+    .rs-formulaStrip{
+      border-radius:14px;
+      border:1px solid rgba(180,210,255,.14);
+      background:rgba(0,0,0,.22);
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .rs-formulaStrip b{
+      color:rgba(242,247,255,.78);
+      font-size:12px;
+      font-weight:950;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .rs-formulaStrip .rs-formulaText{
+      color:rgba(242,247,255,.70);
+      font-size:12px;
+      font-weight:800;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .rs-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    @media (max-width: 560px){ .rs-grid{ grid-template-columns:1fr; } }
+    .rs-field{ display:flex; flex-direction:column; gap:6px; }
+    .rs-label{
+      font-size:12px;
+      font-weight:950;
+      color:rgba(242,247,255,.72);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .rs-hint{ font-size:11px; font-weight:800; color:rgba(242,247,255,.48); white-space:nowrap; }
+    .rs-input, .rs-select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(180,210,255,.16);
+      background:rgba(255,255,255,.06);
+      color:var(--ink);
+      outline:none;
+      font-size:14px;
+      font-weight:800;
+      transition:.12s ease;
+    }
+    .rs-input::placeholder{ color:rgba(242,247,255,.32); font-weight:800; }
+    .rs-input:focus, .rs-select:focus{
+      border-color:rgba(102,178,255,.70);
+      box-shadow:0 0 0 4px rgba(102,178,255,.14);
+    }
+    .rs-select{
+      appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(242,247,255,.70) 50%),
+        linear-gradient(135deg, rgba(242,247,255,.70) 50%, transparent 50%),
+        linear-gradient(to right, transparent, transparent);
+      background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 12px) 50%,
+        0 0;
+      background-size:6px 6px, 6px 6px, 100% 100%;
+      background-repeat:no-repeat;
+      padding-right:34px;
+    }
+    .rs-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+    .rs-btn{
+      appearance:none;
+      border:1px solid rgba(102,178,255,.70);
+      background:
+        radial-gradient(220px 110px at 20% 25%, rgba(102,178,255,.40), transparent 65%),
+        linear-gradient(180deg, rgba(102,178,255,.22), rgba(0,0,0,.28));
+      color:var(--ink);
+      padding:11px 16px;
+      border-radius:14px;
+      font-weight:950;
+      font-size:13px;
+      cursor:pointer;
+      transition:.15s ease;
+      box-shadow:0 14px 30px rgba(102,178,255,.12);
+    }
+    .rs-btn:hover{ transform:translateY(-1px); border-color:rgba(185,243,255,.70); }
+    .rs-btn:active{ transform:translateY(0px); }
+    .rs-btn.secondary{
+      border:1px solid rgba(180,210,255,.16);
+      background:rgba(0,0,0,.25);
+      color:rgba(242,247,255,.70);
+      box-shadow:none;
+    }
+    .rs-btn.secondary:hover{ border-color:rgba(180,210,255,.28); color:var(--ink); }
+    .rs-err{
+      border:1px solid rgba(255,92,122,.35);
+      background:rgba(255,92,122,.10);
+      color:rgba(255,225,232,.95);
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:900;
+      font-size:12.5px;
+      display:none;
+      margin-bottom:10px;
+    }
+    .rs-err.show{ display:block; }
+    /* --- results right --- */
+    .rs-result{ display:flex; flex-direction:column; gap:10px; }
+    .rs-kpi{
+      border-radius:var(--r16);
+      border:1px solid rgba(102,178,255,.28);
+      background:
+        radial-gradient(520px 250px at 18% 0%, rgba(102,178,255,.18), transparent 58%),
+        rgba(0,0,0,.22);
+      padding:12px;
+    }
+    .rs-kpiTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .rs-kpiTop strong{
+      font-size:12px;
+      letter-spacing:.2px;
+      font-weight:950;
+      color:rgba(242,247,255,.70);
+    }
+    .rs-kpiVal{
+      font-size:28px;
+      font-weight:1000;
+      letter-spacing:.2px;
+      line-height:1.05;
+      color:var(--accent2);
+      text-shadow:0 0 18px rgba(185,243,255,.10);
+    }
+    .rs-kpiSub{
+      margin-top:6px;
+      font-size:12px;
+      color:rgba(242,247,255,.55);
+      font-weight:800;
+      line-height:1.35;
+    }
+    .rs-box{
+      border-radius:var(--r16);
+      border:1px solid rgba(180,210,255,.14);
+      background:rgba(255,255,255,.05);
+      padding:12px;
+    }
+    .rs-box h3{
+      margin:0 0 6px 0;
+      font-size:12px;
+      font-weight:950;
+      color:rgba(242,247,255,.70);
+      letter-spacing:.2px;
+    }
+    .rs-mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+      font-size:12px;
+      color:rgba(242,247,255,.82);
+      line-height:1.45;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    /* decimals switch */
+    .rs-toggle{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:rgba(242,247,255,.70);
+      font-size:12px;
+      font-weight:900;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .rs-switch{
+      position:relative;
+      width:42px;
+      height:22px;
+      border-radius:999px;
+      border:1px solid rgba(180,210,255,.18);
+      background:rgba(0,0,0,.30);
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+    .rs-switchKnob{
+      position:absolute;
+      top:3px;
+      left:3px;
+      width:16px;
+      height:16px;
+      border-radius:50%;
+      background:rgba(242,247,255,.70);
+      transition:.15s ease;
+      box-shadow:0 6px 16px rgba(0,0,0,.35);
+    }
+    .rs-switch.on{
+      border-color:rgba(185,243,255,.35);
+      background:rgba(102,178,255,.18);
+    }
+    .rs-switch.on .rs-switchKnob{
+      left:23px;
+      background:var(--accent2);
+      box-shadow:0 0 0 3px rgba(185,243,255,.10), 0 6px 16px rgba(0,0,0,.35);
+    }
+    /* --- Visualization view (full width chart) --- */
+    .viz-pad{ padding:14px; }
+    .viz-shell{
+      border-radius:var(--r16);
+      border:1px solid rgba(180,210,255,.14);
+      background:rgba(0,0,0,.26);
+      box-shadow:var(--shadow2);
+      overflow:hidden;
+    }
+    .viz-head{
+      padding:12px 12px 10px;
+      border-bottom:1px solid rgba(180,210,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      position:relative;
+      min-height:44px;
+    }
+    .viz-legend{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:950;
+      color:rgba(242,247,255,.82);
+      letter-spacing:.2px;
+    }
+    .viz-chip{
+      width:44px;
+      height:12px;
+      border-radius:3px;
+      border:2px solid rgba(102,178,255,.95);
+      background:rgba(102,178,255,.10);
+      box-shadow:0 10px 24px rgba(102,178,255,.10);
+    }
+    .viz-value{
+      font-weight:1000;
+      color:rgba(242,247,255,.86);
+    }
+    .viz-wrap{ padding:12px; }
+    .viz-panel{
+      border-radius:var(--r16);
+      border:1px solid rgba(180,210,255,.14);
+      background:rgba(0,0,0,.22);
+      overflow:hidden;
+      padding:12px;
+    }
+    .viz-canvasWrap{
+      border-radius:14px;
+      border:1px solid rgba(180,210,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(0,0,0,.12));
+      padding:10px;
+      height:460px;
+    }
+    #rs-fin-calc canvas{ width:100% !important; height:100% !important; }
+    .viz-warn{
+      display:none;
+      border:1px solid rgba(255,92,122,.35);
+      background:rgba(255,92,122,.10);
+      color:rgba(255,225,232,.95);
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:900;
+      font-size:12.5px;
+      margin:12px;
+    }
+    .viz-warn.show{ display:block; }
+    /* ============================================================
+      NEW: Footer Ask-Elena dock (replaces Notes)
+    ============================================================ */
+    .rs-foot{
+      padding:12px 14px 14px;
+      border-top:1px solid rgba(180,210,255,.10);
+      background:rgba(0,0,0,.18);
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    .rs-aiInput{
+      width:100%;
+      height:44px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.11);
+      background: rgba(12,14,25,.32);
+      color: rgba(242,247,255,.94);
+      font-size: 13px;
+      font-weight: 800;
+      outline:none;
+      padding: 10px 12px;
+      transition: border-color .14s ease, box-shadow .14s ease, filter .14s ease;
+    }
+    .rs-aiInput::placeholder{ color: rgba(242,247,255,.42); font-weight: 800; }
+    .rs-aiInput:focus{
+      border-color: rgba(70,230,179,.50);
+      box-shadow: 0 0 0 3px rgba(70,230,179,.12);
+      filter: brightness(1.02);
+    }
+    .rs-aiSend{
+      height: 44px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, rgba(70,230,179,1), rgba(102,178,255,.95));
+      color:#06112b;
+      box-shadow: 0 14px 28px rgba(0,0,0,.50);
+      transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
+      user-select:none;
+    }
+    .rs-aiSend:hover{ transform: translateY(-1px); filter: brightness(1.03); box-shadow: 0 18px 34px rgba(0,0,0,.58); }
+    .rs-aiSend:active{ transform: translateY(0); filter: brightness(.99); }
+    .rs-aiSend:disabled{ opacity:.6; cursor:not-allowed; transform:none; box-shadow:none; }
+    /* ============================================================
+      NEW: In-card Ask-Elena full panel (covers main section)
+    ============================================================ */
+    #rs-aiPane{
+      display:none;
+      position:absolute;
+      left:0; right:0;
+      top:0;
+      bottom:0;
+      z-index: 20;
+      background:
+        radial-gradient(1200px 700px at 12% 0%, rgba(106,167,255,.14), transparent 58%),
+        radial-gradient(900px 520px at 92% 120%, rgba(70,230,179,.10), transparent 55%),
+        rgba(12,14,25,.46);
+      -webkit-backdrop-filter: blur(22px) saturate(175%);
+      backdrop-filter: blur(22px) saturate(175%);
+    }
+    #rs-aiPane[data-open="1"]{ display:grid; grid-template-rows: auto 1fr auto; }
+    .rs-aiHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,0));
+    }
+    .rs-aiTitleWrap{ display:flex; align-items:center; gap:12px; min-width:0; }
+    .rs-aiAvatar{
+      width: 34px; height: 34px; border-radius: 999px; flex:0 0 auto;
+      background-image: url("https://cdn.prod.website-files.com/69658389f59da527c04bcbd4/6965838af59da527c04bd03b_34deddc0ea637cb5627a4b008f89aa8c_people2.png");
+      background-size: cover; background-position:center;
+      border: 2px solid rgba(255,255,255,.20);
+      box-shadow: 0 0 16px rgba(106,167,255,.14), 0 0 18px rgba(70,230,179,.10);
+    }
+    .rs-aiTitle{
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(233,236,255,.92);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      line-height:1.05;
+    }
+    .rs-aiSub{
+      font-size: 11px;
+      color: rgba(168,176,214,.88);
+      font-weight: 800;
+      margin-top: 4px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .rs-aiClose{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      color: rgba(233,236,255,.92);
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 1000;
+      transition: transform .14s ease, filter .14s ease, border-color .14s ease;
+      user-select:none;
+    }
+    .rs-aiClose:hover{
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      border-color: rgba(70,230,179,.30);
+    }
+    .rs-aiChat{
+      padding: 14px 14px 10px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      background:
+        radial-gradient(900px 520px at 30% -20%, rgba(106,167,255,.10), transparent 60%),
+        radial-gradient(800px 520px at 80% 120%, rgba(70,230,179,.08), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.10));
+      scroll-behavior:smooth;
+    }
+    .rs-aiMsg{
+      max-width: 86%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      line-height: 1.45;
+      font-size: 13px;
+      white-space: pre-wrap;
+      color: rgba(233,236,255,.94) !important;
+      border: 1px solid rgba(255,255,255,.11);
+      background: rgba(0,0,0,.12);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      backdrop-filter: blur(12px) saturate(150%);
+      box-shadow: var(--shadow2);
+    }
+    .rs-aiUser{
+      align-self:flex-end;
+      background: rgba(70,230,179,.07);
+      border-color: rgba(70,230,179,.24);
+      box-shadow: 0 0 18px rgba(70,230,179,.07);
+    }
+    .rs-aiBot{ align-self:flex-start; }
+    .rs-aiTyping{ font-size:12px; opacity:.85; }
+    .rs-aiMsg small{
+      display:block;
+      margin-top:8px;
+      color: rgba(168,176,214,.90);
+      font-weight: 900;
+      font-size: 10.5px;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+    }
+    .rs-aiFooter{
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding: 12px 14px;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      background: rgba(0,0,0,.08);
+    }
+    #rs-aiInput{
+      width:100%;
+      outline:none;
+      border:1px solid rgba(255,255,255,.11);
+      background: rgba(12,14,25,.40);
+      color: rgba(233,236,255,.94) !important;
+      padding: 12px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    #rs-aiInput::placeholder{ color: rgba(233,236,255,.42); }
+    #rs-aiSend{
+      height: 44px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, rgba(70,230,179,1), rgba(102,178,255,.95));
+      color:#06112b;
+      box-shadow: 0 14px 28px rgba(0,0,0,.50);
+      transition: transform .14s ease, filter .14s ease, box-shadow .14s ease;
+      user-select:none;
+    }
+    #rs-aiSend:hover{ transform: translateY(-1px); filter: brightness(1.03); box-shadow: 0 18px 34px rgba(0,0,0,.58); }
+    #rs-aiSend:active{ transform: translateY(0); filter: brightness(.99); }
+    #rs-aiSend:disabled{ opacity:.6; cursor:not-allowed; transform:none; box-shadow:none; }
+    .tw-caret{
+      display:inline-block;
+      width:1px;
+      height:1.2em;
+      margin-left:2px;
+      background: currentColor;
+      animation: tw-blink 1s steps(1,end) infinite;
+    }
+    @keyframes tw-blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce){
+      .tw-caret{ animation:none; }
+    }
+  </style>
+      <!--  =========================
+    #3) MARKUP
+  ==========================  -->
+      <div class="rs-wrap">
+        <div class="rs-card" id="rs-card">
+          <div class="rs-head">
+            <div class="rs-title">
+              <h1>Financial Calculator</h1>
+              <p>Pick the calculation, enter inputs, hit <b>Analyze</b>. Clean, fast, class-ready.</p>
+            </div>
+            <!--  Visualization toggle (JS in Embed #3 will bind)  -->
+            <button class="rs-visPill" id="rs-vizToggle" type="button" aria-pressed="false" title="Toggle Visualization">
+              <span class="rs-visDot" aria-hidden="true"></span>
+              <span>Visualization</span>
+            </button>
+          </div>
+          <div class="rs-tabs" role="tablist" aria-label="Calculator tabs">
+            <button class="rs-tab" role="tab" data-mode="fv" aria-selected="true">Compounding &amp; Future Value</button>
+            <button class="rs-tab" role="tab" data-mode="pv" aria-selected="false">Present Value</button>
+            <button class="rs-tab" role="tab" data-mode="ann" aria-selected="false">Annuities</button>
+            <button class="rs-tab" role="tab" data-mode="perp" aria-selected="false">Perpetuity</button>
+          </div>
+          <!--  VIEW A) CALCULATOR  -->
+          <div id="rs-view-calc" class="rs-view is-active" aria-label="Calculator view">
+            <div class="rs-body">
+              <!--  LEFT: Inputs  -->
+              <div class="rs-panel">
+                <div class="rs-panel-h">
+                  <h2 id="rs-form-title">Compounding &amp; Future Value</h2>
+                  <span aria-hidden="true">&nbsp;</span>
+                </div>
+                <div class="rs-panel-b">
+                  <div class="rs-formulaStrip" aria-label="Formula strip">
+                    <b>Formula:</b>
+                    <div class="rs-formulaText" id="rs-form-sub">FV = PV · (1 + r/m)^(m·t) (or FV = PV · e^(r·t) for continuous)</div>
+                  </div>
+                  <div id="rs-error" class="rs-err"></div>
+                  <div class="rs-grid" id="rs-fields">
+                    <!--  FV fields  -->
+                    <div class="rs-field" data-for="fv">
+                      <div class="rs-label">Present Value (PV) <span class="rs-hint">$</span></div>
+                      <input class="rs-input" id="pv" type="number" step="0.01" placeholder="e.g., 10000">
+                    </div>
+                    <div class="rs-field" data-for="fv pv ann perp">
+                      <div class="rs-label">Annual Interest Rate (r) <span class="rs-hint">%</span></div>
+                      <input class="rs-input" id="r" type="number" step="0.0001" placeholder="e.g., 6.5">
+                    </div>
+                    <div class="rs-field" data-for="fv pv">
+                      <div class="rs-label">Time (t) <span class="rs-hint">years</span></div>
+                      <input class="rs-input" id="t" type="number" step="0.01" placeholder="e.g., 5">
+                    </div>
+                    <div class="rs-field" data-for="fv pv">
+                      <div class="rs-label">Compounds per Year (m) <span class="rs-hint">#</span></div>
+                      <select class="rs-select" id="m">
+                        <option value="1">1 (Annual)</option>
+                        <option value="2">2 (Semiannual)</option>
+                        <option value="4">4 (Quarterly)</option>
+                        <option value="12" selected="">12 (Monthly)</option>
+                        <option value="365">365 (Daily)</option>
+                        <option value="0">Continuous</option>
+                      </select>
+                    </div>
+                    <!--  PV mode adds FV  -->
+                    <div class="rs-field" data-for="pv">
+                      <div class="rs-label">Future Value (FV) <span class="rs-hint">$</span></div>
+                      <input class="rs-input" id="fv" type="number" step="0.01" placeholder="e.g., 15000">
+                    </div>
+                    <!--  Annuity fields  -->
+                    <div class="rs-field" data-for="ann">
+                      <div class="rs-label">Payment (PMT) <span class="rs-hint">$ per period</span></div>
+                      <input class="rs-input" id="pmt" type="number" step="0.01" placeholder="e.g., 500">
+                    </div>
+                    <div class="rs-field" data-for="ann">
+                      <div class="rs-label">Number of Periods (n) <span class="rs-hint">#</span></div>
+                      <input class="rs-input" id="n" type="number" step="1" placeholder="e.g., 36">
+                    </div>
+                    <div class="rs-field" data-for="ann">
+                      <div class="rs-label">Payments per Year <span class="rs-hint">#</span></div>
+                      <select class="rs-select" id="ppy">
+                        <option value="1">1 (Annual)</option>
+                        <option value="2">2 (Semiannual)</option>
+                        <option value="4">4 (Quarterly)</option>
+                        <option value="12" selected="">12 (Monthly)</option>
+                        <option value="26">26 (Biweekly)</option>
+                        <option value="52">52 (Weekly)</option>
+                      </select>
+                    </div>
+                    <div class="rs-field" data-for="ann">
+                      <div class="rs-label">Annuity Type <span class="rs-hint">timing</span></div>
+                      <select class="rs-select" id="annType">
+                        <option value="ordinary" selected="">Ordinary (end of period)</option>
+                        <option value="due">Annuity Due (beginning of period)</option>
+                      </select>
+                    </div>
+                    <div class="rs-field" data-for="ann">
+                      <div class="rs-label">Solve For <span class="rs-hint">PV or FV</span></div>
+                      <select class="rs-select" id="annSolve">
+                        <option value="pv" selected="">Present Value (PV)</option>
+                        <option value="fv">Future Value (FV)</option>
+                      </select>
+                    </div>
+                    <!--  Perpetuity fields  -->
+                    <div class="rs-field" data-for="perp">
+                      <div class="rs-label">Payment (C) <span class="rs-hint">$ per year</span></div>
+                      <input class="rs-input" id="c" type="number" step="0.01" placeholder="e.g., 12000">
+                    </div>
+                    <div class="rs-field" data-for="perp">
+                      <div class="rs-label">Growth Rate (g) <span class="rs-hint">% optional</span></div>
+                      <input class="rs-input" id="g" type="number" step="0.0001" placeholder="e.g., 2.0 (leave blank if none)">
+                    </div>
+                  </div>
+                  <div class="rs-row">
+                    <button class="rs-btn" id="analyze" type="button">Analyze</button>
+                    <button class="rs-btn secondary" id="reset" type="button">Reset</button>
+                  </div>
+                </div>
+              </div>
+              <!--  RIGHT: Results  -->
+              <div class="rs-panel">
+                <div class="rs-panel-h">
+                  <h2>Results</h2>
+                  <span id="rs-mode-badge">Mode: FV</span>
+                </div>
+                <div class="rs-panel-b rs-result">
+                  <div class="rs-kpi">
+                    <div class="rs-kpiTop">
+                      <strong id="rs-answer-label">Future Value (FV)</strong>
+                      <div class="rs-toggle" id="rs-decimalsWrap" title="Toggle 2 decimals formatting">
+                        <div class="rs-switch on" id="rs-decSwitch" role="switch" aria-checked="true" tabindex="0">
+                          <div class="rs-switchKnob" aria-hidden="true"></div>
+                        </div>
+                        <span id="rs-precision">2 decimals</span>
+                      </div>
+                    </div>
+                    <div class="rs-kpiVal" id="rs-answer">$—</div>
+                    <div class="rs-kpiSub" id="rs-meaning">Enter inputs and click Analyze.</div>
+                  </div>
+                  <div class="rs-box">
+                    <h3>Formula used</h3>
+                    <div class="rs-mono" id="rs-formula">—</div>
+                  </div>
+                  <div class="rs-box">
+                    <h3>Steps (what I did)</h3>
+                    <div class="rs-mono" id="rs-steps">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--  VIEW B) VISUALIZATION  -->
+          <div id="rs-view-viz" class="rs-view" aria-label="Visualization view">
+            <div class="viz-pad">
+              <div class="viz-shell">
+                <div class="viz-head">
+                  <div class="viz-legend" aria-label="Legend">
+                    <span class="viz-chip" aria-hidden="true"></span>
+                    <span class="viz-value" id="viz-topValue">$—</span>
+                  </div>
+                </div>
+                <div id="viz-warn" class="viz-warn"></div>
+                <div class="viz-wrap">
+                  <div class="viz-panel">
+                    <div class="viz-canvasWrap">
+                      <canvas id="viz-chart"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--  NEW FOOTER: Ask Elena dock (replaces Notes)  -->
+          <div class="rs-foot" aria-label="Ask Elena dock">
+            <input id="rs-aiDockInput" class="rs-aiInput" type="text" placeholder="Ask Elena: what formula is this? what’s the intuition? explain like I’m 5…" autocomplete="off">
+            <button id="rs-aiDockSend" class="rs-aiSend" type="button">Send</button>
+          </div>
+          <!--  NEW: In-card Ask-Elena full panel  -->
+          <div id="rs-aiPane" data-open="0" aria-label="Ask Elena panel">
+            <div class="rs-aiHeader">
+              <div class="rs-aiTitleWrap">
+                <div class="rs-aiAvatar" aria-hidden="true"></div>
+                <div style="min-width:0">
+                  <div class="rs-aiTitle">Elena • Finance Tutor</div>
+                  <div class="rs-aiSub">Explain • Steps • Sanity checks • Study help</div>
+                </div>
+              </div>
+              <button class="rs-aiClose" id="rs-aiClose" type="button" aria-label="Close Ask Elena">×</button>
+            </div>
+            <div class="rs-aiChat" id="rs-aiChat"></div>
+            <div class="rs-aiFooter">
+              <input id="rs-aiInput" type="text" placeholder="Type here… (Enter to send)" autocomplete="off">
+              <button id="rs-aiSend" type="button"> Summary </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-embed w-script"><!--  ============================================================
+  RealtySaSS • Financial Calculator (CALCULATOR JS)
+  v1.3.0 — Split Embeds
+  EMBED #2 of 4: CALCULATOR LOGIC (JS only)
+  ✅ All math + modes + results + decimals
+  ✅ Exposes window.RS_FIN_CALC API
+============================================================  -->
+    <script>
+(()=> {
+  "use strict";
+  if (window.RS_FIN_CALC && window.RS_FIN_CALC.__mounted) return;
+  const $ = (sel, root=document)=>root.querySelector(sel);
+  const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+  const root = document.getElementById("rs-fin-calc");
+  if (!root) return;
+  const tabs = $$(".rs-tab", root);
+  const fieldsWrap = $("#rs-fields", root);
+  // views (controlled by Viz embed)
+  const viewCalc = $("#rs-view-calc", root);
+  const viewViz  = $("#rs-view-viz", root);
+  // calc header bits
+  const title = $("#rs-form-title", root);
+  const sub = $("#rs-form-sub", root);
+  const modeBadge = $("#rs-mode-badge", root);
+  const errBox = $("#rs-error", root);
+  const answerLabel = $("#rs-answer-label", root);
+  const answerEl = $("#rs-answer", root);
+  const meaningEl = $("#rs-meaning", root);
+  const formulaEl = $("#rs-formula", root);
+  const stepsEl = $("#rs-steps", root);
+  // decimals toggle
+  const decSwitch = $("#rs-decSwitch", root);
+  const precisionEl = $("#rs-precision", root);
+  const inputs = {
+    pv: $("#pv", root),
+    fv: $("#fv", root),
+    r: $("#r", root),
+    t: $("#t", root),
+    m: $("#m", root),
+    pmt: $("#pmt", root),
+    n: $("#n", root),
+    ppy: $("#ppy", root),
+    annType: $("#annType", root),
+    annSolve: $("#annSolve", root),
+    c: $("#c", root),
+    g: $("#g", root),
+  };
+  const state = {
+    mode: "fv",
+    use2Decimals: true,
+    lastValue: NaN
+  };
+  // ---------- helpers ----------
+  const num = (v)=> {
+    if (v === null || v === undefined) return NaN;
+    if (typeof v === "number") return v;
+    const s = String(v).trim();
+    if (!s) return NaN;
+    const x = Number(s);
+    return Number.isFinite(x) ? x : NaN;
+  };
+  const pctToDec = (p)=> num(p)/100;
+  const money = (x)=>{
+    if (!Number.isFinite(x)) return "—";
+    const abs = Math.abs(x);
+    const sign = x < 0 ? "-" : "";
+    const decimals = state.use2Decimals ? 2 : 0;
+    const s = abs.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return sign + "$" + s;
+  };
+  const clean = ()=> {
+    errBox.classList.remove("show");
+    errBox.textContent = "";
+  };
+  const error = (msg)=> {
+    errBox.textContent = msg;
+    errBox.classList.add("show");
+  };
+  const showFields = (mode)=>{
+    $$(".rs-field", fieldsWrap).forEach(f=>{
+      const rule = (f.getAttribute("data-for") || "").split(/\s+/).filter(Boolean);
+      f.style.display = rule.includes(mode) ? "flex" : "none";
+    });
+  };
+  const setHeader = (mode)=>{
+    if (mode === "fv"){
+      title.textContent = "Compounding & Future Value";
+      sub.textContent = "FV = PV · (1 + r/m)^(m·t) (or FV = PV · e^(r·t) for continuous)";
+      modeBadge.textContent = "Mode: FV";
+      answerLabel.textContent = "Future Value (FV)";
+    } else if (mode === "pv"){
+      title.textContent = "Present Value";
+      sub.textContent = "PV = FV / (1 + r/m)^(m·t) (or PV = FV · e^(-r·t) for continuous)";
+      modeBadge.textContent = "Mode: PV";
+      answerLabel.textContent = "Present Value (PV)";
+    } else if (mode === "ann"){
+      title.textContent = "Annuities";
+      sub.textContent = "PV ordinary = PMT·(1-(1+i)^-n)/i  |  FV ordinary = PMT·((1+i)^n-1)/i";
+      modeBadge.textContent = "Mode: Annuity";
+    } else if (mode === "perp"){
+      title.textContent = "Perpetuity";
+      sub.textContent = "PV = C/r (no growth)  |  PV = C/(r-g) (growing perpetuity)";
+      modeBadge.textContent = "Mode: Perpetuity";
+      answerLabel.textContent = "Present Value (PV)";
+    }
+  };
+  const setResult = ({value, meaning, formula, steps})=>{
+    state.lastValue = value;
+    answerEl.textContent = money(value);
+    meaningEl.textContent = meaning || "";
+    formulaEl.textContent = formula || "—";
+    stepsEl.textContent = steps || "—";
+    precisionEl.textContent = state.use2Decimals ? "2 decimals" : "0 decimals";
+    // notify other modules (viz/ai) without tight coupling
+    try{
+      window.dispatchEvent(new CustomEvent("rsfin:result", { detail: {
+        mode: state.mode,
+        value,
+        money: money(value),
+        meaning: meaning || "",
+        formula: formula || "—"
+      }}));
+    }catch(_){}
+  };
+  // ---------- calculators ----------
+  function calcFV(){
+    clean();
+    const PV = num(inputs.pv.value);
+    const r = pctToDec(inputs.r.value);
+    const t = num(inputs.t.value);
+    const m = num(inputs.m.value);
+    if (!Number.isFinite(PV) || !Number.isFinite(r) || !Number.isFinite(t) || !Number.isFinite(m)){
+      error("Missing inputs. For FV you need PV, r, t, and compounding frequency.");
+      return;
+    }
+    if (t < 0) return error("Time (t) must be ≥ 0.");
+    if (r < -1) return error("Rate (r) looks invalid. Use a percent like 6.5 for 6.5%.");
+    let FV, formula, steps;
+    if (m === 0){
+      FV = PV * Math.exp(r * t);
+      formula = "FV = PV · e^(r·t)";
+      steps =
+        `1) Convert r% to decimal: r = ${(r).toFixed(6)}\n`+
+        `2) Compute exponent: r·t = ${(r*t).toFixed(6)}\n`+
+        `3) FV = PV · e^(r·t) = ${PV} · e^(${(r*t).toFixed(6)})`;
+    } else {
+      if (m <= 0) return error("Compounds per year (m) must be positive (or choose Continuous).");
+      const base = 1 + (r / m);
+      const pow = m * t;
+      FV = PV * Math.pow(base, pow);
+      formula = "FV = PV · (1 + r/m)^(m·t)";
+      steps =
+        `1) Convert r% to decimal: r = ${(r).toFixed(6)}\n`+
+        `2) Compute periodic rate: r/m = ${(r/m).toFixed(6)}\n`+
+        `3) Compute power: m·t = ${(pow).toFixed(6)}\n`+
+        `4) FV = PV · (1 + r/m)^(m·t) = ${PV} · (${base.toFixed(6)})^(${pow.toFixed(6)})`;
+    }
+    setResult({
+      value: FV,
+      meaning: "Future value of a lump sum after compounding.",
+      formula,
+      steps
+    });
+  }
+  function calcPV(){
+    clean();
+    const FVv = num(inputs.fv.value);
+    const r = pctToDec(inputs.r.value);
+    const t = num(inputs.t.value);
+    const m = num(inputs.m.value);
+    if (!Number.isFinite(FVv) || !Number.isFinite(r) || !Number.isFinite(t) || !Number.isFinite(m)){
+      error("Missing inputs. For PV you need FV, r, t, and compounding frequency.");
+      return;
+    }
+    if (t < 0) return error("Time (t) must be ≥ 0.");
+    let PV, formula, steps;
+    if (m === 0){
+      PV = FVv * Math.exp(-r * t);
+      formula = "PV = FV · e^(-r·t)";
+      steps =
+        `1) Convert r% to decimal: r = ${(r).toFixed(6)}\n`+
+        `2) Compute exponent: -r·t = ${(-r*t).toFixed(6)}\n`+
+        `3) PV = FV · e^(-r·t) = ${FVv} · e^(${(-r*t).toFixed(6)})`;
+    } else {
+      if (m <= 0) return error("Compounds per year (m) must be positive (or choose Continuous).");
+      const base = 1 + (r / m);
+      const pow = m * t;
+      PV = FVv / Math.pow(base, pow);
+      formula = "PV = FV / (1 + r/m)^(m·t)";
+      steps =
+        `1) Convert r% to decimal: r = ${(r).toFixed(6)}\n`+
+        `2) Compute periodic rate: r/m = ${(r/m).toFixed(6)}\n`+
+        `3) Compute power: m·t = ${(pow).toFixed(6)}\n`+
+        `4) PV = FV / (1 + r/m)^(m·t) = ${FVv} / (${base.toFixed(6)})^(${pow.toFixed(6)})`;
+    }
+    setResult({
+      value: PV,
+      meaning: "Present value of a future lump sum discounted back to today.",
+      formula,
+      steps
+    });
+  }
+  function calcAnnuity(){
+    clean();
+    const PMT = num(inputs.pmt.value);
+    const rAnnual = pctToDec(inputs.r.value);
+    const n = num(inputs.n.value);
+    const ppy = num(inputs.ppy.value);
+    const annType = (inputs.annType.value || "ordinary");
+    const solve = (inputs.annSolve.value || "pv");
+    if (!Number.isFinite(PMT) || !Number.isFinite(rAnnual) || !Number.isFinite(n) || !Number.isFinite(ppy)){
+      error("Missing inputs. For annuities you need PMT, annual r, number of periods n, and payments per year.");
+      return;
+    }
+    if (n <= 0) return error("Number of periods (n) must be > 0.");
+    if (ppy <= 0) return error("Payments per year must be > 0.");
+    const i = rAnnual / ppy;
+    const dueMult = (annType === "due") ? (1 + i) : 1;
+    let value = 0;
+    let formula = "";
+    let steps = "";
+    if (solve === "pv"){
+      answerLabel.textContent = "Present Value (PV)";
+      if (Math.abs(i) < 1e-12){
+        value = PMT * n;
+        formula = "PV = PMT · n (when i = 0)";
+        steps =
+          `1) i = r/ppy = ${(rAnnual).toFixed(6)}/${ppy} = ${(i).toFixed(12)}\n`+
+          `2) i ≈ 0, so PV = PMT·n = ${PMT}·${n}`;
+      } else {
+        const pvOrd = PMT * (1 - Math.pow(1+i, -n)) / i;
+        value = pvOrd * dueMult;
+        formula = (annType === "due")
+          ? "PV(due) = PMT · (1-(1+i)^(-n))/i · (1+i)"
+          : "PV(ordinary) = PMT · (1-(1+i)^(-n))/i";
+        steps =
+          `1) Convert annual r% to decimal: r = ${(rAnnual).toFixed(6)}\n`+
+          `2) Per-period rate: i = r/ppy = ${(rAnnual).toFixed(6)}/${ppy} = ${(i).toFixed(6)}\n`+
+          `3) Discount factor: (1+i)^(-n) = (1+${(i).toFixed(6)})^(-${n}) = ${(Math.pow(1+i,-n)).toFixed(8)}\n`+
+          `4) PV ordinary = PMT·(1-(1+i)^(-n))/i\n`+
+          `5) If annuity due, multiply by (1+i)`;
+      }
+      setResult({
+        value,
+        meaning: (annType === "due")
+          ? "Present value of an annuity due (payments at beginning)."
+          : "Present value of an ordinary annuity (payments at end).",
+        formula,
+        steps
+      });
+    } else {
+      answerLabel.textContent = "Future Value (FV)";
+      if (Math.abs(i) < 1e-12){
+        value = PMT * n;
+        formula = "FV = PMT · n (when i = 0)";
+        steps =
+          `1) i = r/ppy = ${(rAnnual).toFixed(6)}/${ppy} = ${(i).toFixed(12)}\n`+
+          `2) i ≈ 0, so FV = PMT·n = ${PMT}·${n}`;
+      } else {
+        const fvOrd = PMT * (Math.pow(1+i, n) - 1) / i;
+        value = fvOrd * dueMult;
+        formula = (annType === "due")
+          ? "FV(due) = PMT · ((1+i)^n - 1)/i · (1+i)"
+          : "FV(ordinary) = PMT · ((1+i)^n - 1)/i";
+        steps =
+          `1) Convert annual r% to decimal: r = ${(rAnnual).toFixed(6)}\n`+
+          `2) Per-period rate: i = r/ppy = ${(rAnnual).toFixed(6)}/${ppy} = ${(i).toFixed(6)}\n`+
+          `3) Growth factor: (1+i)^n = (1+${(i).toFixed(6)})^(${n}) = ${(Math.pow(1+i,n)).toFixed(8)}\n`+
+          `4) FV ordinary = PMT·((1+i)^n - 1)/i\n`+
+          `5) If annuity due, multiply by (1+i)`;
+      }
+      setResult({
+        value,
+        meaning: (annType === "due")
+          ? "Future value of an annuity due (payments at beginning)."
+          : "Future value of an ordinary annuity (payments at end).",
+        formula,
+        steps
+      });
+    }
+  }
+  function calcPerpetuity(){
+    clean();
+    const C = num(inputs.c.value);
+    const r = pctToDec(inputs.r.value);
+    const gRaw = String(inputs.g.value ?? "");
+    const g = gRaw.trim() === "" ? NaN : pctToDec(gRaw);
+    if (!Number.isFinite(C) || !Number.isFinite(r)){
+      error("Missing inputs. For perpetuity you need payment C and annual rate r.");
+      return;
+    }
+    if (r <= 0) return error("For perpetuity PV, r must be > 0.");
+    let PV, formula, steps;
+    if (Number.isFinite(g)){
+      if (g < 0) return error("Growth rate g must be ≥ 0 (or leave blank).");
+      if (r <= g) return error("For growing perpetuity, you must have r > g.");
+      PV = C / (r - g);
+      formula = "PV = C / (r - g)";
+      steps =
+        `1) Convert r% to decimal: r = ${(r).toFixed(6)}\n`+
+        `2) Convert g% to decimal: g = ${(g).toFixed(6)}\n`+
+        `3) PV = C / (r - g) = ${C} / (${(r).toFixed(6)} - ${(g).toFixed(6)})`;
+      setResult({
+        value: PV,
+        meaning: "Present value of a growing perpetuity (payments grow forever at rate g).",
+        formula,
+        steps
+      });
+    } else {
+      PV = C / r;
+      formula = "PV = C / r";
+      steps =
+        `1) Convert r% to decimal: r = ${(r).toFixed(6)}\n`+
+        `2) PV = C / r = ${C} / ${(r).toFixed(6)}`;
+      setResult({
+        value: PV,
+        meaning: "Present value of a level perpetuity (same payment forever).",
+        formula,
+        steps
+      });
+    }
+  }
+  function analyze(){
+    if (state.mode === "fv") return calcFV();
+    if (state.mode === "pv") return calcPV();
+    if (state.mode === "ann") return calcAnnuity();
+    if (state.mode === "perp") return calcPerpetuity();
+  }
+  function reset(){
+    clean();
+    Object.values(inputs).forEach(el=>{
+      if (!el) return;
+      if (el.tagName === "SELECT") return;
+      el.value = "";
+    });
+    setResult({ value: NaN, meaning:"Enter inputs and click Analyze.", formula:"—", steps:"—" });
+    try{ window.dispatchEvent(new CustomEvent("rsfin:reset")); }catch(_){}
+  }
+  // ---------- mode switching ----------
+  function setMode(mode){
+    state.mode = mode;
+    tabs.forEach(b=>{
+      const on = b.getAttribute("data-mode") === mode;
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    setHeader(mode);
+    showFields(mode);
+    clean();
+    if (mode === "ann"){
+      const solve = (inputs.annSolve.value || "pv");
+      answerLabel.textContent = (solve === "pv") ? "Present Value (PV)" : "Future Value (FV)";
+    }
+    // default preview text
+    if (mode === "fv") {
+      formulaEl.textContent = "FV = PV · (1 + r/m)^(m·t)  (or FV = PV · e^(r·t))";
+      meaningEl.textContent = "Future value of a lump sum after compounding.";
+    } else if (mode === "pv") {
+      formulaEl.textContent = "PV = FV / (1 + r/m)^(m·t)  (or PV = FV · e^(-r·t))";
+      meaningEl.textContent = "Present value of a future lump sum discounted to today.";
+    } else if (mode === "ann") {
+      formulaEl.textContent = "PV = PMT·(1-(1+i)^-n)/i  |  FV = PMT·((1+i)^n-1)/i  (Due ×(1+i))";
+      meaningEl.textContent = "Annuity PV/FV using per-period rate i = r/paymentsPerYear.";
+    } else if (mode === "perp") {
+      formulaEl.textContent = "PV = C/r  |  PV(growing) = C/(r-g)";
+      meaningEl.textContent = "Perpetuity present value (level or growing).";
+    }
+    try{
+      window.dispatchEvent(new CustomEvent("rsfin:mode", { detail:{ mode } }));
+    }catch(_){}
+  }
+  // ---------- decimals toggle ----------
+  function setDecimals(on){
+    state.use2Decimals = !!on;
+    decSwitch.classList.toggle("on", state.use2Decimals);
+    decSwitch.setAttribute("aria-checked", state.use2Decimals ? "true" : "false");
+    precisionEl.textContent = state.use2Decimals ? "2 decimals" : "0 decimals";
+    answerEl.textContent = money(state.lastValue);
+    try{
+      window.dispatchEvent(new CustomEvent("rsfin:decimals", { detail:{ use2Decimals: state.use2Decimals } }));
+    }catch(_){}
+  }
+  function toggleDecimals(){ setDecimals(!state.use2Decimals); }
+  // ---------- bind UI ----------
+  tabs.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const mode = btn.getAttribute("data-mode");
+      setMode(mode);
+    });
+  });
+  inputs.annSolve.addEventListener("change", ()=>{
+    if (state.mode !== "ann") return;
+    const solve = (inputs.annSolve.value || "pv");
+    answerLabel.textContent = (solve === "pv") ? "Present Value (PV)" : "Future Value (FV)";
+    clean();
+    try{ window.dispatchEvent(new CustomEvent("rsfin:inputs")); }catch(_){}
+  });
+  $("#analyze", root).addEventListener("click", ()=>{
+    analyze();
+    try{ window.dispatchEvent(new CustomEvent("rsfin:inputs")); }catch(_){}
+  });
+  $("#reset", root).addEventListener("click", reset);
+  // input change broadcast (viz listens)
+  ["pv","fv","r","t","m","pmt","n","ppy","annType","annSolve","c","g"].forEach(id=>{
+    const el = $("#"+id, root);
+    if (!el) return;
+    el.addEventListener("change", ()=>{ try{ window.dispatchEvent(new CustomEvent("rsfin:inputs")); }catch(_){}} );
+    el.addEventListener("input",  ()=>{ try{ window.dispatchEvent(new CustomEvent("rsfin:inputs")); }catch(_){}} );
+  });
+  decSwitch.addEventListener("click", toggleDecimals);
+  decSwitch.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      toggleDecimals();
+    }
+  });
+  // ---------- boot ----------
+  setDecimals(true);
+  setMode("fv");
+  setResult({ value: NaN, meaning:"Enter inputs and click Analyze.", formula:"—", steps:"—" });
+  window.RS_FIN_CALC = {
+    __mounted:true,
+    getState: ()=> ({ ...state }),
+    getMode: ()=> state.mode,
+    money,
+    setMode,
+    analyze,
+    reset,
+    setDecimals,
+    // view nodes exposed for other embeds
+    views: { viewCalc, viewViz }
+  };
+})();
+</script>
+  </div>
+  <div class="w-embed w-script"><!--  ============================================================
+  RealtySaSS • Financial Calculator (VISUALIZATION JS)
+  v1.3.1 — Split Embeds (CLEAN VIS)
+  EMBED #3 of 4: VISUALIZATION LOGIC (JS only)
+  ✅ FIX #1: Remove duplicate value on graph (disable Chart.js legend)
+  ✅ FIX #2: Clean “box inside a box” (CSS override: viz-panel becomes invisible)
+  ✅ Keeps everything else the same
+============================================================  -->
+    <script>
+(()=> {
+  "use strict";
+  if (window.RS_FIN_VIZ && window.RS_FIN_VIZ.__mounted) return;
+  const root = document.getElementById("rs-fin-calc");
+  if (!root) return;
+  const api = window.RS_FIN_CALC;
+  if (!api) return;
+  const $ = (sel, r=root)=>r.querySelector(sel);
+  /* ============================================================
+    #0) CLEAN-UP CSS OVERRIDE (no shell edit needed)
+    - removes the extra “panel box” so the chart looks cleaner
+  ============================================================ */
+  (function injectCleanVizCSS(){
+    if (document.getElementById("rs-fin-viz-clean-css")) return;
+    const s = document.createElement("style");
+    s.id = "rs-fin-viz-clean-css";
+    s.textContent = `
+      /* remove the extra nested box */
+      #rs-fin-calc .viz-panel{
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+      }
+      #rs-fin-calc .viz-wrap{
+        padding: 12px !important;
+      }
+      /* keep a single clean container (canvasWrap) */
+      #rs-fin-calc .viz-canvasWrap{
+        border: 1px solid rgba(180,210,255,.14) !important;
+        background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(0,0,0,.12)) !important;
+        padding: 10px !important;
+      }
+    `;
+    document.head.appendChild(s);
+  })();
+  const btnViz = $("#rs-vizToggle");
+  const viewCalc = $("#rs-view-calc");
+  const viewViz  = $("#rs-view-viz");
+  const vizWarn = $("#viz-warn");
+  const vizTopValue = $("#viz-topValue");
+  const vizCanvas = $("#viz-chart");
+  const inputs = {
+    pv: $("#pv"), fv: $("#fv"), r: $("#r"), t: $("#t"), m: $("#m"),
+    pmt: $("#pmt"), n: $("#n"), ppy: $("#ppy"), annType: $("#annType"), annSolve: $("#annSolve"),
+    c: $("#c"), g: $("#g")
+  };
+  const state = {
+    view: "calc",
+    chart: null
+  };
+  const num = (v)=> {
+    if (v === null || v === undefined) return NaN;
+    const s = String(v).trim();
+    if (!s) return NaN;
+    const x = Number(s);
+    return Number.isFinite(x) ? x : NaN;
+  };
+  const pctToDec = (p)=> num(p)/100;
+  function setWarn(msg){
+    vizWarn.textContent = msg || "";
+    vizWarn.classList.toggle("show", !!msg);
+  }
+  function getMode(){
+    const sel = root.querySelector(".rs-tab[aria-selected='true']");
+    return sel ? sel.getAttribute("data-mode") : api.getMode();
+  }
+  function readInputs(){
+    return {
+      mode: getMode(),
+      pv: num(inputs.pv.value),
+      fv: num(inputs.fv.value),
+      r: pctToDec(inputs.r.value),
+      t: num(inputs.t.value),
+      m: num(inputs.m.value),
+      pmt: num(inputs.pmt.value),
+      n: num(inputs.n.value),
+      ppy: num(inputs.ppy.value),
+      annType: String(inputs.annType.value || "ordinary"),
+      annSolve: String(inputs.annSolve.value || "pv"),
+      c: num(inputs.c.value),
+      g: (() => {
+        const raw = String(inputs.g.value || "").trim();
+        return raw ? pctToDec(raw) : NaN;
+      })()
+    };
+  }
+  function buildSeries(x){
+    const mode = x.mode;
+    const compFV = (PV, r, t, m) => {
+      if (m === 0) return PV * Math.exp(r * t);
+      const base = 1 + (r / m);
+      return PV * Math.pow(base, m * t);
+    };
+    const compPV = (FV, r, t, m) => {
+      if (m === 0) return FV * Math.exp(-r * t);
+      const base = 1 + (r / m);
+      return FV / Math.pow(base, m * t);
+    };
+    if (mode === "fv"){
+      const PV = x.pv, r = x.r, t = x.t, m = x.m;
+      if (![PV,r,t,m].every(Number.isFinite) || t < 0) return null;
+      const steps = Math.max(12, Math.min(120, Math.round(t * 10)));
+      const labels = [];
+      const data = [];
+      for (let i=0;i<=steps;i++){
+        const tt = (t * i)/steps;
+        labels.push(tt.toFixed(2));
+        data.push(compFV(PV, r, tt, m));
+      }
+      return { labels, topLabel: api.money(compFV(PV,r,t,m)), data };
+    }
+    if (mode === "pv"){
+      const FV = x.fv, r = x.r, t = x.t, m = x.m;
+      if (![FV,r,t,m].every(Number.isFinite) || t < 0) return null;
+      const steps = Math.max(12, Math.min(120, Math.round(t * 10)));
+      const labels = [];
+      const data = [];
+      for (let i=0;i<=steps;i++){
+        const tt = (t * i)/steps;
+        labels.push(tt.toFixed(2));
+        data.push(compPV(FV, r, tt, m));
+      }
+      return { labels, topLabel: api.money(compPV(FV,r,t,m)), data };
+    }
+    if (mode === "ann"){
+      const PMT = x.pmt, rA = x.r, n = x.n, ppy = x.ppy;
+      if (![PMT,rA,n,ppy].every(Number.isFinite) || n <= 0 || ppy <= 0) return null;
+      const i = rA / ppy;
+      const solve = x.annSolve;
+      const labels = [];
+      const data = [];
+      if (solve === "fv"){
+        let acc = 0;
+        for (let k=1;k<=n;k++){
+          labels.push(String(k));
+          if (Math.abs(i) < 1e-12) acc += PMT;
+          else acc = acc * (1+i) + PMT;
+          const v = acc * (x.annType === "due" ? (1+i) : 1);
+          data.push(v);
+        }
+        return { labels, topLabel: api.money(data[data.length-1]), data };
+      } else {
+        const dueMult = (x.annType === "due") ? (1 + i) : 1;
+        for (let k=0;k<n;k++){
+          const rem = n - k;
+          labels.push(String(k));
+          let pv;
+          if (Math.abs(i) < 1e-12) pv = PMT * rem;
+          else pv = PMT * (1 - Math.pow(1+i, -rem)) / i;
+          data.push(pv * dueMult);
+        }
+        return { labels, topLabel: api.money(data[0]), data };
+      }
+    }
+    if (mode === "perp"){
+      const C = x.c, r = x.r;
+      if (!Number.isFinite(C) || !Number.isFinite(r) || r <= 0) return null;
+      const g = Number.isFinite(x.g) ? x.g : 0;
+      const rMin = Math.max(g + 0.0025, r - 0.05);
+      const rMax = r + 0.05;
+      const steps = 52;
+      const labels = [];
+      const data = [];
+      for (let i=0;i<=steps;i++){
+        const rr = rMin + ((rMax - rMin) * i)/steps;
+        labels.push((rr*100).toFixed(2));
+        const pv = (Number.isFinite(x.g)) ? (C / (rr - g)) : (C / rr);
+        data.push(pv);
+      }
+      const pvNow = Number.isFinite(x.g) ? (C / (r - g)) : (C / r);
+      return { labels, topLabel: api.money(pvNow), data };
+    }
+    return null;
+  }
+  function makeChart(series){
+    if (!vizCanvas) return;
+    const ctx = vizCanvas.getContext("2d");
+    const cfg = {
+      type: "line",
+      data: {
+        labels: series.labels,
+        datasets: [{
+          label: "",                 // ✅ no value label text
+          data: series.data,
+          tension: 0.25,
+          pointRadius: 0,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }, // ✅ removes the duplicate value on chart
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const y = ctx.parsed.y;
+                if (!Number.isFinite(y)) return "—";
+                const abs = Math.abs(y);
+                const sign = y < 0 ? "-" : "";
+                const s = abs.toFixed(api.getState().use2Decimals ? 2 : 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return `${sign}$${s}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "rgba(234,242,255,.70)", font: { weight: 800 } }, grid: { color: "rgba(180,210,255,.10)" } },
+          y: {
+            ticks: {
+              color: "rgba(234,242,255,.70)",
+              font: { weight: 800 },
+              callback: (v) => {
+                if (!Number.isFinite(v)) return "";
+                const abs = Math.abs(v);
+                if (abs >= 1e9) return (v/1e9).toFixed(1) + "B";
+                if (abs >= 1e6) return (v/1e6).toFixed(1) + "M";
+                if (abs >= 1e3) return (v/1e3).toFixed(1) + "K";
+                return String(Math.round(v));
+              }
+            },
+            grid: { color: "rgba(180,210,255,.10)" }
+          }
+        }
+      }
+    };
+    if (state.chart) state.chart.destroy();
+    state.chart = new Chart(ctx, cfg);
+  }
+  function render(force){
+    if (state.view !== "viz" && !force) return;
+    setWarn("");
+    const x = readInputs();
+    const series = buildSeries(x);
+    if (!series){
+      if (state.chart) { state.chart.destroy(); state.chart = null; }
+      vizTopValue.textContent = api.money(api.getState().lastValue);
+      if (state.view === "viz"){
+        setWarn("Waiting for calculator inputs… Enter the required fields for this mode, then click Analyze (or change a field).");
+      }
+      return;
+    }
+    // ✅ top value only (the single value you want)
+    vizTopValue.textContent = series.topLabel || api.money(api.getState().lastValue);
+    makeChart(series);
+    setTimeout(()=>{ if (state.chart) state.chart.resize(); }, 50);
+  }
+  function setView(next){
+    state.view = next;
+    const onViz = (next === "viz");
+    btnViz.classList.toggle("is-on", onViz);
+    btnViz.setAttribute("aria-pressed", onViz ? "true" : "false");
+    viewCalc.classList.toggle("is-active", !onViz);
+    viewViz.classList.toggle("is-active", onViz);
+    // tell AI embed what the previous view was
+    try{ window.dispatchEvent(new CustomEvent("rsfin:view", { detail:{ view: next } })); }catch(_){}
+    if (onViz) render(true);
+  }
+  btnViz.addEventListener("click", ()=>{
+    setView(state.view === "viz" ? "calc" : "viz");
+  });
+  window.addEventListener("rsfin:inputs", ()=>render(false));
+  window.addEventListener("rsfin:mode",   ()=>render(false));
+  window.addEventListener("rsfin:decimals",()=>render(false));
+  window.addEventListener("resize", ()=>{ if (state.chart) state.chart.resize(); });
+  // boot
+  setView("calc");
+  render(true);
+  window.RS_FIN_VIZ = { __mounted:true, setView, render };
+})();
+</script>
+  </div>
+  <div class="w-embed w-script"><!--  ============================================================
+  RealtySaSS • Financial Calculator — Ask Elena (FINANCE-AWARE)
+  v1.4.2 — UPDATE: Dock button becomes "Summarize"
+  EMBED #4 of 4: ASK-ELENA IN-CARD PANEL (JS only)
+  ✅ Dock button label: SEND → SUMMARIZE
+  ✅ Clicking Summarize triggers Elena summary of CURRENT formula/task
+  ✅ Uses live financial_calculator_context
+  ✅ Keeps endpoint fallbacks (Webflow-safe)
+============================================================  -->
+    <script>
+(()=> {
+  "use strict";
+  if (window.RS_FIN_AI && window.RS_FIN_AI.__mounted) return;
+  const root = document.getElementById("rs-fin-calc");
+  if (!root) return;
+  const $ = (sel)=>root.querySelector(sel);
+  // Dock (footer)
+  const dockInput = $("#rs-aiDockInput");
+  const dockSend  = $("#rs-aiDockSend");
+  // Pane (full)
+  const pane   = $("#rs-aiPane");
+  const close  = $("#rs-aiClose");
+  const chatEl = $("#rs-aiChat");
+  const input  = $("#rs-aiInput");
+  const send   = $("#rs-aiSend");
+  // -----------------------------
+  // Debug: ?ae_debug=1
+  // -----------------------------
+  const AE_DEBUG = (() => {
+    try{
+      const qs = new URLSearchParams(location.search);
+      return (qs.get("ae_debug") === "1");
+    }catch(_){ return false; }
+  })();
+  function dbg(){ if (AE_DEBUG) console.log("[RS_FIN_AI]", ...arguments); }
+  // Remember where user was (calc/viz)
+  let lastView = "calc";
+  window.addEventListener("rsfin:view", (e)=> {
+    if (e && e.detail && e.detail.view) lastView = e.detail.view;
+  });
+  // ============================================================
+  // Local memory
+  // ============================================================
+  const KEY_IDENTITY = "realtysass.identity";
+  const KEY_CID    = "realtysass.finai.cid.v2";
+  const KEY_THREAD = "realtysass.finai.thread.v2";
+  const KEY_MEM    = "realtysass.finai.memory.v2";
+  const THREAD_MAX = 24;
+  const prefersReduced = () =>
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function safeJSON(str){ try { return JSON.parse(str); } catch(_){ return null; } }
+  function lsGet(k){ try{ return localStorage.getItem(k); }catch(_){ return null; } }
+  function lsSet(k,v){ try{ localStorage.setItem(k,v); return true; }catch(_){ return false; } }
+  function lsDel(k){ try{ localStorage.removeItem(k); return true; }catch(_){ return false; } }
+  function uuid(){
+    return "cid_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+  }
+  function getCID(){
+    const existing = (lsGet(KEY_CID) || "").trim();
+    if (existing) return existing;
+    const id = uuid();
+    lsSet(KEY_CID, id);
+    return id;
+  }
+  function loadThread(){
+    const t = safeJSON(lsGet(KEY_THREAD) || "[]");
+    return Array.isArray(t) ? t : [];
+  }
+  function saveThread(thread){
+    const trimmed = Array.isArray(thread) ? thread.slice(-THREAD_MAX) : [];
+    lsSet(KEY_THREAD, JSON.stringify(trimmed));
+    return trimmed;
+  }
+  function addToThread(role, content){
+    const t = loadThread();
+    t.push({ role: role === "assistant" ? "assistant" : "user", content: String(content||""), ts: Date.now() });
+    return saveThread(t);
+  }
+  function loadMemory(){
+    const m = safeJSON(lsGet(KEY_MEM) || "{}");
+    return (m && typeof m === "object") ? m : {};
+  }
+  function saveMemory(mem){
+    const clean = (mem && typeof mem === "object") ? mem : {};
+    lsSet(KEY_MEM, JSON.stringify(clean));
+    return clean;
+  }
+  function applyMemoryPatch(patch){
+    if (!patch || typeof patch !== "object") return loadMemory();
+    const mem = loadMemory();
+    Object.keys(patch).forEach(k => mem[k] = patch[k]);
+    return saveMemory(mem);
+  }
+  function resetLocalMemory(){
+    lsDel(KEY_THREAD);
+    lsDel(KEY_MEM);
+    lsDel(KEY_CID);
+    chatEl.innerHTML = "";
+  }
+  // ============================================================
+  // Identity (optional)
+  // ============================================================
+  function getIdentityEmail(){
+    const raw = lsGet(KEY_IDENTITY);
+    if (!raw) return "";
+    const obj = safeJSON(raw);
+    if (obj && obj.email) return String(obj.email).trim().toLowerCase();
+    if (raw.includes("@")) return raw.trim().toLowerCase();
+    return "";
+  }
+  function getPageContext(){
+    const path = (location && location.pathname) ? String(location.pathname) : "";
+    return {
+      href: (location && location.href) ? String(location.href) : "",
+      origin: (location && location.origin) ? String(location.origin) : "",
+      host: (location && location.host) ? String(location.host) : "",
+      path
+    };
+  }
+  // ============================================================
+  // ✅ Endpoint fallback (Webflow-safe)
+  // ============================================================
+  function uniq(list){ return Array.from(new Set((list||[]).filter(Boolean))); }
+  function isWebflowHost(){
+    try{ return /webflow\.io$/i.test(String(location.host || "")); }
+    catch(_){ return false; }
+  }
+  const NETLIFY_BASE_CANDIDATES = [
+    "https://theorozcorealty.netlify.app",
+    "https://realtysass.netlify.app"
+  ];
+  function buildAskElenaEndpoints(){
+    const list = [];
+    if (!isWebflowHost()){
+      list.push("/api/ask-elena");
+      list.push("/.netlify/functions/ask-elena");
+    }
+    NETLIFY_BASE_CANDIDATES.forEach(base=>{
+      list.push(base + "/api/ask-elena");
+      list.push(base + "/.netlify/functions/ask-elena");
+    });
+    try{
+      const origin = String(location.origin || "");
+      if (origin){
+        list.push(origin + "/api/ask-elena");
+        list.push(origin + "/.netlify/functions/ask-elena");
+      }
+    }catch(_){}
+    return uniq(list);
+  }
+  async function postJSON(url, body){
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {})
+    });
+    const txt = await r.text();
+    let j = {};
+    try{ j = JSON.parse(txt || "{}"); }catch(_){ j = { raw: txt }; }
+    if (!r.ok || j.ok === false){
+      const msg = j.error || j.message || ("HTTP " + r.status);
+      const e = new Error(msg);
+      e.__status = r.status;
+      e.__raw = j;
+      throw e;
+    }
+    return j;
+  }
+  // ============================================================
+  // ✅ Finance calculator context (LIVE)
+  // ============================================================
+  let ctxLast = null;
+  function modeToLabel(mode){
+    if (mode === "fv") return "Compounding & Future Value";
+    if (mode === "pv") return "Present Value";
+    if (mode === "ann") return "Annuities";
+    if (mode === "perp") return "Perpetuity";
+    return String(mode || "fv");
+  }
+  function getSelectedMode(){
+    const sel = root.querySelector(".rs-tab[aria-selected='true']");
+    return sel ? sel.getAttribute("data-mode") : (window.RS_FIN_CALC && window.RS_FIN_CALC.getMode ? window.RS_FIN_CALC.getMode() : "fv");
+  }
+  function listVisibleFieldIds(){
+    const wrap = $("#rs-fields");
+    if (!wrap) return [];
+    const fields = Array.from(wrap.querySelectorAll(".rs-field"));
+    const visible = [];
+    fields.forEach(f=>{
+      const style = window.getComputedStyle(f);
+      if (style && style.display !== "none" && style.visibility !== "hidden") {
+        const input = f.querySelector("input, select");
+        if (input && input.id) visible.push(input.id);
+      }
+    });
+    return visible;
+  }
+  function readFieldValue(id){
+    const el = $("#"+id);
+    if (!el) return null;
+    return el.value;
+  }
+  function captureContextSnapshot(){
+    const api = window.RS_FIN_CALC;
+    const mode = getSelectedMode() || "fv";
+    const tabLabel = modeToLabel(mode);
+    const st = api && api.getState ? api.getState() : {};
+    const ids = ["pv","fv","r","t","m","pmt","n","ppy","annType","annSolve","c","g"];
+    const inputs = {};
+    ids.forEach(id => { inputs[id] = readFieldValue(id); });
+    const snap = {
+      mode,
+      tab_label: tabLabel,
+      view: lastView || "calc",
+      formatting: { use2Decimals: !!st.use2Decimals },
+      inputs,
+      visible_inputs: listVisibleFieldIds(),
+      outputs: {
+        value_text: ($("#rs-answer") || {}).textContent || "",
+        meaning: ($("#rs-meaning") || {}).textContent || "",
+        formula_used: ($("#rs-formula") || {}).textContent || "",
+        steps: ($("#rs-steps") || {}).textContent || "",
+        viz_top_value: ($("#viz-topValue") || {}).textContent || ""
+      }
+    };
+    ctxLast = snap;
+    return snap;
+  }
+  window.addEventListener("rsfin:mode",   ()=>captureContextSnapshot());
+  window.addEventListener("rsfin:inputs", ()=>captureContextSnapshot());
+  window.addEventListener("rsfin:result", ()=>captureContextSnapshot());
+  window.addEventListener("rsfin:decimals",()=>captureContextSnapshot());
+  window.addEventListener("rsfin:view",   ()=>captureContextSnapshot());
+  // ============================================================
+  // Chat UI
+  // ============================================================
+  function scrollToBottom(){ chatEl.scrollTop = chatEl.scrollHeight; }
+  function stamp(role){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    return (role === "user" ? "You" : "Elena") + " • " + hh + ":" + mm;
+  }
+  function typewriterInto(el, text, speed, startDelay){
+    return new Promise((resolve) => {
+      el.textContent = "";
+      const caret = document.createElement("span");
+      caret.className = "tw-caret";
+      el.appendChild(caret);
+      let i = 0;
+      const tick = () => {
+        if (i < text.length) {
+          caret.insertAdjacentText("beforebegin", text.charAt(i++));
+          scrollToBottom();
+          setTimeout(tick, speed);
+        } else {
+          caret.remove();
+          resolve();
+        }
+      };
+      setTimeout(tick, startDelay);
+    });
+  }
+  async function pushMsg(role, content, opts){
+    opts = opts || {};
+    const typewriter = !!opts.typewriter;
+    const speed = Number(opts.speed || 22);
+    const delay = Number(opts.delay || 120);
+    const msg = document.createElement("div");
+    msg.className = "rs-aiMsg " + (role === "user" ? "rs-aiUser" : "rs-aiBot");
+    msg.setAttribute("data-role", role);
+    const textNode = document.createElement("span");
+    msg.appendChild(textNode);
+    const small = document.createElement("small");
+    small.textContent = stamp(role);
+    chatEl.appendChild(msg);
+    msg.appendChild(small);
+    scrollToBottom();
+    if (role === "user") addToThread("user", content);
+    else addToThread("assistant", content);
+    if (!typewriter || prefersReduced() || role === "user"){
+      textNode.textContent = content;
+      scrollToBottom();
+      return;
+    }
+    await typewriterInto(textNode, content, speed, delay);
+    scrollToBottom();
+  }
+  function showTyping(){
+    const t = document.createElement("div");
+    t.className = "rs-aiMsg rs-aiBot rs-aiTyping";
+    t.id = "rs-aiTyping";
+    t.textContent = "Elena is thinking…";
+    chatEl.appendChild(t);
+    scrollToBottom();
+  }
+  function hideTyping(){
+    const t = $("#rs-aiTyping");
+    if (t) t.remove();
+  }
+  // ============================================================
+  // Open/Close pane
+  // ============================================================
+  function openPane(focusComposer=true){
+    captureContextSnapshot();
+    pane.setAttribute("data-open","1");
+    if (focusComposer) setTimeout(()=>{ try{ input.focus(); }catch(_){ } }, 40);
+  }
+  function closePane(){
+    pane.setAttribute("data-open","0");
+    if (window.RS_FIN_VIZ && window.RS_FIN_VIZ.setView){
+      window.RS_FIN_VIZ.setView(lastView === "viz" ? "viz" : "calc");
+    }
+    setTimeout(()=>{ try{ dockInput.focus(); }catch(_){ } }, 60);
+  }
+  // ============================================================
+  // ✅ Call Elena
+  // ============================================================
+  async function callElena(userText){
+    send.disabled = true;
+    dockSend.disabled = true;
+    showTyping();
+    const email = getIdentityEmail();
+    const isPublic = !(email && email.includes("@"));
+    const cid = getCID();
+    const thread = loadThread();
+    const memory = loadMemory();
+    const calcCtx = captureContextSnapshot();
+    const page = getPageContext();
+    const payload = {
+      message: userText,
+      ...(isPublic ? {} : { email }),
+      identity: (email ? { email, ts: Date.now() } : { anonymous:true, ts: Date.now() }),
+      context: {
+        source: "web",
+        widget: "rs-fin-calc-ai-pane",
+        product: "realtysass",
+        version: "rs-fin-ai-v1.4.2",
+        page,
+        public_mode: isPublic,
+        conversation_id: cid,
+        thread,
+        memory,
+        financial_calculator_context: calcCtx,
+        styleGuide: {
+          rules: [
+            "Always reference the active calculator mode (fv/pv/ann/perp) when answering.",
+            "If user asks 'how do I solve', respond with exact click-by-click steps for THIS UI.",
+            "If user asks for formula, show formula and define each variable using the current mode.",
+            "If user asks intuition, give: (1) intuition (2) sanity check (3) common mistake.",
+            "Be concise and class-ready."
+          ]
+        }
+      }
+    };
+    try{
+      let data = null;
+      let lastErr = null;
+      const endpoints = buildAskElenaEndpoints();
+      dbg("endpoints:", endpoints);
+      for (const ep of endpoints){
+        try{
+          dbg("POST →", ep);
+          data = await postJSON(ep, payload);
+          dbg("OK  ←", ep, data);
+          break;
+        }catch(e){
+          lastErr = e;
+          dbg("FAIL←", ep, e && e.message ? e.message : e, e && e.__status ? ("status=" + e.__status) : "");
+        }
+      }
+      hideTyping();
+      if (!data) throw lastErr || new Error("All endpoints failed");
+      if (data.memory_patch && typeof data.memory_patch === "object") applyMemoryPatch(data.memory_patch);
+      if (data.memory_echo && typeof data.memory_echo === "object") saveMemory(data.memory_echo);
+      const reply = data.reply || "I’m here. What do you want to solve?";
+      const ui = data.ui || {};
+      const speed = Number(ui.speed || 22);
+      const delay = Number(ui.startDelay || 120);
+      await pushMsg("assistant", reply, { typewriter:true, speed, delay });
+    } catch(err){
+      hideTyping();
+      const msg = AE_DEBUG
+        ? ("Connection snag: " + (err && err.message ? err.message : "Unknown error") + "\n(Enable ?ae_debug=1 and check console logs.)")
+        : "Hmm… I hit a connection snag. Try again?";
+      await pushMsg("assistant", msg, { typewriter:true, speed:22, delay:120 });
+    } finally {
+      send.disabled = false;
+      dockSend.disabled = false;
+    }
+  }
+  // ============================================================
+  // ✅ SUMMARIZE behavior (Dock button)
+  // ============================================================
+  function buildSummaryPrompt(){
+    const c = ctxLast || captureContextSnapshot();
+    const mode = (c && c.tab_label) ? c.tab_label : "this mode";
+    const f = (c && c.outputs && c.outputs.formula_used) ? c.outputs.formula_used : "the formula shown";
+    const value = (c && c.outputs && (c.outputs.value_text || c.outputs.viz_top_value)) ? (c.outputs.value_text || c.outputs.viz_top_value) : "";
+    return [
+      `Summarize the current formula for the "${mode}" calculation.`,
+      ``,
+      `1) What is the task/problem this formula solves (in plain English)?`,
+      `2) Show the formula exactly as displayed and explain each variable (PV, FV, r, t, m, PMT, n, i, C, g as applicable).`,
+      `3) Explain how the formula works step-by-step and what changes when inputs change.`,
+      `4) Give one quick sanity check and one common mistake.`,
+      value ? `5) If a value is currently shown (${value}), briefly interpret what it means.` : `5) If a value is shown, briefly interpret what it means.`,
+      ``,
+      `Use the calculator context I provided. Keep it class-ready and concise.`
+    ].join("\n");
+  }
+  function runSummarize(){
+    openPane(false);
+    const prompt = buildSummaryPrompt();
+    // (Optional) show a tiny user bubble so it feels intentional
+    pushMsg("user", "Summarize the current formula.", { typewriter:false });
+    callElena(prompt);
+    setTimeout(()=>{ try{ input.focus(); }catch(_){ } }, 40);
+  }
+  // ============================================================
+  // Send handlers (Expanded panel stays normal chat)
+  // ============================================================
+  function sendExpanded(){
+    const text = (input.value || "").trim();
+    if (!text) return;
+    if (text.toLowerCase() === "/reset") {
+      resetLocalMemory();
+      input.value = "";
+      dockInput.value = "";
+      pushMsg("assistant", "Done. Local memory cleared. What are we solving now?", { typewriter:true, speed:22, delay:120 });
+      return;
+    }
+    pushMsg("user", text);
+    input.value = "";
+    dockInput.value = "";
+    callElena(text);
+  }
+  // ============================================================
+  // ✅ Wiring updates
+  // ============================================================
+  // 1) Change dock button label to SUMMARIZE
+  try{ dockSend.textContent = "Summarize"; }catch(_){}
+  // 2) Dock button triggers summarize (ignores typed input)
+  dockSend.addEventListener("click", runSummarize);
+  // 3) Enter in dock also triggers summarize (optional but clean UX)
+  dockInput.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter"){ e.preventDefault(); runSummarize(); }
+    if (e.key === "Escape"){ e.preventDefault(); closePane(); }
+  });
+  // 4) Typing in dock still opens the full pane (your existing behavior)
+  let __dockOpened = false;
+  function openFromTyping(){
+    if (__dockOpened) return;
+    __dockOpened = true;
+    openPane(false);
+    const v = (dockInput.value || "").trim();
+    if (v && !input.value) input.value = v;
+    setTimeout(()=>{ try{ input.focus(); }catch(_){ } }, 40);
+  }
+  dockInput.addEventListener("input", () => {
+    const v = (dockInput.value || "").trim();
+    if (v.length >= 1) openFromTyping();
+  });
+  // Expanded chat send stays normal
+  send.addEventListener("click", sendExpanded);
+  input.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter"){ e.preventDefault(); sendExpanded(); }
+    if (e.key === "Escape"){ e.preventDefault(); closePane(); }
+  });
+  close.addEventListener("click", closePane);
+  // ============================================================
+  // Boot
+  // ============================================================
+  (function boot(){
+    captureContextSnapshot();
+    const t = loadThread().slice(-10);
+    if (t.length){
+      t.forEach((m)=>{
+        const role = (m.role === "assistant") ? "assistant" : "user";
+        pushMsg(role, String(m.content || ""), { typewriter:false });
+      });
+      return;
+    }
+    pushMsg("assistant",
+      "Hey — I’m Elena. Tap Summarize to get a clean breakdown of the current formula, or ask me anything in the chat.",
+      { typewriter:true, speed:22, delay:160 }
+    );
+  })();
+  window.RS_FIN_AI = {
+    __mounted:true,
+    open: openPane,
+    close: closePane,
+    summarize: runSummarize,
+    send: (txt)=>{ openPane(false); pushMsg("user", txt); callElena(txt); }
+  };
+})();
+</script>
+  </div>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=691facbe35fbba00c096f2b7" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="js/webflow.js" type="text/javascript"></script>
+</body>
+</html>

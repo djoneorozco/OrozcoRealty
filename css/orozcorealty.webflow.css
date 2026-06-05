@@ -4,7 +4,7 @@
   --primary: #e3af5a;
   --slate-grey: #a1a1a1;
   --dark-card: #2b333d;
-  --lighter-black: #1a1614;
+  --lighter-black: #1a161400;
   --black-footer-bottom: #1e1e1e;
   --black-footer: #222;
   --transparent: #0000;
@@ -6715,7 +6715,7 @@ figcaption {
 
 .contact-us-wrapper {
   flex-flow: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   max-width: 80%;
   margin-left: auto;
@@ -11101,24 +11101,6 @@ figcaption {
   margin-left: 60px;
 }
 
-.container-full-copy {
-  max-width: 1440px;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: hidden;
-}
-
-.container-full-copy.home-background {
-  background-image: linear-gradient(180deg, var(--transparent) 20%, #0c0c0c80 35%, #0e0e0e99 80%, var(--black) 95%), url('../images/Hero-Image-2.jpg');
-  background-position: 0 0, 50%;
-  background-size: auto, cover;
-  max-width: none;
-}
-
-.container-full-copy.home-background.no-max-width {
-  margin-top: 0;
-}
-
 .container-full-copy.padding-216px {
   padding-left: 0;
   padding-right: 0;
@@ -11138,52 +11120,11 @@ figcaption {
   box-shadow: 0 2px 9px -6px #0000008f;
 }
 
-.container-full-copy.reviews-image {
-  background-image: linear-gradient(#000000b3, #000000b3), url('../images/a-modern-living-room-with-a-large-window.jpg');
-  background-position: 0 0, 50%;
-  background-repeat: repeat, no-repeat;
-  background-size: auto, cover;
-  background-attachment: scroll, fixed;
-}
-
-.container-full-copy.about-background-03 {
-  background-image: url('../images/a-chair-in-a-room-Square.jpg');
-  background-position: 50% 33%;
-  background-size: cover;
-  max-width: none;
-}
-
-.container-full-copy.about-background {
-  background-image: url('../images/About-Image-Overlay.png'), url('../images/About-Image.jpg');
-  background-position: 50%, 50%;
-  background-repeat: no-repeat, repeat;
-  background-size: cover, cover;
-  max-width: none;
-}
-
-.container-full-copy.no-max-width {
-  margin-top: 0;
-}
-
 .container-full-copy.listings-01 {
   margin-top: 39px;
   padding-left: 64px;
   padding-right: 64px;
   overflow: visible;
-}
-
-.container-full-copy.listings-02-03 {
-  margin-top: 200px;
-  padding-left: 120px;
-  padding-right: 120px;
-  overflow: visible;
-}
-
-.container-full-copy.padding-72px {
-  background-color: #0000;
-  max-width: 1600px;
-  margin-top: -96px;
-  padding-right: 72px;
 }
 
 .orozconavbar {
@@ -12923,7 +12864,7 @@ figcaption {
 
 .code-embed-23 {
   aspect-ratio: auto;
-  margin-top: 51px;
+  margin-top: 0;
   padding-top: 0;
   position: static;
 }
@@ -14846,8 +14787,8 @@ figcaption {
 }
 
 .separator-icon-5 {
-  max-width: 45px;
-  max-height: 45px;
+  max-width: 55px;
+  max-height: 55px;
 }
 
 .features-main-flex-2 {
@@ -15111,7 +15052,7 @@ figcaption {
   align-self: center;
   place-items: stretch end;
   width: 100%;
-  margin-bottom: 220px;
+  margin-bottom: 0;
   margin-left: 0;
   margin-right: 0;
   padding-left: 20px;
@@ -16412,6 +16353,125 @@ figcaption {
   padding-bottom: 10px;
 }
 
+.container-full-copy {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+}
+
+.container-full-copy.home-background {
+  background-image: linear-gradient(180deg, var(--transparent) 20%, #0c0c0c80 35%, #0e0e0e99 80%, var(--black) 95%), url('../images/Hero-Image-2.jpg');
+  background-position: 0 0, 50%;
+  background-size: auto, cover;
+  max-width: none;
+}
+
+.container-full-copy.home-background.no-max-width {
+  margin-top: 0;
+}
+
+.container-full-copy.padding-216px {
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+  text-align: center;
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-columns: 1fr;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  margin-top: 60px;
+  padding-left: 0;
+  padding-right: 0;
+  display: flex;
+  position: static;
+}
+
+.container-full-copy.padding-72px {
+  max-width: 113%;
+  padding-top: 0;
+  padding-left: 72px;
+  padding-right: 72px;
+}
+
+.container-full-copy.padding-144px {
+  text-align: center;
+  background-color: #1a1614;
+  border-radius: 0;
+  max-width: 97%;
+  margin-top: 40px;
+  margin-bottom: 220px;
+  padding: 10px 60px 40px;
+  box-shadow: 0 2px 9px -6px #000000b5;
+}
+
+.container-full-copy.reviews-image {
+  background-image: linear-gradient(#000000b3, #000000b3), url('../images/a-modern-living-room-with-a-large-window.jpg');
+  background-position: 0 0, 50%;
+  background-repeat: repeat, no-repeat;
+  background-size: auto, cover;
+  background-attachment: scroll, fixed;
+}
+
+.container-full-copy.about-background-03 {
+  background-image: url('../images/a-chair-in-a-room-Square.jpg');
+  background-position: 50% 33%;
+  background-size: cover;
+  max-width: none;
+}
+
+.container-full-copy.about-background {
+  background-image: url('../images/About-Image-Overlay.png'), url('../images/About-Image.jpg');
+  background-position: 50%, 50%;
+  background-repeat: no-repeat, repeat;
+  background-size: cover, cover;
+  max-width: none;
+}
+
+.container-full-copy.no-max-width {
+  margin-top: 0;
+}
+
+.container-full-copy.listings-01 {
+  text-align: center;
+  max-width: 100%;
+  margin-top: 39px;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: visible;
+}
+
+.container-full-copy.listings-02-03 {
+  margin-top: 200px;
+  padding-left: 120px;
+  padding-right: 120px;
+  overflow: visible;
+}
+
+.container-full-copy.padding-72px {
+  background-color: #0000;
+  max-width: 1600px;
+  margin-top: -96px;
+  padding-right: 72px;
+}
+
+.container-full-copy.mrtgage-calculator {
+  max-width: 113%;
+  margin-top: 100px;
+  padding-top: 0;
+  padding-left: 72px;
+  padding-right: 72px;
+}
+
+.section-277 {
+  margin-top: 60px;
+}
+
+.code-embed-53 {
+  margin-bottom: 0;
+}
+
 @media screen and (min-width: 1280px) {
   .sg-right-bottom-wrapper {
     background-color: #111;
@@ -17458,6 +17518,12 @@ figcaption {
     margin-left: 5px;
   }
 
+  .home-three-dropdown-block {
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    background-color: #080808;
+  }
+
   .text-block-20 {
     color: #330303;
     font-size: .8rem;
@@ -18192,30 +18258,10 @@ figcaption {
     margin-left: 98px;
   }
 
-  .container-full-copy.home-background.no-max-width {
-    background-image: linear-gradient(180deg, var(--transparent) 16%, #0c0c0c80 60%, #0e0e0e99 80%, var(--black)), url('../images/Hero-Image-2.jpg');
-    background-position: 0 0, 50%;
-    background-size: auto, cover;
-    max-width: 100%;
-    height: 100%;
-    min-height: 100%;
-  }
-
   .container-full-copy.padding-144px {
     background-color: #1a1614;
     max-width: 1350px;
     margin-top: -39px;
-  }
-
-  .container-full-copy.no-max-width {
-    max-width: 100%;
-    min-height: 88%;
-    margin-top: -30px;
-  }
-
-  .container-full-copy.padding-72px {
-    margin-top: -15px;
-    margin-bottom: 100px;
   }
 
   .orozconavbar.style-three-header-container {
@@ -19029,10 +19075,12 @@ figcaption {
 
   .section-272 {
     background-color: #0000;
-    margin-top: 0;
+    margin-top: 60px;
   }
 
   .hero-wrapper-2 {
+    margin-top: -140px;
+    margin-bottom: 0;
     padding-bottom: 0;
   }
 
@@ -19184,6 +19232,10 @@ figcaption {
 
   .locations-card-6-copy-2 {
     margin-left: 86px;
+  }
+
+  .black-bg-wrap-2 {
+    margin-bottom: 100px;
   }
 
   .section-276 {
@@ -19352,6 +19404,37 @@ figcaption {
     padding-top: 0;
     padding-bottom: 0;
   }
+
+  .container-full-copy.home-background.no-max-width {
+    background-image: linear-gradient(180deg, var(--transparent) 16%, #0c0c0c80 60%, #0e0e0e99 80%, var(--black)), url('../images/Hero-Image-2.jpg');
+    background-position: 0 0, 50%;
+    background-size: auto, cover;
+    max-width: 100%;
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .container-full-copy.padding-144px {
+    outline-offset: 0px;
+    background-color: #1a1614;
+    outline: 1px solid #201d1a;
+    max-width: 97%;
+    margin-top: 20px;
+    margin-bottom: 0;
+    padding-bottom: 77px;
+    box-shadow: 0 2px 9px -3px #000000b5;
+  }
+
+  .container-full-copy.no-max-width {
+    max-width: 100%;
+    min-height: 88%;
+    margin-top: -124px;
+  }
+
+  .container-full-copy.padding-72px {
+    margin-top: -15px;
+    margin-bottom: 100px;
+  }
 }
 
 @media screen and (min-width: 1440px) {
@@ -19443,9 +19526,9 @@ figcaption {
   .container-full.padding-144px {
     background-color: #1a1614;
     max-width: 95%;
-    margin-top: 100px;
+    margin-top: 60px;
     margin-bottom: 100px;
-    padding: 198px 60px 40px;
+    padding: 100px 60px 40px;
     box-shadow: 0 2px 5px #000;
   }
 
@@ -20805,6 +20888,10 @@ figcaption {
     margin-left: 0;
   }
 
+  .home-three-dropdown-link-2.w--current {
+    color: var(--slate-grey);
+  }
+
   .navbar-wrapper {
     color: #c5661f;
     background-color: #fff;
@@ -21776,10 +21863,6 @@ figcaption {
     margin-left: 40px;
   }
 
-  .container-full-copy {
-    margin-top: 9px;
-  }
-
   .container-full-copy.aioucontianter {
     max-width: 100%;
     margin-top: -89px;
@@ -21794,18 +21877,6 @@ figcaption {
     margin-bottom: 200px;
     padding-top: 0;
     box-shadow: 0 2px 5px #000;
-  }
-
-  .container-full-copy.no-max-width {
-    max-width: none;
-    margin-top: 0;
-  }
-
-  .container-full-copy.padding-72px {
-    background-color: #1110;
-    margin-top: -156px;
-    margin-bottom: 0;
-    padding-left: 87px;
   }
 
   .orozconavbar.style-three-header-container {
@@ -22586,6 +22657,8 @@ figcaption {
   }
 
   .code-embed-23 {
+    margin-top: 0;
+    margin-bottom: 0;
     position: static;
   }
 
@@ -22634,6 +22707,8 @@ figcaption {
 
   .home-three-property-slider-wrap {
     text-align: center;
+    justify-content: center;
+    align-items: center;
     max-width: 100%;
   }
 
@@ -23043,13 +23118,32 @@ figcaption {
     font-size: 1.7rem;
   }
 
+  .tabs-text-wrap.h03 {
+    width: 60%;
+    max-width: 60%;
+  }
+
+  .tabs-wrap.h03 {
+    margin-top: 40px;
+  }
+
+  .sub-heading-01---40px {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .image-wrap.tabs {
     max-width: none;
+  }
+
+  .section-272 {
+    margin-top: 60px;
   }
 
   .hero-wrapper-2 {
     justify-content: center;
     align-items: center;
+    margin-top: 29px;
   }
 
   .image-steps-wrapper-10 {
@@ -23070,7 +23164,7 @@ figcaption {
   }
 
   .image-scroll-movement-2 {
-    width: 900px;
+    width: 1000px;
   }
 
   .title-wrapper-21 {
@@ -23247,6 +23341,11 @@ figcaption {
     margin-left: -56px;
   }
 
+  .align-left-6 {
+    justify-content: center;
+    align-items: center;
+  }
+
   .code-embed-21-copy {
     padding-left: 0;
   }
@@ -23343,6 +23442,10 @@ figcaption {
     box-shadow: 0 2px 6px 2px #030000c4;
   }
 
+  .container-67 {
+    margin-left: 0;
+  }
+
   .locations-card-7 {
     margin-top: 48px;
     margin-left: 92px;
@@ -23385,6 +23488,7 @@ figcaption {
   }
 
   .black-bg-wrap-2 {
+    text-align: center;
     padding-top: 100px;
   }
 
@@ -23543,7 +23647,8 @@ figcaption {
   .container-full-2.listings-01 {
     text-align: center;
     margin-top: 60px;
-    margin-bottom: 60px;
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
 
   .heading-127 {
@@ -23619,6 +23724,47 @@ figcaption {
 
   .mian-mhed.black-color-copy {
     padding-bottom: 10px;
+  }
+
+  .container-full-copy {
+    margin-top: 9px;
+  }
+
+  .container-full-copy.padding-72px {
+    margin-top: 200px;
+  }
+
+  .container-full-copy.padding-144px {
+    background-color: #1a1614;
+    max-width: 95%;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    padding: 198px 60px 40px;
+    box-shadow: 0 2px 5px #000;
+  }
+
+  .container-full-copy.no-max-width {
+    max-width: none;
+    margin-top: 0;
+  }
+
+  .container-full-copy.listings-01 {
+    margin-top: 60px;
+  }
+
+  .container-full-copy.padding-72px {
+    background-color: #1110;
+    margin-top: -156px;
+    margin-bottom: 0;
+    padding-left: 87px;
+  }
+
+  .container-full-copy.mrtgage-calculator {
+    margin-top: 200px;
+  }
+
+  .code-embed-52 {
+    margin-top: 0;
   }
 }
 
@@ -24620,26 +24766,6 @@ figcaption {
     padding-left: 0;
   }
 
-  .container-full-copy.padding-144px {
-    aspect-ratio: auto;
-    justify-content: center;
-    align-items: center;
-    max-width: 1800px;
-    margin-left: 200px;
-    display: flex;
-    position: static;
-  }
-
-  .container-full-copy.no-max-width {
-    margin-top: -138px;
-  }
-
-  .container-full-copy.padding-72px {
-    margin-top: -147px;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
   .orozconavbar.style-three-header-container {
     height: 100px;
     margin-top: 3px;
@@ -25318,6 +25444,34 @@ figcaption {
 
   .main-page-header.black-color, .mian-mhed.black-color, .mian-mhed.black-color, .mian-mhed.black-color, .mian-mhed.black-color {
     font-size: .85rem;
+  }
+
+  .container-full-copy.padding-72px {
+    max-width: 1900px;
+  }
+
+  .container-full-copy.padding-144px {
+    aspect-ratio: auto;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    margin-left: 200px;
+    display: flex;
+    position: static;
+  }
+
+  .container-full-copy.no-max-width {
+    margin-top: -138px;
+  }
+
+  .container-full-copy.padding-72px {
+    margin-top: -147px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .container-full-copy.mrtgage-calculator {
+    max-width: 1900px;
   }
 }
 
@@ -27103,11 +27257,6 @@ figcaption {
     margin-left: 38px;
   }
 
-  .container-full-copy.padding-72px {
-    padding-left: 5%;
-    padding-right: 5%;
-  }
-
   .container-full-copy.listings-01 {
     max-width: none;
     margin-left: 0;
@@ -27721,39 +27870,15 @@ figcaption {
     margin-left: 0;
   }
 
-  .container-full-copy.home-background {
-    background-image: linear-gradient(180deg, var(--transparent), #0c0c0c99 30%, #0e0e0ea6 80%, var(--black) 95%), url('../images/Hero-Image-2.jpg');
-    background-position: 0 0, 50%;
-    background-size: auto, cover;
-  }
-
-  .container-full-copy.padding-216px {
-    padding-left: 10%;
-    padding-right: 10%;
-  }
-
   .container-full-copy.aioucontianter {
     padding-left: 5%;
     padding-right: 5%;
-  }
-
-  .container-full-copy.padding-144px {
-    padding-left: 10%;
-    padding-right: 10%;
   }
 
   .container-full-copy.listings-01, .container-full-copy.listings-02-03 {
     max-width: none;
     padding-left: 10%;
     padding-right: 10%;
-  }
-
-  .container-full-copy.padding-72px {
-    background-color: #111;
-    margin-top: 24px;
-    padding-left: 5%;
-    padding-right: 5%;
-    box-shadow: 0 20px 5px 10px #02000033;
   }
 
   .orozconavbar.style-three-header-container, .orozconavbar.style-three-header-container-copy, .tormain.tormainpage, .tormain.style-three-header-container, .tormain.style-three-header-container {
@@ -28989,6 +29114,46 @@ figcaption {
 
   .main-page-header, .mian-mhed {
     color: #0b0d0f;
+  }
+
+  .container-full-copy.home-background {
+    background-image: linear-gradient(180deg, var(--transparent), #0c0c0c99 30%, #0e0e0ea6 80%, var(--black) 95%), url('../images/Hero-Image-2.jpg');
+    background-position: 0 0, 50%;
+    background-size: auto, cover;
+  }
+
+  .container-full-copy.padding-216px {
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+
+  .container-full-copy.padding-72px {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  .container-full-copy.padding-144px {
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+
+  .container-full-copy.listings-01, .container-full-copy.listings-02-03 {
+    max-width: none;
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+
+  .container-full-copy.padding-72px {
+    background-color: #111;
+    margin-top: 24px;
+    padding-left: 5%;
+    padding-right: 5%;
+    box-shadow: 0 20px 5px 10px #02000033;
+  }
+
+  .container-full-copy.mrtgage-calculator {
+    padding-left: 5%;
+    padding-right: 5%;
   }
 }
 
@@ -33628,10 +33793,6 @@ figcaption {
     margin-left: -20px;
   }
 
-  .container-full-copy.no-max-width {
-    max-width: 100%;
-  }
-
   .buttons-row-5 {
     grid-column-gap: .5em;
     grid-row-gap: .5em;
@@ -34770,15 +34931,10 @@ figcaption {
     padding-top: 0;
     padding-bottom: 0;
   }
-}
 
-#w-node-a91c9a3a-f164-217c-4bf2-53cbb0ab98eb-c096f3f0 {
-  grid-area: 1 / 1 / 2 / 2;
-  justify-self: start;
-}
-
-#w-node-a91c9a3a-f164-217c-4bf2-53cbb0ab98fe-c096f3f0 {
-  grid-area: 1 / 2 / 2 / 3;
+  .container-full-copy.no-max-width {
+    max-width: 100%;
+  }
 }
 
 #w-node-_611e61bf-a163-6c9c-40e1-a799a690d943-a690d940 {
@@ -34834,6 +34990,33 @@ figcaption {
   grid-area: span 1 / span 1 / span 1 / span 1;
 }
 
+#w-node-_5b3d680f-315a-97e3-e1b3-3898fbfe923d-97fb326d {
+  grid-area: 1 / 1 / 2 / 2;
+  justify-self: start;
+}
+
+#w-node-_5b3d680f-315a-97e3-e1b3-3898fbfe9250-97fb326d {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+#w-node-_20ea1806-8016-4ac9-0821-ded698a5e92e-12580fbf {
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr;
+}
+
+#w-node-_20ea1806-8016-4ac9-0821-ded698a5e92f-12580fbf, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e937-12580fbf, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e940-12580fbf, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e948-12580fbf {
+  grid-area: span 1 / span 1 / span 1 / span 1;
+}
+
+#w-node-_20ea1806-8016-4ac9-0821-ded698a5e92e-8f971353 {
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr;
+}
+
+#w-node-_20ea1806-8016-4ac9-0821-ded698a5e92f-8f971353, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e937-8f971353, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e940-8f971353, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e948-8f971353 {
+  grid-area: span 1 / span 1 / span 1 / span 1;
+}
+
 @media screen and (max-width: 767px) {
   #w-node-_20ea1806-8016-4ac9-0821-ded698a5e92e-c096f3e4 {
     grid-template-rows: auto auto;
@@ -34841,6 +35024,24 @@ figcaption {
   }
 
   #w-node-_20ea1806-8016-4ac9-0821-ded698a5e92f-c096f3e4, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e937-c096f3e4, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e940-c096f3e4, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e948-c096f3e4 {
+    grid-area: span 1 / span 1 / span 1 / span 1;
+  }
+
+  #w-node-_20ea1806-8016-4ac9-0821-ded698a5e92e-12580fbf {
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr;
+  }
+
+  #w-node-_20ea1806-8016-4ac9-0821-ded698a5e92f-12580fbf, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e937-12580fbf, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e940-12580fbf, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e948-12580fbf {
+    grid-area: span 1 / span 1 / span 1 / span 1;
+  }
+
+  #w-node-_20ea1806-8016-4ac9-0821-ded698a5e92e-8f971353 {
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr;
+  }
+
+  #w-node-_20ea1806-8016-4ac9-0821-ded698a5e92f-8f971353, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e937-8f971353, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e940-8f971353, #w-node-_20ea1806-8016-4ac9-0821-ded698a5e948-8f971353 {
     grid-area: span 1 / span 1 / span 1 / span 1;
   }
 }
