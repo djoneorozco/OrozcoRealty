@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Fri Jun 05 2026 06:24:43 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Oct 21 2026 05:28:07 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="69d8a922fb2c6562c20ee5c6" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
 <head>
   <meta charset="utf-8">
@@ -20,30 +20,35 @@
 </head>
 <body>
   <div class="w-embed w-script"><!--  =========================================================
-  The Orozco Realty • Texas Demographics
+  The Orozco Realty • Laredo ZIP Code Market Explorer
   HEADER SHELL + MAP UX
-  v1.0.1-LAREDO • Hero Map Selector Only / Clean Map Chrome
-  UPDATE
-  - Laredo market version
-  - Removed bottom legend
-  - Removed Leaflet attribution link bottom-right
-  - Uses Laredo region keys from laredo.json:
-    north-laredo, central-laredo, south-laredo, east-laredo, west-laredo
-  - Keeps tor:region-selected dispatch intact
+  v1.0.0-LAREDO-ZIP • City ZIP Selector / Clean Map Chrome
+  PURPOSE
+  - Replicates the PCSUnited map UX pattern for TOR
+  - City-specific Laredo map instead of USA map
+  - ZIP-code market zones instead of states
+  - Right-side selected ZIP panel
+  - Dispatches both:
+    1) tor:zip-selected
+    2) tor:region-selected
+  - Keeps compatibility with existing TOR lower intelligence panels
+  NOTE
+  - ZIP polygons are approximate prototype zones.
+  - Replace polygon points later with official ZIP GeoJSON if desired.
 =========================================================  -->
-    <div id="tor-texas-header" style="all:initial;">
+    <div id="tor-laredo-zip-header" style="all:initial;">
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
       <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
       <style>
-    #tor-texas-header,
-    #tor-texas-header *{
+    #tor-laredo-zip-header,
+    #tor-laredo-zip-header *{
       box-sizing:border-box;
       margin:0;
       padding:0;
       font-family:"Barlow",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     }
-    #tor-texas-header{
+    #tor-laredo-zip-header{
       --bg:#071018;
       --bg2:#0b1621;
       --bg3:#050912;
@@ -66,26 +71,26 @@
       width:100%;
       color:var(--ink);
     }
-    #tor-texas-header a{
+    #tor-laredo-zip-header a{
       color:inherit;
       text-decoration:none;
     }
-    #tor-texas-header .torh-wrap{
+    #tor-laredo-zip-header .torz-wrap{
       width:var(--wrap);
       margin:0 auto;
       padding:24px 0 20px;
     }
-    #tor-texas-header .torh-hero{
+    #tor-laredo-zip-header .torz-hero{
       position:relative;
       overflow:hidden;
-      min-height:520px;
+      min-height:560px;
       border-radius:34px;
       border:1px solid rgba(216,184,122,.16);
       box-shadow:var(--shadow2);
       background:#0c131c;
       isolation:isolate;
     }
-    #tor-texas-header .torh-hero::before{
+    #tor-laredo-zip-header .torz-hero::before{
       content:"";
       position:absolute;
       inset:0;
@@ -97,7 +102,7 @@
         radial-gradient(circle at 88% 16%, rgba(106,167,255,.10), transparent 26%);
       mix-blend-mode:screen;
     }
-    #tor-texas-header .torh-hero::after{
+    #tor-laredo-zip-header .torz-hero::after{
       content:"";
       position:absolute;
       inset:0;
@@ -107,7 +112,7 @@
         linear-gradient(90deg, rgba(0,0,0,.44), rgba(0,0,0,.22) 42%, rgba(0,0,0,.38)),
         linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.38) 74%, rgba(0,0,0,.62));
     }
-    #tor-texas-header .torh-bg{
+    #tor-laredo-zip-header .torz-bg{
       position:absolute;
       inset:0;
       background:
@@ -118,20 +123,20 @@
       transform:scale(1.025);
       filter:saturate(1.03) contrast(1.04) brightness(.78);
     }
-    #tor-texas-header .torh-inner{
+    #tor-laredo-zip-header .torz-inner{
       position:relative;
       z-index:2;
-      min-height:520px;
+      min-height:560px;
       display:grid;
-      grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr);
+      grid-template-columns:minmax(0,1.02fr) minmax(430px,.98fr);
       gap:26px;
       align-items:end;
       padding:34px;
     }
-    #tor-texas-header .torh-left{
-      max-width:780px;
+    #tor-laredo-zip-header .torz-left{
+      max-width:790px;
     }
-    #tor-texas-header .torh-eyebrow{
+    #tor-laredo-zip-header .torz-eyebrow{
       display:inline-flex;
       align-items:center;
       gap:8px;
@@ -147,28 +152,28 @@
       margin-bottom:16px;
       box-shadow:0 10px 30px rgba(0,0,0,.22);
     }
-    #tor-texas-header .torh-title{
+    #tor-laredo-zip-header .torz-title{
       font-family:"Gilda Display",serif;
-      font-size:clamp(2.65rem, 4.8vw, 5rem);
+      font-size:clamp(2.55rem, 4.7vw, 5rem);
       line-height:.96;
       color:#fbf4e7;
       margin-bottom:15px;
       text-shadow:0 14px 40px rgba(0,0,0,.55);
       letter-spacing:-.03em;
     }
-    #tor-texas-header .torh-subtitle{
+    #tor-laredo-zip-header .torz-subtitle{
       max-width:760px;
       color:#e4dccf;
       font-size:1.04rem;
       line-height:1.72;
       margin-bottom:24px;
     }
-    #tor-texas-header .torh-kpis{
+    #tor-laredo-zip-header .torz-kpis{
       display:grid;
       grid-template-columns:repeat(4,minmax(0,1fr));
       gap:14px;
     }
-    #tor-texas-header .torh-kpi{
+    #tor-laredo-zip-header .torz-kpi{
       position:relative;
       overflow:hidden;
       border-radius:20px;
@@ -176,9 +181,10 @@
       background:linear-gradient(180deg, rgba(10,16,24,.68), rgba(8,12,18,.56));
       border:1px solid rgba(255,255,255,.09);
       backdrop-filter:blur(16px) saturate(140%);
+      -webkit-backdrop-filter:blur(16px) saturate(140%);
       box-shadow:0 18px 42px rgba(0,0,0,.28);
     }
-    #tor-texas-header .torh-kpi::before{
+    #tor-laredo-zip-header .torz-kpi::before{
       content:"";
       position:absolute;
       inset:0 0 auto 0;
@@ -186,7 +192,7 @@
       background:linear-gradient(90deg, rgba(216,184,122,.34), rgba(106,167,255,.16), transparent);
       pointer-events:none;
     }
-    #tor-texas-header .torh-kpi-label{
+    #tor-laredo-zip-header .torz-kpi-label{
       color:var(--muted);
       text-transform:uppercase;
       letter-spacing:.14em;
@@ -195,19 +201,19 @@
       margin-bottom:8px;
       line-height:1.25;
     }
-    #tor-texas-header .torh-kpi-value{
+    #tor-laredo-zip-header .torz-kpi-value{
       font-size:1.48rem;
       font-weight:900;
       color:#fff;
       letter-spacing:-.02em;
       line-height:1.1;
     }
-    #tor-texas-header .torh-right{
+    #tor-laredo-zip-header .torz-right{
       display:grid;
       gap:14px;
       align-self:center;
     }
-    #tor-texas-header .torh-card{
+    #tor-laredo-zip-header .torz-card{
       position:relative;
       overflow:hidden;
       border-radius:26px;
@@ -215,9 +221,10 @@
       background:linear-gradient(180deg, rgba(18,24,34,.84), rgba(8,12,18,.88));
       border:1px solid rgba(216,184,122,.13);
       backdrop-filter:blur(18px) saturate(145%);
+      -webkit-backdrop-filter:blur(18px) saturate(145%);
       box-shadow:0 22px 60px rgba(0,0,0,.38);
     }
-    #tor-texas-header .torh-card::before{
+    #tor-laredo-zip-header .torz-card::before{
       content:"";
       position:absolute;
       inset:0;
@@ -226,34 +233,34 @@
         radial-gradient(circle at top left, rgba(216,184,122,.10), transparent 32%),
         linear-gradient(180deg, rgba(255,255,255,.045), transparent 24%);
     }
-    #tor-texas-header .torh-card > *{
+    #tor-laredo-zip-header .torz-card > *{
       position:relative;
       z-index:1;
     }
-    #tor-texas-header .torh-map-top{
+    #tor-laredo-zip-header .torz-map-top{
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
       gap:14px;
       margin-bottom:12px;
     }
-    #tor-texas-header .torh-map-title{
+    #tor-laredo-zip-header .torz-map-title{
       color:#fbf2e2;
       font-size:.72rem;
       font-weight:900;
       letter-spacing:.15em;
       text-transform:uppercase;
     }
-    #tor-texas-header .torh-map-hint{
+    #tor-laredo-zip-header .torz-map-hint{
       color:var(--muted);
       font-size:.72rem;
       font-weight:700;
       line-height:1.4;
       text-align:right;
     }
-    #tor-sa-map{
+    #tor-laredo-zip-map{
       width:100%;
-      height:255px;
+      height:295px;
       border-radius:18px;
       overflow:hidden;
       border:1px solid rgba(255,255,255,.08);
@@ -261,7 +268,7 @@
       position:relative;
       box-shadow:0 18px 42px rgba(0,0,0,.32);
     }
-    #tor-texas-header .torh-map-loading{
+    #tor-laredo-zip-header .torz-map-loading{
       position:absolute;
       inset:0;
       display:grid;
@@ -276,30 +283,30 @@
         linear-gradient(180deg,#071018,#050912);
       z-index:4;
     }
-    #tor-texas-header .leaflet-container{
+    #tor-laredo-zip-header .leaflet-container{
       background:#071018;
       font-family:"Barlow",system-ui,sans-serif;
     }
-    #tor-texas-header .leaflet-control-attribution{
+    #tor-laredo-zip-header .leaflet-control-attribution{
       display:none !important;
     }
-    #tor-texas-header .leaflet-control-container .leaflet-bottom.leaflet-right{
+    #tor-laredo-zip-header .leaflet-control-container .leaflet-bottom.leaflet-right{
       display:none !important;
     }
-    #tor-texas-header .leaflet-control-zoom{
+    #tor-laredo-zip-header .leaflet-control-zoom{
       border:none;
       box-shadow:0 12px 28px rgba(0,0,0,.32);
     }
-    #tor-texas-header .leaflet-control-zoom a{
+    #tor-laredo-zip-header .leaflet-control-zoom a{
       background:rgba(7,16,24,.82);
       color:#f6d06d;
       border-bottom:1px solid rgba(255,255,255,.08);
     }
-    #tor-texas-header .leaflet-control-zoom a:hover{
+    #tor-laredo-zip-header .leaflet-control-zoom a:hover{
       background:rgba(216,184,122,.16);
       color:#fff6e7;
     }
-    #tor-texas-header .leaflet-tooltip{
+    #tor-laredo-zip-header .leaflet-tooltip{
       background:#101822;
       color:#f3efe7;
       border:1px solid rgba(216,184,122,.24);
@@ -308,25 +315,25 @@
       font-weight:900;
       letter-spacing:.03em;
     }
-    #tor-texas-header .torh-score-card{
+    #tor-laredo-zip-header .torz-zip-panel{
       padding:20px;
     }
-    #tor-texas-header .torh-score-title-row{
+    #tor-laredo-zip-header .torz-panel-title-row{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:14px;
       margin-bottom:14px;
     }
-    #tor-texas-header .torh-score-title{
+    #tor-laredo-zip-header .torz-panel-title{
       color:#fbf2e2;
       font-size:.78rem;
       font-weight:900;
       letter-spacing:.15em;
       text-transform:uppercase;
     }
-    #tor-texas-header .torh-region-pill{
-      max-width:210px;
+    #tor-laredo-zip-header .torz-selected-pill{
+      max-width:220px;
       overflow:hidden;
       white-space:nowrap;
       text-overflow:ellipsis;
@@ -340,152 +347,237 @@
       text-transform:uppercase;
       letter-spacing:.10em;
     }
-    #tor-texas-header .torh-score-grid{
+    #tor-laredo-zip-header .torz-zip-list{
       display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
+      gap:10px;
+      max-height:230px;
+      overflow:auto;
+      padding-right:4px;
     }
-    #tor-texas-header .torh-score-mini{
+    #tor-laredo-zip-header .torz-zip-list::-webkit-scrollbar{
+      width:8px;
+    }
+    #tor-laredo-zip-header .torz-zip-list::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.12);
+      border-radius:999px;
+    }
+    #tor-laredo-zip-header .torz-zip-btn{
+      appearance:none;
+      width:100%;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:17px;
+      padding:14px 14px;
+      text-align:left;
+      cursor:pointer;
+      color:#e9ecff;
+      background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
+      box-shadow:0 12px 28px rgba(0,0,0,.14);
+      transition:
+        transform .18s ease,
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
+    }
+    #tor-laredo-zip-header .torz-zip-btn:hover{
+      transform:translateY(-1px);
+      border-color:rgba(216,184,122,.28);
+      background:linear-gradient(180deg, rgba(216,184,122,.10), rgba(106,167,255,.045));
+    }
+    #tor-laredo-zip-header .torz-zip-btn.is-selected{
+      border-color:rgba(246,208,109,.54);
+      background:linear-gradient(180deg, rgba(216,184,122,.17), rgba(106,167,255,.07));
+      box-shadow:
+        0 0 0 1px rgba(246,208,109,.10),
+        0 20px 42px rgba(0,0,0,.25),
+        0 0 28px rgba(216,184,122,.12);
+    }
+    #tor-laredo-zip-header .torz-zip-code{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color:#fff6e7;
+      font-size:1rem;
+      line-height:1.2;
+      font-weight:900;
+      margin-bottom:5px;
+    }
+    #tor-laredo-zip-header .torz-zip-btn.is-selected .torz-zip-code{
+      color:#f6d06d;
+    }
+    #tor-laredo-zip-header .torz-zip-grade{
+      flex:0 0 auto;
+      color:#111827;
+      background:linear-gradient(135deg, rgba(216,184,122,.95), rgba(246,208,109,.95));
+      border-radius:999px;
+      padding:5px 8px;
+      font-size:.64rem;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    #tor-laredo-zip-header .torz-zip-meta{
+      display:block;
+      color:#b8b0a4;
+      font-size:.78rem;
+      line-height:1.45;
+      font-weight:700;
+    }
+    #tor-laredo-zip-header .torz-score-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:14px;
+    }
+    #tor-laredo-zip-header .torz-score-mini{
       position:relative;
       overflow:hidden;
-      border-radius:17px;
-      padding:14px;
+      border-radius:15px;
+      padding:12px;
       background:rgba(255,255,255,.035);
       border:1px solid rgba(255,255,255,.07);
     }
-    #tor-texas-header .torh-score-mini::after{
+    #tor-laredo-zip-header .torz-score-mini::after{
       content:"";
       position:absolute;
       inset:auto 0 0 0;
       height:2px;
       background:linear-gradient(90deg, rgba(216,184,122,.65), rgba(106,167,255,.30), transparent);
     }
-    #tor-texas-header .torh-score-mini span{
+    #tor-laredo-zip-header .torz-score-mini span{
       display:block;
-      font-size:.70rem;
+      font-size:.61rem;
       text-transform:uppercase;
-      letter-spacing:.12em;
+      letter-spacing:.11em;
       color:var(--muted);
       margin-bottom:6px;
       font-weight:900;
+      line-height:1.2;
     }
-    #tor-texas-header .torh-score-mini strong{
+    #tor-laredo-zip-header .torz-score-mini strong{
       display:block;
-      font-size:1.48rem;
+      font-size:1.18rem;
       color:#fff;
       font-weight:900;
       line-height:1.1;
     }
     @media(max-width:1120px){
-      #tor-texas-header .torh-inner{
+      #tor-laredo-zip-header .torz-inner{
         grid-template-columns:1fr;
         align-items:end;
       }
-      #tor-texas-header .torh-left{
+      #tor-laredo-zip-header .torz-left{
         max-width:100%;
       }
-      #tor-sa-map{
-        height:330px;
+      #tor-laredo-zip-map{
+        height:360px;
       }
     }
     @media(max-width:760px){
-      #tor-texas-header{
+      #tor-laredo-zip-header{
         --wrap:min(100% - 20px, 1380px);
       }
-      #tor-texas-header .torh-wrap{
+      #tor-laredo-zip-header .torz-wrap{
         padding:16px 0;
       }
-      #tor-texas-header .torh-hero{
+      #tor-laredo-zip-header .torz-hero{
         border-radius:26px;
         min-height:auto;
       }
-      #tor-texas-header .torh-inner{
+      #tor-laredo-zip-header .torz-inner{
         padding:20px;
         min-height:auto;
       }
-      #tor-texas-header .torh-kpis,
-      #tor-texas-header .torh-score-grid{
+      #tor-laredo-zip-header .torz-kpis{
         grid-template-columns:1fr;
       }
-      #tor-sa-map{
-        height:300px;
+      #tor-laredo-zip-map{
+        height:330px;
       }
-      #tor-texas-header .torh-map-top,
-      #tor-texas-header .torh-score-title-row{
+      #tor-laredo-zip-header .torz-map-top,
+      #tor-laredo-zip-header .torz-panel-title-row{
         flex-direction:column;
       }
-      #tor-texas-header .torh-map-hint{
+      #tor-laredo-zip-header .torz-map-hint{
         text-align:left;
       }
-      #tor-texas-header .torh-region-pill{
+      #tor-laredo-zip-header .torz-selected-pill{
         max-width:100%;
+      }
+      #tor-laredo-zip-header .torz-score-grid{
+        grid-template-columns:repeat(2,1fr);
       }
     }
   </style>
-      <div class="torh-wrap">
-        <section class="torh-hero">
-          <div class="torh-bg" id="torHeroBg"></div>
-          <div class="torh-inner">
-            <div class="torh-left">
-              <div class="torh-eyebrow" id="torHeroEyebrow">
-                Texas • Laredo Metro
+      <div class="torz-wrap">
+        <section class="torz-hero">
+          <div class="torz-bg" id="torZipHeroBg"></div>
+          <div class="torz-inner">
+            <div class="torz-left">
+              <div class="torz-eyebrow" id="torZipHeroEyebrow">
+                Texas • Laredo ZIP Market
               </div>
-              <h1 class="torh-title" id="torHeroTitle">
-                Laredo Market Intelligence
+              <h1 class="torz-title" id="torZipHeroTitle">
+                Laredo ZIP Code Market Explorer
               </h1>
-              <p class="torh-subtitle" id="torHeroSubtitle">
-                Explore Laredo by region with housing, logistics, affordability, and buyer-positioning signals built for smarter South Texas real estate decisions.
+              <p class="torz-subtitle" id="torZipHeroSubtitle">
+                Explore Laredo by ZIP code with housing, affordability, lifestyle, resale, and buyer-positioning signals built for smarter South Texas real estate decisions.
               </p>
-              <div class="torh-kpis">
-                <div class="torh-kpi">
-                  <div class="torh-kpi-label">Typical Buy Price</div>
-                  <div class="torh-kpi-value" id="torKpiPrice">$315K</div>
+              <div class="torz-kpis">
+                <div class="torz-kpi">
+                  <div class="torz-kpi-label">Typical Buy Price</div>
+                  <div class="torz-kpi-value" id="torZipKpiPrice">$315K</div>
                 </div>
-                <div class="torh-kpi">
-                  <div class="torh-kpi-label">Buyer Fit</div>
-                  <div class="torh-kpi-value" id="torKpiFit">Family</div>
+                <div class="torz-kpi">
+                  <div class="torz-kpi-label">Buyer Fit</div>
+                  <div class="torz-kpi-value" id="torZipKpiFit">Family</div>
                 </div>
-                <div class="torh-kpi">
-                  <div class="torh-kpi-label">Market Pace</div>
-                  <div class="torh-kpi-value" id="torKpiPace">Steady</div>
+                <div class="torz-kpi">
+                  <div class="torz-kpi-label">Market Pace</div>
+                  <div class="torz-kpi-value" id="torZipKpiPace">Steady</div>
                 </div>
-                <div class="torh-kpi">
-                  <div class="torh-kpi-label">Market Grade</div>
-                  <div class="torh-kpi-value" id="torKpiGrade">A-</div>
+                <div class="torz-kpi">
+                  <div class="torz-kpi-label">Market Grade</div>
+                  <div class="torz-kpi-value" id="torZipKpiGrade">A-</div>
                 </div>
               </div>
             </div>
-            <div class="torh-right">
-              <div class="torh-card">
-                <div class="torh-map-top">
-                  <div class="torh-map-title">Laredo Region Map</div>
-                  <div class="torh-map-hint">Click a highlighted region</div>
+            <div class="torz-right">
+              <div class="torz-card">
+                <div class="torz-map-top">
+                  <div class="torz-map-title">Laredo ZIP Code Map</div>
+                  <div class="torz-map-hint">Click a highlighted ZIP zone</div>
                 </div>
-                <div id="tor-sa-map">
-                  <div class="torh-map-loading" id="torMapLoading">Loading Market Map</div>
+                <div id="tor-laredo-zip-map">
+                  <div class="torz-map-loading" id="torZipMapLoading">
+                    Loading ZIP Market Map
+                  </div>
                 </div>
               </div>
-              <div class="torh-card torh-score-card">
-                <div class="torh-score-title-row">
-                  <div class="torh-score-title">Market Scorecard</div>
-                  <div class="torh-region-pill" id="torSelectedRegionPill">North Laredo / Del Mar</div>
+              <div class="torz-card torz-zip-panel">
+                <div class="torz-panel-title-row">
+                  <div class="torz-panel-title">Selected ZIP Market</div>
+                  <div class="torz-selected-pill" id="torZipSelectedPill">
+                    78045 • North Laredo
+                  </div>
                 </div>
-                <div class="torh-score-grid">
-                  <div class="torh-score-mini">
+                <div class="torz-zip-list" id="torZipList"></div>
+                <div class="torz-score-grid">
+                  <div class="torz-score-mini">
                     <span>Affordability</span>
-                    <strong id="torScoreAffordability">82</strong>
+                    <strong id="torZipScoreAffordability">82</strong>
                   </div>
-                  <div class="torh-score-mini">
+                  <div class="torz-score-mini">
                     <span>Growth</span>
-                    <strong id="torScoreGrowth">84</strong>
+                    <strong id="torZipScoreGrowth">84</strong>
                   </div>
-                  <div class="torh-score-mini">
+                  <div class="torz-score-mini">
                     <span>Stability</span>
-                    <strong id="torScoreStability">88</strong>
+                    <strong id="torZipScoreStability">88</strong>
                   </div>
-                  <div class="torh-score-mini">
+                  <div class="torz-score-mini">
                     <span>Overall</span>
-                    <strong id="torScoreOverall">84</strong>
+                    <strong id="torZipScoreOverall">84</strong>
                   </div>
                 </div>
               </div>
@@ -496,124 +588,192 @@
       <script>
     (() => {
       "use strict";
-      if (window.TOR_TEXAS_HEADER_MAP?.__mounted_laredo_v101) return;
-      window.TOR_TEXAS_HEADER_MAP = { __mounted_laredo_v101:true };
+      if (window.TOR_LAREDO_ZIP_MAP?.__mounted_v100) return;
+      window.TOR_LAREDO_ZIP_MAP = {
+        __mounted_v100:true
+      };
       const LEAFLET_CSS_ID = "tor-leaflet-css-v194";
       const LEAFLET_JS_ID = "tor-leaflet-js-v194";
-      const REGIONS = {
-        "north-laredo": {
-          key:"north-laredo",
+      const DEFAULT_ZIP = "78045";
+      const ZIP_REGISTRY = {
+        "78045": {
+          key:"78045",
+          zip:"78045",
           name:"North Laredo / Del Mar",
-          eyebrow:"Texas • North Laredo",
-          title:"North Laredo / Del Mar",
-          subtitle:"Laredo's strongest family-oriented buyer corridor, anchored by Del Mar, North Laredo, stronger school appeal, and newer residential growth.",
+          shortName:"North Laredo",
+          eyebrow:"Texas • Laredo 78045",
+          title:"78045 • North Laredo / Del Mar",
+          subtitle:"Laredo's strongest family-oriented buyer corridor, anchored by Del Mar, Plantation, Alexander-area demand, stronger school appeal, and newer residential growth.",
           price:"$315K",
           fit:"Family",
           pace:"Steady",
           grade:"A-",
-          scores:{ affordability:82, growth:84, stability:88, overall:84 },
-          color:"#d8b87a",
           category:"Premium Family Corridor",
+          scores:{
+            affordability:82,
+            growth:84,
+            stability:88,
+            overall:84
+          },
+          color:"#d8b87a",
+          meta:"Premium family corridor • schools • resale stability",
+          regionKey:"north-laredo",
+          jsonKey:"laredo-78045",
+          center:[27.635,-99.505],
           points:[
-            [27.675,-99.560],
-            [27.675,-99.420],
-            [27.595,-99.390],
-            [27.545,-99.465],
-            [27.575,-99.570]
+            [27.715,-99.610],
+            [27.710,-99.425],
+            [27.635,-99.360],
+            [27.575,-99.420],
+            [27.555,-99.535],
+            [27.610,-99.635]
           ]
         },
-        "central-laredo": {
-          key:"central-laredo",
-          name:"Central Laredo",
-          eyebrow:"Texas • Central Laredo",
-          title:"Central Laredo",
-          subtitle:"Established central-market area with older housing stock, practical access, and mixed resale dynamics depending heavily on condition and block-level quality.",
-          price:"$205K",
+        "78041": {
+          key:"78041",
+          zip:"78041",
+          name:"Central / North-Central Laredo",
+          shortName:"Central Laredo",
+          eyebrow:"Texas • Laredo 78041",
+          title:"78041 • Central / North-Central Laredo",
+          subtitle:"Established Laredo market with practical access, mixed housing age, retail convenience, and resale performance that depends heavily on condition and block-level quality.",
+          price:"$225K",
           fit:"Practical",
           pace:"Mixed",
           grade:"B",
-          scores:{ affordability:92, growth:66, stability:72, overall:73 },
-          color:"#6aa7ff",
           category:"Established Core",
+          scores:{
+            affordability:90,
+            growth:68,
+            stability:74,
+            overall:75
+          },
+          color:"#6aa7ff",
+          meta:"Established core • practical access • mixed resale",
+          regionKey:"central-laredo",
+          jsonKey:"laredo-78041",
+          center:[27.555,-99.485],
           points:[
-            [27.565,-99.555],
-            [27.555,-99.455],
-            [27.505,-99.420],
-            [27.455,-99.470],
-            [27.470,-99.555],
-            [27.520,-99.590]
+            [27.590,-99.565],
+            [27.575,-99.420],
+            [27.515,-99.390],
+            [27.470,-99.460],
+            [27.475,-99.555],
+            [27.525,-99.600]
           ]
         },
-        "south-laredo": {
-          key:"south-laredo",
+        "78040": {
+          key:"78040",
+          zip:"78040",
+          name:"Downtown / West-Central Laredo",
+          shortName:"Downtown / West",
+          eyebrow:"Texas • Laredo 78040",
+          title:"78040 • Downtown / West-Central Laredo",
+          subtitle:"Border-adjacent and central-west Laredo area shaped by older housing stock, historic proximity, trade access, and value-oriented buyer opportunities.",
+          price:"$190K",
+          fit:"Value",
+          pace:"Variable",
+          grade:"B-",
+          category:"Value / Historic Core",
+          scores:{
+            affordability:94,
+            growth:64,
+            stability:66,
+            overall:70
+          },
+          color:"#f6d06d",
+          meta:"Value market • border access • older housing stock",
+          regionKey:"west-laredo",
+          jsonKey:"laredo-78040",
+          center:[27.510,-99.530],
+          points:[
+            [27.550,-99.630],
+            [27.525,-99.500],
+            [27.475,-99.455],
+            [27.425,-99.505],
+            [27.435,-99.625],
+            [27.490,-99.675]
+          ]
+        },
+        "78043": {
+          key:"78043",
+          zip:"78043",
+          name:"East Laredo",
+          shortName:"East Laredo",
+          eyebrow:"Texas • Laredo 78043",
+          title:"78043 • East Laredo",
+          subtitle:"Emerging east-side market influenced by transportation routes, practical affordability, industrial access, and developing residential pockets.",
+          price:"$215K",
+          fit:"Growth",
+          pace:"Developing",
+          grade:"B",
+          category:"Growth / Logistics Edge",
+          scores:{
+            affordability:89,
+            growth:78,
+            stability:70,
+            overall:74
+          },
+          color:"#8ef3c5",
+          meta:"Growth edge • logistics • practical affordability",
+          regionKey:"east-laredo",
+          jsonKey:"laredo-78043",
+          center:[27.505,-99.365],
+          points:[
+            [27.600,-99.425],
+            [27.560,-99.295],
+            [27.455,-99.260],
+            [27.365,-99.345],
+            [27.410,-99.455],
+            [27.515,-99.430]
+          ]
+        },
+        "78046": {
+          key:"78046",
+          zip:"78046",
           name:"South Laredo",
-          eyebrow:"Texas • South Laredo",
-          title:"South Laredo",
-          subtitle:"Affordability-led southern market with lower entry pricing, practical households, and value-oriented buyer demand.",
+          shortName:"South Laredo",
+          eyebrow:"Texas • Laredo 78046",
+          title:"78046 • South Laredo",
+          subtitle:"Affordability-led southern Laredo market with lower entry pricing, practical households, value-oriented demand, and careful micro-market variation.",
           price:"$185K",
           fit:"Entry",
           pace:"Variable",
           grade:"B-",
-          scores:{ affordability:96, growth:62, stability:64, overall:69 },
-          color:"#d98c8c",
           category:"Affordable Entry Zone",
+          scores:{
+            affordability:96,
+            growth:62,
+            stability:64,
+            overall:69
+          },
+          color:"#d98c8c",
+          meta:"Affordable entry • practical buyers • value demand",
+          regionKey:"south-laredo",
+          jsonKey:"laredo-78046",
+          center:[27.370,-99.510],
           points:[
-            [27.470,-99.560],
-            [27.455,-99.455],
-            [27.345,-99.430],
-            [27.270,-99.535],
-            [27.330,-99.650],
-            [27.420,-99.635]
-          ]
-        },
-        "east-laredo": {
-          key:"east-laredo",
-          name:"East Laredo",
-          eyebrow:"Texas • East Laredo",
-          title:"East Laredo",
-          subtitle:"Emerging east-side market shaped by transportation, industrial access, newer growth pockets, and practical affordability.",
-          price:"$230K",
-          fit:"Growth",
-          pace:"Developing",
-          grade:"B",
-          scores:{ affordability:88, growth:78, stability:70, overall:74 },
-          color:"#8ef3c5",
-          category:"Growth / Logistics Edge",
-          points:[
-            [27.590,-99.420],
-            [27.555,-99.310],
-            [27.450,-99.275],
-            [27.360,-99.365],
-            [27.410,-99.455],
-            [27.505,-99.430]
-          ]
-        },
-        "west-laredo": {
-          key:"west-laredo",
-          name:"West Laredo / Mines Road",
-          eyebrow:"Texas • West Laredo Trade Corridor",
-          title:"West Laredo / Mines Road",
-          subtitle:"Trade-corridor influenced west-side area shaped by border commerce, industrial access, practical housing, and route-specific demand.",
-          price:"$220K",
-          fit:"Trade",
-          pace:"Mixed",
-          grade:"B-",
-          scores:{ affordability:86, growth:70, stability:66, overall:70 },
-          color:"#f6d06d",
-          category:"Trade Corridor",
-          points:[
-            [27.650,-99.720],
-            [27.625,-99.575],
-            [27.520,-99.590],
-            [27.420,-99.635],
-            [27.380,-99.740],
-            [27.505,-99.820]
+            [27.455,-99.575],
+            [27.445,-99.430],
+            [27.345,-99.380],
+            [27.255,-99.500],
+            [27.310,-99.660],
+            [27.410,-99.645]
           ]
         }
       };
-      const root = document.getElementById("tor-texas-header");
+      const root =
+        document.getElementById("tor-laredo-zip-header");
       if (!root) return;
       const $ = (sel) => root.querySelector(sel);
+      function esc(str){
+        return String(str ?? "")
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
+      }
       function setText(sel, value){
         const el = $(sel);
         if (el) el.textContent = value ?? "—";
@@ -632,7 +792,8 @@
             resolve(window.L);
             return;
           }
-          const existing = document.getElementById(LEAFLET_JS_ID);
+          const existing =
+            document.getElementById(LEAFLET_JS_ID);
           if (existing) {
             existing.addEventListener("load", () => resolve(window.L));
             existing.addEventListener("error", reject);
@@ -647,13 +808,41 @@
           document.body.appendChild(script);
         });
       }
+      function getZipFromUrl(){
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const zip = String(params.get("zip") || "").trim();
+          return ZIP_REGISTRY[zip] ? zip : "";
+        } catch(err) {
+          return "";
+        }
+      }
+      function syncUrlZip(zip){
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.set("city", "laredo");
+          url.searchParams.set("zip", zip);
+          window.history.replaceState(
+            {},
+            "",
+            url.toString()
+          );
+        } catch(err) {
+          console.warn(err);
+        }
+      }
       function boot(){
-        const mapEl = document.getElementById("tor-sa-map");
-        const loading = $("#torMapLoading");
+        const mapEl =
+          document.getElementById("tor-laredo-zip-map");
+        const loading =
+          $("#torZipMapLoading");
+        const list =
+          $("#torZipList");
         if (!mapEl || !window.L) return;
-        let activeRegion = "north-laredo";
+        let activeZip =
+          getZipFromUrl() || DEFAULT_ZIP;
         const layers = {};
-        const map = L.map("tor-sa-map", {
+        const map = L.map("tor-laredo-zip-map", {
           center:[27.5306,-99.4803],
           zoom:10,
           scrollWheelZoom:false,
@@ -664,93 +853,152 @@
           maxZoom:18,
           attribution:""
         }).addTo(map);
-        function styleRegion(key){
-          const region = REGIONS[key];
+        function styleZip(zip){
+          const item = ZIP_REGISTRY[zip];
           return {
             color:"rgba(251,242,226,.92)",
-            weight:key === activeRegion ? 3.5 : 1.4,
-            fillColor:region.color,
-            fillOpacity:key === activeRegion ? .52 : .24,
+            weight:zip === activeZip ? 3.5 : 1.4,
+            fillColor:item.color,
+            fillOpacity:zip === activeZip ? .54 : .24,
             opacity:.95
           };
         }
-        function renderRegion(key, options = {}){
-          const region = REGIONS[key];
-          if (!region) return;
-          activeRegion = key;
-          Object.keys(layers).forEach(layerKey => {
-            layers[layerKey].setStyle(styleRegion(layerKey));
+        function renderZipList(){
+          if (!list) return;
+          list.innerHTML =
+            Object.values(ZIP_REGISTRY).map(item => `
+              <button
+                class="torz-zip-btn${item.zip === activeZip ? " is-selected" : ""}"
+                type="button"
+                data-tor-zip="${esc(item.zip)}">
+                <span class="torz-zip-code">
+                  <span>${esc(item.zip)} • ${esc(item.shortName)}</span>
+                  <span class="torz-zip-grade">${esc(item.grade)}</span>
+                </span>
+                <span class="torz-zip-meta">
+                  ${esc(item.meta)}
+                </span>
+              </button>
+            `).join("");
+          list
+            .querySelectorAll("[data-tor-zip]")
+            .forEach(button => {
+              button.addEventListener("click", () => {
+                const zip = button.getAttribute("data-tor-zip");
+                selectZip(zip, {
+                  fitBounds:true,
+                  updateUrl:true
+                });
+              });
+            });
+        }
+        function selectZip(zip, options = {}){
+          const item = ZIP_REGISTRY[zip];
+          if (!item) return;
+          activeZip = zip;
+          Object.keys(layers).forEach(layerZip => {
+            layers[layerZip].setStyle(styleZip(layerZip));
           });
-          setText("#torHeroEyebrow", region.eyebrow);
-          setText("#torHeroTitle", region.title);
-          setText("#torHeroSubtitle", region.subtitle);
-          setText("#torKpiPrice", region.price);
-          setText("#torKpiFit", region.fit);
-          setText("#torKpiPace", region.pace);
-          setText("#torKpiGrade", region.grade);
-          setText("#torSelectedRegionPill", region.name);
-          setText("#torScoreAffordability", region.scores.affordability);
-          setText("#torScoreGrowth", region.scores.growth);
-          setText("#torScoreStability", region.scores.stability);
-          setText("#torScoreOverall", region.scores.overall);
-          if (layers[key]) {
-            layers[key].bringToFront();
+          setText("#torZipHeroEyebrow", item.eyebrow);
+          setText("#torZipHeroTitle", item.title);
+          setText("#torZipHeroSubtitle", item.subtitle);
+          setText("#torZipKpiPrice", item.price);
+          setText("#torZipKpiFit", item.fit);
+          setText("#torZipKpiPace", item.pace);
+          setText("#torZipKpiGrade", item.grade);
+          setText("#torZipSelectedPill", `${item.zip} • ${item.shortName}`);
+          setText("#torZipScoreAffordability", item.scores.affordability);
+          setText("#torZipScoreGrowth", item.scores.growth);
+          setText("#torZipScoreStability", item.scores.stability);
+          setText("#torZipScoreOverall", item.scores.overall);
+          if (layers[zip]) {
+            layers[zip].bringToFront();
             if (options.fitBounds === true) {
-              map.fitBounds(layers[key].getBounds(), {
+              map.fitBounds(layers[zip].getBounds(), {
                 padding:[18,18],
-                maxZoom:11
+                maxZoom:12
               });
             }
           }
-          window.TOR_SELECTED_REGION = {
-            key,
-            region
+          renderZipList();
+          if (options.updateUrl === true) {
+            syncUrlZip(zip);
+          }
+          window.TOR_SELECTED_ZIP = {
+            zip,
+            area:item
           };
+          window.TOR_SELECTED_REGION = {
+            key:item.regionKey,
+            region:item
+          };
+          window.dispatchEvent(new CustomEvent("tor:zip-selected", {
+            detail:{
+              zip,
+              area:item
+            }
+          }));
           window.dispatchEvent(new CustomEvent("tor:region-selected", {
             detail:{
-              key,
-              region
+              key:item.regionKey,
+              region:item
             }
           }));
         }
-        Object.entries(REGIONS).forEach(([key, region]) => {
-          const layer = L.polygon(region.points, styleRegion(key)).addTo(map);
-          layers[key] = layer;
-          layer.bindTooltip(region.name, {
+        Object.entries(ZIP_REGISTRY).forEach(([zip, item]) => {
+          const layer =
+            L.polygon(item.points, styleZip(zip)).addTo(map);
+          layers[zip] = layer;
+          layer.bindTooltip(`${item.zip} • ${item.shortName}`, {
             sticky:true,
             direction:"top"
           });
           layer.on("click", () => {
-            renderRegion(key, { fitBounds:false });
+            selectZip(zip, {
+              fitBounds:false,
+              updateUrl:true
+            });
           });
           layer.on("mouseover", () => {
             layer.setStyle({
-              fillOpacity:.58,
+              fillOpacity:.60,
               weight:3.5
             });
           });
           layer.on("mouseout", () => {
-            layer.setStyle(styleRegion(key));
+            layer.setStyle(styleZip(zip));
           });
         });
         const allBounds = L.latLngBounds(
-          Object.values(REGIONS)
-            .flatMap(region => region.points)
+          Object.values(ZIP_REGISTRY)
+            .flatMap(item => item.points)
             .map(point => L.latLng(point[0], point[1]))
         );
         map.fitBounds(allBounds, {
           padding:[18,18],
           maxZoom:10
         });
-        renderRegion(activeRegion);
+        selectZip(activeZip, {
+          fitBounds:false,
+          updateUrl:false
+        });
         if (loading) {
           loading.style.display = "none";
         }
-        window.TOR_TEXAS_HEADER_MAP.selectRegion = function(key){
-          renderRegion(key, { fitBounds:true });
+        window.TOR_LAREDO_ZIP_MAP.selectZip = function(zip){
+          selectZip(zip, {
+            fitBounds:true,
+            updateUrl:true
+          });
         };
-        window.TOR_TEXAS_HEADER_MAP.getRegions = function(){
-          return REGIONS;
+        window.TOR_LAREDO_ZIP_MAP.getZips = function(){
+          return ZIP_REGISTRY;
+        };
+        window.TOR_LAREDO_ZIP_MAP.getCurrentZip = function(){
+          return activeZip;
+        };
+        window.TOR_LAREDO_ZIP_MAP.getCurrentArea = function(){
+          return ZIP_REGISTRY[activeZip] || null;
         };
         setTimeout(() => map.invalidateSize(), 250);
         setTimeout(() => map.invalidateSize(), 750);
@@ -770,7 +1018,7 @@
           boot();
         })
         .catch(() => {
-          const loading = $("#torMapLoading");
+          const loading = $("#torZipMapLoading");
           if (loading) {
             loading.textContent = "Map temporarily unavailable";
           }
@@ -1774,41 +2022,188 @@
   </script>
     </div>
   </div>
-  <div class="w-embed w-script"><!--  =========================================================
-  The Orozco Realty • Texas Demographics
-  JS RUNTIME
-  v1.2.0-LAREDO • Market Data API + Census-Enriched Region Calls
-  REQUIRED:
-  1) Laredo Header Shell + Map UX already on page
-  2) Laredo Demographic / Real Estate Shell already on page
-  3) Netlify Function:
-     netlify/functions/market-data.js
-  JSON SOURCE:
-  netlify/functions/data/market/laredo.json
-  BROWSER API:
-  /api/market-data?city=laredo
-  /api/market-data?city=laredo&region=north-laredo
-  PURPOSE:
-  - Loads Laredo market JSON through Netlify Function
-  - Uses Census-enriched market-data API
-  - Calls region-specific API when map region changes
-  - Updates Demographic / Real Estate Shell
-  - Has Header Shell fallback if API fails
-=========================================================  -->
+  <div class="w-embed w-script">
     <script>
 (() => {
   "use strict";
-  if (window.TOR_REGION_INTEL_RUNTIME?.__mounted_laredo_v120) return;
-  window.TOR_REGION_INTEL_RUNTIME = { __mounted_laredo_v120:true };
-  const CITY_SLUG = "laredo";
-  const DEFAULT_REGION_KEY = "north-laredo";
-  const root = document.getElementById("tor-region-intel");
+  if (window.TOR_LAREDO_ZIP_MAP?.__mounted_v100) return;
+  window.TOR_LAREDO_ZIP_MAP = {
+    __mounted_v100:true
+  };
+  const LEAFLET_CSS_ID = "tor-leaflet-css-v194";
+  const LEAFLET_JS_ID = "tor-leaflet-js-v194";
+  const DEFAULT_ZIP = "78045";
+  const ZIP_REGISTRY = {
+    "78045": {
+      key:"78045",
+      zip:"78045",
+      name:"North Laredo / Del Mar",
+      shortName:"North Laredo",
+      eyebrow:"Texas • Laredo 78045",
+      title:"78045 • North Laredo / Del Mar",
+      subtitle:"Laredo's strongest family-oriented buyer corridor, anchored by Del Mar, Plantation, Alexander-area demand, stronger school appeal, and newer residential growth.",
+      price:"$315K",
+      fit:"Family",
+      pace:"Steady",
+      grade:"A-",
+      category:"Premium Family Corridor",
+      scores:{
+        affordability:82,
+        growth:84,
+        stability:88,
+        overall:84
+      },
+      color:"#d8b87a",
+      meta:"Premium family corridor • schools • resale stability",
+      regionKey:"north-laredo",
+      jsonKey:"laredo-78045",
+      center:[27.635,-99.505],
+      points:[
+        [27.715,-99.610],
+        [27.710,-99.425],
+        [27.635,-99.360],
+        [27.575,-99.420],
+        [27.555,-99.535],
+        [27.610,-99.635]
+      ]
+    },
+    "78041": {
+      key:"78041",
+      zip:"78041",
+      name:"Central / North-Central Laredo",
+      shortName:"Central Laredo",
+      eyebrow:"Texas • Laredo 78041",
+      title:"78041 • Central / North-Central Laredo",
+      subtitle:"Established Laredo market with practical access, mixed housing age, retail convenience, and resale performance that depends heavily on condition and block-level quality.",
+      price:"$225K",
+      fit:"Practical",
+      pace:"Mixed",
+      grade:"B",
+      category:"Established Core",
+      scores:{
+        affordability:90,
+        growth:68,
+        stability:74,
+        overall:75
+      },
+      color:"#6aa7ff",
+      meta:"Established core • practical access • mixed resale",
+      regionKey:"central-laredo",
+      jsonKey:"laredo-78041",
+      center:[27.555,-99.485],
+      points:[
+        [27.590,-99.565],
+        [27.575,-99.420],
+        [27.515,-99.390],
+        [27.470,-99.460],
+        [27.475,-99.555],
+        [27.525,-99.600]
+      ]
+    },
+    "78040": {
+      key:"78040",
+      zip:"78040",
+      name:"Downtown / West-Central Laredo",
+      shortName:"Downtown / West",
+      eyebrow:"Texas • Laredo 78040",
+      title:"78040 • Downtown / West-Central Laredo",
+      subtitle:"Border-adjacent and central-west Laredo area shaped by older housing stock, historic proximity, trade access, and value-oriented buyer opportunities.",
+      price:"$190K",
+      fit:"Value",
+      pace:"Variable",
+      grade:"B-",
+      category:"Value / Historic Core",
+      scores:{
+        affordability:94,
+        growth:64,
+        stability:66,
+        overall:70
+      },
+      color:"#f6d06d",
+      meta:"Value market • border access • older housing stock",
+      regionKey:"west-laredo",
+      jsonKey:"laredo-78040",
+      center:[27.510,-99.530],
+      points:[
+        [27.550,-99.630],
+        [27.525,-99.500],
+        [27.475,-99.455],
+        [27.425,-99.505],
+        [27.435,-99.625],
+        [27.490,-99.675]
+      ]
+    },
+    "78043": {
+      key:"78043",
+      zip:"78043",
+      name:"East Laredo",
+      shortName:"East Laredo",
+      eyebrow:"Texas • Laredo 78043",
+      title:"78043 • East Laredo",
+      subtitle:"Emerging east-side market influenced by transportation routes, practical affordability, industrial access, and developing residential pockets.",
+      price:"$215K",
+      fit:"Growth",
+      pace:"Developing",
+      grade:"B",
+      category:"Growth / Logistics Edge",
+      scores:{
+        affordability:89,
+        growth:78,
+        stability:70,
+        overall:74
+      },
+      color:"#8ef3c5",
+      meta:"Growth edge • logistics • practical affordability",
+      regionKey:"east-laredo",
+      jsonKey:"laredo-78043",
+      center:[27.505,-99.365],
+      points:[
+        [27.600,-99.425],
+        [27.560,-99.295],
+        [27.455,-99.260],
+        [27.365,-99.345],
+        [27.410,-99.455],
+        [27.515,-99.430]
+      ]
+    },
+    "78046": {
+      key:"78046",
+      zip:"78046",
+      name:"South Laredo",
+      shortName:"South Laredo",
+      eyebrow:"Texas • Laredo 78046",
+      title:"78046 • South Laredo",
+      subtitle:"Affordability-led southern Laredo market with lower entry pricing, practical households, value-oriented demand, and careful micro-market variation.",
+      price:"$185K",
+      fit:"Entry",
+      pace:"Variable",
+      grade:"B-",
+      category:"Affordable Entry Zone",
+      scores:{
+        affordability:96,
+        growth:62,
+        stability:64,
+        overall:69
+      },
+      color:"#d98c8c",
+      meta:"Affordable entry • practical buyers • value demand",
+      regionKey:"south-laredo",
+      jsonKey:"laredo-78046",
+      center:[27.370,-99.510],
+      points:[
+        [27.455,-99.575],
+        [27.445,-99.430],
+        [27.345,-99.380],
+        [27.255,-99.500],
+        [27.310,-99.660],
+        [27.410,-99.645]
+      ]
+    }
+  };
+  const root =
+    document.getElementById("tor-laredo-zip-header");
   if (!root) return;
-  let CITY = null;
-  let ACTIVE_REGION_KEY = DEFAULT_REGION_KEY;
-  let REGION_REQUEST_ID = 0;
-  const REGION_CACHE = new Map();
-  const $ = (sel, node = root) => node.querySelector(sel);
+  const $ = (sel) => root.querySelector(sel);
   function esc(str){
     return String(str ?? "")
       .replaceAll("&","&amp;")
@@ -1819,635 +2214,258 @@
   }
   function setText(sel, value){
     const el = $(sel);
-    if (!el) return;
-    el.textContent = value === undefined || value === null || value === "" ? "—" : String(value);
+    if (el) el.textContent = value ?? "—";
   }
-  function setHTML(sel, html){
-    const el = $(sel);
-    if (!el) return;
-    el.innerHTML = html || "";
+  function loadCss(){
+    if (document.getElementById(LEAFLET_CSS_ID)) return;
+    const link = document.createElement("link");
+    link.id = LEAFLET_CSS_ID;
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    document.head.appendChild(link);
   }
-  function arr(value){
-    return Array.isArray(value) ? value : [];
-  }
-  function fmtMoney(value){
-    const n = Number(value);
-    if (!Number.isFinite(n)) return "—";
-    return new Intl.NumberFormat("en-US", {
-      style:"currency",
-      currency:"USD",
-      maximumFractionDigits:0
-    }).format(n);
-  }
-  function fmtShortMoney(value){
-    const n = Number(value);
-    if (!Number.isFinite(n)) return "—";
-    if (Math.abs(n) >= 1000000) return `$${(n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1)}M`;
-    if (Math.abs(n) >= 1000) return `$${Math.round(n / 1000)}K`;
-    return fmtMoney(n);
-  }
-  function firstDefined(...values){
-    for (const value of values){
-      if (value !== undefined && value !== null && value !== "") return value;
-    }
-    return null;
-  }
-  function renderList(sel, items){
-    const safe = arr(items).filter(Boolean);
-    setHTML(
-      sel,
-      safe.length
-        ? safe.map(item => `<li>${esc(item)}</li>`).join("")
-        : `<li>No data available yet.</li>`
-    );
-  }
-  function renderTags(sel, tags){
-    const safe = arr(tags).filter(Boolean);
-    setHTML(
-      sel,
-      safe.length
-        ? safe.map(tag => `<span class="tori-tag">${esc(tag)}</span>`).join("")
-        : `<span class="tori-tag">No Tags Yet</span>`
-    );
-  }
-  function renderNeighborhoodItems(sel, neighborhoods){
-    const safe = arr(neighborhoods).filter(Boolean);
-    setHTML(
-      sel,
-      safe.length
-        ? safe.map(item => {
-            const name = typeof item === "string" ? item : item.name;
-            const desc = typeof item === "string"
-              ? "Neighborhood signal for this region."
-              : item.description;
-            return `
-              <div class="tori-neighborhood-item">
-                <strong>${esc(name)}</strong>
-                <span>${esc(desc)}</span>
-              </div>
-            `;
-          }).join("")
-        : `
-          <div class="tori-neighborhood-item">
-            <strong>No neighborhood data yet</strong>
-            <span>Add neighborhood objects to this region in the Laredo JSON file.</span>
-          </div>
-        `
-    );
-  }
-  function scoreBar(label, value){
-    const n = Number(value);
-    const width = Number.isFinite(n) ? Math.max(0, Math.min(n, 100)) : 0;
-    return `
-      <div class="tori-bar-row">
-        <div class="tori-bar-name">${esc(label)}</div>
-        <div class="tori-bar-track">
-          <div class="tori-bar-fill" style="width:${width}%"></div>
-        </div>
-        <div class="tori-bar-val">${Number.isFinite(n) ? n : "—"}</div>
-      </div>
-    `;
-  }
-  function miniBar(label, value, max, display){
-    const n = Number(value);
-    const m = Number(max);
-    const width = Number.isFinite(n) && Number.isFinite(m) && m > 0
-      ? Math.max(0, Math.min((n / m) * 100, 100))
-      : 0;
-    return `
-      <div class="tori-mini-row">
-        <span>${esc(label)}</span>
-        <div class="tori-mini-track">
-          <div class="tori-mini-fill" style="width:${width}%"></div>
-        </div>
-        <strong>${esc(display)}</strong>
-      </div>
-    `;
-  }
-  function makeApiUrl(regionKey = ""){
-    const query = new URLSearchParams();
-    query.set("city", CITY_SLUG);
-    query.set("census", "true");
-    if (regionKey) {
-      query.set("region", regionKey);
-    }
-    return `/api/market-data?${query.toString()}`;
-  }
-  function makeAbsoluteApiUrl(regionKey = ""){
-    const query = new URLSearchParams();
-    query.set("city", CITY_SLUG);
-    query.set("census", "true");
-    if (regionKey) {
-      query.set("region", regionKey);
-    }
-    return `https://theorozcorealty.netlify.app/api/market-data?${query.toString()}`;
-  }
-  async function fetchMarketPayload(regionKey = ""){
-    const urls = [
-      makeApiUrl(regionKey),
-      makeAbsoluteApiUrl(regionKey)
-    ];
-    let lastError = null;
-    for (const url of urls){
-      try{
-        const res = await fetch(url, { cache:"no-store" });
-        if (!res.ok){
-          lastError = new Error(`HTTP ${res.status} from ${url}`);
-          continue;
-        }
-        const payload = await res.json();
-        if (payload?.ok && payload?.data){
-          window.TOR_REGION_INTEL_RUNTIME.loadedFrom = url;
-          window.TOR_REGION_INTEL_RUNTIME.lastPayload = payload;
-          return payload;
-        }
-        if (payload?.regions){
-          window.TOR_REGION_INTEL_RUNTIME.loadedFrom = url;
-          window.TOR_REGION_INTEL_RUNTIME.lastPayload = {
-            ok:true,
-            data:payload
-          };
-          return {
-            ok:true,
-            data:payload
-          };
-        }
-        lastError = new Error(`Unexpected payload from ${url}`);
-      }catch(err){
-        lastError = err;
+  function loadLeaflet(){
+    return new Promise((resolve, reject) => {
+      if (window.L) {
+        resolve(window.L);
+        return;
       }
-    }
-    throw lastError || new Error("Market data could not load.");
-  }
-  function fallbackRegionFromHeader(headerRegion){
-    const r = headerRegion || {};
-    return {
-      slug: r.key || ACTIVE_REGION_KEY,
-      name: r.name || r.title || "Selected Region",
-      region_label: r.eyebrow || "Laredo Region",
-      market_label: r.category || "Market View",
-      profile: r.subtitle || "Regional intelligence loaded from the map selection.",
-      typical_price: null,
-      price_display: r.price || "—",
-      entry_price: null,
-      premium_price: null,
-      estimated_payment_range: "$—",
-      buyer_fit: r.fit || "—",
-      market_pace: r.pace || "—",
-      market_grade: r.grade || "—",
-      inventory_feel: "—",
-      negotiation_power: "—",
-      household_profile: r.fit || "—",
-      income_signal: "—",
-      education_signal: "—",
-      commute_pattern: r.eyebrow || "—",
-      lifestyle_fit: r.category || "—",
-      growth_pressure: "—",
-      overview_bluf: r.subtitle || "Regional intelligence loaded from the map selection.",
-      summary_points: [
-        r.subtitle || "Regional profile loaded from the map selector.",
-        "The Header Map and Demographics Panel are connected.",
-        "Full JSON and Census-powered detail appears once /api/market-data is live."
-      ],
-      scorecard: {
-        affordability_score: r.scores?.affordability ?? 0,
-        growth_score: r.scores?.growth ?? 0,
-        stability_score: r.scores?.stability ?? 0,
-        military_fit_score: r.scores?.militaryFit ?? r.scores?.military_fit ?? 0,
-        overall_score: r.scores?.overall ?? 0
-      },
-      real_estate: {
-        ownership_notes: [
-          "Panel is currently using Header Map fallback data.",
-          "Once /api/market-data works, ownership notes will come from laredo.json."
-        ],
-        opportunities: [
-          "Header-to-panel region switching is active.",
-          "Region-specific JSON can control this panel once the API loads."
-        ],
-        risks: [
-          "If JSON fails, check the Netlify Function route /api/market-data?city=laredo.",
-          "Confirm the Laredo JSON file is included in Netlify function bundled files."
-        ],
-        buyer_strategy: r.subtitle || "Use the region selection to guide buyer strategy.",
-        price_positioning: {
-          entry: null,
-          typical: null,
-          premium: null
-        }
-      },
-      demographics: {
-        household_profile: r.fit || "—",
-        income_signal: "—",
-        education_signal: "—",
-        commute_pattern: r.eyebrow || "—",
-        lifestyle_fit: r.category || "—",
-        growth_pressure: "—",
-        education_bars: {
-          schools: r.scores?.stability ?? 0,
-          demand: r.scores?.growth ?? 0,
-          stability: r.scores?.stability ?? 0
-        },
-        lifestyle_signals: [
-          r.subtitle || "Lifestyle profile loaded from map selection."
-        ],
-        buyer_psychology: "This fallback updates from the Header Map. The full copy comes from laredo.json and official Census enrichment once the API loads."
-      },
-      neighborhoods: [],
-      commute_notes: [
-        "Commute notes will come from laredo.json once available."
-      ],
-      tags: [
-        r.fit || "Region",
-        r.pace || "Market",
-        r.grade || "Grade"
-      ],
-      guidance: {
-        buyer_guidance: [
-          "Use the selected region as the buyer conversation anchor.",
-          "Confirm payment, taxes, insurance, commute, school data, and exact neighborhood fit before making final decisions."
-        ],
-        seller_guidance: [
-          "Position the property around the selected region's strongest buyer appeal."
-        ],
-        investor_guidance: [
-          "Use region selection as the first filter, then underwrite by exact neighborhood and property."
-        ],
-        best_for: [
-          r.fit || "Selected buyer profile"
-        ],
-        watchouts: [
-          "Full watchouts will load from laredo.json once API access is fixed."
-        ]
+      const existing =
+        document.getElementById(LEAFLET_JS_ID);
+      if (existing) {
+        existing.addEventListener("load", () => resolve(window.L));
+        existing.addEventListener("error", reject);
+        return;
       }
-    };
-  }
-  function getRegion(key, headerRegion){
-    if (CITY?.regions?.[key]) return CITY.regions[key];
-    const defaultKey =
-      CITY?.compatibility?.default_region_key ||
-      DEFAULT_REGION_KEY;
-    if (CITY?.regions?.[defaultKey]) return CITY.regions[defaultKey];
-    return fallbackRegionFromHeader(headerRegion);
-  }
-  function getOfficialDemographics(region){
-    const d = region?.demographics || {};
-    const city = CITY?.official_census_profile || {};
-    return {
-      population: firstDefined(
-        d.official_population,
-        city.population?.total,
-        CITY?.population?.estimate
-      ),
-      medianAge: firstDefined(
-        d.official_median_age,
-        city.population?.median_age,
-        CITY?.population?.median_age
-      ),
-      households: firstDefined(
-        d.official_households,
-        city.households?.total,
-        CITY?.households?.total_households
-      ),
-      averageHouseholdSize: firstDefined(
-        d.official_average_household_size,
-        city.households?.average_household_size,
-        CITY?.population?.persons_per_household
-      ),
-      medianIncome: firstDefined(
-        d.official_median_household_income,
-        city.economy?.median_household_income,
-        CITY?.income?.median_household_income
-      ),
-      perCapitaIncome: firstDefined(
-        d.official_per_capita_income,
-        city.economy?.per_capita_income,
-        CITY?.income?.per_capita_income
-      ),
-      povertyPct: firstDefined(
-        d.official_poverty_pct,
-        city.economy?.poverty_pct,
-        CITY?.income?.poverty_rate_percent
-      ),
-      unemploymentPct: firstDefined(
-        d.official_unemployment_rate_pct,
-        city.economy?.unemployment_rate_pct,
-        CITY?.labor?.unemployment_rate_percent
-      ),
-      commuteMinutes: firstDefined(
-        d.official_mean_travel_time_minutes,
-        city.commute?.mean_travel_time_minutes,
-        CITY?.labor?.mean_travel_time_to_work_minutes
-      ),
-      highSchoolPct: firstDefined(
-        d.official_high_school_or_higher_pct,
-        city.education?.high_school_or_higher_pct,
-        CITY?.education?.high_school_grad_or_higher_percent
-      ),
-      bachelorsPct: firstDefined(
-        d.official_bachelors_or_higher_pct,
-        city.education?.bachelors_or_higher_pct,
-        CITY?.education?.bachelors_degree_or_higher_percent
-      ),
-      veteransPct: firstDefined(
-        d.official_veterans_pct,
-        city.military_veterans?.veterans_pct,
-        CITY?.veterans?.veteran_population_percent
-      ),
-      medianHomeValue: firstDefined(
-        d.official_median_home_value,
-        city.housing?.median_home_value,
-        CITY?.housing?.median_value_owner_occupied
-      ),
-      medianGrossRent: firstDefined(
-        d.official_median_gross_rent,
-        city.housing?.median_gross_rent,
-        CITY?.rental_metrics?.median_rent
-      )
-    };
-  }
-  function normalizeRegionPayload(region){
-    const scorecard = region.scorecard || {};
-    const realEstate = region.real_estate || {};
-    const demographics = region.demographics || {};
-    const guidance = region.guidance || {};
-    const pricePositioning = realEstate.price_positioning || {};
-    const official = getOfficialDemographics(region);
-    return {
-      key: region.slug || ACTIVE_REGION_KEY,
-      name: firstDefined(region.name, "Selected Region"),
-      subtitle: firstDefined(region.profile, CITY?.profile, "Regional intelligence loaded."),
-      overviewStatus: firstDefined(region.market_label, "Market View"),
-      price: firstDefined(region.price_display, fmtShortMoney(region.typical_price), fmtShortMoney(CITY?.avg_home_value)),
-      priceNumber: firstDefined(region.typical_price, CITY?.avg_home_value),
-      buyerFit: firstDefined(region.buyer_fit, "Buyer"),
-      pace: firstDefined(region.market_pace, "Market"),
-      grade: firstDefined(region.market_grade, "—"),
-      overviewBluf: firstDefined(region.overview_bluf, region.profile, CITY?.market_bluf?.bluf_summary),
-      summaryPoints: arr(region.summary_points).length ? region.summary_points : CITY?.summary_points,
-      affordability: firstDefined(scorecard.affordability_score, CITY?.scorecard?.affordability_score),
-      growth: firstDefined(scorecard.growth_score, CITY?.scorecard?.growth_score),
-      stability: firstDefined(scorecard.stability_score, CITY?.scorecard?.stability_score),
-      militaryFit: firstDefined(scorecard.military_fit_score, CITY?.scorecard?.military_fit_score),
-      overall: firstDefined(scorecard.overall_score, CITY?.scorecard?.overall_score),
-      estimatedPaymentRange: firstDefined(region.estimated_payment_range, "$—"),
-      inventoryFeel: firstDefined(region.inventory_feel, "—"),
-      negotiationPower: firstDefined(region.negotiation_power, "—"),
-      ownershipNotes: arr(realEstate.ownership_notes).length ? realEstate.ownership_notes : CITY?.ownership_costs?.notes,
-      opportunities: arr(realEstate.opportunities).length ? realEstate.opportunities : CITY?.opportunities,
-      risks: arr(realEstate.risks).length ? realEstate.risks : CITY?.risks,
-      buyerStrategy: firstDefined(realEstate.buyer_strategy, CITY?.financial_brief?.affordability_summary, "No buyer strategy available yet."),
-      entryPrice: firstDefined(pricePositioning.entry, region.entry_price),
-      typicalPrice: firstDefined(pricePositioning.typical, region.typical_price),
-      premiumPrice: firstDefined(pricePositioning.premium, region.premium_price),
-      householdProfile: firstDefined(region.household_profile, demographics.household_profile, "—"),
-      incomeSignal: firstDefined(region.income_signal, demographics.income_signal, "—"),
-      educationSignal: firstDefined(region.education_signal, demographics.education_signal, "—"),
-      commutePattern: firstDefined(region.commute_pattern, demographics.commute_pattern, "—"),
-      lifestyleFit: firstDefined(region.lifestyle_fit, demographics.lifestyle_fit, "—"),
-      growthPressure: firstDefined(region.growth_pressure, demographics.growth_pressure, "—"),
-      educationBars: demographics.education_bars || {},
-      lifestyleSignals: arr(demographics.lifestyle_signals),
-      buyerPsychology: firstDefined(demographics.buyer_psychology, "No buyer psychology summary available yet."),
-      official,
-      neighborhoods: arr(region.neighborhoods).length ? region.neighborhoods : CITY?.target_neighborhoods,
-      commuteNotes: arr(region.commute_notes),
-      tags: arr(region.tags),
-      buyerGuidance: arr(guidance.buyer_guidance).length ? guidance.buyer_guidance : CITY?.buyer_guidance,
-      sellerGuidance: arr(guidance.seller_guidance).length ? guidance.seller_guidance : CITY?.seller_guidance,
-      investorGuidance: arr(guidance.investor_guidance).length ? guidance.investor_guidance : CITY?.investor_angles,
-      bestFor: arr(guidance.best_for),
-      watchouts: arr(guidance.watchouts),
-      censusName: firstDefined(
-        region.official_census_profile?.name,
-        CITY?.official_census_profile?.name,
-        "Official Census profile"
-      )
-    };
-  }
-  function renderOverview(data){
-    setText("#torIntelTitle", `${data.name} Buyer Intelligence`);
-    setText("#torIntelSubtitle", data.subtitle);
-    setText("#torIntelSelectedRegion", data.name);
-    setText("#torOverviewIntro", data.subtitle);
-    setText("#torOverviewStatus", data.overviewStatus);
-    setText("#torOverviewPrice", data.price);
-    setText("#torOverviewBuyerFit", data.buyerFit);
-    setText("#torOverviewPace", data.pace);
-    setText("#torOverviewGrade", data.grade);
-    setText("#torOverviewPriceHint", "Typical regional pricing anchor.");
-    setText("#torOverviewBuyerFitHint", "Primary buyer profile for this region.");
-    setText("#torOverviewPaceHint", "How quickly well-positioned homes may move.");
-    setText("#torOverviewGradeHint", "TOR decision score for this region.");
-    setText("#torOverviewBluf", data.overviewBluf);
-    renderList("#torOverviewSummaryList", data.summaryPoints);
-    setHTML("#torOverviewScoreBars", [
-      scoreBar("Affordability", data.affordability),
-      scoreBar("Growth", data.growth),
-      scoreBar("Stability", data.stability),
-      scoreBar("Military Fit", data.militaryFit),
-      scoreBar("Overall", data.overall)
-    ].join(""));
-  }
-  function renderRealEstate(data){
-    setText("#torRealEstateIntro", `Pricing, ownership cost posture, inventory behavior, and buyer leverage for ${data.name}.`);
-    setText("#torRealEstateStatus", "Housing Context");
-    setText("#torREHomePrice", data.price);
-    setText("#torREPayment", data.estimatedPaymentRange);
-    setText("#torREInventory", data.inventoryFeel);
-    setText("#torRELeverage", data.negotiationPower);
-    renderList("#torREOwnershipNotes", data.ownershipNotes);
-    renderList("#torREOpportunities", data.opportunities);
-    renderList("#torRERisks", data.risks);
-    const maxPrice = Math.max(
-      Number(data.entryPrice) || 0,
-      Number(data.typicalPrice) || 0,
-      Number(data.premiumPrice) || 0,
-      1
-    );
-    setHTML("#torREPriceBars", [
-      miniBar("Entry", data.entryPrice, maxPrice, fmtShortMoney(data.entryPrice)),
-      miniBar("Typical", data.typicalPrice, maxPrice, fmtShortMoney(data.typicalPrice)),
-      miniBar("Premium", data.premiumPrice, maxPrice, `${fmtShortMoney(data.premiumPrice)}+`)
-    ].join(""));
-    setText("#torREBuyerStrategy", data.buyerStrategy);
-  }
-  function renderDemographics(data){
-    const official = data.official || {};
-    setText(
-      "#torDemographicsIntro",
-      `Official Census-enriched demographic signals for ${data.name}. Source profile: ${data.censusName}.`
-    );
-    setText("#torDemographicsStatus", "Official Census + TOR Read");
-    setText("#torDemoHouseholdProfile", data.householdProfile);
-    setText("#torDemoIncomeSignal", official.medianIncome ? fmtShortMoney(official.medianIncome) : data.incomeSignal);
-    setText("#torDemoEducationSignal", official.bachelorsPct !== null && official.bachelorsPct !== undefined ? `${official.bachelorsPct}% BA+` : data.educationSignal);
-    setText("#torDemoCommute", official.commuteMinutes ? `${official.commuteMinutes} min` : data.commutePattern);
-    setText("#torDemoLifestyle", data.lifestyleFit);
-    setText("#torDemoGrowthPressure", data.growthPressure);
-    const bars = data.educationBars || {};
-    const schoolsScore = Number(firstDefined(bars.schools, official.highSchoolPct, 0));
-    const demandScore = Number(firstDefined(bars.demand, data.growth, 0));
-    const stabilityScore = Number(firstDefined(bars.stability, data.stability, 0));
-    setHTML("#torDemoEducationBars", [
-      miniBar("HS+", official.highSchoolPct ?? schoolsScore, 100, official.highSchoolPct !== null && official.highSchoolPct !== undefined ? `${official.highSchoolPct}%` : String(schoolsScore || "—")),
-      miniBar("BA+", official.bachelorsPct ?? demandScore, 100, official.bachelorsPct !== null && official.bachelorsPct !== undefined ? `${official.bachelorsPct}%` : String(demandScore || "—")),
-      miniBar("Veterans", official.veteransPct ?? stabilityScore, 100, official.veteransPct !== null && official.veteransPct !== undefined ? `${official.veteransPct}%` : String(stabilityScore || "—"))
-    ].join(""));
-    const censusSignals = [
-      official.population ? `Official population profile: ${Number(official.population).toLocaleString()} residents.` : null,
-      official.medianAge ? `Median age: ${official.medianAge}.` : null,
-      official.medianIncome ? `Median household income: ${fmtMoney(official.medianIncome)}.` : null,
-      official.medianGrossRent ? `Median gross rent: ${fmtMoney(official.medianGrossRent)}.` : null
-    ].filter(Boolean);
-    const lifestyleSignals = censusSignals.length
-      ? [...censusSignals, ...arr(data.lifestyleSignals)]
-      : data.lifestyleSignals;
-    renderList("#torDemoLifestyleSignals", lifestyleSignals);
-    setText("#torDemoBuyerPsychology", data.buyerPsychology);
-  }
-  function renderNeighborhoodsPanel(data){
-    setText("#torNeighborhoodIntro", `Key neighborhood patterns, commute notes, and micro-market watchouts for ${data.name}.`);
-    setText("#torNeighborhoodStatus", "Micro-Market View");
-    renderNeighborhoodItems("#torNeighborhoodList", data.neighborhoods);
-    renderList("#torNeighborhoodCommuteNotes", data.commuteNotes);
-    renderTags("#torNeighborhoodTags", data.tags);
-  }
-  function renderGuidance(data){
-    setText("#torGuidanceIntro", `Practical strategy for evaluating ${data.name} before touring, offering, listing, or investing.`);
-    setText("#torGuidanceStatus", "Strategy Layer");
-    renderList("#torBuyerGuidance", data.buyerGuidance);
-    renderList("#torSellerGuidance", data.sellerGuidance);
-    renderList("#torInvestorGuidance", data.investorGuidance);
-    renderList("#torGuidanceBestFor", data.bestFor);
-    renderList("#torGuidanceWatchouts", data.watchouts);
-  }
-  function updateButtons(key){
-    const briefBtn = $("#torRequestBuyerBrief");
-    const compareBtn = $("#torCompareRegions");
-    if (briefBtn) {
-      briefBtn.textContent = "Request Region Buyer Brief";
-      briefBtn.setAttribute("data-region", key);
-    }
-    if (compareBtn) {
-      compareBtn.textContent = "Compare Regions";
-      compareBtn.setAttribute("data-region", key);
-    }
-  }
-  function renderRegion(key, headerRegion){
-    ACTIVE_REGION_KEY = key || ACTIVE_REGION_KEY || DEFAULT_REGION_KEY;
-    const region = getRegion(ACTIVE_REGION_KEY, headerRegion);
-    if (!region) return;
-    const normalized = normalizeRegionPayload(region);
-    renderOverview(normalized);
-    renderRealEstate(normalized);
-    renderDemographics(normalized);
-    renderNeighborhoodsPanel(normalized);
-    renderGuidance(normalized);
-    updateButtons(ACTIVE_REGION_KEY);
-    window.TOR_REGION_INTEL_RUNTIME.activeRegion = {
-      key: ACTIVE_REGION_KEY,
-      region,
-      normalized,
-      city: CITY
-    };
-  }
-  async function hydrateRegionFromApi(key, headerRegion){
-    const requestId = ++REGION_REQUEST_ID;
-    const cacheKey = key || DEFAULT_REGION_KEY;
-    renderRegion(cacheKey, headerRegion);
-    if (REGION_CACHE.has(cacheKey)) {
-      const cached = REGION_CACHE.get(cacheKey);
-      CITY = cached;
-      renderRegion(cacheKey, headerRegion);
-      return;
-    }
-    try{
-      const payload = await fetchMarketPayload(cacheKey);
-      if (requestId !== REGION_REQUEST_ID) return;
-      CITY = payload.data;
-      REGION_CACHE.set(cacheKey, CITY);
-      window.TOR_LAREDO_JSON = CITY;
-      window.TOR_MARKET_JSON = CITY;
-      renderRegion(cacheKey, headerRegion);
-    }catch(err){
-      console.warn(`TOR Laredo region API failed for ${cacheKey}. Using current data or header fallback.`, err);
-      renderRegion(cacheKey, headerRegion);
-    }
-  }
-  function bindRegionEvents(){
-    window.addEventListener("tor:region-selected", (event) => {
-      const key = event?.detail?.key || DEFAULT_REGION_KEY;
-      const headerRegion = event?.detail?.region || null;
-      hydrateRegionFromApi(key, headerRegion);
+      const script = document.createElement("script");
+      script.id = LEAFLET_JS_ID;
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.async = true;
+      script.onload = () => resolve(window.L);
+      script.onerror = reject;
+      document.body.appendChild(script);
     });
   }
-  function bindButtonOverrides(){
-    const briefBtn = $("#torRequestBuyerBrief");
-    const compareBtn = $("#torCompareRegions");
-    if (briefBtn) {
-      briefBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        const key = ACTIVE_REGION_KEY || DEFAULT_REGION_KEY;
-        const url = new URL(window.location.href);
-        url.searchParams.set("region", key);
-        url.searchParams.set("intent", "buyer-brief");
-        window.location.href = url.toString();
-      });
-    }
-    if (compareBtn) {
-      compareBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        const key = ACTIVE_REGION_KEY || DEFAULT_REGION_KEY;
-        const url = new URL(window.location.href);
-        url.searchParams.set("region", key);
-        url.searchParams.set("intent", "compare-regions");
-        window.location.href = url.toString();
-      });
+  function getZipFromUrl(){
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const zip = String(params.get("zip") || "").trim();
+      return ZIP_REGISTRY[zip] ? zip : "";
+    } catch(err) {
+      return "";
     }
   }
-  async function init(){
-    bindRegionEvents();
-    bindButtonOverrides();
-    const initialKey =
-      new URLSearchParams(window.location.search).get("region") ||
-      window.TOR_SELECTED_REGION?.key ||
-      DEFAULT_REGION_KEY;
-    try{
-      const payload = await fetchMarketPayload(initialKey);
-      CITY = payload.data;
-      REGION_CACHE.set(initialKey, CITY);
-      window.TOR_LAREDO_JSON = CITY;
-      window.TOR_MARKET_JSON = CITY;
-      const defaultKey =
-        initialKey ||
-        CITY?.compatibility?.default_region_key ||
-        DEFAULT_REGION_KEY;
-      renderRegion(defaultKey, window.TOR_SELECTED_REGION?.region || null);
-      if (window.TOR_TEXAS_HEADER_MAP?.selectRegion) {
-        window.TOR_TEXAS_HEADER_MAP.selectRegion(defaultKey);
-      }
-    }catch(err){
-      console.warn("TOR Laredo market API did not load. Using header fallback only.", err);
-      const fallbackKey = window.TOR_SELECTED_REGION?.key || initialKey || DEFAULT_REGION_KEY;
-      const fallbackRegion = window.TOR_SELECTED_REGION?.region || null;
-      renderRegion(fallbackKey, fallbackRegion);
-      setText(
-        "#torIntelSubtitle",
-        "The map is connected, but /api/market-data is not loading yet. Check market-data.js, CENSUS_API_KEY, laredo.json, and included_files in Netlify."
+  function syncUrlZip(zip){
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set("city", "laredo");
+      url.searchParams.set("zip", zip);
+      window.history.replaceState(
+        {},
+        "",
+        url.toString()
       );
+    } catch(err) {
+      console.warn(err);
     }
   }
-  window.TOR_REGION_INTEL_RUNTIME.renderRegion = renderRegion;
-  window.TOR_REGION_INTEL_RUNTIME.hydrateRegionFromApi = hydrateRegionFromApi;
-  window.TOR_REGION_INTEL_RUNTIME.getCity = () => CITY;
-  window.TOR_REGION_INTEL_RUNTIME.getActiveRegionKey = () => ACTIVE_REGION_KEY;
-  window.TOR_REGION_INTEL_RUNTIME.clearCache = () => REGION_CACHE.clear();
-  init();
+  function boot(){
+    const mapEl =
+      document.getElementById("tor-laredo-zip-map");
+    const loading =
+      $("#torZipMapLoading");
+    const list =
+      $("#torZipList");
+    if (!mapEl || !window.L) return;
+    let activeZip =
+      getZipFromUrl() || DEFAULT_ZIP;
+    const layers = {};
+    const map = L.map("tor-laredo-zip-map", {
+      center:[27.5306,-99.4803],
+      zoom:10,
+      scrollWheelZoom:false,
+      zoomControl:true,
+      attributionControl:false
+    });
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:18,
+      attribution:""
+    }).addTo(map);
+    function styleZip(zip){
+      const item = ZIP_REGISTRY[zip];
+      return {
+        color:"rgba(251,242,226,.92)",
+        weight:zip === activeZip ? 3.5 : 1.4,
+        fillColor:item.color,
+        fillOpacity:zip === activeZip ? .54 : .24,
+        opacity:.95
+      };
+    }
+    function renderZipList(){
+      if (!list) return;
+      list.innerHTML =
+        Object.values(ZIP_REGISTRY).map(item => `
+          <button
+            class="torz-zip-btn${item.zip === activeZip ? " is-selected" : ""}"
+            type="button"
+            data-tor-zip="${esc(item.zip)}">
+            <span class="torz-zip-code">
+              <span>${esc(item.zip)} • ${esc(item.shortName)}</span>
+              <span class="torz-zip-grade">${esc(item.grade)}</span>
+            </span>
+            <span class="torz-zip-meta">
+              ${esc(item.meta)}
+            </span>
+          </button>
+        `).join("");
+      list
+        .querySelectorAll("[data-tor-zip]")
+        .forEach(button => {
+          button.addEventListener("click", () => {
+            const zip = button.getAttribute("data-tor-zip");
+            selectZip(zip, {
+              fitBounds:true,
+              updateUrl:true
+            });
+          });
+        });
+    }
+    function selectZip(zip, options = {}){
+      const item = ZIP_REGISTRY[zip];
+      if (!item) return;
+      activeZip = zip;
+      Object.keys(layers).forEach(layerZip => {
+        layers[layerZip].setStyle(styleZip(layerZip));
+      });
+      setText("#torZipHeroEyebrow", item.eyebrow);
+      setText("#torZipHeroTitle", item.title);
+      setText("#torZipHeroSubtitle", item.subtitle);
+      setText("#torZipKpiPrice", item.price);
+      setText("#torZipKpiFit", item.fit);
+      setText("#torZipKpiPace", item.pace);
+      setText("#torZipKpiGrade", item.grade);
+      setText("#torZipSelectedPill", `${item.zip} • ${item.shortName}`);
+      setText("#torZipScoreAffordability", item.scores.affordability);
+      setText("#torZipScoreGrowth", item.scores.growth);
+      setText("#torZipScoreStability", item.scores.stability);
+      setText("#torZipScoreOverall", item.scores.overall);
+      if (layers[zip]) {
+        layers[zip].bringToFront();
+        if (options.fitBounds === true) {
+          map.fitBounds(layers[zip].getBounds(), {
+            padding:[18,18],
+            maxZoom:12
+          });
+        }
+      }
+      renderZipList();
+      if (options.updateUrl === true) {
+        syncUrlZip(zip);
+      }
+      window.TOR_SELECTED_ZIP = {
+        zip,
+        area:item
+      };
+      window.TOR_SELECTED_REGION = {
+        key:item.regionKey,
+        region:item
+      };
+      window.dispatchEvent(new CustomEvent("tor:zip-selected", {
+        detail:{
+          zip,
+          area:item
+        }
+      }));
+      window.dispatchEvent(new CustomEvent("tor:region-selected", {
+        detail:{
+          key:item.regionKey,
+          region:item
+        }
+      }));
+    }
+    Object.entries(ZIP_REGISTRY).forEach(([zip, item]) => {
+      const layer =
+        L.polygon(item.points, styleZip(zip)).addTo(map);
+      layers[zip] = layer;
+      layer.bindTooltip(`${item.zip} • ${item.shortName}`, {
+        sticky:true,
+        direction:"top"
+      });
+      layer.on("click", () => {
+        selectZip(zip, {
+          fitBounds:false,
+          updateUrl:true
+        });
+      });
+      layer.on("mouseover", () => {
+        layer.setStyle({
+          fillOpacity:.60,
+          weight:3.5
+        });
+      });
+      layer.on("mouseout", () => {
+        layer.setStyle(styleZip(zip));
+      });
+    });
+    const allBounds = L.latLngBounds(
+      Object.values(ZIP_REGISTRY)
+        .flatMap(item => item.points)
+        .map(point => L.latLng(point[0], point[1]))
+    );
+    map.fitBounds(allBounds, {
+      padding:[18,18],
+      maxZoom:10
+    });
+    selectZip(activeZip, {
+      fitBounds:false,
+      updateUrl:false
+    });
+    if (loading) {
+      loading.style.display = "none";
+    }
+    window.TOR_LAREDO_ZIP_MAP.selectZip = function(zip){
+      selectZip(zip, {
+        fitBounds:true,
+        updateUrl:true
+      });
+    };
+    window.TOR_LAREDO_ZIP_MAP.getZips = function(){
+      return ZIP_REGISTRY;
+    };
+    window.TOR_LAREDO_ZIP_MAP.getCurrentZip = function(){
+      return activeZip;
+    };
+    window.TOR_LAREDO_ZIP_MAP.getCurrentArea = function(){
+      return ZIP_REGISTRY[activeZip] || null;
+    };
+    setTimeout(() => map.invalidateSize(), 250);
+    setTimeout(() => map.invalidateSize(), 750);
+    setTimeout(() => map.invalidateSize(), 1500);
+    window.addEventListener("resize", () => {
+      setTimeout(() => map.invalidateSize(), 150);
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        setTimeout(() => map.invalidateSize(), 150);
+      }
+    });
+  }
+  loadCss();
+  loadLeaflet()
+    .then(() => {
+      boot();
+    })
+    .catch(() => {
+      const loading = $("#torZipMapLoading");
+      if (loading) {
+        loading.textContent = "Map temporarily unavailable";
+      }
+    });
 })();
 </script>
   </div>
   <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=691facbe35fbba00c096f2b7" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
   <script src="../js/webflow.js" type="text/javascript"></script>
+  <script src="https://cdn.prod.website-files.com/gsap/3.15.0/ScrollTrigger.min.js" type="text/javascript"></script>
 </body>
 </html>
