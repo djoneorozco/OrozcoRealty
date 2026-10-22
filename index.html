@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Oct 21 2026 05:28:07 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Thu Oct 22 2026 14:52:00 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="6ad60461c2e3315d81af3aa7" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
 <head>
   <meta charset="utf-8">
@@ -103,7 +103,7 @@
                 <div data-w-id="46b09602-9566-bf53-0922-0f94a5a2f6ff" class="w-layout-vflex sub-menu portfolio-sub-menu">
                   <a href="about-us.html" class="sub-menu-text">About OrozcoRealty</a>
                   <a href="resources-page.html" class="sub-menu-text">Information Center</a>
-                  <a href="#" class="sub-menu-text">Contact Us</a>
+                  <a href="contact-us/contact-us.html" class="sub-menu-text">Contact Us</a>
                 </div>
                 <div data-w-id="46b09602-9566-bf53-0922-0f94a5a2f706" class="w-layout-vflex sub-menu blog-menu">
                   <a href="#" class="sub-menu-text">BAH &amp; Base Pay</a>
@@ -312,6 +312,45 @@
  #tor-life .pcsu26-hero{padding:10px}
  #tor-life .pcsu26-hero-visual{height:auto;min-height:300px;aspect-ratio:4/3}
 }
+</style>
+    <style>
+/* TOR slide-down glass shell; scoped to the shared stage/tool dialog. */
+#tor-life #tl-tool-dialog[data-glass-ready]{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:100dvh;border:1px solid #d7b87538;border-radius:0;padding:0;overflow:hidden;color:var(--ivory);background:linear-gradient(145deg,#191b17c9,#121411bf);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 20px 80px #0008}
+#tor-life #tl-tool-dialog[data-glass-ready][open]{display:flex;flex-direction:column;animation:tl-glass-enter .38s cubic-bezier(.2,.7,.2,1) both}
+#tor-life #tl-tool-dialog[data-glass-ready]::backdrop{background:#090b0980;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#tor-life #tl-tool-dialog.tl-glass-closing{animation:tl-glass-exit .2s ease-in both}
+#tor-life #tl-tool-dialog[data-glass-ready] [hidden]{display:none!important}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head{background:#151713a6;border-bottom:1px solid #d7b87540;padding:20px max(24px,env(safe-area-inset-right)) 20px max(24px,env(safe-area-inset-left));gap:16px;flex-wrap:nowrap}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head>div{flex:1;min-width:0}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head p{color:var(--gold)}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head h2{color:var(--ivory);font-size:clamp(24px,2.4vw,36px);overflow-wrap:anywhere}
+#tor-life #tl-tool-dialog[data-glass-ready] :is(.tl-tool-close,.tl-glass-back){color:var(--ivory);background:#ffffff09;border:1px solid #d7b87570;border-radius:24px;padding:10px 16px;min-height:44px;font:500 13px/1.4 Barlow,Arial,sans-serif;cursor:pointer;flex-shrink:0}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-body{background:transparent;flex:1;min-height:0;overflow:hidden}
+#tor-life .tl-glass-stage-view{height:100%;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-bottom:env(safe-area-inset-bottom)}
+#tor-life .tl-glass-stage-view>section{background:transparent!important;padding:clamp(28px,5vw,64px) 0;margin:0;min-width:0}
+#tor-life .tl-glass-stage-view [data-tl-stage-toolbar]{display:none}
+#tor-life .tl-glass-stage-view .tl-wrap{width:min(1280px,calc(100% - 64px));max-width:100%;margin-inline:auto}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-nav{background:#1b1e18d9;border-color:#d7b87540;flex-wrap:wrap}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-nav button{color:var(--ivory);border-color:#d7b87560}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-nav button[aria-pressed=true]{background:var(--gold);color:#171913}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-foot{background:#151713e6;border-color:#d7b87540;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-foot :is(p,a){color:#dad8cc}
+#tor-life #tl-tool-dialog[data-glass-ready] :is(button,a):focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+@keyframes tl-glass-enter{from{transform:translateY(-100%);opacity:.5}to{transform:translateY(0);opacity:1}}
+@keyframes tl-glass-exit{to{transform:translateY(-100%);opacity:.5}}
+@media(max-width:767px){
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head{padding:14px max(16px,env(safe-area-inset-right)) 14px max(16px,env(safe-area-inset-left));gap:10px;flex-wrap:wrap}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head>div{flex-basis:calc(100% - 95px)}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head h2{font-size:24px;line-height:1.15}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-head p{font-size:8px;letter-spacing:.1em}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-tool-close{order:1}
+#tor-life #tl-tool-dialog[data-glass-ready] .tl-glass-back{order:2}
+#tor-life #tl-tool-dialog[data-glass-ready] .tor-amy-tool-trigger{order:3;margin:0}
+#tor-life .tl-glass-stage-view .tl-wrap{width:calc(100% - 32px)}
+#tor-life .tl-glass-stage-view :is(.tl-two-col,.tl-tools){grid-template-columns:minmax(0,1fr)}
+#tor-life .tl-glass-stage-view>section{padding:24px 0}
+}
+@media(prefers-reduced-motion:reduce){#tor-life #tl-tool-dialog[data-glass-ready][open]{animation:none}}
 </style>
   </div>
   <div id="tor-life" data-tor-node="n1">
@@ -1928,71 +1967,89 @@
 const steps=[['Know your budget. Build your team.','Review your cash flow, clarify your priorities, and explore financing with a lender. Learn what an agent can help with and discuss representation before starting your search.','“What can I comfortably spend while keeping my emergency fund and other goals intact?”'],['Find the fit. Understand your offer.','Compare homes against your priorities and full ownership budget. Review price, contingencies, deadlines, and representation terms with your agent before making a commitment.','“What am I agreeing to, and which dates or conditions need my attention?”'],['Understand the home beneath the finish.','An inspection helps identify condition concerns. Review the report with your inspector and agent, prioritize questions, and discuss any available negotiation options within your contract deadlines.','“Which findings need a specialist, an immediate repair, or a future maintenance reserve?”'],['Bring the details together.','Work with your lender and closing team on appraisal, underwriting, title, insurance, and final documents. Review the payment, cash required, and closing arrangements before signing.','“Do the final costs and loan terms match what I understand and can afford?”'],['Get the keys. Settle into ownership.','Coordinate possession and move-in with your team. Arrange utilities and insurance, keep your closing records, and begin a simple home-maintenance and expense record.','“What should I document, service, or set aside money for during my first year?”']];const tabs=[...root.querySelectorAll('[data-milestone]')],panel=document.getElementById('tl-milestone-content');function select(i,focus){tabs.forEach((t,j)=>{t.setAttribute('aria-selected',String(j===i));t.tabIndex=j===i?0:-1;});panel.setAttribute('aria-labelledby',tabs[i].id);document.getElementById('tl-step-title').textContent=steps[i][0];document.getElementById('tl-step-copy').textContent=steps[i][1];document.getElementById('tl-step-question').textContent=steps[i][2];if(focus)tabs[i].focus();}tabs.forEach((t,i)=>{t.addEventListener('click',()=>select(i,false));t.addEventListener('keydown',e=>{let next;if(e.key==='ArrowRight')next=(i+1)%tabs.length;else if(e.key==='ArrowLeft')next=(i+tabs.length-1)%tabs.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=tabs.length-1;else return;e.preventDefault();select(next,true);});});document.getElementById('tl-year').textContent=String(new Date().getFullYear());}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();})();
 </script>
       <script>
-(()=>{'use strict';function boot(){const root=document.getElementById('tor-life'),dialog=document.getElementById('tl-tool-dialog');if(!root||!dialog||dialog.dataset.bound)return;dialog.dataset.bound='1';const body=document.getElementById('tl-tool-body'),loading=document.getElementById('tl-tool-load'),retry=document.getElementById('tl-tool-retry'),loadText=document.getElementById('tl-load-text'),nav=document.getElementById('tl-tool-nav'),external=document.getElementById('tl-tool-external'),note=document.getElementById('tl-tool-note');
-const tools={mortgage:{title:'Your mortgage workspace',url:'https://thewing.netlify.app/Mortgage-Calculator/?amy=tor'},finance:{title:'Your financial workspace',url:'https://thewing.netlify.app/Finance-UX/?income=inline&amy=tor'},journey:{title:'Your homebuying journey'},ownership:{title:'Your ownership vision'}};const frames={};let active=null,opener=null,oldOverflow='',oldBodyOverflow='',timer=0,locked=false;
-function show(key){const t=tools[key];if(!t)return;active=key;document.getElementById('tl-tool-title').textContent=t.title;nav.hidden=!t.url;external.hidden=!t.url;if(t.url)external.href=t.url;note.textContent=t.url?'Each tool keeps its own inputs in this page session. Planning estimates by TheWing.ai.':key==='ownership'?'Concept preview. Live equity tracking, alerts and account services are planned.':'Educational guide. Your contract and local professionals determine actual deadlines.';Object.entries(frames).forEach(([k,f])=>f.hidden=k!==key);root.querySelectorAll('.tl-native-workspace').forEach(e=>e.hidden=e.id!=='tl-native-'+key);nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tlSwitch===key)));clearTimeout(timer);loading.hidden=true;retry.hidden=true;
-if(t.url){let f=frames[key];if(!f){f=document.createElement('iframe');f.className='tl-tool-frame';f.title=t.title;f.referrerPolicy='strict-origin-when-cross-origin';f.dataset.loaded='false';f.addEventListener('load',()=>{f.dataset.loaded='true';if(active===key){clearTimeout(timer);loading.hidden=true;}});f.addEventListener('error',()=>{if(active===key){loading.hidden=false;loadText.textContent='The workspace could not load. Try again or open it separately.';retry.hidden=false;}});frames[key]=f;body.append(f);f.src=t.url;}f.hidden=false;if(f.dataset.loaded!=='true'){loading.hidden=false;loadText.textContent='Opening your workspace…';timer=setTimeout(()=>{if(active===key&&f.dataset.loaded!=='true'){loadText.textContent='This is taking longer than expected. Retry or open the tool separately.';retry.hidden=false;}},15000);}}
-}
-root.querySelectorAll('[data-tl-tool]').forEach(b=>b.addEventListener('click',()=>{opener=b;show(b.dataset.tlTool);if(!locked){oldOverflow=document.documentElement.style.overflow;oldBodyOverflow=document.body.style.overflow;locked=true;}document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';dialog.showModal();document.getElementById('tl-tool-close').focus();}));nav.addEventListener('click',e=>{const b=e.target.closest('[data-tl-switch]');if(b)show(b.dataset.tlSwitch);});document.getElementById('tl-tool-close').onclick=()=>dialog.close();retry.onclick=()=>{const f=frames[active];if(f){f.remove();delete frames[active];show(active);}};let outside=false;dialog.addEventListener('pointerdown',e=>{const r=dialog.getBoundingClientRect();outside=e.target===dialog&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);});dialog.addEventListener('click',e=>{if(outside&&e.target===dialog)dialog.close();outside=false;});dialog.addEventListener('close',()=>{if(dialog.open||!locked)return;locked=false;clearTimeout(timer);document.documentElement.style.overflow=oldOverflow;document.body.style.overflow=oldBodyOverflow;opener?.focus({preventScroll:true});});}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();})();
-</script>
-      <script>
-/* TOR card accordion v1: native sections stay visible in Webflow Designer. */
+/* TOR shared glass stage/tool overlay. Source sections remain native in Designer. */
 (function(){
 'use strict';
 function init(){
-const root=document.getElementById('tor-life');
-if(!root||root.dataset.stageAccordion|| (window.Webflow&&typeof window.Webflow.env==='function'&&window.Webflow.env('design')))return;
-const cards=Array.from(root.querySelectorAll('#tl-journey .tl-stage-card'));
-const items=cards.map((card,i)=>({card,panel:document.getElementById(card.hash.slice(1)),index:i}));
-if(items.length!==3||items.some(item=>!item.panel))return;
-root.dataset.stageAccordion='1';
-const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-items.forEach(({card,panel,index})=>{
-card.id='tl-stage-trigger-'+(index+1);
-card.setAttribute('role','button');
-card.setAttribute('aria-controls',panel.id);
-card.setAttribute('data-tl-stage-trigger','');
-panel.setAttribute('role','region');
-panel.setAttribute('aria-labelledby',card.id);
-});
-function setOpen(item,scroll,returnFocus){
-items.forEach(({card,panel})=>{
-const open=!!item&&panel===item.panel;
-card.setAttribute('aria-expanded',String(open));
-panel.hidden=!open;
-const icon=card.querySelector('.tl-card-link [aria-hidden]');
-if(icon)icon.textContent=open?'−':'+';
-});
-if(item&&scroll){
-const heading=item.panel.querySelector('h2');
-if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}
-item.panel.scrollIntoView({behavior:reduced()?'auto':'smooth',block:'start'});
+const root=document.getElementById('tor-life'),dialog=document.getElementById('tl-tool-dialog');
+if(!root||!dialog||dialog.dataset.glassReady||(window.Webflow&&Webflow.env&&Webflow.env('design')))return;
+const body=document.getElementById('tl-tool-body'),title=document.getElementById('tl-tool-title'),nav=document.getElementById('tl-tool-nav'),external=document.getElementById('tl-tool-external'),note=document.getElementById('tl-tool-note'),loading=document.getElementById('tl-tool-load'),retry=document.getElementById('tl-tool-retry'),loadText=document.getElementById('tl-load-text'),close=document.getElementById('tl-tool-close');
+const stages=[...root.querySelectorAll('#tl-journey .tl-stage-card')].map((card,i)=>({card,panel:document.getElementById(card.hash.slice(1)),index:i,title:card.querySelector('h3').innerText.replace(/\s+/g,' ').trim()}));
+if(stages.length!==3||stages.some(s=>!s.panel))return;
+dialog.dataset.glassReady='1';dialog.dataset.bound='1';root.dataset.stageAccordion='glass';
+const stageView=document.createElement('div');stageView.className='tl-glass-stage-view';stageView.hidden=true;body.append(stageView);
+const back=document.createElement('button');back.type='button';back.className='tl-glass-back';back.textContent='← Back to stage';back.hidden=true;dialog.querySelector('.tl-tool-head').insertBefore(back,dialog.querySelector('.tl-tool-head').firstChild);
+const tools={mortgage:{title:'Your mortgage workspace',url:'https://thewing.netlify.app/Mortgage-Calculator/?amy=tor'},finance:{title:'Your financial workspace',url:'https://thewing.netlify.app/Finance-UX/?income=inline&amy=tor'},journey:{title:'Your homebuying journey'},ownership:{title:'Your ownership vision'}};
+const frames={};let context=null,active=null,opener=null,toolOpener=null,timer=0,closing=0,locked=false,oldHtml='',oldBody='',stageScroll=0,pageX=0,pageY=0;
+const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function hash(value){history.replaceState(null,'',location.pathname+location.search+value);}
+function selection(stage){stages.forEach(s=>s.card.setAttribute('aria-expanded',String(s===stage)));}
+function clearView(){clearTimeout(timer);loading.hidden=true;retry.hidden=true;stageView.hidden=true;Object.values(frames).forEach(f=>f.hidden=true);root.querySelectorAll('.tl-native-workspace').forEach(n=>n.hidden=true);}
+function open(){clearTimeout(closing);dialog.classList.remove('tl-glass-closing');if(!dialog.open){pageX=window.scrollX;pageY=window.scrollY;oldHtml=document.documentElement.style.overflow;oldBody=document.body.style.overflow;locked=true;document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';dialog.showModal();}close.focus({preventScroll:true});}
+function showStage(stage,focus){
+clearView();context=stage;active=null;selection(stage);dialog.dataset.view='stage';title.textContent=stage.title;nav.hidden=true;external.hidden=true;back.hidden=true;dialog.querySelector('.tl-tool-foot').hidden=true;
+stages.forEach(s=>s.panel.hidden=s!==stage);stageView.hidden=false;stageView.scrollTop=stageScroll;hash('#'+stage.panel.id);
+if(focus&&toolOpener&&stage.panel.contains(toolOpener))toolOpener.focus({preventScroll:true});
 }
-if(returnFocus){returnFocus.focus({preventScroll:true});returnFocus.scrollIntoView({behavior:reduced()?'auto':'smooth',block:'nearest'});}
+function showTool(key){
+const t=tools[key];if(!t)return;clearView();active=key;dialog.dataset.view='tool';title.textContent=t.title;nav.hidden=!t.url;external.hidden=!t.url;back.hidden=!context;dialog.querySelector('.tl-tool-foot').hidden=false;
+if(t.url)external.href=t.url;
+note.textContent=t.url?'Each tool keeps its own inputs in this page session. Planning estimates by TheWing.ai.':key==='ownership'?'Concept preview. Live equity tracking, alerts and account services are planned.':'Educational guide. Your contract and local professionals determine actual deadlines.';
+nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tlSwitch===key)));
+if(!t.url){const native=document.getElementById('tl-native-'+key);if(native)native.hidden=false;return;}
+let f=frames[key];if(!f){f=document.createElement('iframe');f.className='tl-tool-frame';f.title=t.title;f.referrerPolicy='strict-origin-when-cross-origin';f.dataset.loaded='false';f.addEventListener('load',()=>{f.dataset.loaded='true';if(active===key){clearTimeout(timer);loading.hidden=true;}});f.addEventListener('error',()=>{if(active===key){loading.hidden=false;loadText.textContent='The workspace could not load. Try again or open it separately.';retry.hidden=false;}});frames[key]=f;body.append(f);f.src=t.url;}
+f.hidden=false;if(f.dataset.loaded!=='true'){loading.hidden=false;loadText.textContent='Opening your workspace…';timer=setTimeout(()=>{if(active===key&&f.dataset.loaded!=='true'){loadText.textContent='This is taking longer than expected. Retry or open the tool separately.';retry.hidden=false;}},15000);}
 }
-function updateHash(hash){history.replaceState(null,'',location.pathname+location.search+hash);}
-items.forEach(item=>{
-item.card.addEventListener('click',e=>{
-e.preventDefault();e.stopPropagation();
-const opening=item.card.getAttribute('aria-expanded')!=='true';
-setOpen(opening?item:null,opening,false);
-updateHash(opening?'#'+item.panel.id:'#tl-journey');
+function dismiss(){if(!dialog.open||dialog.classList.contains('tl-glass-closing'))return;if(reduced())dialog.close();else{dialog.classList.add('tl-glass-closing');closing=setTimeout(()=>dialog.close(),200);}}
+stages.forEach(s=>{
+s.card.id='tl-stage-trigger-'+(s.index+1);s.card.setAttribute('role','button');s.card.setAttribute('aria-haspopup','dialog');s.card.setAttribute('aria-controls','tl-tool-dialog');s.card.setAttribute('aria-expanded','false');s.card.setAttribute('data-tl-stage-trigger','');
+s.panel.setAttribute('role','region');s.panel.setAttribute('aria-labelledby',s.card.id);s.panel.hidden=true;stageView.append(s.panel);
+s.card.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();opener=s.card;toolOpener=null;stageScroll=0;showStage(s,false);open();});
+s.card.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();s.card.click();}});
+s.panel.querySelectorAll('[data-tl-stage-close]').forEach(b=>b.addEventListener('click',dismiss));
 });
-item.card.addEventListener('keydown',e=>{
-if(e.key===' '){e.preventDefault();item.card.click();}
-});
-item.panel.querySelectorAll('[data-tl-stage-close]').forEach(button=>{
-button.addEventListener('click',()=>{setOpen(null,false,item.card);updateHash('#tl-journey');});
-});
-item.panel.addEventListener('keydown',e=>{
-if(e.key==='Escape'&&!root.querySelector('dialog[open]')){
-e.preventDefault();setOpen(null,false,item.card);updateHash('#tl-journey');
+root.querySelectorAll('[data-tl-tool]').forEach(b=>b.addEventListener('click',()=>{const parent=stages.find(s=>s.panel.contains(b));if(parent){context=parent;toolOpener=b;stageScroll=stageView.scrollTop;}else{context=null;opener=b;selection(null);}showTool(b.dataset.tlTool);open();}));
+nav.addEventListener('click',e=>{const b=e.target.closest('[data-tl-switch]');if(b)showTool(b.dataset.tlSwitch);});
+back.addEventListener('click',()=>{if(context)showStage(context,true);});close.addEventListener('click',dismiss);
+dialog.addEventListener('cancel',e=>{e.preventDefault();dismiss();});
+retry.addEventListener('click',()=>{const key=active;if(frames[key]){frames[key].remove();delete frames[key];showTool(key);}});
+dialog.addEventListener('close',()=>{if(dialog.open)return;clearTimeout(closing);clearTimeout(timer);dialog.classList.remove('tl-glass-closing');if(locked){document.documentElement.style.overflow=oldHtml;document.body.style.overflow=oldBody;locked=false;window.scrollTo({left:pageX,top:pageY,behavior:'instant'});}selection(null);if(context)hash('#tl-journey');context=null;active=null;opener?.focus({preventScroll:true});});
+function fromHash(){const stage=stages.find(s=>'#'+s.panel.id===location.hash);if(stage){opener=stage.card;stageScroll=0;showStage(stage,false);open();}else if(dialog.open&&context)dismiss();}
+window.addEventListener('hashchange',fromHash);fromHash();
 }
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+      <!--  TOR navigation submenu continuity: keeps native destination links and Webflow content.  -->
+      <style>
+html[data-wf-page="6ad60461c2e3315d81af3aa7"] .tor-nav-submenus-ready > [data-tor-submenu]{display:none!important;opacity:0!important}
+html[data-wf-page="6ad60461c2e3315d81af3aa7"] .tor-nav-submenus-ready > [data-tor-submenu="active"]{display:flex!important;opacity:1!important}
+@media(max-width:991px){
+html[data-wf-page="6ad60461c2e3315d81af3aa7"] .navbar-fullscreen-menu-left-column{flex-direction:column;align-items:flex-start;gap:24px}
+html[data-wf-page="6ad60461c2e3315d81af3aa7"] .tor-nav-submenus-ready{position:static;max-width:100%;width:100%;height:auto}
+html[data-wf-page="6ad60461c2e3315d81af3aa7"] .tor-nav-submenus-ready > [data-tor-submenu="active"]{position:static;max-width:100%;flex-wrap:wrap}
+}
+</style>
+      <script>
+(function(){
+'use strict';
+function init(){
+if(document.documentElement.dataset.wfPage!=='6ad60461c2e3315d81af3aa7')return;
+if(window.Webflow&&typeof Webflow.env==='function'&&Webflow.env('design'))return;
+const menu=document.querySelector('.navbar-two-main-menu'), panels=document.querySelector('.navbar-two-sub-menus');
+if(!menu||!panels||panels.dataset.torHoverReady)return;
+panels.dataset.torHoverReady='1';
+const pairs=[['.portfolio-text','.portfolio-sub-menu'],['.blog-text','.blog-menu'],['.pages-text','.military'],['.contact-text','.contact-menu'],['.home-text','.home-submenu']].map(([label,panel])=>({row:menu.querySelector(label)?.closest('.navbar-two-menu-items'),panel:panels.querySelector(panel)})).filter(x=>x.row&&x.panel);
+function show(active){
+panels.classList.add('tor-nav-submenus-ready');
+pairs.forEach(({panel})=>panel.setAttribute('data-tor-submenu',panel===active?'active':'inactive'));
+}
+pairs.forEach(({row,panel})=>{
+row.addEventListener('mouseenter',()=>show(panel));
+row.addEventListener('focusin',()=>show(panel));
+row.addEventListener('click',e=>{if(!e.target.closest('a[href]'))show(panel);});
 });
-});
-function fromHash(){const item=items.find(({panel})=>'#'+panel.id===location.hash);setOpen(item||null,false,false);}
-window.addEventListener('hashchange',fromHash);
-fromHash();
+if(matchMedia('(max-width:991px)').matches&&pairs[0])show(pairs[0].panel);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

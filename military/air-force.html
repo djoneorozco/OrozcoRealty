@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Wed Oct 21 2026 05:28:07 GMT+0000 (Coordinated Universal Time)  -->
+<!DOCTYPE html><!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Thu Oct 22 2026 14:52:00 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="691facbf35fbba00c096f3f2" data-wf-site="691facbe35fbba00c096f2b7" lang="en">
 <head>
   <meta charset="utf-8">
@@ -231,6 +231,54 @@ body { overflow-wrap: break-word; }
  html { scroll-behavior:auto!important; }
  .hero-slider-section *,#pcsj-journey *,#sass-front-strip * { animation:none!important; transition:none!important; }
 }
+</style>
+  <style>
+/* TOR military cards: shared fullscreen glass presentation, native source retained. */
+#pcsj-journey #tor-military-stage-dialog{position:fixed;inset:0;margin:0;width:100%;max-width:none;height:100dvh;max-height:100dvh;border:1px solid #d7b87538;border-radius:0;padding:0;box-sizing:border-box;overflow:hidden;color:#f2eee5;background:linear-gradient(145deg,#191b17c9,#121411bf);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 20px 80px #0008;font-family:Barlow,Arial,sans-serif;text-transform:none;letter-spacing:normal}
+#pcsj-journey #tor-military-stage-dialog:not([open]){display:none!important}
+#pcsj-journey #tor-military-stage-dialog[open]{display:flex;flex-direction:column;animation:tor-mstage-enter .38s cubic-bezier(.2,.7,.2,1) both}
+#tor-military-stage-dialog::backdrop{background:#090b0980;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#pcsj-journey #tor-military-stage-dialog.is-closing{animation:tor-mstage-exit .2s ease-in both}
+#tor-military-stage-dialog *{box-sizing:border-box}
+#tor-military-stage-dialog .tor-mstage-head{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-shrink:0;padding:20px max(24px,env(safe-area-inset-right)) 20px max(24px,env(safe-area-inset-left));background:#151713a6;border-bottom:1px solid #d7b87540}
+#tor-military-stage-dialog .tor-mstage-head>div{min-width:0}
+#tor-military-stage-dialog .tor-mstage-head p{margin:0 0 6px;color:#d7b875;font:500 10px/1.5 Barlow,Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase}
+#tor-military-stage-dialog .tor-mstage-head h2{color:#f2eee5;font:clamp(24px,2.4vw,36px)/1.15 'Gilda Display',Georgia,serif;margin:0;text-transform:none;letter-spacing:normal;overflow-wrap:anywhere}
+#tor-military-stage-dialog .tor-mstage-close{color:#f2eee5;background:#ffffff09;border:1px solid #d7b87570;border-radius:24px;padding:10px 16px;min-height:44px;font:500 13px/1.4 Barlow,Arial,sans-serif;cursor:pointer;flex-shrink:0;white-space:nowrap}
+#tor-military-stage-dialog .tor-mstage-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:clamp(28px,5vw,64px) 32px max(32px,env(safe-area-inset-bottom))}
+#pcsj-journey #tor-military-stage-dialog .pcsj-panel{width:100%;max-width:1280px;margin:0 auto;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;color:#f2eee5}
+#tor-military-stage-dialog .pcsj-panel-top{margin:0 0 24px}
+#tor-military-stage-dialog .pcsj-close{display:none}
+#pcsj-journey #tor-military-stage-dialog .pcsj-panel-grid{gap:clamp(24px,4vw,64px);align-items:start}
+#tor-military-stage-dialog .pcsj-stage{color:#d7b875;font:600 11px/1.6 Barlow,Arial,sans-serif;letter-spacing:.15em}
+#tor-military-stage-dialog .pcsj-panel-title{color:#f2eee5;font:clamp(32px,3.6vw,52px)/1.1 'Gilda Display',Georgia,serif;letter-spacing:-.02em;text-transform:none;margin:0 0 24px}
+#tor-military-stage-dialog :is(.pcsj-panel-lead,.pcsj-list,.pcsj-limit){color:#d6d7ce;font-family:Barlow,Arial,sans-serif;line-height:1.75;letter-spacing:normal;text-transform:none}
+#tor-military-stage-dialog .pcsj-panel-lead{font-size:18px}
+#tor-military-stage-dialog .pcsj-list{font-size:16px;padding-left:22px;margin-top:0}
+#tor-military-stage-dialog .pcsj-list li{color:inherit;margin-bottom:18px}
+#tor-military-stage-dialog .pcsj-limit{font-size:13px}
+#tor-military-stage-dialog .pcsj-primary-link{background:#d7b875;color:#171913;border:1px solid #d7b875;min-height:44px;white-space:normal}
+#tor-military-stage-dialog .pcsj-text-link{color:#e3c98c;overflow-wrap:anywhere;white-space:normal}
+#tor-military-stage-dialog .pcsj-formula{background:#ffffff08;border:1px solid #d7b87540;padding:24px;border-radius:8px}
+#tor-military-stage-dialog .pcsj-formula p{color:#d6d7ce}
+#tor-military-stage-dialog .pcsj-formula .pcsj-formula-title{color:#e3c98c}
+#tor-military-stage-dialog :is(a,button):focus-visible{outline:2px solid #d7b875;outline-offset:4px}
+@keyframes tor-mstage-enter{from{transform:translateY(-100%);opacity:.5}to{transform:translateY(0);opacity:1}}
+@keyframes tor-mstage-exit{to{transform:translateY(-100%);opacity:.5}}
+@media(max-width:767px){
+#tor-military-stage-dialog .tor-mstage-head{padding:16px;gap:12px}
+#tor-military-stage-dialog .tor-mstage-head p{font-size:8px;letter-spacing:.1em}
+#tor-military-stage-dialog .tor-mstage-head h2{font-size:24px}
+#tor-military-stage-dialog .tor-mstage-close{padding:10px 12px}
+#tor-military-stage-dialog .tor-mstage-body{padding:24px 18px max(28px,env(safe-area-inset-bottom))}
+#pcsj-journey #tor-military-stage-dialog .pcsj-panel-grid{grid-template-columns:minmax(0,1fr);gap:28px}
+#tor-military-stage-dialog .pcsj-panel-title{font-size:34px}
+#tor-military-stage-dialog .pcsj-panel-lead{font-size:17px}
+#tor-military-stage-dialog .pcsj-links{align-items:stretch}
+}
+@media(prefers-reduced-motion:reduce){#pcsj-journey #tor-military-stage-dialog[open]{animation:none}}
+#tor-military-stage-dialog .tor-mstage-head h2{padding:0;text-align:left}
+#tor-military-stage-dialog .pcsj-panel :is(h3,p,ul,li){text-align:left}
 </style>
 </head>
 <body class="body-2">
@@ -499,7 +547,7 @@ body { overflow-wrap: break-word; }
       </article>
       <article data-pcsj-card="budget" class="pcsj-card">
         <a id="pcsj-trigger-budget" data-pcsj-topic="budget" aria-controls="pcsj-preview-budget" aria-expanded="false" role="button" href="#pcsj-preview-budget" class="pcsj-trigger w-inline-block">
-          <div class="pcsj-photo-wrap"><img src="../images/Guidance.png" loading="lazy" sizes="(max-width: 1672px) 100vw, 1672px" srcset="../images/Guidance.png 500w, ../images/Guidance.png 800w, ../images/Guidance.png 1080w, ../images/Guidance.png 1600w, ../images/Guidance.png 1672w" alt="Illustrative service member and partner reviewing paperwork at a table." class="pcsj-photo"></div>
+          <div class="pcsj-photo-wrap"><img src="../images/Guidance.png" loading="lazy" sizes="(max-width: 1672px) 100vw, 1672px" srcset="../images/90e8684e3dca5450c8a772e5babb175f_white-and-red-wooden-house-beside-grey-framed-magnifying-glass-p-500.png 500w, ../images/90e8684e3dca5450c8a772e5babb175f_white-and-red-wooden-house-beside-grey-framed-magnifying-glass-p-800.png 800w, ../images/90e8684e3dca5450c8a772e5babb175f_white-and-red-wooden-house-beside-grey-framed-magnifying-glass-p-1080.png 1080w, ../images/90e8684e3dca5450c8a772e5babb175f_white-and-red-wooden-house-beside-grey-framed-magnifying-glass-p-1600.png 1600w, ../images/Guidance.png 1672w" alt="Illustrative service member and partner reviewing paperwork at a table." class="pcsj-photo"></div>
           <div class="pcsj-card-copy">
             <p class="pcsj-stage">02 / UNDERSTAND</p>
             <h3 class="pcsj-card-title">Understand Your Budget</h3>
@@ -1098,7 +1146,7 @@ body { overflow-wrap: break-word; }
                   <div class="footer-social-links-wrapper-copy invert">
                     <a href="https://www.instagram.com/" target="_blank" class="footer-social-link w-inline-block"><img src="../images/instagram-black_1instagram-black.webp" loading="lazy" alt="Instagram Icon Image Black" class="footer-social-link-image"></a>
                     <a href="https://facebook.com/" target="_blank" class="footer-social-link w-inline-block"><img src="../images/facebook-black_1facebook-black.webp" loading="lazy" alt="facebook icon black" class="footer-social-link-image"></a>
-                    <a href="https://www.twitter.com/" target="_blank" class="footer-social-link w-inline-block"><img src="../images/twitter.png" loading="lazy" sizes="100vw" srcset="../images/twitter-p-500.png 500w, ../images/twitter.png 512w" alt="" class="footer-social-link-image"></a>
+                    <a href="https://www.twitter.com/" target="_blank" class="footer-social-link w-inline-block"><img src="../images/twitter.png" loading="lazy" sizes="(max-width: 479px) 90vw, (max-width: 767px) 48vw, (max-width: 991px) 356px, 462px" srcset="../images/twitter-p-500.png 500w, ../images/twitter.png 512w" alt="" class="footer-social-link-image"></a>
                     <a href="https://www.youtube.com/" target="_blank" class="footer-social-link w-inline-block"><img src="../images/youtube-black_1youtube-black.webp" loading="lazy" alt="YouTube White Icon Image Black" class="footer-social-link-image"></a>
                   </div>
                 </div>
@@ -1199,28 +1247,29 @@ function init(){
  if(!root||root.dataset.torReady)return;
  root.dataset.torReady='1';
  const stage1='/military/air-force-pcs-support',stage2='/military/state-2',buy='/blogs/steps-to-home-buying';
- const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+ /* TOR military stage glass overlay: native panels remain editable in Designer. */
  const triggers=[...root.querySelectorAll('[data-pcsj-topic]')],panels=[...root.querySelectorAll('[data-pcsj-panel]')];
- function close(topic,focus){
-  const trigger=document.getElementById('pcsj-trigger-'+topic),panel=document.getElementById('pcsj-preview-'+topic);
-  if(panel)panel.hidden=true;
-  if(trigger){trigger.setAttribute('aria-expanded','false');if(focus)trigger.focus({preventScroll:true});}
- }
+ const dialog=document.createElement('dialog');dialog.id='tor-military-stage-dialog';dialog.setAttribute('aria-labelledby','tor-military-stage-title');
+ const header=document.createElement('div');header.className='tor-mstage-head';
+ const heading=document.createElement('div'),brand=document.createElement('p'),overlayTitle=document.createElement('h2');brand.textContent='The Orozco Realty / Military guidance';overlayTitle.id='tor-military-stage-title';heading.append(brand,overlayTitle);
+ const closeButton=document.createElement('button');closeButton.type='button';closeButton.className='tor-mstage-close';closeButton.textContent='Close ×';header.append(heading,closeButton);
+ const body=document.createElement('div');body.className='tor-mstage-body';dialog.append(header,body);root.append(dialog);
+ let opener=null,active=null,oldHtml='',oldBody='',pageX=0,pageY=0,closing=0;
+ function close(){if(!dialog.open||dialog.classList.contains('is-closing'))return;if(matchMedia('(prefers-reduced-motion:reduce)').matches)dialog.close();else{dialog.classList.add('is-closing');closing=setTimeout(()=>dialog.close(),200);}}
  function open(topic){
-  const panel=document.getElementById('pcsj-preview-'+topic),trigger=document.getElementById('pcsj-trigger-'+topic);
-  if(!panel||!trigger)return;
-  const wasOpen=!panel.hidden;
-  panels.forEach(p=>close(p.dataset.pcsjPanel,false));
-  if(wasOpen)return;
-  panel.hidden=false;trigger.setAttribute('aria-expanded','true');
-  panel.tabIndex=-1;panel.focus({preventScroll:true});
-  panel.scrollIntoView({behavior:reduced.matches?'auto':'smooth',block:'start'});
+ const panel=panels.find(p=>p.dataset.pcsjPanel===topic),trigger=triggers.find(t=>t.dataset.pcsjTopic===topic);if(!panel||!trigger)return;
+ clearTimeout(closing);dialog.classList.remove('is-closing');opener=trigger;active=topic;overlayTitle.textContent=trigger.querySelector('.pcsj-card-title').innerText;
+ panels.forEach(p=>p.hidden=p!==panel);triggers.forEach(t=>t.setAttribute('aria-expanded',String(t===trigger)));body.scrollTop=0;
+ if(!dialog.open){pageX=scrollX;pageY=scrollY;oldHtml=document.documentElement.style.overflow;oldBody=document.body.style.overflow;document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';dialog.showModal();}
+ history.replaceState(null,'',location.pathname+location.search+'#pcsj-preview-'+topic);closeButton.focus({preventScroll:true});
  }
- panels.forEach(p=>p.hidden=true);
- triggers.forEach(t=>{t.setAttribute('aria-expanded','false');t.href='#'+t.getAttribute('aria-controls');t.addEventListener('click',e=>{e.preventDefault();open(t.dataset.pcsjTopic);});t.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();t.click();}});});
- root.querySelectorAll('[data-pcsj-close]').forEach(b=>{b.addEventListener('click',e=>{e.preventDefault();close(b.dataset.pcsjClose,true);});b.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();b.click();}});});
- root.addEventListener('keydown',e=>{if(e.key==='Escape'){const p=panels.find(p=>!p.hidden);if(p){e.preventDefault();close(p.dataset.pcsjPanel,true);}}});
- const deep=location.hash.match(/^#pcsj-preview-(base|budget|buy)$/);if(deep)open(deep[1]);
+ panels.forEach(p=>{p.hidden=true;body.append(p);});
+ triggers.forEach(t=>{t.setAttribute('aria-expanded','false');t.setAttribute('aria-haspopup','dialog');t.setAttribute('aria-controls',dialog.id);t.href='#pcsj-preview-'+t.dataset.pcsjTopic;t.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();open(t.dataset.pcsjTopic);});t.addEventListener('keydown',e=>{if(e.key===' '){e.preventDefault();t.click();}});});
+ root.querySelectorAll('[data-pcsj-close]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();close();}));
+ closeButton.addEventListener('click',close);dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
+ dialog.addEventListener('close',()=>{if(dialog.open)return;clearTimeout(closing);dialog.classList.remove('is-closing');document.documentElement.style.overflow=oldHtml;document.body.style.overflow=oldBody;panels.forEach(p=>p.hidden=true);triggers.forEach(t=>t.setAttribute('aria-expanded','false'));active=null;history.replaceState(null,'',location.pathname+location.search+'#pcsj-journey');window.scrollTo({left:pageX,top:pageY,behavior:'instant'});opener?.focus({preventScroll:true});});
+ function fromHash(){const deep=location.hash.match(/^#pcsj-preview-(base|budget|buy)$/);if(deep)open(deep[1]);else if(dialog.open)close();}
+ window.addEventListener('hashchange',fromHash);fromHash();
  function link(selector,url,label){document.querySelectorAll(selector).forEach(a=>{a.href=url;if(label)a.textContent=label;});}
  link('#pcsj-preview-base .pcsj-primary-link',stage1,'Explore your next base');
  link('#pcsj-preview-base a[href*="/pcs-plan"]',stage1+'#tw-pcs-planner','Open the PCS logistics planner');
