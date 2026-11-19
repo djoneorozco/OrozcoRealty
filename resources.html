@@ -2044,7 +2044,7 @@
       "use strict";
       const API_BASE = "https://thewing.netlify.app/api";
 
-      const MORTGAGE_CALCULATOR_URL = "https://orozcorealty.webflow.io/mortgage-calculator";
+      const MORTGAGE_CALCULATOR_URL = new URL("/mortgage-calculator", window.location.origin).href;
       const OV_KEY               = "pcsunited.kpi_overrides.v1";
       const BRIDGE_V1_KEY        = "pcsunited.bridge.v1";
       const BRIDGE_KEY           = "pcsunited.bridge";
@@ -2283,28 +2283,7 @@
         scoreRange.addEventListener("input",updateScoreUI);
         scoreRange.addEventListener("change",updateScoreUI);
       }
-            function mergeServerSaveResult(serverData, fallbackBridge){
-        if(!serverData || typeof serverData !== "object") return fallbackBridge;
-        const serverProfile = serverData.profile && typeof serverData.profile === "object"
-          ? serverData.profile
-          : null;
-        const serverBridge = serverData.bridge && typeof serverData.bridge === "object"
-          ? serverData.bridge
-          : null;
-        const latestMerged = serverData.latest?.merged_financial && typeof serverData.latest.merged_financial === "object"
-          ? serverData.latest.merged_financial
-          : null;
-        return {
-          ...(fallbackBridge || {}),
-          ...(latestMerged || {}),
-          ...(serverBridge || {}),
-          ...(serverProfile || {}),
-          _thewingSaved:true,
-          _thewingSavedAt:new Date().toISOString(),
-          _thewingFinancialIntakeVersion:serverData.version || ""
-        };
-      }
-      (function prefill(){
+            (function prefill(){
         const ov = readJSON(OV_KEY,{}) || {};
         const intakeLegacy = readJSON(INTAKE_KEY_LEGACY,{}) || {};
         const intakeModern = readJSON(INTAKE_KEY,{}) || {};

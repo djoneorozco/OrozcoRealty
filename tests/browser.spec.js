@@ -74,3 +74,12 @@ test('registered calculator frames send inputs only; invalidation blocks a stale
  await expect(page.locator('#tor-amy-mortgage-state')).toContainText('no current result');pending();
  await expect(page.locator('#tor-amy-status')).toContainText('inputs changed');await expect(page.getByText(response.reply,{exact:true})).toHaveCount(0);
 });
+test('Resources retains a local same-origin calculator handoff without an account save',async({page})=>{
+ await prepare(page);const outbound=[];page.on('request',req=>{if(req.method()==='POST')outbound.push(req.url());});
+ await page.goto('/resources.html',{waitUntil:'domcontentloaded'});
+ await page.route('**/mortgage-calculator',route=>route.fulfill({contentType:'text/html',body:'<h1>Calculator destination</h1>'}));
+ // Exercise the intake component without loading external Webflow tab/animation dependencies.
+ await page.locator('#sass-analyze-btn').dispatchEvent('click');await expect(page).toHaveURL('http://127.0.0.1:4178/mortgage-calculator');
+ expect(outbound).toEqual([]);
+ const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('pcsunited.bridge.v1')));expect(state.projected_home_price).toBeGreaterThan(0);
+});

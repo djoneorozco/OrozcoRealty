@@ -68,7 +68,7 @@ export async function postJSON(url, body, { fetchImpl = fetch, timeout = 9000, h
         const code = error.error?.code;
         // Only a small operational category is retained. Never expose provider messages, keys or request data.
         const category = ['model_not_found', 'model_not_available'].includes(code) ? 'model_access'
-          : response.status === 401 ? 'provider_auth' : response.status === 429 ? 'provider_limit'
+          : response.status === 401 ? 'provider_auth' : code === 'insufficient_quota' ? 'provider_quota' : response.status === 429 ? 'provider_limit'
           : response.status === 400 ? 'provider_request' : 'provider_unavailable';
         throw new PublicError(503, category, 'The explanation service is temporarily unavailable.');
       }
