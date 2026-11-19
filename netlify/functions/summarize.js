@@ -196,7 +196,7 @@ function synthesizeFromFacts(f, k) {
 }
 
 /* ===================== Handler ===================== */
-module.exports.handler = async (event) => {
+export const handler = async (event) => {
   const origin = event.headers?.origin || "";
   const headers = corsHeaders(origin);
 

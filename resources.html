@@ -104,6 +104,7 @@
   ]
 }
 </script>
+<link rel="stylesheet" href="/css/ask-elena.css">
 </head>
 <body>
   <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" data-doc-height="1" role="banner" class="code-navbar w-nav">
@@ -1637,18 +1638,7 @@
                     <div class="space-87"></div>
                   </div>
                 </div>
-                <div class="code-embed-21-copy w-embed w-script"><!--  //#0 HOUSE OF SASS • THE OROZCO REALTY • FINANCIAL INTAKE
-     v2.4.0 • TOR PSC SNAPSHOT HANDOFF
-     INPUT → saves locally → optionally POSTs to TheWing /api/financial-intake when email exists → redirects to Mortgage Calculator
-     ✅ Saves localStorage for instant mortgage calculator handoff
-     ✅ Redirects to https://orozcorealty.webflow.io/mortgage-calculator
-     ✅ Does NOT require login/email for public tester flow
-     ✅ Still saves to TheWing/Supabase when an email is available
-     ✅ Preserves transparent section / no page background
-     REQUIRED BACKEND OPTIONAL:
-     - TheWing: netlify/functions/financial-intake.js
-     - Endpoint: https://thewing.netlify.app/api/financial-intake
- -->
+                <div class="code-embed-21-copy w-embed w-script"><!-- Public Elena: no account or email verification. -->
                   <div id="sass-mortgage-strip" style="all: initial;">
                     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
                     <style>
@@ -2053,7 +2043,7 @@
     (function(){
       "use strict";
       const API_BASE = "https://thewing.netlify.app/api";
-      const FINANCIAL_INTAKE_ENDPOINT = API_BASE + "/financial-intake";
+
       const MORTGAGE_CALCULATOR_URL = "https://orozcorealty.webflow.io/mortgage-calculator";
       const OV_KEY               = "pcsunited.kpi_overrides.v1";
       const BRIDGE_V1_KEY        = "pcsunited.bridge.v1";
@@ -2218,42 +2208,6 @@
           "linear-gradient(90deg,#8ef3c5 0%,#6aa7ff " + pct + "%,rgba(18,24,38,.18) " + pct + "%,rgba(18,24,38,.18) 100%)"
         );
       }
-      function getLoggedInProfile(){
-        const profile = readJSON(PROFILE_KEY,{}) || {};
-        const identity = readJSON(ID_KEY,{}) || {};
-        const bridge = readJSON(BRIDGE_V1_KEY,{}) || {};
-        const session = readJSON(SESSION_KEY,{}) || {};
-        const auth = readJSON(AUTH_KEY,{}) || {};
-        return {
-          ...bridge,
-          ...identity,
-          ...profile,
-          _session: session,
-          _auth: auth
-        };
-      }
-      function resolveEmail(){
-        const params = new URLSearchParams(window.location.search || "");
-        const profile = readJSON(PROFILE_KEY,{}) || {};
-        const identity = readJSON(ID_KEY,{}) || {};
-        const bridge = readJSON(BRIDGE_V1_KEY,{}) || {};
-        const session = readJSON(SESSION_KEY,{}) || {};
-        const auth = readJSON(AUTH_KEY,{}) || {};
-        const email = cleanEmail(
-          params.get("email") ||
-          profile.email ||
-          identity.email ||
-          bridge.email ||
-          session.email ||
-          session.user?.email ||
-          auth.email ||
-          localStorage.getItem(SESSION_EMAIL_KEY) ||
-          localStorage.getItem(LOGIN_EMAIL_KEY) ||
-          sessionStorage.getItem(SESSION_EMAIL_KEY) ||
-          sessionStorage.getItem(LOGIN_EMAIL_KEY)
-        );
-        return email;
-      }
       function updateDownUI(){
         const price = readMoneyInput(elPrice);
         const pct = clamp(Number(downRange && downRange.value) || 0,0,30);
@@ -2329,24 +2283,7 @@
         scoreRange.addEventListener("input",updateScoreUI);
         scoreRange.addEventListener("change",updateScoreUI);
       }
-      async function postFinancialIntake(payload){
-        const response = await fetch(FINANCIAL_INTAKE_ENDPOINT, {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify(payload)
-        });
-        const data = await response.json().catch(function(){ return {}; });
-        if(!response.ok || data.ok === false){
-          const err = new Error(data.error || "Financial intake could not be saved to Supabase.");
-          err.payload = data;
-          err.status = response.status;
-          throw err;
-        }
-        return data;
-      }
-      function mergeServerSaveResult(serverData, fallbackBridge){
+            function mergeServerSaveResult(serverData, fallbackBridge){
         if(!serverData || typeof serverData !== "object") return fallbackBridge;
         const serverProfile = serverData.profile && typeof serverData.profile === "object"
           ? serverData.profile
@@ -2378,7 +2315,7 @@
           ...torIntake
         };
         const bridge = readJSON(BRIDGE_V1_KEY,{}) || {};
-        const profile = getLoggedInProfile() || {};
+        const profile = {};
         const prevExpenses =
           ov.expensesOverride ??
           intake.expenses ??
@@ -2445,7 +2382,7 @@
       continueBtn.addEventListener("click", async function(){
         setError("");
         setStatus("");
-        const email = resolveEmail();
+        const email = "";
         const mode     = getActiveMode();
         const expenses = Math.max(0,readMoneyInput(elExpenses));
         const price    = Math.max(0,readMoneyInput(elPrice));
@@ -2458,7 +2395,7 @@
           return;
         }
         const aiouWrap = readAiouIfPresent();
-        const profile = getLoggedInProfile() || {};
+        const profile = {};
         const savedAt = new Date().toISOString();
         const downPct = Number(downRange && downRange.value) || 0;
         const estimatedApr = scoreAPR(score);
@@ -2580,7 +2517,7 @@
           dashboard_url:MORTGAGE_CALCULATOR_URL,
           redirect_url:MORTGAGE_CALCULATOR_URL,
           email:email || "",
-          supabase_pending:!!email
+          accountFree:true
         });
         dispatchEventSafe("tor:financial-intake-ready",{
           intake:intakePayload,
@@ -2599,89 +2536,9 @@
           email:email || ""
         });
         continueBtn.disabled = true;
-        continueBtn.textContent = email && isValidEmail(email) ? "Saving…" : "Opening…";
-        if(!email || !isValidEmail(email)){
-          setStatus("Opening mortgage calculator...", "ok");
-          setTimeout(function(){
-            window.location.assign(MORTGAGE_CALCULATOR_URL.trim());
-          }, 250);
-          return;
-        }
-        setStatus("Saving to TheWing...", "");
-        try{
-          const serverData = await postFinancialIntake(intakePayload);
-          const mergedBridge = mergeServerSaveResult(serverData, bridge);
-          mergedBridge.email = mergedBridge.email || email;
-          mergedBridge._intakeMode = mode;
-          mergedBridge._intakeSource = "tor.financial.intake.v2.4";
-          mergedBridge._intakeTs = Date.now();
-          writeJSON(BRIDGE_V1_KEY,mergedBridge);
-          writeJSON(BRIDGE_KEY,mergedBridge);
-          writeJSON(REALTY_BRIDGE_KEY,mergedBridge);
-          if(serverData && serverData.profile){
-            const currentProfile = readJSON(PROFILE_KEY,{}) || {};
-            writeJSON(PROFILE_KEY,{
-              ...currentProfile,
-              ...serverData.profile,
-              email:email,
-              loaded_at:new Date().toISOString(),
-              source:"tor.financial.intake.v2.4"
-            });
-          }
-          writeJSON(OPEN_FLOW_MARKER_KEY,{
-            ready:true,
-            ts:Date.now(),
-            source:"tor.financial.intake.v2.4",
-            dashboard_url:MORTGAGE_CALCULATOR_URL,
-            redirect_url:MORTGAGE_CALCULATOR_URL,
-            email:email,
-            supabase_saved:true,
-            intake_id:serverData.intake_id || null
-          });
-          writeText(SESSION_EMAIL_KEY,email);
-          writeText(LOGIN_EMAIL_KEY,email);
-          dispatchEventSafe("tor:financial-intake-saved",{
-            intake:intakePayload,
-            server:serverData,
-            bridge:mergedBridge,
-            email:email
-          });
-          dispatchEventSafe("pcsunited:financial-intake-saved",{
-            intake:intakePayload,
-            server:serverData,
-            bridge:mergedBridge,
-            email:email
-          });
-          dispatchEventSafe("pcsunited:bridge-ready",{
-            bridge:mergedBridge,
-            email:email
-          });
-          setStatus("Saved. Opening mortgage calculator...", "ok");
-          continueBtn.textContent = "Opening…";
-          setTimeout(function(){
-            window.location.assign(MORTGAGE_CALCULATOR_URL.trim());
-          }, 300);
-        }catch(err){
-          console.error("TheWing financial intake save failed:", err);
-          const detail = err && err.payload && err.payload.error
-            ? err.payload.error
-            : err.message || "Supabase save failed.";
-          writeJSON(OPEN_FLOW_MARKER_KEY,{
-            ready:true,
-            ts:Date.now(),
-            source:"tor.financial.intake.v2.4",
-            dashboard_url:MORTGAGE_CALCULATOR_URL,
-            redirect_url:MORTGAGE_CALCULATOR_URL,
-            email:email,
-            supabase_saved:false,
-            supabase_error:detail
-          });
-          setStatus("Cloud save failed. Opening mortgage calculator with local handoff.", "warn");
-          continueBtn.textContent = "Opening…";
-          setTimeout(function(){
-            window.location.assign(MORTGAGE_CALCULATOR_URL.trim());
-          }, 650);
-        }
+        continueBtn.textContent = "Opening…";
+        setStatus("Opening mortgage calculator with this browser’s inputs…", "ok");
+        window.location.assign(MORTGAGE_CALCULATOR_URL.trim());
       });
       updateRangeFill(expensesRange);
       updateRangeFill(priceRange);
@@ -2689,10 +2546,10 @@
       updateScoreUI();
       window.TOR_FINANCIAL_INTAKE = {
         version:"2.4.0-tor",
-        endpoint:FINANCIAL_INTAKE_ENDPOINT,
+
         redirect:MORTGAGE_CALCULATOR_URL,
-        resolveEmail:resolveEmail,
-        getProfile:getLoggedInProfile
+
+
       };
       window.PCSU_FINANCIAL_INTAKE = window.TOR_FINANCIAL_INTAKE;
     })();
@@ -4761,7 +4618,7 @@ renderQuestion();
                 </div>
               </div>
               <div class="ae-top-controls">
-                <input id="ae-email" class="ae-control-input" type="email" placeholder="Enter your email to load your saved profile">
+
               </div>
               <div class="ae-chat" id="ae-chat"></div>
               <div class="ae-footer">
@@ -4770,407 +4627,14 @@ renderQuestion();
               </div>
             </div>
           </div>
-          <script>
-      (() => {
-        const root = document.getElementById("ask-elena-shell");
-        if (!root || root.__aeMountedV53) return;
-        root.__aeMountedV53 = true;
-        const RAW_ENDPOINT = root.getAttribute("data-endpoint") || "";
-        const chatEl = document.getElementById("ae-chat");
-        const inputEl = document.getElementById("ae-input");
-        const sendBtn = document.getElementById("ae-send");
-        const emailEl = document.getElementById("ae-email");
-        const STORAGE_KEY = "orozco.ask_elena.v5_3";
-        const VERIFIED_EMAIL_KEY = "orozco.ask_elena.verified_email.v1";
-        const VERIFIED_PROFILE_KEY = "orozco.ask_elena.verified_profile.v1";
-        let verifyTimer = null;
-        let verifySeq = 0;
-        let lastVerifiedEmail = "";
-        let verifiedProfile = null;
-        let verifyingEmail = "";
-        function resolveAskEndpoint(raw) {
-          if (location.hostname && /webflow\.io$/i.test(location.hostname)) {
-            return "https://theorozcorealty.netlify.app/.netlify/functions/ask-elena";
-          }
-          if (!raw) return "/.netlify/functions/ask-elena";
-          return raw;
-        }
-        function resolveApiBase() {
-          if (location.hostname && /webflow\.io$/i.test(location.hostname)) {
-            return "https://theorozcorealty.netlify.app/api";
-          }
-          return (location.origin || "") + "/api";
-        }
-        const ENDPOINT = resolveAskEndpoint(RAW_ENDPOINT);
-        const API_BASE = resolveApiBase();
-        const prefersReduced = () =>
-          window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        function scrollToBottom() {
-          chatEl.scrollTop = chatEl.scrollHeight;
-        }
-        function clean(v) {
-          return String(v == null ? "" : v).trim();
-        }
-        function lowerEmail(v) {
-          return clean(v).toLowerCase();
-        }
-        function safeParse(raw, fallback = null) {
-          try { return JSON.parse(raw || "null") ?? fallback; }
-          catch { return fallback; }
-        }
-        function savePrefs() {
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-              email: emailEl ? emailEl.value : ""
-            }));
-          } catch {}
-        }
-        function loadPrefs() {
-          try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return;
-            const data = JSON.parse(raw);
-            if (emailEl && data.email) emailEl.value = data.email;
-          } catch {}
-        }
-        function saveVerifiedState(email, profile) {
-          try {
-            localStorage.setItem(VERIFIED_EMAIL_KEY, email || "");
-            localStorage.setItem(VERIFIED_PROFILE_KEY, JSON.stringify(profile || null));
-          } catch {}
-        }
-        function loadVerifiedState() {
-          try {
-            const savedEmail = lowerEmail(localStorage.getItem(VERIFIED_EMAIL_KEY) || "");
-            const savedProfile = safeParse(localStorage.getItem(VERIFIED_PROFILE_KEY), null);
-            if (savedEmail && savedProfile && typeof savedProfile === "object") {
-              lastVerifiedEmail = savedEmail;
-              verifiedProfile = savedProfile;
-            }
-          } catch {}
-        }
-        function clearVerifiedState() {
-          lastVerifiedEmail = "";
-          verifiedProfile = null;
-          try {
-            localStorage.removeItem(VERIFIED_EMAIL_KEY);
-            localStorage.removeItem(VERIFIED_PROFILE_KEY);
-          } catch {}
-        }
-        function getDisplayName(profile) {
-          if (!profile || typeof profile !== "object") return "";
-          return clean(
-            profile.full_name ||
-            profile.fullName ||
-            [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
-            profile.name ||
-            ""
-          );
-        }
-        function getFirstName(profile) {
-          if (!profile || typeof profile !== "object") return "";
-          return clean(
-            profile.first_name ||
-            profile.firstName ||
-            getDisplayName(profile).split(" ")[0] ||
-            ""
-          );
-        }
-        function normalizeProfile(profile) {
-          if (!profile || typeof profile !== "object") return null;
-          return {
-            id: profile.id ?? null,
-            email: lowerEmail(profile.email || ""),
-            full_name: clean(
-              profile.full_name ||
-              profile.fullName ||
-              [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
-              profile.name ||
-              ""
-            ),
-            first_name: clean(profile.first_name || profile.firstName || ""),
-            last_name: clean(profile.last_name || profile.lastName || ""),
-            phone: clean(profile.phone || ""),
-            mode: clean(profile.mode || profile.user_type || ""),
-            rank: clean(profile.rank || profile.rank_paygrade || ""),
-            rank_paygrade: clean(profile.rank_paygrade || profile.rank || ""),
-            va_disability: profile.va_disability ?? null,
-            yos: profile.yos ?? null,
-            family: profile.family ?? null,
-            base: clean(profile.base || ""),
-            notes: clean(profile.notes || ""),
-            projected_home_price: profile.projected_home_price ?? profile.projectedHomePrice ?? profile.price ?? null,
-            monthly_expenses: profile.monthly_expenses ?? profile.monthlyExpenses ?? profile.expenses ?? null,
-            downpayment: profile.downpayment ?? profile.downPayment ?? null,
-            savings: profile.savings ?? null,
-            credit_score: profile.credit_score ?? profile.creditScore ?? null,
-            bedrooms: profile.bedrooms ?? null,
-            bathrooms: profile.bathrooms ?? null,
-            sqft: profile.sqft ?? null,
-            property_type: clean(profile.property_type || profile.propertyType || ""),
-            home_condition: clean(profile.home_condition || profile.homeCondition || ""),
-            amenities: Array.isArray(profile.amenities) ? profile.amenities : clean(profile.amenities || "")
-          };
-        }
-        function buildContextSummary(profile) {
-          if (!profile) return "";
-          const parts = [];
-          if (profile.full_name) parts.push("Name: " + profile.full_name);
-          if (profile.base) parts.push("Base: " + profile.base);
-          if (profile.rank_paygrade || profile.rank) parts.push("Rank: " + (profile.rank_paygrade || profile.rank));
-          if (profile.projected_home_price) parts.push("Target Price: $" + Number(profile.projected_home_price).toLocaleString("en-US"));
-          if (profile.monthly_expenses) parts.push("Monthly Expenses: $" + Number(profile.monthly_expenses).toLocaleString("en-US"));
-          if (profile.downpayment) parts.push("Down Payment: $" + Number(profile.downpayment).toLocaleString("en-US"));
-          if (profile.credit_score) parts.push("Credit Score: " + profile.credit_score);
-          if (profile.bedrooms) parts.push("Bedrooms: " + profile.bedrooms);
-          if (profile.home_condition) parts.push("Home Condition: " + profile.home_condition);
-          return parts.join(" | ");
-        }
-        async function pushMsg(role, content, opts = {}) {
-          const { typewriter = false, speed = 18, delay = 120 } = opts;
-          const msg = document.createElement("div");
-          msg.className = "ae-msg " + (role === "user" ? "ae-user" : "ae-bot");
-          const textNode = document.createElement("span");
-          msg.appendChild(textNode);
-          chatEl.appendChild(msg);
-          scrollToBottom();
-          if (!typewriter || prefersReduced() || role === "user") {
-            textNode.textContent = content;
-            scrollToBottom();
-            return;
-          }
-          await typewriterInto(textNode, content, speed, delay);
-          scrollToBottom();
-        }
-        function showTyping() {
-          const t = document.createElement("div");
-          t.className = "ae-msg ae-bot ae-typing";
-          t.id = "ae-typing";
-          t.textContent = "Elena is reviewing your question…";
-          chatEl.appendChild(t);
-          scrollToBottom();
-        }
-        function hideTyping() {
-          const t = document.getElementById("ae-typing");
-          if (t) t.remove();
-        }
-        function typewriterInto(el, text, speed = 18, startDelay = 120) {
-          return new Promise((resolve) => {
-            el.textContent = "";
-            const caret = document.createElement("span");
-            caret.className = "tw-caret";
-            el.appendChild(caret);
-            let i = 0;
-            const tick = () => {
-              if (i < text.length) {
-                caret.insertAdjacentText("beforebegin", text.charAt(i++));
-                scrollToBottom();
-                setTimeout(tick, speed);
-              } else {
-                caret.remove();
-                resolve();
-              }
-            };
-            setTimeout(tick, startDelay);
-          });
-        }
-        async function postJSON(url, body) {
-          const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body || {})
-          });
-          const text = await res.text();
-          let data = {};
-          try { data = text ? JSON.parse(text) : {}; }
-          catch { data = {}; }
-          if (!res.ok || data.ok === false) {
-            throw new Error(data.error || data.message || ("HTTP " + res.status));
-          }
-          return data;
-        }
-        async function verifyEmailAndLoadProfile(email) {
-          const out = await postJSON(API_BASE + "/profile-by-email", { email });
-          const profile = out.profile || out.data || out || null;
-          if (!profile || typeof profile !== "object") {
-            throw new Error("Profile not found.");
-          }
-          const normalized = normalizeProfile(profile);
-          if (!normalized || !normalized.email) {
-            throw new Error("Profile loaded, but email data was missing.");
-          }
-          if (normalized.email !== lowerEmail(email)) {
-            throw new Error("Loaded profile email did not match the entered email.");
-          }
-          return normalized;
-        }
-        async function autoVerifyEmail(showFailureMessage = true) {
-          const email = lowerEmail(emailEl && emailEl.value);
-          if (!email) {
-            clearVerifiedState();
-            return;
-          }
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            clearVerifiedState();
-            return;
-          }
-          if (email === lastVerifiedEmail && verifiedProfile) {
-            return;
-          }
-          const seq = ++verifySeq;
-          verifyingEmail = email;
-          try {
-            const profile = await verifyEmailAndLoadProfile(email);
-            if (seq !== verifySeq) return;
-            lastVerifiedEmail = profile.email;
-            verifiedProfile = profile;
-            saveVerifiedState(profile.email, profile);
-            await pushMsg(
-              "assistant",
-              `Perfect — I verified ${profile.email} and loaded your saved profile${getFirstName(profile) ? `, ${getFirstName(profile)}` : ""}. You can ask me questions that use your saved OrozcoRealty information now.`,
-              { typewriter: true, speed: 16, delay: 90 }
-            );
-          } catch (err) {
-            if (seq !== verifySeq) return;
-            clearVerifiedState();
-            if (showFailureMessage && email === lowerEmail(emailEl && emailEl.value)) {
-              await pushMsg(
-                "assistant",
-                "Verification failed, please try again.",
-                { typewriter: true, speed: 16, delay: 80 }
-              );
-            }
-          } finally {
-            if (seq === verifySeq) verifyingEmail = "";
-          }
-        }
-        function scheduleAutoVerify() {
-          savePrefs();
-          const current = lowerEmail(emailEl && emailEl.value);
-          if (!current || current !== lastVerifiedEmail) {
-            clearVerifiedState();
-          }
-          if (verifyTimer) clearTimeout(verifyTimer);
-          verifyTimer = setTimeout(() => {
-            autoVerifyEmail(true);
-          }, 700);
-        }
-        async function callElena(userText) {
-          sendBtn.disabled = true;
-          showTyping();
-          try {
-            savePrefs();
-            const currentEmail = lowerEmail(emailEl && emailEl.value);
-            const contextSummary = buildContextSummary(verifiedProfile);
-            const payload = {
-              message: userText,
-              email: currentEmail || undefined,
-              marketSlug: undefined,
-              verifiedProfile: verifiedProfile || undefined,
-              profileContext: contextSummary || undefined
-            };
-            const res = await fetch(ENDPOINT, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
-            const data = await res.json().catch(() => ({}));
-            hideTyping();
-            if (!res.ok || !data || data.ok !== true) {
-              throw new Error((data && data.error) || "Request failed.");
-            }
-            const reply = String(data.reply || "I’m here. What would you like to explore?");
-            const ui = data.ui || {};
-            const speed = Number(ui.speed || 18);
-            const delay = Number(ui.startDelay || 120);
-            await pushMsg("assistant", reply, { typewriter: true, speed, delay });
-          } catch (err) {
-            hideTyping();
-            await pushMsg(
-              "assistant",
-              "Hmm… I hit a connection snag. Please make sure this widget is calling /.netlify/functions/ask-elena.",
-              { typewriter: true, speed: 16, delay: 80 }
-            );
-          } finally {
-            sendBtn.disabled = false;
-          }
-        }
-        async function trySend() {
-          const text = clean(inputEl.value);
-          if (!text) return;
-          const currentEmail = lowerEmail(emailEl && emailEl.value);
-          if (currentEmail && (!verifiedProfile || currentEmail !== lastVerifiedEmail)) {
-            if (verifyTimer) {
-              clearTimeout(verifyTimer);
-              verifyTimer = null;
-            }
-            await autoVerifyEmail(true);
-          }
-          await pushMsg("user", text);
-          inputEl.value = "";
-          await callElena(text);
-        }
-        if (sendBtn) sendBtn.addEventListener("click", trySend);
-        if (inputEl) {
-          inputEl.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              trySend();
-            }
-          });
-        }
-        if (emailEl) {
-          emailEl.addEventListener("input", scheduleAutoVerify);
-          emailEl.addEventListener("change", () => autoVerifyEmail(true));
-          emailEl.addEventListener("blur", () => autoVerifyEmail(true));
-          emailEl.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              autoVerifyEmail(true);
-            }
-          });
-        }
-        loadPrefs();
-        loadVerifiedState();
-        const greeting =
-          "Hey — I’m Elena, your OrozcoRealty concierge. Ask me about Texas real estate, affordability, monthly payments, buyer or seller strategy, or a market like San Antonio or McAllen.";
-        pushMsg("assistant", greeting, { typewriter: true, speed: 18, delay: 220 });
-      })();
-      </script>
+          <script src="/js/ask-elena.js" defer></script>
         </div>
       </div>
     </div>
     <!--  ============================================================
   STAGE 2 — OPEN / CLOSE LOGIC
 ===============================================================  -->
-    <script>
-(function(){
-  const launcher = document.getElementById("ask-elena-launcher");
-  const modal = document.getElementById("ask-elena-modal");
-  const closeBtn = document.getElementById("ask-elena-modal-close");
-  if (!launcher || !modal || !closeBtn) return;
-  function openAskElena(){
-    modal.style.display = "flex";
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-  }
-  function closeAskElena(){
-    modal.style.display = "none";
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-  }
-  launcher.addEventListener("click", openAskElena);
-  closeBtn.addEventListener("click", closeAskElena);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeAskElena();
-  });
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.style.display === "flex") {
-      closeAskElena();
-    }
-  });
-})();
-</script>
+
   </div>
   <section class="footersection">
     <div class="container-full w-container">

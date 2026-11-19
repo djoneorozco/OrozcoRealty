@@ -87,6 +87,7 @@
 @media(max-width:991px){#tor-footer[data-reveal],#tor-military-footer[data-reveal]{position:relative;bottom:auto}}
 @media(prefers-reduced-motion:reduce){#tor-footer[data-reveal],#tor-military-footer[data-reveal]{position:relative;bottom:auto}}
 </style>
+<link rel="stylesheet" href="/css/ask-elena.css">
 </head>
 <body class="body">
   <header class="modern-navbar-2 home-copy-blur-layer">
@@ -1882,7 +1883,7 @@
         </div>
       </section>
     </main>
-    <div class="w-embed w-script"><!--  TOR Ask Amy. Public chat stays in page memory. Calculator sharing is opt-in with ?amy=tor.  -->
+    <div class="w-embed w-script"><!--  TOR Ask Elena. Public chat stays in page memory. Calculator sharing is opt-in with ?amy=tor.  -->
       <style>
 #tor-ask-amy{font:15px/1.5 Barlow,Arial,sans-serif;color:#f2eee5}
 #tor-ask-amy *{box-sizing:border-box}
@@ -1928,32 +1929,32 @@
 @media(max-width:600px){#tor-amy-launcher{right:16px;bottom:20px;padding-right:17px}#tor-amy-dialog{width:100vw;border-left:0}#tor-ask-amy .tor-amy-head{padding:14px 16px}#tor-ask-amy .tor-amy-context{padding:10px 16px}#tor-ask-amy .tor-amy-suggestions{padding:10px 16px}#tor-amy-chat{padding:8px 16px 16px}#tor-ask-amy .tor-amy-compose{padding:10px 16px max(12px,env(safe-area-inset-bottom))}#tor-ask-amy #tor-amy-input{font-size:16px}#tor-ask-amy .tor-amy-head h2{font-size:27px}}
 @media(prefers-reduced-motion:reduce){#tor-amy-dialog[open]{animation:none}}
 </style>
-      <div id="tor-ask-amy" data-endpoint="https://thewing.netlify.app/.netlify/functions/agent-amy-public" data-tool-origin="https://thewing.netlify.app">
+      <div id="tor-ask-amy" data-endpoint="/api/ask-elena" data-tool-origin="https://thewing.netlify.app">
         <button id="tor-amy-launcher" type="button" aria-haspopup="dialog" aria-controls="tor-amy-dialog" aria-expanded="false">
-          <img class="tor-amy-avatar" src="https://cdn.prod.website-files.com/69eb162337c57d450e0e19a3/6a3334f99ed5987c434df57f_Face.jpg" alt="" width="42" height="42">
-          <span><strong>Ask Amy</strong><small>Your homeownership guide</small></span>
+          <img class="tor-amy-avatar" src="/images/ElenaProfile.jpg" alt="" width="42" height="42">
+          <span><strong>Ask Elena</strong><small>Your homeownership guide</small></span>
         </button>
         <dialog id="tor-amy-dialog" aria-labelledby="tor-amy-title" aria-describedby="tor-amy-sharing">
           <header class="tor-amy-head">
-            <img class="tor-amy-avatar" src="https://cdn.prod.website-files.com/69eb162337c57d450e0e19a3/6a3334f99ed5987c434df57f_Face.jpg" alt="" width="42" height="42">
+            <img class="tor-amy-avatar" src="/images/ElenaProfile.jpg" alt="" width="42" height="42">
             <div>
-              <h2 id="tor-amy-title">Ask Amy</h2>
+              <h2 id="tor-amy-title">Ask Elena</h2>
               <p>The Orozco Realty · Powered by TheWing</p>
             </div>
-            <button id="tor-amy-close" type="button" aria-label="Close Ask Amy">×</button>
+            <button id="tor-amy-close" type="button" aria-label="Close Ask Elena">×</button>
           </header>
           <section class="tor-amy-context" aria-label="Current page context"><small>Exploring together</small><strong id="tor-amy-stage">Your homeownership journey</strong><span class="tor-amy-result" id="tor-amy-mortgage-state">Mortgage · no current result</span><span class="tor-amy-result" id="tor-amy-finance-state">Budget · no current result</span></section>
           <div class="tor-amy-suggestions"><button type="button" data-tor-amy-question="Explain my mortgage estimate">Explain my mortgage estimate</button><button type="button" data-tor-amy-question="Explain my cash flow and housing range">Explain my cash flow and housing range</button></div>
-          <div id="tor-amy-chat" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation with Amy"></div>
+          <div id="tor-amy-chat" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation with Elena"></div>
           <footer class="tor-amy-compose">
-            <form id="tor-amy-form"><textarea id="tor-amy-input" rows="2" maxlength="3000" required="" placeholder="What would you like to understand?" aria-label="Your question for Amy"></textarea><button id="tor-amy-send" type="submit">Send</button></form>
+            <form id="tor-amy-form"><textarea id="tor-amy-input" rows="2" maxlength="3000" required="" placeholder="What would you like to understand?" aria-label="Your question for Elena"></textarea><button id="tor-amy-send" type="submit">Send</button></form>
             <p id="tor-amy-status" role="status"></p>
-            <p class="tor-amy-privacy" id="tor-amy-sharing">When you send a question, your current calculator inputs are shared with TheWing to calculate context for Amy’s AI explanation. This page keeps the conversation in memory; reloading clears it.</p>
+            <p class="tor-amy-privacy" id="tor-amy-sharing">When you send a question, your current calculator inputs are shared with TheWing to calculate context for Elena’s AI explanation. This page keeps the conversation in memory; reloading clears it.</p>
             <p class="tor-amy-privacy">Planning guidance, not lending approval or legal or tax advice.</p><button id="tor-amy-reset" type="button">Start a new conversation</button>
           </footer>
         </dialog>
       </div>
-      <script src="https://thewing.netlify.app/public/ask-amy/tor-ask-amy.js?v=1.0.1" defer=""></script>
+      <script src="/js/ask-elena.js" defer=""></script>
     </div>
     <div class="w-embed w-script"><!--  TOR lifecycle behavior. Kept separate so the layout renders in Webflow Design mode.  -->
       <script>

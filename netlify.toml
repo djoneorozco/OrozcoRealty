@@ -1,29 +1,208 @@
 [build]
-  publish = "."
+  command = "npm run build"
+  publish = "dist"
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "22"
+
 [functions]
+  node_bundler = "esbuild"
   included_files = ["netlify/functions/data/**", "netlify/functions/cities/**"]
+
+[[redirects]]
+  from = "/api/admin-export"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/admin-export"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/commit-financial-analysis"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/commit-financial-analysis"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/create-auth-user"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/create-auth-user"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/login"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/login"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/profile-by-email"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/profile-by-email"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/profile"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/profile"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/register"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/register"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/save-aiou-inputs"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/save-aiou-inputs"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/save-financial-inputs"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/save-financial-inputs"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/save-intake"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/save-intake"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/save-profile"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/save-profile"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/send-code"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/send-code"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/session"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/session"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/signup"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/signup"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/verify-code"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/verify-code"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/brain"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/brain"
+  to = "/.netlify/functions/accounts-paused"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
-[[headers]]
-  for = "/.netlify/functions/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "*"
-    Access-Control-Allow-Methods = "POST, OPTIONS"
-    Access-Control-Max-Age = "86400"
-    Vary = "Origin"
-
-[[headers]]
-  for = "/api/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "*"
-    Access-Control-Allow-Methods = "POST, OPTIONS"
-    Access-Control-Max-Age = "86400"
-    Vary = "Origin"

@@ -1,0 +1,6 @@
+/* Scoped readability/accessibility additions; the existing panel and avatars retain their styling. */
+.elena-status,.elena-privacy{font:12px/1.5 system-ui,sans-serif;color:#d9d1c4;margin:8px 16px;opacity:.85;overflow-wrap:anywhere}
+.elena-reset{font:inherit;color:inherit;background:transparent;border:1px solid currentColor;border-radius:8px;padding:8px 12px;margin:8px 16px;cursor:pointer}
+.elena-source{display:block;color:inherit;text-decoration:underline;margin-top:8px;overflow-wrap:anywhere}
+#ask-elena-shell .ae-msg p,#ask-elena-widget .ae-msg p,#tor-ask-elena-command-widget .tor-elena-msg p{margin:6px 0;overflow-wrap:anywhere}
+#ask-elena-shell button:focus-visible,#ask-elena-widget button:focus-visible,#tor-ask-elena-command-widget button:focus-visible{outline:2px solid #dfc088;outline-offset:3px}

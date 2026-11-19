@@ -68,7 +68,7 @@ function conditionGuidance(conditionPreference, yearBand) {
 }
 
 /* ---------------- entry ---------------- */
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers: corsHeaders, body: "" };
   if (event.httpMethod !== "POST") return bad(405, "Use POST");
   if (!OPENAI_API_KEY) return bad(500, "OPENAI_API_KEY not configured");
