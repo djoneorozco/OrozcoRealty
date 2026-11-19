@@ -11,7 +11,6 @@
 
 import fs from "fs/promises";
 import path from "path";
-import { fileURLToPath } from "url";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -57,10 +56,7 @@ export const handler = async (event) => {
       };
     }
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-
-    const filePath = path.join(__dirname, "cities", `${cityKey}.json`);
+    const filePath = path.join(process.cwd(), "netlify/functions/cities", `${cityKey}.json`);
 
     const raw = await fs.readFile(filePath, "utf8");
 

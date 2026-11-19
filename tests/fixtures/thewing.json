@@ -1,0 +1,434 @@
+{
+  "provenance": {
+    "repository": "djoneorozco/TheWing.ai",
+    "commit": "2658c68f10780f75478430220b768fad70346d52",
+    "note": "Generated directly from the pinned shared engines using synthetic inputs; no visitor data."
+  },
+  "military": {
+    "inputs": {
+      "contract": "military-mortgage-v1",
+      "loanType": "VA",
+      "homePrice": 300000,
+      "downPayment": 30000,
+      "interestRate": 6.25,
+      "termYears": 30,
+      "creditScore": 720,
+      "propertyTaxAnnual": 6000,
+      "insuranceAnnual": 2400,
+      "hoaMonthly": 50,
+      "otherOwnershipMonthly": 100,
+      "vaFeeStatus": "exempt",
+      "feePayment": "finance"
+    },
+    "result": {
+      "ok": true,
+      "contract": "military-mortgage-v1",
+      "version": "1.1.0",
+      "inputs": {
+        "loanType": "VA",
+        "homePrice": 300000,
+        "downPayment": 30000,
+        "interestRate": 6.25,
+        "termYears": 30,
+        "creditScore": 720,
+        "propertyTaxAnnual": 6000,
+        "insuranceAnnual": 2400,
+        "hoaMonthly": 50,
+        "otherOwnershipMonthly": 100,
+        "pmiMonthly": null,
+        "vaFeeStatus": "exempt",
+        "feePayment": "finance",
+        "closingCosts": null,
+        "prepaidsEscrow": null,
+        "cashAvailable": null,
+        "moveInCosts": null
+      },
+      "monthly": {
+        "principalInterest": 1662.44,
+        "propertyTax": 500,
+        "insurance": 200,
+        "hoa": 50,
+        "mortgageInsurance": 0,
+        "otherOwnership": 100,
+        "mortgagePayment": 2412.44,
+        "totalHousing": 2512.44
+      },
+      "loan": {
+        "baseLoan": 270000,
+        "financedFee": 0,
+        "loanAmount": 270000,
+        "fee": 0,
+        "feeRate": 0,
+        "feeLabel": "VA funding fee",
+        "feePaidAtClosing": 0
+      },
+      "amortization": {
+        "months": 360,
+        "monthly_pi": 1662.44,
+        "monthlyPI": 1662.44,
+        "total_payments_pi": 598477.12,
+        "totalPaymentsPI": 598477.12,
+        "total_interest": 328477.12,
+        "totalInterest": 328477.12,
+        "principal": 270000,
+        "basis": "fixed-rate-no-extra-payments",
+        "excludes": "Taxes, insurance, HOA, other ownership costs and upfront cash are excluded."
+      },
+      "upfront": {
+        "downPayment": 30000,
+        "feePaidAtClosing": 0,
+        "knownSubtotal": 30000,
+        "closingCosts": null,
+        "prepaidsEscrow": null,
+        "cashAvailable": null,
+        "moveInCosts": null,
+        "purchaseCash": null,
+        "totalCashNeeded": null,
+        "reservesAfterPurchase": null,
+        "cashPlanStarted": false,
+        "excludes": "Other closing costs, prepaid items and escrow deposits are not included in this subtotal."
+      },
+      "mortgageInsurance": {
+        "note": "VA loans have no monthly mortgage insurance.",
+        "annualRate": null,
+        "durationYears": null
+      },
+      "notes": [
+        "VA fee uses the status you selected. Confirm exemption and entitlement with your lender."
+      ],
+      "sources": [
+        "https://www.va.gov/housing-assistance/home-loans/funding-fee-and-closing-costs/"
+      ],
+      "assumptions": {
+        "rateMeaning": "note-interest-rate-not-apr",
+        "fixedRate": true,
+        "purchaseOnly": true,
+        "appraisalValue": "Assumed equal to purchase price.",
+        "rulesChecked": "2026-11-06",
+        "excludedCosts": "Only ownership costs entered above are included. Taxes, insurance, dues and premiums may change."
+      }
+    }
+  },
+  "conventional": {
+    "inputs": {
+      "loanType": "conventional",
+      "price": 300000,
+      "downPayment": 60000,
+      "interestRate": 6.25,
+      "termYears": 30,
+      "creditScore": 720,
+      "propertyTaxPercent": 2,
+      "insuranceMonthly": 200,
+      "hoaMonthly": 50
+    },
+    "result": {
+      "ok": true,
+      "engineVersion": "thewing-mortgage-engine-shared-1.2.0",
+      "inputs": {
+        "price": 300000,
+        "downRaw": null,
+        "downpayment": 60000,
+        "downPayment": 60000,
+        "downPct": 20,
+        "downPercent": 20,
+        "downSource": "amount",
+        "credit_score": 720,
+        "creditScore": 720,
+        "term_years": 30,
+        "termYears": 30,
+        "loan_type": "conventional",
+        "loanType": "conventional",
+        "apr_override": 6.25,
+        "aprOverride": 6.25,
+        "property_tax_annual": 6000,
+        "propertyTaxAnnual": 6000,
+        "propertyTaxSource": "inputPercent",
+        "insurance_annual": 2400,
+        "insuranceAnnual": 2400,
+        "insuranceSource": "inputMonthly",
+        "hoa_monthly": 50,
+        "hoaMonthly": 50,
+        "hoaSource": "input",
+        "pmi_rate": null,
+        "pmiRate": null,
+        "pmi_monthly_override": null,
+        "pmiMonthlyOverride": null,
+        "city_defaults": {}
+      },
+      "mortgage": {
+        "price": 300000,
+        "downPayment": 60000,
+        "downpayment": 60000,
+        "downPercent": 20,
+        "downpayment_pct": 20,
+        "loanAmount": 240000,
+        "loan_amount": 240000,
+        "creditScore": 720,
+        "credit_score": 720,
+        "loanType": "conventional",
+        "loan_type": "conventional",
+        "apr": 6.25,
+        "interestRate": 6.25,
+        "termYears": 30,
+        "term_years": 30
+      },
+      "monthly": {
+        "principalInterest": 1477.72,
+        "principal_interest": 1477.72,
+        "pi": 1477.72,
+        "propertyTax": 500,
+        "property_tax": 500,
+        "tax": 500,
+        "insurance": 200,
+        "hoa": 50,
+        "hoaMonthly": 50,
+        "hoa_monthly": 50,
+        "pmi": 0,
+        "allIn": 2227.72,
+        "totalPayment": 2227.72,
+        "total_payment": 2227.72,
+        "totalMonthly": 2227.72
+      },
+      "totals": {
+        "months": 360,
+        "pmiMonths": 0,
+        "assumptions": "Fixed interest rate; unchanged tax, insurance and HOA; PMI projection assumes current payments and original value equal to price. Excludes upfront cash, repairs and utilities.",
+        "principalInterestTotal": 531979.66,
+        "principal_interest_total": 531979.66,
+        "totalInterest": 291979.66,
+        "total_interest": 291979.66,
+        "propertyTaxTotal": 180000,
+        "property_tax_total": 180000,
+        "insuranceTotal": 72000,
+        "insurance_total": 72000,
+        "hoaTotal": 18000,
+        "hoa_total": 18000,
+        "pmiTotal": 0,
+        "pmi_total": 0,
+        "outOfPocketTotal": 801979.66,
+        "out_of_pocket_total": 801979.66,
+        "scheduledHousingPayments": 801979.66
+      },
+      "apr": 6.25,
+      "interestRate": 6.25,
+      "aprSource": "override",
+      "termYears": 30,
+      "price": 300000,
+      "downPayment": 60000,
+      "downPercent": 20,
+      "loanAmount": 240000,
+      "breakdown": {
+        "pi": 1477.72,
+        "tax": 500,
+        "insurance": 200,
+        "hoa": 50,
+        "pmi": 0,
+        "allIn": 2227.72
+      },
+      "summary": {
+        "paymentLabel": "$2,228",
+        "payment_label": "$2,228",
+        "aprLabel": "6.25%",
+        "apr_label": "6.25%",
+        "monthlyPayment": 2227.72,
+        "monthly_payment": 2227.72
+      },
+      "meta": {
+        "calculationContract": "mortgage-v2",
+        "rateMeaning": "interest-rate-not-apr",
+        "engineVersion": "thewing-mortgage-engine-shared-1.2.0",
+        "generatedAt": "2026-11-19T01:34:35.503Z",
+        "aprSource": "override",
+        "pmiApplied": false,
+        "pmiSource": "down_payment_20_plus",
+        "propertyTaxSource": "inputPercent",
+        "insuranceSource": "inputMonthly",
+        "hoaSource": "input",
+        "warnings": []
+      },
+      "upfrontKnown": {
+        "downPayment": 60000,
+        "fundingFeePaidAtClosing": 0,
+        "excludes": "Closing costs, prepaid expenses and escrow deposits are not included.",
+        "total": 60000
+      },
+      "budget": {
+        "complete": false,
+        "missing": [
+          "takeHomeMonthly",
+          "otherExpensesMonthly"
+        ],
+        "income": null,
+        "expenses": null,
+        "remainder": null,
+        "remainderPct": null
+      }
+    }
+  },
+  "finance": {
+    "inputs": {
+      "grossMonthly": 9000,
+      "netMonthly": 7000,
+      "savingsMonthly": 500,
+      "emergencyFund": 12000,
+      "bufferMonthly": 500,
+      "extraBufferMonthly": 300,
+      "reviewed": true,
+      "items": [
+        {
+          "id": "rent",
+          "value": 1800,
+          "minimumPayment": 1800,
+          "category": "monthly-expenses",
+          "essential": true,
+          "housing": true,
+          "continues": false
+        },
+        {
+          "id": "food",
+          "value": 600,
+          "minimumPayment": 600,
+          "category": "monthly-expenses",
+          "essential": true,
+          "housing": false,
+          "continues": true
+        },
+        {
+          "id": "car",
+          "value": 400,
+          "minimumPayment": 400,
+          "category": "debt",
+          "essential": true,
+          "housing": false,
+          "continues": true
+        }
+      ]
+    },
+    "result": {
+      "ok": true,
+      "version": "finance-budget-v1",
+      "reviewed": true,
+      "metrics": {
+        "monthlyIncome": 7000,
+        "grossMonthly": 9000,
+        "totalExpenses": 2400,
+        "totalDebt": 400,
+        "totalSavings": 500,
+        "cashFlow": 3700,
+        "beforeDeductionsRemaining": 5700,
+        "cashFlowPercentage": 52.85714285714286,
+        "expensesIncomeRatio": 34.285714285714285,
+        "debtIncomeRatio": 4.444444444444445,
+        "emergencyFund": 12000,
+        "essentialMonthlyExpenses": 2800,
+        "emergencyFundMonths": 4.285714285714286
+      },
+      "affordability": {
+        "monthlyRange": {
+          "comfortable": 2220,
+          "upper": 2520
+        },
+        "homeRange": null,
+        "scenario": null,
+        "scenarioError": null,
+        "limits": {
+          "housing28": 2520,
+          "totalDebt36": 2840,
+          "cashFlow": 5000,
+          "beforeDeductionsCashFlow": 7000
+        },
+        "continuingDebt": 400,
+        "bufferMonthly": 500,
+        "extraBufferMonthly": 300,
+        "projectedBeforeHousing": 5500,
+        "remainingAtUpper": 2980,
+        "remainingAtComfortable": 3280,
+        "missing": [],
+        "guidance": "28/36 is a planning guideline, not loan approval or a VA qualification test. Utilities and maintenance remain in the budget. Cash to close and reserves require separate review."
+      }
+    }
+  },
+  "draft": {
+    "inputs": {
+      "grossMonthly": 9000,
+      "netMonthly": null,
+      "savingsMonthly": 500,
+      "emergencyFund": 12000,
+      "bufferMonthly": 500,
+      "extraBufferMonthly": 300,
+      "reviewed": false,
+      "items": [
+        {
+          "id": "rent",
+          "value": 1800,
+          "minimumPayment": 1800,
+          "category": "monthly-expenses",
+          "essential": true,
+          "housing": true,
+          "continues": false
+        },
+        {
+          "id": "food",
+          "value": 600,
+          "minimumPayment": 600,
+          "category": "monthly-expenses",
+          "essential": true,
+          "housing": false,
+          "continues": true
+        },
+        {
+          "id": "car",
+          "value": 400,
+          "minimumPayment": 400,
+          "category": "debt",
+          "essential": true,
+          "housing": false,
+          "continues": true
+        }
+      ]
+    },
+    "result": {
+      "ok": true,
+      "version": "finance-budget-v1",
+      "reviewed": false,
+      "metrics": {
+        "monthlyIncome": null,
+        "grossMonthly": 9000,
+        "totalExpenses": 2400,
+        "totalDebt": 400,
+        "totalSavings": 500,
+        "cashFlow": null,
+        "beforeDeductionsRemaining": 5700,
+        "cashFlowPercentage": null,
+        "expensesIncomeRatio": null,
+        "debtIncomeRatio": 4.444444444444445,
+        "emergencyFund": 12000,
+        "essentialMonthlyExpenses": 2800,
+        "emergencyFundMonths": 4.285714285714286
+      },
+      "affordability": {
+        "monthlyRange": null,
+        "homeRange": null,
+        "scenario": null,
+        "scenarioError": null,
+        "limits": {
+          "housing28": 2520,
+          "totalDebt36": 2840,
+          "cashFlow": null,
+          "beforeDeductionsCashFlow": 7000
+        },
+        "continuingDebt": 400,
+        "bufferMonthly": 500,
+        "extraBufferMonthly": 300,
+        "projectedBeforeHousing": null,
+        "remainingAtUpper": null,
+        "remainingAtComfortable": null,
+        "missing": [
+          "take-home income",
+          "budget review"
+        ],
+        "guidance": "28/36 is a planning guideline, not loan approval or a VA qualification test. Utilities and maintenance remain in the budget. Cash to close and reserves require separate review."
+      }
+    }
+  }
+}

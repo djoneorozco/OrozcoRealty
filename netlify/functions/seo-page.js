@@ -45,13 +45,17 @@
 
 "use strict";
 
-const fs = require("node:fs");
-const path = require("node:path");
-const { handler: mortgageHandler } = require("./mortgage.js");
+import fs from "node:fs";
+import path from "node:path";
+import mortgageEndpoint from "./mortgage.js";
+async function mortgageHandler(event) {
+ const response = await mortgageEndpoint(new Request("https://theorozcorealty.netlify.app/api/mortgage", {method:"POST",headers:{"Content-Type":"application/json"},body:event.body}));
+ return {statusCode:response.status,body:await response.text()};
+}
 
 const SCHEMA_VERSION = "1.0.1";
 
-const __RUNTIME_DIR = __dirname;
+const __RUNTIME_DIR = path.join(process.cwd(), "netlify/functions");
 const __ROOT = process.cwd();
 
 const __PAY_TABLES_PATHS = [
@@ -557,101 +561,22 @@ async function callMortgageEngine(payload) {
   return { res, out };
 }
 
-async function computeMortgageEstimate({ body, city, price }) {
-  const dpAmount = nonNegative(
-    pickFirst(body, ["down", "downPayment", "down_payment", "dpAmt"]),
-    null
-  );
-
-  const dpPctBody = nonNegative(
-    pickFirst(body, ["dpPct", "downPaymentPct", "down_payment_pct"]),
-    null
-  );
-
-  const finalDpPct =
-    dpPctBody != null
-      ? dpPctBody
-      : (dpAmount != null && price > 0 ? (dpAmount / price) * 100 : 5);
-
-  const termYears =
-    toInt(pickFirst(body, ["termYears", "term", "term_years"])) ?? 30;
-
-  const creditScore =
-    toInt(pickFirst(body, ["creditScore", "credit_score", "fico", "score"])) ?? undefined;
-
-  const aprOverride =
-    toNum(pickFirst(body, ["apr", "aprOverride"])) ?? undefined;
-
-  const loanType =
-    lower(pickFirst(body, ["loanType", "loan_type"])) || "conventional";
-
-  const taxRatePct =
-    toNum(pickFirst(body, ["taxRate"])) ??
-    toNum(city?.tax_rate ?? city?.property_tax_rate ?? city?.raw?.property_tax_rate) ??
-    1.2;
-
-  const insRatePct =
-    toNum(pickFirst(body, ["insRate"])) ??
-    toNum(city?.insurance_rate ?? city?.raw?.insurance_rate) ??
-    0.5;
-
-  const hoaMonthly =
-    toNum(pickFirst(body, ["hoa", "hoaMonthly", "hoa_monthly"])) ??
-    toNum(city?.hoa_monthly ?? city?.raw?.hoa_monthly) ??
-    0;
-
-  const pmiRatePct =
-    toNum(pickFirst(body, ["pmiRate"])) ??
-    defaultPmiRatePct({ loanType, dpPct: finalDpPct });
-
-  const mortgagePayload = {
-    price: price,
-    down: finalDpPct,
-    creditScore: creditScore,
-    termYears: termYears,
-    taxRate: Number.isFinite(taxRatePct) ? taxRatePct / 100 : undefined,
-    insuranceAnnual: Number.isFinite(insRatePct) ? price * (insRatePct / 100) : undefined,
-    hoaMonthly: Number.isFinite(hoaMonthly) ? hoaMonthly : 0,
-    loanType: loanType,
-    aprOverride: Number.isFinite(aprOverride) ? aprOverride : undefined,
-    pmiRate: Number.isFinite(pmiRatePct) ? pmiRatePct / 100 : undefined
-  };
-
-  const { res, out } = await callMortgageEngine(mortgagePayload);
-
-  if (!res || res.statusCode !== 200 || !out || out.ok !== true) {
-    throw new Error(out?.error || `mortgage.js failed (status=${res?.statusCode ?? "unknown"})`);
+async function computeMortgageEstimate({ body }) {
+  // Legacy city defaults are not a current loan quote. Require the explicit shared-engine contract.
+  const inputs = body.mortgageInputs || body;
+  const { res, out } = await callMortgageEngine(inputs);
+  if (res.statusCode !== 200 || !out?.ok) {
+    const error = new Error(out?.error || "Complete mortgage inputs are required.");
+    error.status = res.statusCode === 422 ? 422 : 503;
+    throw error;
   }
-
+  const m = out.monthly;
+  const modern = inputs.contract === 'military-mortgage-v1';
   return {
     ok: true,
-    raw: out,
-    breakdown: {
-      principalInterest: Number(out?.breakdown?.pi || 0) || 0,
-      propertyTax: Number(out?.breakdown?.tax || 0) || 0,
-      insurance: Number(out?.breakdown?.insurance || 0) || 0,
-      hoa: Number(out?.breakdown?.hoa || 0) || 0,
-      pmi: Number(out?.breakdown?.pmi || 0) || 0,
-      totalMonthly: Number(out?.breakdown?.allIn || 0) || 0
-    },
-    assumptions: {
-      price: Number(out?.price || price) || price,
-      dpPct: Number(out?.downPercent || finalDpPct) || finalDpPct,
-      dpAmt: Number(out?.downPayment || 0) || 0,
-      loanAmount: Number(out?.loanAmount || 0) || 0,
-      apr: Number(out?.apr || 0) || 0,
-      termYears: Number(out?.termYears || termYears) || termYears,
-      creditScore: creditScore ?? null,
-      loanType,
-      taxRate: taxRatePct,
-      insRate: insRatePct,
-      hoaMonthly,
-      pmiRate: pmiRatePct
-    },
-    meta: {
-      aprSource: out?.aprSource ?? null,
-      warnings: out?.meta?.warnings ?? []
-    }
+    breakdown: { principalInterest: modern ? m.principalInterest : m.pi, propertyTax: modern ? m.propertyTax : m.tax,
+      insurance: m.insurance, hoa: m.hoa, pmi: modern ? m.mortgageInsurance : m.pmi, totalMonthly: modern ? m.totalHousing : m.allIn },
+    assumptions: { ...inputs }, meta: { source: 'TheWing', warnings: ['Planning estimate from explicit inputs.'] }
   };
 }
 
@@ -733,7 +658,7 @@ function buildSeoSummary({ city, price, monthlyIncome, mortgage, verdict }) {
 // ------------------------------------------------------------
 // //#10) HANDLER
 // ------------------------------------------------------------
-exports.handler = async function handler(event) {
+export const handler = async function handler(event) {
   try {
     if (event.httpMethod === "OPTIONS") {
       return {
@@ -928,7 +853,7 @@ exports.handler = async function handler(event) {
       }
     });
   } catch (e) {
-    return respond(event, 500, {
+    return respond(event, e.status || 500, {
       ok: false,
       schemaVersion: SCHEMA_VERSION,
       error: String(e?.message || e),

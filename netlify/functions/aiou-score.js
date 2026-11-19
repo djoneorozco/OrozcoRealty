@@ -7,7 +7,7 @@
 // - Keeps full backwards compatibility
 // ============================================================
 
-import { Handler } from "@netlify/functions";
+// Plain JavaScript handler; no runtime import of a TypeScript-only Handler type.
 
 /* ============================================================
    //#1 CORS

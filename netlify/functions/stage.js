@@ -294,7 +294,6 @@ function buildUpstreamHeaders() {
   const apiKey =
     trimString(process.env.DECOR8_API_KEY) ||
     trimString(process.env.STAGE_API_KEY) ||
-    trimString(process.env.OPENAI_API_KEY) ||
     "";
 
   const headers = {
@@ -322,7 +321,7 @@ function extractFirstImageUrl(data) {
   );
 }
 
-module.exports.handler = async (event) => {
+export const handler = async (event) => {
   const origin =
     event.headers?.origin ||
     event.headers?.Origin ||

@@ -15,7 +15,7 @@ const buildUrl = (ver) => BASE.replace("{VER}", ver);
 
 //#3 Minimal inline fallback (only used if CDN fails)
 const FALLBACK_STUB = `/* Chart.js fallback stub (CDN fetch failed) */
-window.Chart = window.Chart || (function(){ 
+window.Chart = window.Chart || (function(){
   console.warn("[Zipped] Chart.js CDN failed. Using no-op stub.");
   function Noop(){ return {
     destroy(){}, update(){}, resize(){}, toBase64Image(){ return ""; }
@@ -24,7 +24,7 @@ window.Chart = window.Chart || (function(){
 }());`;
 
 //#4 Handler
-exports.handler = async (event) => {
+export const handler = async (event) => {
   try {
     // 4A) Version from query (?v=4.4.4) with validation
     const url = new URL(event.rawUrl || `https://x.local${event.rawQuery ? "?" + event.rawQuery : ""}`);
