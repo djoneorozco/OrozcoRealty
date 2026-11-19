@@ -21,12 +21,13 @@ export function validateAnswer(answer, packet) {
 }
 export async function explain(request, packet, options = {}) {
   const apiKey = options.apiKey ?? process.env.OPENAI_API_KEY;
+  const model = process.env.ELENA_OPENAI_MODEL || DEFAULT_MODEL;
   if (!apiKey) throw Error('Missing API key');
   const schema = { type: 'object', additionalProperties: false, required: ['answer', 'fact_ids', 'source_ids'], properties: {
     answer: { type: 'string' }, fact_ids: { type: 'array', items: { type: 'string' } }, source_ids: { type: 'array', items: { type: 'string' } }
   } };
   const result = await postJSON('https://api.openai.com/v1/responses', {
-    model: process.env.ELENA_OPENAI_MODEL || DEFAULT_MODEL, store: false, reasoning: { effort: 'low' }, max_output_tokens: 5000,
+    model, store: false, reasoning: { effort: 'low' }, max_output_tokens: 5000,
     input: [{ role: 'developer', content: instructions },
       // History stays in a user data envelope so a forged assistant turn never becomes a trusted message.
       { role: 'user', content: JSON.stringify({ question: request.message, recent_conversation: request.thread, current_context: packet }) }],
@@ -41,5 +42,5 @@ export async function explain(request, packet, options = {}) {
   return { reply: answer.answer.trim() + (figures ? '\n\n' + figures + (request.language === 'es' ? '\n\nEstimaciones para planificación, no aprobación de préstamo.' : '\n\nPlanning estimates, not loan approval.') : ''),
     facts: answer.fact_ids.map(id => packet.facts[id]),
     citations: answer.source_ids.map(id => { const s = packet.knowledge.sources.find(s => s.id === id); return { title: s.title, url: s.url }; }),
-    explanation_mode: 'ai_grounded' };
+    model: typeof result.model === 'string' ? result.model : model, explanation_mode: 'ai_grounded' };
 }

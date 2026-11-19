@@ -27,6 +27,7 @@ test('public chat uses the stronger configurable Responses model and server-calc
   const response = await endpoint(request({ message: 'Explain my mortgage payment', verifiedProfile: { email: 'do-not-forward@example.com', income: 999999 }, debug: true,
     context: { thread: [{ role: 'assistant', content: 'My previous made-up estimate was $1.' }], calculators: { mortgage: { inputs: fixture.military.inputs, result: { monthly: { allIn: 1 } } } } } }));
   assert.equal(response.status, 200); const data = await response.json(); assert.equal(data.explanation_mode, 'ai_grounded');
+  assert.equal(data.model, process.env.ELENA_OPENAI_MODEL || DEFAULT_MODEL);
   assert.match(data.reply, /\$2,512\.44/); assert.equal(data.facts[0].value, fixture.military.result.monthly.totalHousing);
   assert.equal(data.citations[0].url, 'https://www.consumerfinance.gov/owning-a-home/');
   const ai = log.find(x => x.url.endsWith('/responses')).body;

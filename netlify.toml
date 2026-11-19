@@ -203,6 +203,11 @@
   force = true
 
 [[redirects]]
+  from = "/api/mortgage-calculator"
+  to = "/.netlify/functions/mortgage"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
