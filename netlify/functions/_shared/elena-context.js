@@ -27,7 +27,8 @@ const labels = {
   taxes: ['Monthly property tax assumption', 'Impuesto predial mensual estimado'], insurance: ['Monthly insurance assumption', 'Seguro mensual estimado'],
   hoa: ['Monthly HOA', 'Cuota mensual de asociación'], mortgageInsurance: ['Monthly mortgage insurance', 'Seguro hipotecario mensual'],
   otherOwnership: ['Other monthly ownership costs', 'Otros gastos mensuales de vivienda'],
-  cashFlow: ['Current monthly cash flow', 'Flujo de efectivo mensual actual'], gross: ['Gross monthly income', 'Ingreso bruto mensual'],
+  cashFlow: ['Current monthly cash flow after planned savings', 'Flujo de efectivo mensual después del ahorro previsto'], gross: ['Gross monthly income', 'Ingreso bruto mensual'],
+  savings: ['Planned monthly savings already deducted', 'Ahorro mensual previsto ya descontado'],
   net: ['Take-home monthly income', 'Ingreso neto mensual'], comfortable: ['Planning housing budget — comfortable', 'Presupuesto de vivienda orientativo — cómodo'],
   upper: ['Planning housing budget — upper bound', 'Presupuesto de vivienda orientativo — límite superior'],
   basicPay: ['Monthly basic pay', 'Sueldo base mensual'], bah: ['Monthly BAH', 'BAH mensual'], bas: ['Monthly BAS', 'BAS mensual'],
@@ -57,6 +58,7 @@ export async function buildContext(request, options) {
       } else if (tool === 'finance') {
         const draft = !inputs.reviewed;
         add('gross', inputs.grossMonthly, tool, draft); add('net', inputs.netMonthly, tool, draft); add('cashFlow', result.metrics.cashFlow, tool, draft);
+        add('savings', result.metrics.totalSavings, tool, draft);
         add('comfortable', result.affordability?.monthlyRange?.comfortable, tool); add('upper', result.affordability?.monthlyRange?.upper, tool);
         if (draft || inputs.netMonthly === null || !(inputs.grossMonthly > 0)) issues.push({ tool, code: 'incomplete_budget', message: request.language === 'es' ? 'Revise el presupuesto y complete ingresos brutos y netos antes de estimar capacidad de compra.' : 'Review the budget and complete gross and take-home income before estimating affordability.' });
       } else {

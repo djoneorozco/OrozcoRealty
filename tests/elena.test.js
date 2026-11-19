@@ -72,6 +72,17 @@ test('unreviewed budgets cannot receive a returned affordability range', async (
   const result = structuredClone(fixture.draft.result); result.affordability.monthlyRange = { comfortable: 2000, upper: 3000 };
   await assert.rejects(calculateBudget(fixture.draft.inputs, { fetchImpl: async () => json(result) }), /incomplete budget/);
 });
+test('budget explanations receive the savings already deducted from checked cash flow', async () => {
+  const packet = await buildContext(normalizeRequest({ message: 'Explain my cash flow', context: { calculators: { finance: { inputs: fixture.finance.inputs, result: { metrics: { totalSavings: 0 } } } } } }), { fetchImpl: mockProvider() });
+  assert.equal(packet.facts.savings.value, 500);
+  assert.equal(packet.facts.cashFlow.value, 3700);
+  assert.equal(packet.facts.net.value - fixture.finance.result.metrics.totalExpenses - fixture.finance.result.metrics.totalDebt - packet.facts.savings.value, packet.facts.cashFlow.value);
+  assert.match(packet.facts.cashFlow.label, /after planned savings/);
+  assert.ok(packet.knowledge.guidance.some(g => g.includes('planned savings have already been deducted')));
+  const draft = await buildContext(normalizeRequest({ message: 'Mi presupuesto', context: { calculators: { finance: { inputs: fixture.draft.inputs } } } }), { fetchImpl: mockProvider() });
+  assert.equal(draft.facts.savings.provisional, true);
+  assert.match(draft.facts.savings.label, /ya descontado/);
+});
 test('fractional years pass unchanged to the shared compensation service, not the old highest bracket', async () => {
   let sent;
   const data = await calculateCompensation({ rank: 'E-5', yearsOfService: 1.5, base: 'Lackland', dependents: 'without' }, { fetchImpl: async (url, opts) => {

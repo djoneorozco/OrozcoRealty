@@ -20,6 +20,7 @@ export function loadKnowledge(message) {
       'Help people buy, sell, rent, wait, or plan ownership based on their own priorities. Do not force lead capture.',
       'Explain principal and interest, property taxes, insurance, HOA, and mortgage insurance separately when those results are available.',
       'Never treat gross income as take-home cash. An unreviewed budget is provisional. Existing housing expenses that end after moving must not be counted twice.',
+      'Checked current cash flow is take-home income after entered expenses, debt payments, and planned savings have already been deducted. Do not tell the visitor to deduct those savings again. Only additional savings or costs not entered would reduce that remaining cash further. Current cash flow describes the current budget, not the after-move housing allowance.',
       'Do not rank or recommend neighborhoods based on protected characteristics. Ask about budget, commute preferences, property needs and user-selected amenities instead.',
       'Never claim live listings, live rates, guaranteed savings, eligibility, tax exemptions, a safe purchase limit, or lender approval without a current verified source.',
       'When a current local fact or individualized legal, tax or lending determination is missing, say what needs checking and point to the relevant source or professional.'
