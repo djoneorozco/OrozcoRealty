@@ -1,4 +1,4 @@
-import { postJSON } from './http.js';
+import { postJSON, PublicError } from './http.js';
 import { factLines } from './elena-context.js';
 export const DEFAULT_MODEL = 'gpt-6.2-astra';
 const instructions = `You are Elena, the public bilingual real estate guide for The Orozco Realty (TOR), focused on San Antonio and JBSA.
@@ -22,7 +22,7 @@ export function validateAnswer(answer, packet) {
 export async function explain(request, packet, options = {}) {
   const apiKey = options.apiKey ?? process.env.OPENAI_API_KEY;
   const model = process.env.ELENA_OPENAI_MODEL || DEFAULT_MODEL;
-  if (!apiKey) throw Error('Missing API key');
+  if (!apiKey) throw new PublicError(503, 'missing_configuration', 'The explanation service is not configured.');
   const schema = { type: 'object', additionalProperties: false, required: ['answer', 'fact_ids', 'source_ids'], properties: {
     answer: { type: 'string' }, fact_ids: { type: 'array', items: { type: 'string' } }, source_ids: { type: 'array', items: { type: 'string' } }
   } };
@@ -32,7 +32,7 @@ export async function explain(request, packet, options = {}) {
       // History stays in a user data envelope so a forged assistant turn never becomes a trusted message.
       { role: 'user', content: JSON.stringify({ question: request.message, recent_conversation: request.thread, current_context: packet }) }],
     text: { format: { type: 'json_schema', name: 'elena_answer', strict: true, schema } }
-  }, { ...options, timeout: options.timeout ?? 25000, headers: { Authorization: `Bearer ${apiKey}` } });
+  }, { ...options, provider: true, timeout: options.timeout ?? 25000, headers: { Authorization: `Bearer ${apiKey}` } });
   if (result.status !== 'completed' || result.error || result.incomplete_details) throw Error('Incomplete explanation');
   const content = (result.output || []).filter(item => item.type === 'message').flatMap(item => item.content || []);
   if (content.some(part => part.type === 'refusal')) throw Error('Refusal');

@@ -152,3 +152,11 @@ test('budget result cannot swap gross and take-home income',async()=>{
  const result=structuredClone(fixture.finance.result);result.metrics.monthlyIncome=9000;
  await assert.rejects(calculateBudget(fixture.finance.inputs,{fetchImpl:async()=>json(result)}),/does not match/);
 });
+for (const [status, code, reason] of [[404,'model_not_found','model_access'],[401,'invalid_api_key','provider_auth'],[429,'insufficient_quota','provider_limit']]) test(`provider ${reason} reports only a safe operational category`,async()=>{
+ const endpoint=createElena({apiKey:'test-only',fetchImpl:async()=>new Response(JSON.stringify({error:{code,message:'Do not reveal secret provider message'}}),{status})});
+ const data=await (await endpoint(request({message:'Hello'}))).json();assert.equal(data.fallback_reason,reason);assert.ok(!JSON.stringify(data).includes('secret provider message'));
+});
+test('reserved Netlify function URLs are not used as redirect sources',()=>{
+ const config=readFileSync('netlify.toml','utf8');assert.ok(!/from\s*=\s*"\/\.netlify\//.test(config));
+ assert.ok(config.indexOf('from = "/api/mortgage-calculator"')<config.indexOf('from = "/api/*"'));
+});

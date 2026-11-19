@@ -57,12 +57,23 @@ export function endpoint(run) {
     }
   };
 }
-export async function postJSON(url, body, { fetchImpl = fetch, timeout = 9000, headers = {} } = {}) {
+export async function postJSON(url, body, { fetchImpl = fetch, timeout = 9000, headers = {}, provider = false } = {}) {
   const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), timeout);
   try {
     const response = await fetchImpl(url, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers },
       body: JSON.stringify(body), signal: controller.signal, redirect: 'error' });
-    if (!response.ok) throw new PublicError(502, 'upstream_unavailable', 'The calculation or explanation service is temporarily unavailable.');
+    if (!response.ok) {
+      if (provider) {
+        const error = await response.json().catch(() => ({}));
+        const code = error.error?.code;
+        // Only a small operational category is retained. Never expose provider messages, keys or request data.
+        const category = ['model_not_found', 'model_not_available'].includes(code) ? 'model_access'
+          : response.status === 401 ? 'provider_auth' : response.status === 429 ? 'provider_limit'
+          : response.status === 400 ? 'provider_request' : 'provider_unavailable';
+        throw new PublicError(503, category, 'The explanation service is temporarily unavailable.');
+      }
+      throw new PublicError(502, 'upstream_unavailable', 'The calculation or explanation service is temporarily unavailable.');
+    }
     const result = await response.json();
     if (!object(result)) throw new PublicError(502, 'invalid_upstream', 'The service returned an incomplete result.');
     return result;
