@@ -152,7 +152,17 @@ test('budget result cannot swap gross and take-home income',async()=>{
  const result=structuredClone(fixture.finance.result);result.metrics.monthlyIncome=9000;
  await assert.rejects(calculateBudget(fixture.finance.inputs,{fetchImpl:async()=>json(result)}),/does not match/);
 });
-for (const [status, code, reason] of [[404,'model_not_found','model_access'],[401,'invalid_api_key','provider_auth'],[429,'insufficient_quota','provider_quota'],[429,'rate_limit_exceeded','provider_limit']]) test(`provider ${reason} reports only a safe operational category`,async()=>{
+for (const [status, code, reason] of [
+  [404,'model_not_found','model_access'],[401,'invalid_api_key','provider_auth'],
+  [429,'insufficient_quota','provider_quota'],[429,'rate_limit_exceeded','provider_limit'],
+  [429,'credit_balance_exhausted','provider_credit_balance'],
+  [429,'organization_spend_limit_exceeded','provider_organization_spend_limit'],
+  [429,'project_spend_limit_exceeded','provider_project_spend_limit'],
+  [429,'api_key_spend_limit_exceeded','provider_key_spend_limit'],
+  [429,'organization_usage_limit_exceeded','provider_organization_usage_limit'],
+  [429,'slow_down','provider_slow_down'],[429,'unrecognized_error','provider_429_unknown'],
+  [429,'constructor','provider_429_unknown'],[429,null,'provider_429_unknown']
+]) test(`provider ${code} reports only a safe operational category`,async()=>{
  const endpoint=createElena({apiKey:'test-only',fetchImpl:async()=>new Response(JSON.stringify({error:{code,message:'Do not reveal secret provider message'}}),{status})});
  const data=await (await endpoint(request({message:'Hello'}))).json();assert.equal(data.fallback_reason,reason);assert.ok(!JSON.stringify(data).includes('secret provider message'));
 });

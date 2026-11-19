@@ -67,8 +67,17 @@ export async function postJSON(url, body, { fetchImpl = fetch, timeout = 9000, h
         const error = await response.json().catch(() => ({}));
         const code = error.error?.code;
         // Only a small operational category is retained. Never expose provider messages, keys or request data.
-        const category = ['model_not_found', 'model_not_available'].includes(code) ? 'model_access'
-          : response.status === 401 ? 'provider_auth' : code === 'insufficient_quota' ? 'provider_quota' : response.status === 429 ? 'provider_limit'
+        const categories = {
+          model_not_found: 'model_access', model_not_available: 'model_access',
+          insufficient_quota: 'provider_quota', credit_balance_exhausted: 'provider_credit_balance',
+          organization_spend_limit_exceeded: 'provider_organization_spend_limit',
+          project_spend_limit_exceeded: 'provider_project_spend_limit',
+          api_key_spend_limit_exceeded: 'provider_key_spend_limit',
+          organization_usage_limit_exceeded: 'provider_organization_usage_limit',
+          rate_limit_exceeded: 'provider_limit', slow_down: 'provider_slow_down'
+        };
+        const category = Object.hasOwn(categories, code) ? categories[code]
+          : response.status === 401 ? 'provider_auth' : response.status === 429 ? 'provider_429_unknown'
           : response.status === 400 ? 'provider_request' : 'provider_unavailable';
         throw new PublicError(503, category, 'The explanation service is temporarily unavailable.');
       }
