@@ -18,6 +18,10 @@ async function open(page, name) {
 for(const width of [1440,390]) for(const name of pages) test(`${name} public chat at ${width}px`,async({page})=>{
   await page.setViewportSize({width,height:900}); await prepare(page); const input=await open(page,name);
   await expect(input).toBeVisible(); await expect(page.locator('#ae-email,#ae-verify,#tor-elena-email,#rs-lock-overlay')).toHaveCount(0);
+  if(['about-us.html','resources.html'].includes(name)) {
+    const close=page.locator('#ask-elena-modal-close');await expect(close).toBeVisible();const bounds=await close.boundingBox();
+    expect(bounds.y).toBeGreaterThanOrEqual(0);expect(bounds.y+bounds.height).toBeLessThanOrEqual(900);
+  }
   await input.fill('What should I ask my lender?'); await input.press('Enter');
   await expect(page.getByText(response.reply,{exact:true})).toBeVisible();
   await expect(page.getByRole('link',{name:'Homebuying resources',exact:true})).toBeVisible();

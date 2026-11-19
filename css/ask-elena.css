@@ -4,3 +4,20 @@
 .elena-source{display:block;color:inherit;text-decoration:underline;margin-top:8px;overflow-wrap:anywhere}
 #ask-elena-shell .ae-msg p,#ask-elena-widget .ae-msg p,#tor-ask-elena-command-widget .tor-elena-msg p{margin:6px 0;overflow-wrap:anywhere}
 #ask-elena-shell button:focus-visible,#ask-elena-widget button:focus-visible,#tor-ask-elena-command-widget button:focus-visible{outline:2px solid #dfc088;outline-offset:3px}
+/* Keep the existing two-panel design inside a modal viewport, including its close control. */
+#ask-elena-modal #ask-elena-panel{height:min(820px,calc(100dvh - 36px))}
+#ask-elena-modal #ask-elena-shell{height:100%;min-height:0;padding:0}
+#ask-elena-modal #ae-container{height:100%;min-height:0}
+#ask-elena-modal #ae-left{overflow:auto}
+#ask-elena-modal #ae-right{height:100%;min-height:0;max-height:100%;overflow:hidden}
+.elena-status:empty{display:none}
+.elena-reset{color:#f4efe6;border-color:#8d7856}
+@media(max-width:980px){
+  #ask-elena-modal #ae-container{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:8px}
+  #ask-elena-modal #ae-left{padding:12px 64px 12px 12px;border-radius:12px}
+  #ask-elena-modal #ae-left .ae-avatar-wrapper,#ask-elena-modal #ae-left .ae-name,#ask-elena-modal #ae-left .ae-sub,#ask-elena-modal #ae-left .ae-badge{display:none}
+  #ask-elena-modal #ae-left .ae-links{display:flex;gap:8px;overflow:auto;margin:0}
+  #ask-elena-modal #ae-left .ae-link-btn{flex:0 0 auto;margin:0}
+  #ask-elena-modal #ae-right .ae-topbar{padding:16px}
+  #ask-elena-modal #ae-chat{padding:16px}
+}
